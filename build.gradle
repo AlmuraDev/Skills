@@ -1,0 +1,27 @@
+plugins {
+    id 'org.spongepowered.plugin' version '0.8.1'
+}
+
+group = 'org.inspirenxe' // TODO
+version = '1.0-SNAPSHOT'
+description = 'Advance character through skills!'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name = 'oss-sonatype-public'
+        url = 'https://oss.sonatype.org/content/repositories/public/'
+    }
+    maven {
+        name = 'sponge'
+        url = 'http://repo.spongepowered.org/maven'
+    }
+}
+
+dependencies {
+    compile 'org.spongepowered:spongeapi:7.0.0-SNAPSHOT'
+    compile 'org.jooq:jooq:3.9.5'
+    compile 'org.jooq:jooq-meta:3.9.5'
+    compile 'org.jooq:jooq-codegen:3.9.5'
+}
