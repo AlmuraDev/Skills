@@ -9,6 +9,7 @@ import org.inspirenxe.skills.impl.Constants;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.level.MMOStyleLevelFunction;
+import org.inspirenxe.skills.impl.skill.builtin.FarmingSkillType;
 import org.inspirenxe.skills.impl.skill.builtin.MiningSkillType;
 import org.jooq.DSLContext;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
@@ -33,6 +34,7 @@ public class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<
     public void registerDefaults() {
         // Remove when these are read from config
         this.registerAdditionalCatalog(new MiningSkillType());
+        this.registerAdditionalCatalog(new FarmingSkillType());
     }
 
     @Override
@@ -51,11 +53,10 @@ public class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<
                     .build(context)
                     .fetchAsync(SkillsImpl.instance.asyncExecutor)
                     .whenCompleteAsync((rows, ex) -> {
-                        context.close();
 
                         // Not in the db, insert it
                         if (rows.isEmpty()) {
-                            createInsertSkillTypeQuery(catalogType)
+                            createInsertSkillTypeQuery(catalogType.getId())
                                     .build(context)
                                     .keepStatement(false)
                                     .executeAsync(SkillsImpl.instance.asyncExecutor);

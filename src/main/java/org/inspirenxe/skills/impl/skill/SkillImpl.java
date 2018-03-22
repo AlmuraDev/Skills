@@ -6,8 +6,10 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
+import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostEventImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePreEventImpl;
 import org.spongepowered.api.Sponge;
@@ -64,8 +66,6 @@ public final class SkillImpl implements Skill {
 
         this.experience = event.getExperience();
 
-        this.dirtyState = true;
-
         Sponge.getEventManager().post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
         return this;
     }
@@ -83,6 +83,10 @@ public final class SkillImpl implements Skill {
     @Override
     public void setDirtyState(boolean dirtyState) {
         this.dirtyState = dirtyState;
+
+        if (this.dirtyState) {
+            SkillsImpl.instance.skillManager.queueToSave(this.getHolder());
+        }
     }
 
     @Override

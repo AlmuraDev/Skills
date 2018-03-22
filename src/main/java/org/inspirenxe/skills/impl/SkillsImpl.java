@@ -1,6 +1,8 @@
 package org.inspirenxe.skills.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import net.kyori.membrane.facet.internal.Facets;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.inspirenxe.skills.api.level.LevelFunction;
@@ -48,6 +50,9 @@ public class SkillsImpl {
     public SkillManagerImpl skillManager;
 
     @Inject
+    private Injector injector;
+
+    @Inject
     @DefaultConfig(sharedRoot = false)
     private Path configPath;
 
@@ -58,6 +63,9 @@ public class SkillsImpl {
     @Listener
     public void onGameConstruction(GameConstructionEvent event) {
         instance = this;
+
+        this.injector.createChildInjector(new ServerModule());
+        this.injector.getInstance(Facets.class).enable();
 
         Sponge.getRegistry().registerModule(LevelFunction.class, new LevelFunctionRegistryModule());
         Sponge.getRegistry().registerModule(SkillType.class, new SkillTypeRegistryModule());
@@ -71,6 +79,7 @@ public class SkillsImpl {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         this.skillManager = new SkillManagerImpl();
     }
 

@@ -109,6 +109,7 @@ public final class MiningSkillType extends SkillTypeImpl {
                             try (CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
                                 frame.pushCause(snapshot);
                                 skill.addExperience(getExperience(snapshot));
+                                skill.setDirtyState(true);
                             }
                         }
                     }

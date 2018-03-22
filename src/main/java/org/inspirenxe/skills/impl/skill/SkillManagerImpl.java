@@ -14,9 +14,7 @@ import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.impl.Constants;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
-import org.inspirenxe.skills.impl.database.DatabaseQuery;
 import org.inspirenxe.skills.impl.database.generated.tables.TblSkillExperience;
-import org.inspirenxe.skills.impl.database.generated.tables.records.TblSkillExperienceRecord;
 import org.inspirenxe.skills.impl.event.experience.load.LoadExperiencePostEventImpl;
 import org.inspirenxe.skills.impl.event.experience.load.LoadExperiencePreEventImpl;
 import org.inspirenxe.skills.impl.event.experience.save.SaveExperiencePostEventImpl;
@@ -25,6 +23,7 @@ import org.jooq.DSLContext;
 import org.jooq.Query;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -35,11 +34,11 @@ import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -48,18 +47,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 
 public final class SkillManagerImpl implements SkillManager {
 
     private final Map<UUID, Set<SkillHolder>> holdersInContainer = new HashMap<>();
     private final Map<UUID, Task> savingTasks = new HashMap<>();
+    private final Map<UUID, SaveContainerToDatabase> queueables = new HashMap<>();
 
     public SkillManagerImpl() {
         // TODO Need kashike's fancy system
@@ -121,7 +123,8 @@ public final class SkillManagerImpl implements SkillManager {
         Sponge.getScheduler().createTaskBuilder()
                 .name(Constants.Plugin.NAME + "- Load Skills [" + containerUniqueId + " | " + holderUniqueId + "]")
                 .async()
-                .execute(() -> this.loadSkillsAsync(holder.getContainerUniqueId(), holder.getHolderUniqueId(), new HashSet<>(skillTypes)))
+                .execute(() -> this.loadSkillsAsync(holder.getContainerUniqueId(), holder.getHolderUniqueId(), Sponge.getRegistry().getAllOf
+                        (SkillType.class).stream().map(CatalogType::getId).collect(Collectors.toSet())))
                 .submit(SkillsImpl.instance.container);
     }
 
@@ -144,11 +147,24 @@ public final class SkillManagerImpl implements SkillManager {
                     this.unloadContainer(containerUniqueId);
                 }
 
-                Sponge.getScheduler().createTaskBuilder()
-                        .name(Constants.Plugin.NAME + "- Save Skills [" + containerUniqueId + " | " + holderUniqueId + "]")
-                        .async()
-                        .execute(new SaveHolderToDatabase(this, previousHolder))
-                        .submit(SkillsImpl.instance.container);
+                final Map<String, Double> dirtySkills = new HashMap<>();
+
+                for (Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
+                    final SkillType skillType = skillEntry.getKey();
+                    final Skill skill = skillEntry.getValue();
+
+                    if (skill.isInitialized() && skill.isDirtyState()) {
+                        dirtySkills.put(skillType.getId(), skill.getCurrentExperience());
+                    }
+                }
+
+                if (!dirtySkills.isEmpty()) {
+                    Sponge.getScheduler().createTaskBuilder()
+                            .name(Constants.Plugin.NAME + "- Save Skills [" + containerUniqueId + " | " + holderUniqueId + "]")
+                            .async()
+                            .execute(new SaveHolderToDatabase(this, containerUniqueId, new DirtySkillHolderQueueEntry(holderUniqueId, dirtySkills)))
+                            .submit(SkillsImpl.instance.container);
+                }
             }
         }
     }
@@ -178,11 +194,25 @@ public final class SkillManagerImpl implements SkillManager {
                     this.unloadContainer(previousContainerUniqueId);
                 }
 
-                Sponge.getScheduler().createTaskBuilder()
-                        .name(Constants.Plugin.NAME + "- Save Skills [" + previousContainerUniqueId + " | " + holderUniqueId + "]")
-                        .async()
-                        .execute(new SaveHolderToDatabase(this, previousHolder))
-                        .submit(SkillsImpl.instance.container);
+                final Map<String, Double> dirtySkills = new HashMap<>();
+
+                for (Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
+                    final SkillType skillType = skillEntry.getKey();
+                    final Skill skill = skillEntry.getValue();
+
+                    if (skill.isInitialized() && skill.isDirtyState()) {
+                        dirtySkills.put(skillType.getId(), skill.getCurrentExperience());
+                    }
+                }
+
+                if (!dirtySkills.isEmpty()) {
+                    Sponge.getScheduler().createTaskBuilder()
+                            .name(Constants.Plugin.NAME + "- Save Skills [" + previousContainerUniqueId + " | " + holderUniqueId + "]")
+                            .async()
+                            .execute(new SaveHolderToDatabase(this, previousContainerUniqueId, new DirtySkillHolderQueueEntry(holderUniqueId,
+                                    dirtySkills)))
+                            .submit(SkillsImpl.instance.container);
+                }
             }
         }
 
@@ -203,11 +233,12 @@ public final class SkillManagerImpl implements SkillManager {
         Sponge.getScheduler().createTaskBuilder()
                 .name(Constants.Plugin.NAME + "- Load Skills [" + containerUniqueId + " | " + holderUniqueId + "]")
                 .async()
-                .execute(() -> this.loadSkillsAsync(holder.getContainerUniqueId(), holder.getHolderUniqueId(), new HashSet<>(skillTypes)))
+                .execute(() -> this.loadSkillsAsync(holder.getContainerUniqueId(), holder.getHolderUniqueId(), skillTypes.stream().map(
+                        CatalogType::getId).collect(Collectors.toSet())))
                 .submit(SkillsImpl.instance.container);
     }
 
-    private void loadSkillsAsync(UUID containerUniqueId, UUID holderUniqueId, Collection<SkillType> skillTypes) {
+    private void loadSkillsAsync(UUID containerUniqueId, UUID holderUniqueId, Collection<String> skillTypeIds) {
 
         final PluginContainer container = SkillsImpl.instance.container;
         final ExecutorService executor = SkillsImpl.instance.asyncExecutor;
@@ -215,12 +246,18 @@ public final class SkillManagerImpl implements SkillManager {
 
         // Commence loading of skills
         try (DSLContext context = manager.createContext()) {
-            for (SkillType skillType : skillTypes) {
-                createFetchExperienceQuery(containerUniqueId, holderUniqueId, skillType)
+            for (String skillTypeId : skillTypeIds) {
+                createFetchExperienceQuery(containerUniqueId, holderUniqueId, skillTypeId)
                         .build(context)
                         .keepStatement(false)
                         .fetchAsync(executor)
                         .whenCompleteAsync((rows, ex) -> {
+                            final SkillType skillType = Sponge.getRegistry().getType(SkillType.class, skillTypeId).orElse(null);
+
+                            if (skillType == null) {
+                                return;
+                            }
+
                             final double dbExperience;
                             final boolean isNewSkill;
 
@@ -255,12 +292,10 @@ public final class SkillManagerImpl implements SkillManager {
                                         if (skill != null) {
 
                                             Sponge.getCauseStackManager().pushCause(SkillManagerImpl.this);
-                                            skill.setExperience(experience);
-                                            Sponge.getCauseStackManager().popCause();
 
-                                            if (dbExperience == experience) {
-                                                skill.setDirtyState(isNewSkill);
-                                            }
+                                            skill.setExperience(experience);
+
+                                            Sponge.getCauseStackManager().popCause();
 
                                             Sponge.getCauseStackManager().pushCause(SkillManagerImpl.this);
                                             Sponge.getEventManager().post(new LoadExperiencePostEventImpl(skill, dbExperience, skill
@@ -276,7 +311,7 @@ public final class SkillManagerImpl implements SkillManager {
         }
     }
 
-    private void saveSkillsAsync(UUID containerUniqueId, UUID holderUniqueId, Map<SkillType, Double> skillTypesByExperience) throws SQLException {
+    private void saveSkillsAsync(UUID containerUniqueId, UUID holderUniqueId, Map<String, Double> skillTypesByExperience) throws SQLException {
 
         final DatabaseManager manager = SkillsImpl.instance.databaseManager;
 
@@ -286,8 +321,14 @@ public final class SkillManagerImpl implements SkillManager {
         final HashSet<ExperienceEvent.Save.Pre> preEvents = new HashSet<>();
 
         try (DSLContext context = manager.createContext()) {
-            for (Map.Entry<SkillType, Double> skillEntry : skillTypesByExperience.entrySet()) {
-                final SkillType skillType = skillEntry.getKey();
+            for (Map.Entry<String, Double> skillEntry : skillTypesByExperience.entrySet()) {
+                final String skillTypeId = skillEntry.getKey();
+                final SkillType skillType = Sponge.getRegistry().getType(SkillType.class, skillTypeId).orElse(null);
+
+                if (skillType == null) {
+                    continue;
+                }
+
                 final double skillExperience = skillEntry.getValue();
 
                 final Cause cause = Cause.of(EventContext.empty(), SkillsImpl.instance.container, this);
@@ -296,19 +337,19 @@ public final class SkillManagerImpl implements SkillManager {
                 Sponge.getEventManager().post(event);
 
                 final SelectConditionStep<Record1<Integer>> hasExperienceInSkillQuery = createHasExperienceInSkillQuery(containerUniqueId,
-                        holderUniqueId, skillType).build(context);
+                        holderUniqueId, skillTypeId).build(context);
 
                 final int result = hasExperienceInSkillQuery
                         .keepStatement(false)
                         .execute();
 
                 if (result == 1) {
-                    batchInsert.add(createUpdateSkillExperienceQuery(containerUniqueId, holderUniqueId, skillType, event.getExperience(), Timestamp
+                    batchInsert.add(createUpdateSkillExperienceQuery(containerUniqueId, holderUniqueId, skillTypeId, event.getExperience(), Timestamp
                             .from(Instant.now()))
                             .build(context)
                             .keepStatement(false));
                 } else {
-                    batchUpdate.add(createInsertSkillExperienceQuery(containerUniqueId, holderUniqueId, skillType, event.getExperience())
+                    batchUpdate.add(createInsertSkillExperienceQuery(containerUniqueId, holderUniqueId, skillTypeId, event.getExperience())
                             .build(context)
                             .keepStatement(false));
                 }
@@ -323,14 +364,14 @@ public final class SkillManagerImpl implements SkillManager {
                         .name(Constants.Plugin.NAME + " - Fire Save Post Events [" + containerUniqueId + " | " + holderUniqueId + "]")
                         .execute(() -> {
                             for (ExperienceEvent.Save.Pre preEvent : preEvents) {
-                                final SkillHolder skillHolder = SkillManagerImpl.this.getHolder(event.getContainerUniqueId(), event
+                                final SkillHolder skillHolder = SkillManagerImpl.this.getHolder(preEvent.getContainerUniqueId(), preEvent
                                         .getHolderUniqueId()).orElse(null);
 
                                 if (skillHolder == null) {
                                     continue;
                                 }
 
-                                final Skill skill = skillHolder.getSkill(skillType).orElse(null);
+                                final Skill skill = skillHolder.getSkill(preEvent.getTargetSkillType()).orElse(null);
 
                                 if (skill == null) {
                                     continue;
@@ -346,20 +387,21 @@ public final class SkillManagerImpl implements SkillManager {
                         })
                         .submit(SkillsImpl.instance.container);
             }
-
-            context.close();
         }
     }
 
     private void loadContainer(UUID containerUniqueId) {
+        final SaveContainerToDatabase queueable = new SaveContainerToDatabase(this, containerUniqueId);
+
         final Task task = Sponge.getScheduler().createTaskBuilder()
                 .name(Constants.Plugin.NAME + " - Save Skills in Container [" + containerUniqueId + "]")
                 .async()
                 .interval(60, TimeUnit.SECONDS)
-                .execute(new SaveContainerToDatabase(this, containerUniqueId))
+                .execute(queueable)
                 .submit(SkillsImpl.instance.container);
 
         this.savingTasks.put(containerUniqueId, task);
+        this.queueables.put(containerUniqueId, queueable);
     }
 
     private void unloadContainer(UUID containerUniqueId) {
@@ -378,8 +420,36 @@ public final class SkillManagerImpl implements SkillManager {
                 Sponge.getScheduler().createTaskBuilder()
                         .name(Constants.Plugin.NAME + " - Save Skills in Container [" + containerUniqueId + "]")
                         .async()
-                        .execute(new SaveContainerToDatabase(this, containerUniqueId, holders))
+                        .execute(new SaveContainerToDatabase(this, containerUniqueId))
                         .submit(SkillsImpl.instance.container);
+            }
+        }
+
+        this.queueables.remove(containerUniqueId);
+    }
+
+    void queueToSave(SkillHolder holder) {
+
+        final UUID containerUniqueId = holder.getContainerUniqueId();
+        final UUID holderUniqueId = holder.getHolderUniqueId();
+
+        final SaveContainerToDatabase queueable = this.queueables.get(containerUniqueId);
+
+        if (queueable != null) {
+
+            final Map<String, Double> dirtySkills = new HashMap<>();
+
+            for (Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
+                final SkillType skillType = skillEntry.getKey();
+                final Skill skill = skillEntry.getValue();
+
+                if (skill.isInitialized() && skill.isDirtyState()) {
+                    dirtySkills.put(skillType.getId(), skill.getCurrentExperience());
+                }
+            }
+
+            if (!dirtySkills.isEmpty()) {
+                queueable.queue(holderUniqueId, dirtySkills);
             }
         }
     }
@@ -388,76 +458,85 @@ public final class SkillManagerImpl implements SkillManager {
 
         private final SkillManagerImpl manager;
         private final UUID containerUniqueId;
-        @Nullable private Set<SkillHolder> toSave = null;
+
+        private final Queue<DirtySkillHolderQueueEntry> queued = new ConcurrentLinkedQueue<>();
 
         SaveContainerToDatabase(SkillManagerImpl manager, UUID containerUniqueId) {
             this.manager = manager;
             this.containerUniqueId = containerUniqueId;
         }
 
-        SaveContainerToDatabase(SkillManagerImpl manager, UUID containerUniqueId, Set<SkillHolder> toSave) {
-            this(manager, containerUniqueId);
-            this.toSave = toSave;
-        }
-
         @Override
         public void run() {
-            if (toSave == null) {
-                toSave = manager.getHoldersInContainer(this.containerUniqueId);
-            }
 
-            for (SkillHolder holder : toSave) {
+            DirtySkillHolderQueueEntry entry;
 
-                final Map<SkillType, Double> dirtySkills = new HashMap<>();
+            while ((entry = queued.poll()) != null) {
 
-                for (Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
-                    final Skill skill = skillEntry.getValue();
-
-                    if (skill.isInitialized() && skill.isDirtyState()) {
-                        dirtySkills.put(skill.getSkillType(), skill.getCurrentExperience());
-                    }
-                }
-
-                if (!dirtySkills.isEmpty()) {
-                    try {
-                        manager.saveSkillsAsync(holder.getContainerUniqueId(), holder.getHolderUniqueId(), dirtySkills);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    manager.saveSkillsAsync(containerUniqueId, entry.holderUniqueId, entry.dirtySkills);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
+        }
 
-            toSave = null;
+        public void queue(UUID holderUniqueId, Map<String, Double> dirtySkills) {
+            final DirtySkillHolderQueueEntry queueEntry = new DirtySkillHolderQueueEntry(holderUniqueId, dirtySkills);
+
+            // Only persist the current queue element
+            this.queued.remove(queueEntry);
+            this.queued.add(queueEntry);
         }
     }
 
     private static final class SaveHolderToDatabase implements Runnable {
 
         private final SkillManagerImpl manager;
-        private final SkillHolder holder;
+        private final UUID containerUniqueId;
+        private final DirtySkillHolderQueueEntry queueEntry;
 
-        SaveHolderToDatabase(SkillManagerImpl manager, SkillHolder holder) {
+        SaveHolderToDatabase(SkillManagerImpl manager, UUID containerUniqueId, DirtySkillHolderQueueEntry queueEntry) {
             this.manager = manager;
-            this.holder = holder;
+            this.containerUniqueId = containerUniqueId;
+            this.queueEntry = queueEntry;
         }
 
         @Override
         public void run() {
-            final Map<SkillType, Double> dirtySkills = new HashMap<>();
-
-            for (Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
-                final Skill skill = skillEntry.getValue();
-
-                if (skill.isInitialized() && skill.isDirtyState()) {
-                    dirtySkills.put(skill.getSkillType(), skill.getCurrentExperience());
-                }
-            }
 
             try {
-                manager.saveSkillsAsync(holder.getContainerUniqueId(), holder.getHolderUniqueId(), dirtySkills);
+                this.manager.saveSkillsAsync(this.containerUniqueId, this.queueEntry.holderUniqueId, this.queueEntry.dirtySkills);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private static final class DirtySkillHolderQueueEntry {
+        final UUID holderUniqueId;
+        final Map<String, Double> dirtySkills = new HashMap<>();
+
+        private DirtySkillHolderQueueEntry(UUID holderUniqueId, Map<String, Double> dirtySkills) {
+            this.holderUniqueId = holderUniqueId;
+            this.dirtySkills.putAll(dirtySkills);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof DirtySkillHolderQueueEntry)) {
+                return false;
+            }
+            final DirtySkillHolderQueueEntry entry = (DirtySkillHolderQueueEntry) o;
+            return Objects.equals(this.holderUniqueId, entry.holderUniqueId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.holderUniqueId);
         }
     }
 }
