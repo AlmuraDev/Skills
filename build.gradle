@@ -1,10 +1,17 @@
 plugins {
     id 'org.spongepowered.plugin' version '0.8.1'
+    id 'com.github.hierynomus.license' version '0.14.0'
 }
 
-group = 'org.inspirenxe' // TODO
-version = '1.0-SNAPSHOT'
-description = 'Advance character through skills!'
+group = project.group
+version = project.version
+description = project.description
+
+defaultTasks 'clean', 'licenseFormat', 'build'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+archivesBaseName = project.name.toLowerCase()
 
 repositories {
     mavenLocal()
@@ -20,11 +27,22 @@ repositories {
 }
 
 dependencies {
-    compile 'com.almuradev:toolbox:1.0.0-SNAPSHOT'
-    compile 'net.kyori:membrane:1.0.5'
-    compile 'net.kyori:violet:1.0.0'
-    compile 'org.spongepowered:spongeapi:7.0.0-SNAPSHOT'
-    compile 'org.jooq:jooq:3.9.5'
-    compile 'org.jooq:jooq-meta:3.9.5'
-    compile 'org.jooq:jooq-codegen:3.9.5'
+    compile "com.almuradev:droplet:${project.dropletVersion}"
+    compile "org.spongepowered:spongeapi:${project.spongeAPIVersion}"
+    compile "org.jooq:jooq:${project.jooqVersion}"
+    compile "org.jooq:jooq-meta:${project.jooqVersion}"
+    compile "org.jooq:jooq-codegen:${project.jooqVersion}"
+}
+
+license {
+    ext.name = project.name
+    ext.organization = project.organization
+    ext.url = project.url
+    header rootProject.file('HEADER.txt')
+    ignoreFailures true
+    strictCheck true
+    include '**/*.java'
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
 }
