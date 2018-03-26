@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,11 +27,13 @@ package org.inspirenxe.skills.impl.event.experience.save;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.impl.event.experience.ExperienceEventImpl;
-import org.spongepowered.api.event.cause.Cause;
+
+import java.util.UUID;
 
 abstract class SaveExperienceEventImpl extends ExperienceEventImpl implements ExperienceEvent.Save {
 
-  SaveExperienceEventImpl(Cause cause, SkillType skillType, double originalExperience, double experience) {
-    super(cause, skillType, originalExperience, experience);
+  SaveExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, SkillType skillType, double originalExperience, double
+      experience) {
+    super(containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
   }
 }

@@ -1,6 +1,8 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id 'org.spongepowered.plugin' version '0.8.1'
-    id 'com.github.hierynomus.license' version '0.14.0'
+    id 'net.minecrell.licenser' version '0.3'
 }
 
 group = project.group
@@ -28,21 +30,25 @@ repositories {
 
 dependencies {
     compile "com.almuradev:droplet:${project.dropletVersion}"
+    compile "com.almuradev:toolbox:${project.toolboxVersion}"
     compile "org.spongepowered:spongeapi:${project.spongeAPIVersion}"
+    compile "net.objecthunter:exp4j:${project.expVersion}"
     compile "org.jooq:jooq:${project.jooqVersion}"
     compile "org.jooq:jooq-meta:${project.jooqVersion}"
     compile "org.jooq:jooq-codegen:${project.jooqVersion}"
 }
 
 license {
-    ext.name = project.name
-    ext.organization = project.organization
-    ext.url = project.url
-    header rootProject.file('HEADER.txt')
-    ignoreFailures true
-    strictCheck true
+    header project.file('header.txt')
     include '**/*.java'
-    mapping {
-        java = 'SLASHSTAR_STYLE'
+    newLine false
+}
+
+processResources {
+    filesMatching('**/mcmod.info') {
+        filter ReplaceTokens, tokens: [
+                'build'           : project.internalBuild,
+                'minecraftVersion': project.minecraftVersion
+        ]
     }
 }

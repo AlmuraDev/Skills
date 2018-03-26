@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,9 +34,9 @@ public interface SkillHolder {
 
   UUID getHolderUniqueId();
 
-  Optional<Skill> getSkill(SkillType type);
+  Optional<Skill> getSkill(final SkillType type);
 
   Map<SkillType, Skill> getSkills();
 
-  Skill addSkill(SkillType skillType);
+  Skill addSkill(final SkillType skillType);
 }

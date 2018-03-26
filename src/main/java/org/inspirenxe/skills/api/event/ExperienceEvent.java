@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,35 +25,44 @@
 package org.inspirenxe.skills.api.event;
 
 import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.api.SkillType;
 import org.spongepowered.api.event.Cancellable;
+import org.spongepowered.api.event.Event;
 
 import java.util.UUID;
 
-public interface ExperienceEvent extends TargetSkillTypeEvent {
+public interface ExperienceEvent extends Event {
 
   /**
-   * Gets the {@link UUID} of the container this experience event is occurring in.
+   * Gets the {@link UUID} of the container.
    *
    * @return The container unique id
    */
   UUID getContainerUniqueId();
 
   /**
-   * Gets the {@link UUID} of the holder this experience event is occurring for.
+   * Gets the {@link UUID} of the holder.
    *
    * @return The holder unique id
    */
   UUID getHolderUniqueId();
 
   /**
-   * Gets the original experience change that would occur barring no plugin changes.
+   * Gets the {@link SkillType}.
+   *
+   * @return The skill type
+   */
+  SkillType getSkillType();
+
+  /**
+   * Gets the original experience change that would occur barring no other changes.
    *
    * @return The original experience change
    */
   double getOriginalExperience();
 
   /**
-   * Gets the experience that will be changed on the {@link Skill}. Barring no plugin changes in a sub event,
+   * Gets the experience that will be changed on the {@link Skill}. Barring no other changes in a sub event,
    * this will equal the result of {@link ExperienceEvent#getOriginalExperience()}.
    *
    * @return The experience change
@@ -70,22 +79,21 @@ public interface ExperienceEvent extends TargetSkillTypeEvent {
     return getExperience() - getOriginalExperience();
   }
 
-  interface Change extends ExperienceEvent, TargetSkillEvent {
+  interface Change extends ExperienceEvent {
 
-    @Override
-    default UUID getContainerUniqueId() {
-      return getTargetSkill().getHolder().getContainerUniqueId();
-    }
-
-    @Override
-    default UUID getHolderUniqueId() {
-      return getTargetSkill().getHolder().getHolderUniqueId();
-    }
+    /**
+     * Gets the {@link Skill}.
+     *
+     * @return The skill
+     */
+    Skill getSkill();
 
     /**
      * Called before the change in experience occurs.
      *
-     * Note: This will always be called on the main thread
+     * <Note>
+     *   May be called asynchronously.
+     * </Note>
      */
     interface Pre extends Change, Cancellable {
 
@@ -94,95 +102,99 @@ public interface ExperienceEvent extends TargetSkillTypeEvent {
        *
        * @param experience The new experience change
        */
-      void setExperience(double experience);
+      void setExperience(final double experience);
     }
 
     /**
      * Called after the change in experience occurs.
      *
-     * Note: This will always be called on the main thread
+     * <Note>
+     *   This will always be called on the main thread.
+     * </Note>
      */
     interface Post extends Change {
 
     }
   }
 
-  interface Load extends ExperienceEvent, TargetSkillTypeEvent {
+  interface Load extends ExperienceEvent {
 
     /**
-     * Returns true if the {@link Skill} has ever had experience gained before.
+     * Returns true if experience has been gained before.
      *
      * @return True if experience has been gained before, false if not
      */
     boolean hasGainedExperienceBefore();
 
     /**
-     * Called before loading the experience for the {@link TargetSkillTypeEvent#getTargetSkillType()}.
+     * Called before loading experience.
      *
-     * Note: Be warned that this event could be called asynchronously by the implementation.
+     * <Note>
+     *   May be called asynchronously.
+     * </Note>
      */
     interface Pre extends Load {
 
       /**
-       * Sets the experience that will be changed on the {@link Skill}.
+       * Sets the experience that will be changed.
        *
        * @param experience The new experience change
        */
-      void setExperience(double experience);
+      void setExperience(final double experience);
     }
 
     /**
-     * Called after experience is loaded for the {@link TargetSkillEvent#getTargetSkill()}.
+     * Called after experience is loaded.
      *
-     * Note: This will always be called on the main thread
+     * <Note>
+     *   This will always be called on the main thread.
+     * </Note>
      */
-    interface Post extends Load, TargetSkillEvent {
+    interface Post extends Load {
 
-      @Override
-      default UUID getContainerUniqueId() {
-        return getTargetSkill().getHolder().getContainerUniqueId();
-      }
-
-      @Override
-      default UUID getHolderUniqueId() {
-        return getTargetSkill().getHolder().getHolderUniqueId();
-      }
+      /**
+       * Gets the {@link Skill}.
+       *
+       * @return The skill
+       */
+      Skill getSkill();
     }
   }
 
-  interface Save extends ExperienceEvent, TargetSkillTypeEvent {
+  interface Save extends ExperienceEvent {
 
     /**
-     * Called before saving the experience for the {@link TargetSkillTypeEvent#getTargetSkillType()}.
+     * Called before saving experience.
      *
-     * Note: Be warned that this event could be called asynchronously by the implementation.
+     * <Note>
+     *   May be called asynchronously.
+     * </Note>
      */
     interface Pre extends Save {
 
       /**
-       * Sets the experience that will be changed on the {@link Skill}.
+       * Sets the experience that will be changed.
        *
        * @param experience The new experience change
        */
-      void setExperience(double experience);
+      void setExperience(final double experience);
     }
 
     /**
-     * Called after experience is saved for the {@link TargetSkillEvent#getTargetSkill()}.
+     * Called after experience is saved.
      *
-     * Note: This will always be called on the main thread
+     * <Note>
+     *   This will always be called on the main thread.
+     * </Note>
      */
-    interface Post extends Save, TargetSkillEvent {
+    interface Post extends Save {
 
-      @Override
-      default UUID getContainerUniqueId() {
-        return getTargetSkill().getHolder().getContainerUniqueId();
-      }
-
-      @Override
-      default UUID getHolderUniqueId() {
-        return getTargetSkill().getHolder().getHolderUniqueId();
-      }
+      /**
+       * Gets the {@link Skill}.
+       *
+       * @return The skill
+       */
+      Skill getSkill();
     }
   }
 }

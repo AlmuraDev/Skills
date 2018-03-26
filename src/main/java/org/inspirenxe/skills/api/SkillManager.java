@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public interface SkillManager {
 
-  Set<SkillHolder> getHoldersInContainer(UUID containerUniqueId);
+  Set<SkillHolder> getHoldersInContainer(final UUID containerUniqueId);
 
-  Optional<SkillHolder> getHolder(UUID containerUniqueId, UUID holderUniqueId);
+  Optional<SkillHolder> getHolder(final UUID containerUniqueId, final UUID holderUniqueId);
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,9 +32,9 @@ public interface Skill {
 
   double getCurrentExperience();
 
-  Skill setExperience(double experience);
+  Skill setExperience(final double experience);
 
-  default Skill addExperience(double experience) {
+  default Skill addExperience(final double experience) {
     this.setExperience(this.getCurrentExperience() + experience);
     return this;
   }
@@ -63,5 +63,5 @@ public interface Skill {
    *
    * @param dirtyState True if dirty, false if not
    */
-  void setDirtyState(boolean dirtyState);
+  void setDirtyState(final boolean dirtyState);
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,39 +24,47 @@
  */
 package org.inspirenxe.skills.impl.command;
 
+import com.google.inject.Inject;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.Constants;
-import org.inspirenxe.skills.impl.SkillsImpl;
-import org.inspirenxe.skills.impl.SkillsPermissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 
-public final class SkillsCommandCreator {
+import javax.inject.Provider;
 
-  public static CommandSpec createRootCommand() {
+public final class SkillsCommandCreator implements Provider<CommandSpec> {
+
+  private static final DecimalFormat prettyExp = new DecimalFormat("###,###.##");
+  @Inject
+  private PluginContainer container;
+  @Inject
+  private SkillManager manager;
+
+  @Override
+  public CommandSpec get() {
     return CommandSpec.builder()
-        .permission(SkillsPermissions.INFO_COMMAND)
+        .permission(this.container.getId() + ".command.info")
         .description(Text.of("Displays user skills when logged in or commands in console"))
         .executor((source, args) -> {
 
           if (source instanceof Player) {
             final Player player = (Player) source;
-            final SkillManager manager = SkillsImpl.instance.skillManager;
 
-            final SkillHolder holder = manager.getHolder(player.getWorld().getUniqueId(), player.getUniqueId()).orElse(null);
+            final SkillHolder holder = this.manager.getHolder(player.getWorld().getUniqueId(), player.getUniqueId()).orElse(null);
 
             if (holder == null) {
               return CommandResult.success();
@@ -84,10 +92,9 @@ public final class SkillsCommandCreator {
               skillPrintouts.add(Text.of(TextColors.AQUA, skillType.getName(), TextColors.RESET, " :: Lv. ", currentLevel, "/",
                   maxLevel));
 
-              skillPrintouts.add(Text.of("  Current XP: ", Constants.Format.PRETTY_EXP.format(currentExperience), "/", Constants.Format
-                  .PRETTY_EXP.format(maxLevelExperience)));
+              skillPrintouts.add(Text.of("  Current XP: ", prettyExp.format(currentExperience), "/", prettyExp.format(maxLevelExperience)));
 
-              skillPrintouts.add(Text.of("  Next Level: ", Constants.Format.PRETTY_EXP.format(toNextLevelExperience)));
+              skillPrintouts.add(Text.of("  Next Level: ", prettyExp.format(toNextLevelExperience)));
 
               totalLevel += currentLevel;
             }

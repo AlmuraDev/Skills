@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,12 +31,12 @@ public final class ChangeExperiencePreEventImpl extends ChangeExperienceEventImp
 
   private boolean isCancelled = false;
 
-  public ChangeExperiencePreEventImpl(Skill skill, double originalExperience, double experience) {
+  public ChangeExperiencePreEventImpl(final Skill skill, final double originalExperience, final double experience) {
     super(skill, originalExperience, experience);
   }
 
   @Override
-  public void setExperience(double experience) {
+  public void setExperience(final double experience) {
     this.experience = experience;
   }
 
@@ -46,7 +46,7 @@ public final class ChangeExperiencePreEventImpl extends ChangeExperienceEventImp
   }
 
   @Override
-  public void setCancelled(boolean cancel) {
+  public void setCancelled(final boolean cancel) {
     this.isCancelled = cancel;
   }
 }

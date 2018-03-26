@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,24 +24,25 @@
  */
 package org.inspirenxe.skills.impl.skill;
 
+import com.almuradev.droplet.content.type.Content;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.api.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunction;
 
 import java.util.Objects;
 
-public class SkillTypeImpl implements SkillType {
+public final class SkillTypeImpl implements SkillType, Content {
 
   private final String id, name;
   private final int minlevel, maxLevel;
   private final LevelFunction levelFunction;
 
-  protected SkillTypeImpl(String id, String name, SkillTypeBuilderImpl builder) {
+  SkillTypeImpl(final String id, final String name) {
     this.id = id;
     this.name = name;
-    this.minlevel = builder.minLevel();
-    this.maxLevel = builder.maxLevel();
-    this.levelFunction = builder.levelFunction();
+    this.minlevel = 0;
+    this.maxLevel = 99;
+    this.levelFunction = null;
   }
 
   @Override
@@ -70,7 +71,7 @@ public class SkillTypeImpl implements SkillType {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }

@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,21 +26,46 @@ package org.inspirenxe.skills.impl.event.experience;
 
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.cause.Cause;
+
+import java.util.UUID;
 
 public abstract class ExperienceEventImpl implements ExperienceEvent {
 
-  private final Cause cause;
+  private final UUID containerUniqueId, holderUniqueId;
   private final SkillType skillType;
   private final double originalExperience;
   protected double experience;
 
-  protected ExperienceEventImpl(Cause cause, SkillType skillType, double originalExperience, double
-      experience) {
-    this.cause = cause;
+  protected ExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType, final double originalExperience,
+      final
+      double experience) {
+    this.containerUniqueId = containerUniqueId;
+    this.holderUniqueId = holderUniqueId;
     this.skillType = skillType;
     this.originalExperience = originalExperience;
     this.experience = experience;
+  }
+
+  @Override
+  public final Cause getCause() {
+    return Sponge.getCauseStackManager().getCurrentCause();
+  }
+
+  @Override
+  public final UUID getContainerUniqueId() {
+    return this.containerUniqueId;
+  }
+
+  @Override
+  public final UUID getHolderUniqueId() {
+    return this.holderUniqueId;
+  }
+
+  @Override
+  public final SkillType getSkillType() {
+    return this.skillType;
   }
 
   @Override
@@ -51,15 +76,5 @@ public abstract class ExperienceEventImpl implements ExperienceEvent {
   @Override
   public final double getExperience() {
     return this.experience;
-  }
-
-  @Override
-  public SkillType getTargetSkillType() {
-    return this.skillType;
-  }
-
-  @Override
-  public Cause getCause() {
-    return this.cause;
   }
 }

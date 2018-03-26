@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,9 +24,8 @@
  */
 package org.inspirenxe.skills.api;
 
-import org.inspirenxe.skills.api.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.util.ResettableBuilder;
 
 public interface SkillType extends CatalogType {
 
@@ -35,15 +34,4 @@ public interface SkillType extends CatalogType {
   int getMaxLevel();
 
   LevelFunction getLevelFunction();
-
-  interface Builder extends ResettableBuilder<SkillType, Builder> {
-
-    Builder minLevel(int level);
-
-    Builder maxLevel(int level);
-
-    Builder levelFunction(LevelFunction function);
-
-    SkillType build(String id, String name);
-  }
 }

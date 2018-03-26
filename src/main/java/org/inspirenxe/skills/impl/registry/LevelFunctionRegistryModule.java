@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,14 +26,10 @@ package org.inspirenxe.skills.impl.registry;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.api.level.LevelFunction;
-import org.inspirenxe.skills.api.level.LevelFunctions;
-import org.inspirenxe.skills.impl.Constants;
-import org.inspirenxe.skills.impl.level.MMOStyleLevelFunction;
+import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.impl.function.level.SkillsLevelFunction;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-import org.spongepowered.api.registry.RegistrationPhase;
-import org.spongepowered.api.registry.util.DelayedRegistration;
-import org.spongepowered.api.registry.util.RegisterCatalog;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,28 +37,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Singleton
 public final class LevelFunctionRegistryModule implements AdditionalCatalogRegistryModule<LevelFunction> {
 
-  @RegisterCatalog(LevelFunctions.class)
-  private final Map<String, LevelFunction> map = new HashMap<>();
+  public static final LevelFunctionRegistryModule instance = new LevelFunctionRegistryModule();
 
-  @Override
-  @DelayedRegistration(RegistrationPhase.PRE_INIT)
-  public void registerDefaults() {
-    this.registerAdditionalCatalog(new MMOStyleLevelFunction());
-  }
+  private final Map<String, LevelFunction> map = new HashMap<>();
 
   @Override
   public void registerAdditionalCatalog(LevelFunction catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
+    catalogType.buildLevelTable(120);
+
+    ((SkillsLevelFunction) catalogType).printTable();
   }
 
   @Override
   public Optional<LevelFunction> getById(String id) {
-    if (!id.contains(":")) {
-      id = Constants.Plugin.ID + ":" + id;
-    }
+    checkNotNull(id);
     return Optional.ofNullable(this.map.get(id));
   }
 

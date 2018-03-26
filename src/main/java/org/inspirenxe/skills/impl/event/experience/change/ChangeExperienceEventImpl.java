@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,19 +27,18 @@ package org.inspirenxe.skills.impl.event.experience.change;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.impl.event.experience.ExperienceEventImpl;
-import org.spongepowered.api.Sponge;
 
 public abstract class ChangeExperienceEventImpl extends ExperienceEventImpl implements ExperienceEvent.Change {
 
   private final Skill skill;
 
-  protected ChangeExperienceEventImpl(Skill skill, double originalExperience, double experience) {
-    super(Sponge.getCauseStackManager().getCurrentCause(), skill.getSkillType(), originalExperience, experience);
+  ChangeExperienceEventImpl(final Skill skill, final double originalExperience, final double experience) {
+    super(skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience, experience);
     this.skill = skill;
   }
 
   @Override
-  public Skill getTargetSkill() {
+  public Skill getSkill() {
     return this.skill;
   }
 }

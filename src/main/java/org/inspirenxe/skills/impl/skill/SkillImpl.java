@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,25 +28,31 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
+import com.google.inject.Inject;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostEventImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePreEventImpl;
-import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.EventManager;
 
 import java.util.Objects;
 
 public final class SkillImpl implements Skill {
+
+  @Inject
+  private static EventManager eventManager;
+
+  @Inject
+  private static SkillManagerImpl skillManager;
 
   private final SkillType skillType;
   private final SkillHolder skillHolder;
   private double experience;
   private boolean dirtyState, isInitialized;
 
-  private SkillImpl(SkillType skillType, SkillHolder skillHolder) {
+  private SkillImpl(final SkillType skillType, final SkillHolder skillHolder) {
     checkNotNull(skillType);
     checkNotNull(skillHolder);
 
@@ -54,27 +60,27 @@ public final class SkillImpl implements Skill {
     this.skillHolder = skillHolder;
   }
 
-  public static SkillImpl of(SkillType skillType, SkillHolder skillHolder) {
+  public static SkillImpl of(final SkillType skillType, final SkillHolder skillHolder) {
     return new SkillImpl(skillType, skillHolder);
   }
 
   @Override
-  public final SkillType getSkillType() {
+  public SkillType getSkillType() {
     return this.skillType;
   }
 
   @Override
-  public final SkillHolder getHolder() {
+  public SkillHolder getHolder() {
     return this.skillHolder;
   }
 
   @Override
-  public final double getCurrentExperience() {
+  public double getCurrentExperience() {
     return this.experience;
   }
 
   @Override
-  public Skill setExperience(double experience) {
+  public Skill setExperience(final double experience) {
     checkState(experience >= 0, "Setting experience must be greater than 0!");
 
     if (!this.isInitialized) {
@@ -83,13 +89,13 @@ public final class SkillImpl implements Skill {
 
     final double originalExperience = this.experience;
     final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(this, originalExperience, experience);
-    if (Sponge.getEventManager().post(event)) {
+    if (eventManager.post(event)) {
       return this;
     }
 
     this.experience = event.getExperience();
 
-    Sponge.getEventManager().post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
+    eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
     return this;
   }
 
@@ -104,16 +110,16 @@ public final class SkillImpl implements Skill {
   }
 
   @Override
-  public void setDirtyState(boolean dirtyState) {
+  public void setDirtyState(final boolean dirtyState) {
     this.dirtyState = dirtyState;
 
     if (this.dirtyState) {
-      SkillsImpl.instance.skillManager.queueToSave(this.getHolder());
+      skillManager.queueToSave(this.getHolder());
     }
   }
 
   @Override
-  public final boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
@@ -126,12 +132,12 @@ public final class SkillImpl implements Skill {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return Objects.hash(skillType, skillHolder);
   }
 
   @Override
-  public final String toString() {
+  public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("skillType", this.skillType)
         .add("containerUniqueId", this.skillHolder.getContainerUniqueId())

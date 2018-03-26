@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +29,7 @@ import org.inspirenxe.skills.api.event.ExperienceEvent;
 
 public final class ChangeExperiencePostEventImpl extends ChangeExperienceEventImpl implements ExperienceEvent.Change.Post {
 
-  public ChangeExperiencePostEventImpl(Skill skill, double originalExperience, double experience) {
+  public ChangeExperiencePostEventImpl(final Skill skill, final double originalExperience, final double experience) {
     super(skill, originalExperience, experience);
   }
 }

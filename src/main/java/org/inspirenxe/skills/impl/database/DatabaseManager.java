@@ -1,7 +1,7 @@
 /*
  * This file is part of Skills, licensed under the MIT License (MIT).
  *
- * Copyright (c) InspireNXE <https://github.com/InspireNXE/>
+ * Copyright (c) InspireNXE
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,10 +26,12 @@ package org.inspirenxe.skills.impl.database;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.impl.config.category.DatabaseCategory;
+import com.almuradev.toolbox.inject.event.Witness;
+import com.almuradev.toolbox.inject.event.WitnessScope;
+import com.google.inject.Singleton;
 import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
@@ -41,41 +43,24 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-public final class DatabaseManager {
+@Singleton
+@WitnessScope.Sponge
+public final class DatabaseManager implements Witness {
 
-  private final PluginContainer pluginContainer;
-  private final DatabaseCategory databaseCategory;
-  private final String targetUrl;
-  private SqlService sqlService;
+  private final PluginContainer container;
+  private final DatabaseConfiguration configuration;
+  private SqlService service;
+
   private DataSource dataSource;
 
-  public DatabaseManager(final PluginContainer pluginContainer, final DatabaseCategory databaseCategory) {
-    this.pluginContainer = pluginContainer;
-    this.databaseCategory = databaseCategory;
-
-    switch (this.databaseCategory.connector) {
-      // TODO Should support remote H2 databases but low priority.
-      case H2:
-      case SQLITE:
-        // TODO Sql Service in Sponge should resolve this against the plugin's config directory like it does with H2..
-        this.targetUrl = String.format("jdbc:%s:%s", databaseCategory.connector.getName().toLowerCase(), databaseCategory.database);
-        break;
-      case MYSQL:
-        this.targetUrl = String.format("jdbc:%s://%s:%d/%s", databaseCategory.connector.getName().toLowerCase(), databaseCategory.server,
-            databaseCategory.port, databaseCategory.database);
-        break;
-      default:
-        throw new UnsupportedOperationException("Only H2, SQLite and MySQL are currently supported via this manager!");
-    }
-
-    this.sqlService = Sponge.getServiceManager().provide(SqlService.class).get();
-
-    // TODO Change this to use kashike's fancy system
-    Sponge.getEventManager().registerListeners(pluginContainer, this);
+  public DatabaseManager(final PluginContainer container, final SqlService service, final DatabaseConfiguration configuration) {
+    this.container = container;
+    this.service = service;
+    this.configuration = configuration;
   }
 
   public void createDataSource() throws SQLException {
-    this.dataSource = this.sqlService.getDataSource(this.pluginContainer, this.targetUrl);
+    this.dataSource = this.service.getDataSource(this.container, this.configuration.getConnectionString());
   }
 
   public DataSource getDataSource() {
@@ -89,13 +74,13 @@ public final class DatabaseManager {
   }
 
   public DSLContext createContext() {
-    return DSL.using(this.dataSource, this.databaseCategory.connector);
+    return DSL.using(this.dataSource, SQLDialect.SQLITE);
   }
 
   @Listener(order = Order.LAST)
   public void onServiceChange(ChangeServiceProviderEvent event) {
     if (event.getService() == SqlService.class) {
-      this.sqlService = (SqlService) event.getNewProvider();
+      this.service = (SqlService) event.getNewProvider();
 
       try {
         this.createDataSource();
