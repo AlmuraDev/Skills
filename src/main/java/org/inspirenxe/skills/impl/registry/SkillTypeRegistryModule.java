@@ -86,8 +86,6 @@ public class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<
                                     .executeAsync(SkillsImpl.instance.asyncExecutor);
                         }
                     });
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

@@ -89,7 +89,7 @@ public final class DatabaseManager {
         return this.dataSource.getConnection();
     }
 
-    public DSLContext createContext() throws SQLException {
+    public DSLContext createContext() {
         return DSL.using(this.dataSource, this.databaseCategory.connector);
     }
 

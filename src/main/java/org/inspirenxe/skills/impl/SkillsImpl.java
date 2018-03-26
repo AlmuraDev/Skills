@@ -87,10 +87,7 @@ public class SkillsImpl {
     @Listener
     public void onGameConstruction(GameConstructionEvent event) {
         instance = this;
-
-        this.injector.createChildInjector(new ServerModule());
-        this.injector.getInstance(Facets.class).enable();
-
+        
         Sponge.getRegistry().registerModule(LevelFunction.class, new LevelFunctionRegistryModule());
         Sponge.getRegistry().registerModule(SkillType.class, new SkillTypeRegistryModule());
 

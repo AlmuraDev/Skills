@@ -330,8 +330,6 @@ public final class SkillManagerImpl implements SkillManager {
                                     .submit(container);
                         });
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
