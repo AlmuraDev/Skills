@@ -36,57 +36,57 @@ import java.nio.file.Path;
 
 public final class ConfigurationAdapter<T extends Configuration> {
 
-    private final Class<T> type;
-    private final Path configPath;
-    private final ConfigurationLoader<? extends ConfigurationNode> configLoader;
-    private final ObjectMapper<T>.BoundInstance mapper;
-    private ConfigurationNode root;
-    private T config;
+  private final Class<T> type;
+  private final Path configPath;
+  private final ConfigurationLoader<? extends ConfigurationNode> configLoader;
+  private final ObjectMapper<T>.BoundInstance mapper;
+  private ConfigurationNode root;
+  private T config;
 
-    public ConfigurationAdapter(final Class<T> type, final Path configPath, final ConfigurationLoader<? extends ConfigurationNode> configLoader) {
-        this.type = type;
-        this.configPath = configPath;
-        this.configLoader = configLoader;
-        try {
-            this.mapper = ObjectMapper.forClass(type).bindToNew();
-        } catch (final ObjectMappingException e) {
-            throw new RuntimeException("Failed to construct mapper for config class [" + type + "]!", e);
-        }
-        this.init();
+  public ConfigurationAdapter(final Class<T> type, final Path configPath, final ConfigurationLoader<? extends ConfigurationNode> configLoader) {
+    this.type = type;
+    this.configPath = configPath;
+    this.configLoader = configLoader;
+    try {
+      this.mapper = ObjectMapper.forClass(type).bindToNew();
+    } catch (final ObjectMappingException e) {
+      throw new RuntimeException("Failed to construct mapper for config class [" + type + "]!", e);
     }
+    this.init();
+  }
 
-    private void init() {
-        if (Files.notExists(this.configPath)) {
-            try {
-                if (Files.notExists(this.configPath.getParent())) {
-                    Files.createDirectories(this.configPath.getParent());
-                }
-
-                this.root = SimpleConfigurationNode.root(this.configLoader.getDefaultOptions());
-                this.save();
-            } catch (IOException | ObjectMappingException e) {
-                e.printStackTrace();
-            }
+  private void init() {
+    if (Files.notExists(this.configPath)) {
+      try {
+        if (Files.notExists(this.configPath.getParent())) {
+          Files.createDirectories(this.configPath.getParent());
         }
 
-        try {
-            this.load();
-        } catch (IOException | ObjectMappingException e) {
-            e.printStackTrace();
-        }
+        this.root = SimpleConfigurationNode.root(this.configLoader.getDefaultOptions());
+        this.save();
+      } catch (IOException | ObjectMappingException e) {
+        e.printStackTrace();
+      }
     }
 
-    public T getConfig() {
-        return this.config;
+    try {
+      this.load();
+    } catch (IOException | ObjectMappingException e) {
+      e.printStackTrace();
     }
+  }
 
-    public void load() throws IOException, ObjectMappingException {
-        this.root = this.configLoader.load();
-        this.config = this.mapper.populate(this.root);
-    }
+  public T getConfig() {
+    return this.config;
+  }
 
-    public void save() throws IOException, ObjectMappingException {
-        this.mapper.serialize(this.root);
-        this.configLoader.save(this.root);
-    }
+  public void load() throws IOException, ObjectMappingException {
+    this.root = this.configLoader.load();
+    this.config = this.mapper.populate(this.root);
+  }
+
+  public void save() throws IOException, ObjectMappingException {
+    this.mapper.serialize(this.root);
+    this.configLoader.save(this.root);
+  }
 }

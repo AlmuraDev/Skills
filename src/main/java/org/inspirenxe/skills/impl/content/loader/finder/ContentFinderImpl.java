@@ -49,6 +49,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public final class ContentFinderImpl implements ContentFinder {
+
   private final Logger logger;
   private final ContentConfiguration configuration;
 
@@ -59,7 +60,8 @@ public final class ContentFinderImpl implements ContentFinder {
   }
 
   @Override
-  public <C extends ContentType.Child, R extends ContentType.Root<C>, V extends ContentVisitor<R, C>> FoundContent<R, C> find(final V visitor, final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
+  public <C extends ContentType.Child, R extends ContentType.Root<C>, V extends ContentVisitor<R, C>> FoundContent<R, C> find(final V visitor,
+      final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
     this.logger.debug("{}Discovering {} content...", Logging.indent(1), rootType.id());
     this.configuration.searchPaths().forEach(Exceptions.rethrowConsumer(path -> {
       visitor.visitCore(path);

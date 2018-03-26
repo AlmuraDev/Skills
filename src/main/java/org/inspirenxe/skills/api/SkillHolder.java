@@ -30,13 +30,13 @@ import java.util.UUID;
 
 public interface SkillHolder {
 
-    UUID getContainerUniqueId();
+  UUID getContainerUniqueId();
 
-    UUID getHolderUniqueId();
+  UUID getHolderUniqueId();
 
-    Optional<Skill> getSkill(SkillType type);
+  Optional<Skill> getSkill(SkillType type);
 
-    Map<SkillType, Skill> getSkills();
+  Map<SkillType, Skill> getSkills();
 
-    Skill addSkill(SkillType skillType);
+  Skill addSkill(SkillType skillType);
 }

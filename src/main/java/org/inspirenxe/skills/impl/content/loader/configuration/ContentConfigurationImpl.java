@@ -33,15 +33,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class ContentConfigurationImpl implements ContentConfiguration {
+
   private final List<Path> searchPaths = new ArrayList<>();
   private final int maxDepth;
 
   ContentConfigurationImpl(final JsonObject config, final Path gameDir) {
-    if(config.has("loader")) {
+    if (config.has("loader")) {
       final JsonObject loader = config.getAsJsonObject("loader");
-      for(final JsonElement element : loader.getAsJsonArray("search")) {
+      for (final JsonElement element : loader.getAsJsonArray("search")) {
         final String path = element.getAsString();
-        if(path.charAt(0) == '/' || (path.length() > 2 && path.charAt(1) == ':')) {
+        if (path.charAt(0) == '/' || (path.length() > 2 && path.charAt(1) == ':')) {
           this.searchPaths.add(Paths.get(path));
         } else {
           this.searchPaths.add(gameDir.resolve(path));

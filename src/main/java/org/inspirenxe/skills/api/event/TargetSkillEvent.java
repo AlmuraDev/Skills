@@ -29,5 +29,5 @@ import org.spongepowered.api.event.Event;
 
 public interface TargetSkillEvent extends Event {
 
-    Skill getTargetSkill();
+  Skill getTargetSkill();
 }

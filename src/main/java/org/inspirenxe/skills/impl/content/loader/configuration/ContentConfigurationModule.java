@@ -39,6 +39,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 public final class ContentConfigurationModule extends AbstractModule {
+
   @Override
   protected void configure() {
   }
@@ -48,8 +49,8 @@ public final class ContentConfigurationModule extends AbstractModule {
   ContentConfiguration configuration(@Named("game") final Path gameDir, @Named("config") final Path configDir) throws IOException {
     final Path configPath = configDir.resolve("content.json");
     final JsonObject config;
-    if(Files.exists(configPath)) {
-      try(final InputStream is = Files.newInputStream(configPath)) {
+    if (Files.exists(configPath)) {
+      try (final InputStream is = Files.newInputStream(configPath)) {
         config = new JsonParser().parse(new InputStreamReader(is)).getAsJsonObject();
       }
     } else {

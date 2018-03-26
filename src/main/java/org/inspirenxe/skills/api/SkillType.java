@@ -30,20 +30,20 @@ import org.spongepowered.api.util.ResettableBuilder;
 
 public interface SkillType extends CatalogType {
 
-    int getMinLevel();
+  int getMinLevel();
 
-    int getMaxLevel();
+  int getMaxLevel();
 
-    LevelFunction getLevelFunction();
+  LevelFunction getLevelFunction();
 
-    interface Builder extends ResettableBuilder<SkillType, Builder> {
+  interface Builder extends ResettableBuilder<SkillType, Builder> {
 
-        Builder minLevel(int level);
+    Builder minLevel(int level);
 
-        Builder maxLevel(int level);
+    Builder maxLevel(int level);
 
-        Builder levelFunction(LevelFunction function);
+    Builder levelFunction(LevelFunction function);
 
-        SkillType build(String id, String name);
-    }
+    SkillType build(String id, String name);
+  }
 }

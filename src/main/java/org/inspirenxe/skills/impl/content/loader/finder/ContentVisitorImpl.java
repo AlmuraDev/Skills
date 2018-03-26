@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import javax.inject.Provider;
 
 public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> implements ContentVisitor<R, C> {
+
   private final FoundContentBuilder<R, C> builder = new FoundContentBuilderImpl<>();
 
   @Override

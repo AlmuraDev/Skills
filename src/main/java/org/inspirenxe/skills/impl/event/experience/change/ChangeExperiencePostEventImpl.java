@@ -29,7 +29,7 @@ import org.inspirenxe.skills.api.event.ExperienceEvent;
 
 public final class ChangeExperiencePostEventImpl extends ChangeExperienceEventImpl implements ExperienceEvent.Change.Post {
 
-    public ChangeExperiencePostEventImpl(Skill skill, double originalExperience, double experience) {
-        super(skill, originalExperience, experience);
-    }
+  public ChangeExperiencePostEventImpl(Skill skill, double originalExperience, double experience) {
+    super(skill, originalExperience, experience);
+  }
 }

@@ -31,15 +31,15 @@ import org.spongepowered.api.event.cause.Cause;
 
 abstract class LoadExperienceEventImpl extends ExperienceEventImpl implements ExperienceEvent.Load {
 
-    private final boolean hasGainedExperienceBefore;
+  private final boolean hasGainedExperienceBefore;
 
-    LoadExperienceEventImpl(Cause cause, SkillType skillType, double originalExperience, double experience, boolean hasGainedExperienceBefore) {
-        super(cause, skillType, originalExperience, experience);
-        this.hasGainedExperienceBefore = hasGainedExperienceBefore;
-    }
+  LoadExperienceEventImpl(Cause cause, SkillType skillType, double originalExperience, double experience, boolean hasGainedExperienceBefore) {
+    super(cause, skillType, originalExperience, experience);
+    this.hasGainedExperienceBefore = hasGainedExperienceBefore;
+  }
 
-    @Override
-    public boolean hasGainedExperienceBefore() {
-        return this.hasGainedExperienceBefore;
-    }
+  @Override
+  public boolean hasGainedExperienceBefore() {
+    return this.hasGainedExperienceBefore;
+  }
 }

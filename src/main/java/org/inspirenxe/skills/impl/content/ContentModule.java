@@ -8,6 +8,7 @@ import org.inspirenxe.skills.impl.content.loader.configuration.ContentConfigurat
 import org.inspirenxe.skills.impl.content.loader.finder.ContentFinderImpl;
 
 public final class ContentModule extends AbstractModule implements DropletBinder {
+
   @Override
   protected void configure() {
     this.bind(ContentFinder.class).to(ContentFinderImpl.class);

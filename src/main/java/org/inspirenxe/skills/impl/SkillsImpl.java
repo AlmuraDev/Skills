@@ -26,11 +26,10 @@ package org.inspirenxe.skills.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import net.kyori.membrane.facet.internal.Facets;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.inspirenxe.skills.api.level.LevelFunction;
 import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.level.LevelFunction;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
 import org.inspirenxe.skills.impl.config.ConfigurationAdapter;
 import org.inspirenxe.skills.impl.config.ServerConfiguration;
@@ -56,56 +55,56 @@ import java.sql.SQLException;
 @Plugin(id = Constants.Plugin.ID)
 public class SkillsImpl {
 
-    public static SkillsImpl instance;
+  public static SkillsImpl instance;
 
-    @Inject
-    public PluginContainer container;
+  @Inject
+  public PluginContainer container;
 
-    @Inject
-    public Logger logger;
+  @Inject
+  public Logger logger;
 
-    @Inject
-    @AsynchronousExecutor
-    public SpongeExecutorService asyncExecutor;
+  @Inject
+  @AsynchronousExecutor
+  public SpongeExecutorService asyncExecutor;
 
-    // TODO Need Kashike's fancy system
-    public ConfigurationAdapter<ServerConfiguration> configAdapter;
-    public DatabaseManager databaseManager;
-    public SkillManagerImpl skillManager;
+  // TODO Need Kashike's fancy system
+  public ConfigurationAdapter<ServerConfiguration> configAdapter;
+  public DatabaseManager databaseManager;
+  public SkillManagerImpl skillManager;
 
-    @Inject
-    private Injector injector;
+  @Inject
+  private Injector injector;
 
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    private Path configPath;
+  @Inject
+  @DefaultConfig(sharedRoot = false)
+  private Path configPath;
 
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    private ConfigurationLoader<CommentedConfigurationNode> configLoader;
+  @Inject
+  @DefaultConfig(sharedRoot = false)
+  private ConfigurationLoader<CommentedConfigurationNode> configLoader;
 
-    @Listener
-    public void onGameConstruction(GameConstructionEvent event) {
-        instance = this;
-        
-        Sponge.getRegistry().registerModule(LevelFunction.class, new LevelFunctionRegistryModule());
-        Sponge.getRegistry().registerModule(SkillType.class, new SkillTypeRegistryModule());
+  @Listener
+  public void onGameConstruction(GameConstructionEvent event) {
+    instance = this;
 
-        Sponge.getRegistry().registerBuilderSupplier(SkillType.Builder.class, SkillTypeBuilderImpl::new);
+    Sponge.getRegistry().registerModule(LevelFunction.class, new LevelFunctionRegistryModule());
+    Sponge.getRegistry().registerModule(SkillType.class, new SkillTypeRegistryModule());
 
-        this.configAdapter = new ConfigurationAdapter<>(ServerConfiguration.class, this.configPath, this.configLoader);
-        this.databaseManager = new DatabaseManager(this.container, this.configAdapter.getConfig().database);
-        try {
-            this.databaseManager.createDataSource();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    Sponge.getRegistry().registerBuilderSupplier(SkillType.Builder.class, SkillTypeBuilderImpl::new);
 
-        this.skillManager = new SkillManagerImpl();
+    this.configAdapter = new ConfigurationAdapter<>(ServerConfiguration.class, this.configPath, this.configLoader);
+    this.databaseManager = new DatabaseManager(this.container, this.configAdapter.getConfig().database);
+    try {
+      this.databaseManager.createDataSource();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
-    @Listener
-    public void onGamePreInititialization(GamePreInitializationEvent event) {
-        Sponge.getCommandManager().register(this.container, SkillsCommandCreator.createRootCommand(), "skills");
-    }
+    this.skillManager = new SkillManagerImpl();
+  }
+
+  @Listener
+  public void onGamePreInititialization(GamePreInitializationEvent event) {
+    Sponge.getCommandManager().register(this.container, SkillsCommandCreator.createRootCommand(), "skills");
+  }
 }

@@ -31,7 +31,7 @@ import org.spongepowered.api.event.cause.Cause;
 
 abstract class SaveExperienceEventImpl extends ExperienceEventImpl implements ExperienceEvent.Save {
 
-    SaveExperienceEventImpl(Cause cause, SkillType skillType, double originalExperience, double experience) {
-        super(cause, skillType, originalExperience, experience);
-    }
+  SaveExperienceEventImpl(Cause cause, SkillType skillType, double originalExperience, double experience) {
+    super(cause, skillType, originalExperience, experience);
+  }
 }

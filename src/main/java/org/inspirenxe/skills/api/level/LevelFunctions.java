@@ -28,12 +28,12 @@ import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
 public final class LevelFunctions {
 
-    // SORTFIELDS:ON
+  // SORTFIELDS:ON
 
-    public static final LevelFunction MMO_STYLE = DummyObjectProvider.createFor(LevelFunction.class, "mmo_style");
+  public static final LevelFunction MMO_STYLE = DummyObjectProvider.createFor(LevelFunction.class, "mmo_style");
 
-    // SORTFIELDS:OFF
+  // SORTFIELDS:OFF
 
-    private LevelFunctions() {
-    }
+  private LevelFunctions() {
+  }
 }

@@ -31,5 +31,5 @@ import org.inspirenxe.skills.impl.config.category.DatabaseCategory;
 @ConfigSerializable
 public final class ServerConfiguration implements Configuration {
 
-    @Setting public final DatabaseCategory database = new DatabaseCategory();
+  @Setting public final DatabaseCategory database = new DatabaseCategory();
 }

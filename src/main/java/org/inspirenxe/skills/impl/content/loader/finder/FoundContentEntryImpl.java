@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends ContentType.Child> implements FoundContent.Entry<R, C> {
+
   private final String namespace;
   private final RegistryKey key;
   private final R rootType;
@@ -102,7 +103,7 @@ public class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends Cont
 
   @Override
   public Content result() {
-    if(this.result == null) {
+    if (this.result == null) {
       this.result = this.builder.build();
     }
     return this.result;

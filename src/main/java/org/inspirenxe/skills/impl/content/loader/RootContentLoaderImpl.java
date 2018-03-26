@@ -30,6 +30,7 @@ import org.inspirenxe.skills.impl.content.loader.finder.ContentVisitorImpl;
 
 public final class RootContentLoaderImpl<C extends ContentType.Child, B extends ContentBuilder<?>> extends com.almuradev.droplet.content.loader
     .RootContentLoaderImpl<C, B> {
+
   @Override
   protected ContentVisitor<ContentType.Root<C>, C> contentVisitor() {
     return new ContentVisitorImpl<>();

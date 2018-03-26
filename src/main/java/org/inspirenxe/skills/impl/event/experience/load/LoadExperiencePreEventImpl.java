@@ -32,28 +32,28 @@ import java.util.UUID;
 
 public final class LoadExperiencePreEventImpl extends LoadExperienceEventImpl implements ExperienceEvent.Load.Pre {
 
-    private final UUID containerUniqueId, holderUniqueId;
+  private final UUID containerUniqueId, holderUniqueId;
 
-    public LoadExperiencePreEventImpl(Cause cause, UUID containerUniqueId, UUID holderUniqueId, SkillType skillType, double originalExperience,
-            double experience, boolean hasGainedExperienceBefore) {
-        super(cause, skillType, originalExperience, experience, hasGainedExperienceBefore);
+  public LoadExperiencePreEventImpl(Cause cause, UUID containerUniqueId, UUID holderUniqueId, SkillType skillType, double originalExperience,
+      double experience, boolean hasGainedExperienceBefore) {
+    super(cause, skillType, originalExperience, experience, hasGainedExperienceBefore);
 
-        this.containerUniqueId = containerUniqueId;
-        this.holderUniqueId = holderUniqueId;
-    }
+    this.containerUniqueId = containerUniqueId;
+    this.holderUniqueId = holderUniqueId;
+  }
 
-    @Override
-    public void setExperience(double experience) {
-        this.experience = experience;
-    }
+  @Override
+  public void setExperience(double experience) {
+    this.experience = experience;
+  }
 
-    @Override
-    public UUID getContainerUniqueId() {
-        return this.containerUniqueId;
-    }
+  @Override
+  public UUID getContainerUniqueId() {
+    return this.containerUniqueId;
+  }
 
-    @Override
-    public UUID getHolderUniqueId() {
-        return this.holderUniqueId;
-    }
+  @Override
+  public UUID getHolderUniqueId() {
+    return this.holderUniqueId;
+  }
 }

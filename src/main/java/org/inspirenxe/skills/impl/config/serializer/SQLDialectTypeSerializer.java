@@ -32,17 +32,17 @@ import org.jooq.SQLDialect;
 
 public class SQLDialectTypeSerializer implements TypeSerializer<SQLDialect> {
 
-    @Override
-    public SQLDialect deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        try {
-            return SQLDialect.valueOf(value.getString().toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            throw new ObjectMappingException("Unable to determine SQL connector to use!");
-        }
+  @Override
+  public SQLDialect deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+    try {
+      return SQLDialect.valueOf(value.getString().toUpperCase());
+    } catch (IllegalArgumentException ex) {
+      throw new ObjectMappingException("Unable to determine SQL connector to use!");
     }
+  }
 
-    @Override
-    public void serialize(TypeToken<?> type, SQLDialect obj, ConfigurationNode value) throws ObjectMappingException {
-        value.setValue(obj.getName().toLowerCase());
-    }
+  @Override
+  public void serialize(TypeToken<?> type, SQLDialect obj, ConfigurationNode value) throws ObjectMappingException {
+    value.setValue(obj.getName().toLowerCase());
+  }
 }

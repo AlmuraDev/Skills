@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.registry;
 import com.almuradev.droplet.registry.RegistryKey;
 
 public final class CatalogRegistryKey implements RegistryKey {
+
   private final String namespace;
   private final String value;
 

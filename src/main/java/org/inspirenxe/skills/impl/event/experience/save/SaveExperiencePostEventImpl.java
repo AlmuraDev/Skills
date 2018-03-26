@@ -30,16 +30,16 @@ import org.spongepowered.api.Sponge;
 
 public final class SaveExperiencePostEventImpl extends SaveExperienceEventImpl implements ExperienceEvent.Save.Post {
 
-    private final Skill skill;
+  private final Skill skill;
 
-    public SaveExperiencePostEventImpl(Skill skill, double originalExperience, double experience) {
-        super(Sponge.getCauseStackManager().getCurrentCause(), skill.getSkillType(), originalExperience, experience);
+  public SaveExperiencePostEventImpl(Skill skill, double originalExperience, double experience) {
+    super(Sponge.getCauseStackManager().getCurrentCause(), skill.getSkillType(), originalExperience, experience);
 
-        this.skill = skill;
-    }
+    this.skill = skill;
+  }
 
-    @Override
-    public Skill getTargetSkill() {
-        return this.skill;
-    }
+  @Override
+  public Skill getTargetSkill() {
+    return this.skill;
+  }
 }

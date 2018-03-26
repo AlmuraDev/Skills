@@ -36,7 +36,6 @@ import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.sql.SqlService;
 
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -44,65 +43,65 @@ import javax.sql.DataSource;
 
 public final class DatabaseManager {
 
-    private final PluginContainer pluginContainer;
-    private final DatabaseCategory databaseCategory;
-    private final String targetUrl;
-    private SqlService sqlService;
-    private DataSource dataSource;
+  private final PluginContainer pluginContainer;
+  private final DatabaseCategory databaseCategory;
+  private final String targetUrl;
+  private SqlService sqlService;
+  private DataSource dataSource;
 
-    public DatabaseManager(final PluginContainer pluginContainer, final DatabaseCategory databaseCategory) {
-        this.pluginContainer = pluginContainer;
-        this.databaseCategory = databaseCategory;
+  public DatabaseManager(final PluginContainer pluginContainer, final DatabaseCategory databaseCategory) {
+    this.pluginContainer = pluginContainer;
+    this.databaseCategory = databaseCategory;
 
-        switch (this.databaseCategory.connector) {
-            // TODO Should support remote H2 databases but low priority.
-            case H2:
-            case SQLITE:
-                // TODO Sql Service in Sponge should resolve this against the plugin's config directory like it does with H2..
-                this.targetUrl = String.format("jdbc:%s:%s", databaseCategory.connector.getName().toLowerCase(), databaseCategory.database);
-                break;
-            case MYSQL:
-                this.targetUrl = String.format("jdbc:%s://%s:%d/%s", databaseCategory.connector.getName().toLowerCase(), databaseCategory.server,
-                        databaseCategory.port, databaseCategory.database);
-                break;
-            default:
-                throw new UnsupportedOperationException("Only H2, SQLite and MySQL are currently supported via this manager!");
-        }
-
-        this.sqlService = Sponge.getServiceManager().provide(SqlService.class).get();
-
-        // TODO Change this to use kashike's fancy system
-        Sponge.getEventManager().registerListeners(pluginContainer, this);
+    switch (this.databaseCategory.connector) {
+      // TODO Should support remote H2 databases but low priority.
+      case H2:
+      case SQLITE:
+        // TODO Sql Service in Sponge should resolve this against the plugin's config directory like it does with H2..
+        this.targetUrl = String.format("jdbc:%s:%s", databaseCategory.connector.getName().toLowerCase(), databaseCategory.database);
+        break;
+      case MYSQL:
+        this.targetUrl = String.format("jdbc:%s://%s:%d/%s", databaseCategory.connector.getName().toLowerCase(), databaseCategory.server,
+            databaseCategory.port, databaseCategory.database);
+        break;
+      default:
+        throw new UnsupportedOperationException("Only H2, SQLite and MySQL are currently supported via this manager!");
     }
 
-    public void createDataSource() throws SQLException {
-        this.dataSource = this.sqlService.getDataSource(this.pluginContainer, this.targetUrl);
-    }
+    this.sqlService = Sponge.getServiceManager().provide(SqlService.class).get();
 
-    public DataSource getDataSource() {
-        checkNotNull(this.dataSource, "Data Source has not been initialized yet! (Did you forget to call createDataSource()?)");
-        return this.dataSource;
-    }
+    // TODO Change this to use kashike's fancy system
+    Sponge.getEventManager().registerListeners(pluginContainer, this);
+  }
 
-    public Connection getConnection() throws SQLException {
-        checkNotNull(this.dataSource, "Data Source has not been initialized yet! (Did you forget to call createDataSource()?)");
-        return this.dataSource.getConnection();
-    }
+  public void createDataSource() throws SQLException {
+    this.dataSource = this.sqlService.getDataSource(this.pluginContainer, this.targetUrl);
+  }
 
-    public DSLContext createContext() {
-        return DSL.using(this.dataSource, this.databaseCategory.connector);
-    }
+  public DataSource getDataSource() {
+    checkNotNull(this.dataSource, "Data Source has not been initialized yet! (Did you forget to call createDataSource()?)");
+    return this.dataSource;
+  }
 
-    @Listener (order = Order.LAST)
-    public void onServiceChange(ChangeServiceProviderEvent event) {
-        if (event.getService() == SqlService.class) {
-            this.sqlService = (SqlService) event.getNewProvider();
+  public Connection getConnection() throws SQLException {
+    checkNotNull(this.dataSource, "Data Source has not been initialized yet! (Did you forget to call createDataSource()?)");
+    return this.dataSource.getConnection();
+  }
 
-            try {
-                this.createDataSource();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+  public DSLContext createContext() {
+    return DSL.using(this.dataSource, this.databaseCategory.connector);
+  }
+
+  @Listener(order = Order.LAST)
+  public void onServiceChange(ChangeServiceProviderEvent event) {
+    if (event.getService() == SqlService.class) {
+      this.sqlService = (SqlService) event.getNewProvider();
+
+      try {
+        this.createDataSource();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     }
+  }
 }

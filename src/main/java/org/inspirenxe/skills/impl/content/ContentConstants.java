@@ -24,5 +24,6 @@
 package org.inspirenxe.skills.impl.content;
 
 public interface ContentConstants {
+
   String CONTENT_DIRECTORY_NAME = "content";
 }

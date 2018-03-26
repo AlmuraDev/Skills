@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public interface SkillManager {
 
-    Set<SkillHolder> getHoldersInContainer(UUID containerUniqueId);
+  Set<SkillHolder> getHoldersInContainer(UUID containerUniqueId);
 
-    Optional<SkillHolder> getHolder(UUID containerUniqueId, UUID holderUniqueId);
+  Optional<SkillHolder> getHolder(UUID containerUniqueId, UUID holderUniqueId);
 }
