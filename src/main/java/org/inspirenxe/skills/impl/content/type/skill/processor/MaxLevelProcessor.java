@@ -22,31 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.level;
+package org.inspirenxe.skills.impl.content.type.skill.processor;
 
-import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.toolbox.inject.event.Witness;
+import com.almuradev.droplet.content.processor.Processor;
+import com.almuradev.droplet.parser.Parser;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import net.kyori.xml.XMLException;
+import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
 
-@Singleton
-public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
+public final class MaxLevelProcessor implements Processor<ContentSkillTypeBuilder> {
 
-  private final Registry<LevelFunction> registry;
+  private final Parser<Integer> intParser;
 
   @Inject
-  public LevelFunctionRootLoader(final Registry<LevelFunction> registry) {
-    this.registry = registry;
+  public MaxLevelProcessor(final Parser<Integer> intParser) {
+    this.intParser = intParser;
   }
 
-  @Listener
-  public void onGameStartingServer(GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunction.class)));
+  @Override
+  public void process(final Node node, final ContentSkillTypeBuilder builder) throws XMLException {
+    builder.maxLevel(this.intParser.parse(node.requireAttribute("max_level")));
   }
 }

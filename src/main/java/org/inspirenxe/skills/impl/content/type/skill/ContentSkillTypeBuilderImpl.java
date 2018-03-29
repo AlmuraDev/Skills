@@ -25,12 +25,32 @@
 package org.inspirenxe.skills.impl.content.type.skill;
 
 import com.almuradev.droplet.content.type.AbstractContentBuilder;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
 
 public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<SkillTypeImpl> implements ContentSkillTypeBuilder {
 
+  private RegistryReference<LevelFunction> levelFunction;
+  private int minLevel, maxLevel;
+
+  @Override
+  public void levelFunction(final RegistryReference<LevelFunction> levelFunction) {
+    this.levelFunction = levelFunction;
+  }
+
+  @Override
+  public void minLevel(final int minLevel) {
+    this.minLevel = minLevel;
+  }
+
+  @Override
+  public void maxLevel(final int maxLevel) {
+    this.maxLevel = maxLevel;
+  }
+
   @Override
   public SkillTypeImpl build() {
-    return null;
+    return new SkillTypeImpl(this.key(), this.levelFunction, this.minLevel, this.maxLevel);
   }
 }

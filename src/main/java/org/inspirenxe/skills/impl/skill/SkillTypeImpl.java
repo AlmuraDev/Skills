@@ -25,6 +25,8 @@
 package org.inspirenxe.skills.impl.skill;
 
 import com.almuradev.droplet.content.type.Content;
+import com.almuradev.droplet.registry.RegistryKey;
+import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
@@ -33,26 +35,30 @@ import java.util.Objects;
 
 public final class SkillTypeImpl implements SkillType, Content {
 
-  private final String id, name;
+  private final RegistryKey registryKey;
+  private final RegistryReference<LevelFunction> levelFunction;
   private final int minlevel, maxLevel;
-  private final LevelFunction levelFunction;
 
-  SkillTypeImpl(final String id, final String name) {
-    this.id = id;
-    this.name = name;
-    this.minlevel = 0;
-    this.maxLevel = 99;
-    this.levelFunction = null;
+  public SkillTypeImpl(final RegistryKey registryKey, final RegistryReference<LevelFunction> levelFunction, final int minLevel, final int maxLevel) {
+    this.registryKey = registryKey;
+    this.levelFunction = levelFunction;
+    this.minlevel = minLevel;
+    this.maxLevel = maxLevel;
   }
 
   @Override
   public String getId() {
-    return this.id;
+    return this.registryKey.toString();
   }
 
   @Override
   public String getName() {
-    return this.name;
+    return this.registryKey.value();
+  }
+
+  @Override
+  public LevelFunction getLevelFunction() {
+    return this.levelFunction.require();
   }
 
   @Override
@@ -66,11 +72,6 @@ public final class SkillTypeImpl implements SkillType, Content {
   }
 
   @Override
-  public LevelFunction getLevelFunction() {
-    return this.levelFunction;
-  }
-
-  @Override
   public boolean equals(final Object o) {
     if (this == o) {
       return true;
@@ -79,22 +80,21 @@ public final class SkillTypeImpl implements SkillType, Content {
       return false;
     }
     final SkillTypeImpl skillType = (SkillTypeImpl) o;
-    return Objects.equals(id, skillType.id);
+    return Objects.equals(this.registryKey, skillType.registryKey);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return Objects.hash(this.registryKey);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("id", this.id)
-        .add("name", this.name)
+        .add("id", this.registryKey)
+        .add("levelFunction", this.levelFunction.require())
         .add("minLevel", this.minlevel)
         .add("maxLevel", this.maxLevel)
-        .add("levelFunction", this.levelFunction)
         .toString();
   }
 }

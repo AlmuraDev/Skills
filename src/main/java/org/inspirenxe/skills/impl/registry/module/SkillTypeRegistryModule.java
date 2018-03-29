@@ -22,31 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.impl.registry.module;
 
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.toolbox.inject.event.Witness;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
-import org.inspirenxe.skills.impl.registry.module.SkillTypeRegistryModule;
-import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.inspirenxe.skills.impl.function.level.SkillsLevelFunction;
+import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
-@Singleton
-public class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-  private final Registry<SkillType> registry;
+public class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<SkillType> {
 
-  @Inject
-  public SkillTypeRootLoader(final Registry<SkillType> registry) {
-    this.registry = registry;
+  public static final SkillTypeRegistryModule instance = new SkillTypeRegistryModule();
+
+  private final Map<String, SkillType> map = new HashMap<>();
+
+  @Override
+  public void registerAdditionalCatalog(SkillType catalogType) {
+    checkNotNull(catalogType);
+    this.map.put(catalogType.getId(), catalogType);
+    catalogType.getLevelFunction().buildLevelTable(catalogType.getMaxLevel());
+    ((SkillsLevelFunction) catalogType.getLevelFunction()).printTable();
   }
 
-  @Listener
-  public void onGameStartingServer(GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SkillTypeImpl.class)));
+  @Override
+  public Optional<SkillType> getById(String id) {
+    return Optional.ofNullable(this.map.get(id));
+  }
+
+  @Override
+  public Collection<SkillType> getAll() {
+    return Collections.unmodifiableCollection(this.map.values());
   }
 }

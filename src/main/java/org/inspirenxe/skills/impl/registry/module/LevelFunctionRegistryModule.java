@@ -22,31 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.level;
+package org.inspirenxe.skills.impl.registry.module;
 
-import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.toolbox.inject.event.Witness;
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Singleton
-public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
+public final class LevelFunctionRegistryModule implements AdditionalCatalogRegistryModule<LevelFunction> {
 
-  private final Registry<LevelFunction> registry;
+  public static final LevelFunctionRegistryModule instance = new LevelFunctionRegistryModule();
 
-  @Inject
-  public LevelFunctionRootLoader(final Registry<LevelFunction> registry) {
-    this.registry = registry;
+  private final Map<String, LevelFunction> map = new HashMap<>();
+
+  @Override
+  public void registerAdditionalCatalog(LevelFunction catalogType) {
+    checkNotNull(catalogType);
+    this.map.put(catalogType.getId(), catalogType);
   }
 
-  @Listener
-  public void onGameStartingServer(GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunction.class)));
+  @Override
+  public Optional<LevelFunction> getById(String id) {
+    checkNotNull(id);
+    return Optional.ofNullable(this.map.get(id));
+  }
+
+  @Override
+  public Collection<LevelFunction> getAll() {
+    return Collections.unmodifiableCollection(this.map.values());
   }
 }

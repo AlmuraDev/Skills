@@ -22,38 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import org.inspirenxe.skills.api.SkillType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-public class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<SkillType> {
-
-  public static final SkillTypeRegistryModule instance = new SkillTypeRegistryModule();
-
-  private final Map<String, SkillType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(SkillType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
-
-  @Override
-  public Optional<SkillType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
-
-  @Override
-  public Collection<SkillType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.content.type.skill.processor;

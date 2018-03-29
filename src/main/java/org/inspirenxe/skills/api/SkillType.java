@@ -29,9 +29,10 @@ import org.spongepowered.api.CatalogType;
 
 public interface SkillType extends CatalogType {
 
+  LevelFunction getLevelFunction();
+
   int getMinLevel();
 
   int getMaxLevel();
 
-  LevelFunction getLevelFunction();
 }

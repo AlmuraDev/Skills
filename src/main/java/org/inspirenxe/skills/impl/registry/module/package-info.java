@@ -22,31 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.level;
-
-import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.toolbox.inject.event.Witness;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
-
-@Singleton
-public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
-
-  private final Registry<LevelFunction> registry;
-
-  @Inject
-  public LevelFunctionRootLoader(final Registry<LevelFunction> registry) {
-    this.registry = registry;
-  }
-
-  @Listener
-  public void onGameStartingServer(GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunction.class)));
-  }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.registry.module;

@@ -22,31 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.level;
+package org.inspirenxe.skills.impl.registry;
 
-import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
 import com.almuradev.droplet.registry.Registry;
-import com.almuradev.toolbox.inject.event.Witness;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.LinkedBindingBuilder;
+import net.kyori.violet.AbstractModule;
+import net.kyori.violet.FriendlyTypeLiteral;
+import net.kyori.violet.TypeArgument;
+import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.function.economy.EconomyFunction;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.item.ItemType;
 
-@Singleton
-public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
+public final class RegistryModule extends AbstractModule {
 
-  private final Registry<LevelFunction> registry;
-
-  @Inject
-  public LevelFunctionRootLoader(final Registry<LevelFunction> registry) {
-    this.registry = registry;
+  @Override
+  protected void configure() {
+    this.bindRegistry(BlockType.class).to(new TypeLiteral<CatalogTypeRegistry<BlockType>>() {});
+    this.bindRegistry(ItemType.class).to(new TypeLiteral<CatalogTypeRegistry<ItemType>>() {});
+    this.bindRegistry(LevelFunction.class).to(new TypeLiteral<CatalogTypeRegistry<LevelFunction>>() {});
+    this.bindRegistry(EconomyFunction.class).to(new TypeLiteral<CatalogTypeRegistry<EconomyFunction>>() {});
+    this.bindRegistry(SkillType.class).to(new TypeLiteral<CatalogTypeRegistry<SkillType>>() {});
   }
 
-  @Listener
-  public void onGameStartingServer(GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunction.class)));
+  private <T> LinkedBindingBuilder<Registry<T>> bindRegistry(final Class<T> type) {
+    return this.bind(new FriendlyTypeLiteral<Registry<T>>() {}.where(new TypeArgument<T>(type) {}));
   }
 }

@@ -22,42 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.economy.EconomyFunction;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-@Singleton
-public final class EconomyFunctionRegistryModule implements AdditionalCatalogRegistryModule<EconomyFunction> {
-
-  public static final EconomyFunctionRegistryModule instance = new EconomyFunctionRegistryModule();
-
-  private final Map<String, EconomyFunction> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(EconomyFunction catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
-
-  @Override
-  public Optional<EconomyFunction> getById(String id) {
-    checkNotNull(id);
-    return Optional.ofNullable(this.map.get(id));
-  }
-
-  @Override
-  public Collection<EconomyFunction> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
-}
-
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.content;

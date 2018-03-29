@@ -32,6 +32,11 @@ import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.impl.content.type.function.level.LevelFunctionRootLoader;
+import org.inspirenxe.skills.impl.content.type.skill.processor.LevelFunctionProcessor;
+import org.inspirenxe.skills.impl.content.type.skill.processor.MaxLevelProcessor;
+import org.inspirenxe.skills.impl.content.type.skill.processor.MinLevelProcessor;
 
 import java.util.Collections;
 
@@ -56,6 +61,12 @@ public final class SkillTypeModule extends RootModule.Impl<ContentSkillType.Chil
       this.bindChildLoader(new TypeLiteral<ChildContentLoaderImpl<ContentSkillType.Child>>() {
       });
       this.bindBuilder(ContentSkillTypeBuilder.class).to(ContentSkillTypeBuilderImpl.class);
+
+      this.bindFacet().toProvider(this.getProvider(SkillTypeRootLoader.class));
+
+      this.bindProcessor(LevelFunctionProcessor.class);
+      this.bindProcessor(MinLevelProcessor.class);
+      this.bindProcessor(MaxLevelProcessor.class);
     }
   }
 }

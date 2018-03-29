@@ -22,31 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.level;
+package org.inspirenxe.skills.impl.registry;
 
-import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
 import com.almuradev.droplet.registry.Registry;
-import com.almuradev.toolbox.inject.event.Witness;
+import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import com.google.inject.TypeLiteral;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.GameRegistry;
 
-@Singleton
-public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
+import javax.annotation.Nullable;
 
-  private final Registry<LevelFunction> registry;
+public final class CatalogTypeRegistry<C extends CatalogType> implements Registry<C> {
+
+  private final GameRegistry registry;
+  private final TypeLiteral<C> type;
 
   @Inject
-  public LevelFunctionRootLoader(final Registry<LevelFunction> registry) {
+  public CatalogTypeRegistry(final GameRegistry registry, final TypeLiteral<C> type) {
     this.registry = registry;
+    this.type = type;
   }
 
-  @Listener
-  public void onGameStartingServer(GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunction.class)));
+  @Nullable
+  @Override
+  public C get(RegistryKey key) {
+    return this.registry.getType((Class<C>) this.type.getRawType(), key.namespace() + ":" + key.value()).orElse(null);
+  }
+
+  @Override
+  public void put(RegistryKey key, C value) {
+    this.registry.register((Class<C>) this.type.getRawType(), value);
   }
 }

@@ -22,13 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry;
+package org.inspirenxe.skills.impl.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.function.level.SkillsLevelFunction;
+import org.inspirenxe.skills.api.function.economy.EconomyFunction;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
 import java.util.Collection;
@@ -38,29 +37,27 @@ import java.util.Map;
 import java.util.Optional;
 
 @Singleton
-public final class LevelFunctionRegistryModule implements AdditionalCatalogRegistryModule<LevelFunction> {
+public final class EconomyFunctionRegistryModule implements AdditionalCatalogRegistryModule<EconomyFunction> {
 
-  public static final LevelFunctionRegistryModule instance = new LevelFunctionRegistryModule();
+  public static final EconomyFunctionRegistryModule instance = new EconomyFunctionRegistryModule();
 
-  private final Map<String, LevelFunction> map = new HashMap<>();
+  private final Map<String, EconomyFunction> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(LevelFunction catalogType) {
+  public void registerAdditionalCatalog(EconomyFunction catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
-    catalogType.buildLevelTable(120);
-
-    ((SkillsLevelFunction) catalogType).printTable();
   }
 
   @Override
-  public Optional<LevelFunction> getById(String id) {
+  public Optional<EconomyFunction> getById(String id) {
     checkNotNull(id);
     return Optional.ofNullable(this.map.get(id));
   }
 
   @Override
-  public Collection<LevelFunction> getAll() {
+  public Collection<EconomyFunction> getAll() {
     return Collections.unmodifiableCollection(this.map.values());
   }
 }
+

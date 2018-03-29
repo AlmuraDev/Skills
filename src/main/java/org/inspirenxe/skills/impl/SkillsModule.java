@@ -40,9 +40,10 @@ import org.inspirenxe.skills.impl.content.ContentModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.parser.ParserModule;
-import org.inspirenxe.skills.impl.registry.EconomyFunctionRegistryModule;
-import org.inspirenxe.skills.impl.registry.LevelFunctionRegistryModule;
-import org.inspirenxe.skills.impl.registry.SkillTypeRegistryModule;
+import org.inspirenxe.skills.impl.registry.RegistryModule;
+import org.inspirenxe.skills.impl.registry.module.EconomyFunctionRegistryModule;
+import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
+import org.inspirenxe.skills.impl.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.skill.SkillImpl;
 import org.inspirenxe.skills.impl.skill.SkillManagerImpl;
 import org.jdom2.JDOMException;
@@ -65,15 +66,16 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
     // Register content loader
     this.install(new DropletModule());
     this.install(new ContentModule());
+    this.install(new RegistryModule());
     this.install(new ParserModule());
 
     // Register command tree
     this.command().rootProvider(SkillsCommandCreator.class, SkillsImpl.ID);
 
     // Register registry for skills building
-    this.registry().module(EconomyFunction.class, new EconomyFunctionRegistryModule());
-    this.registry().module(LevelFunction.class, new LevelFunctionRegistryModule());
-    this.registry().module(SkillType.class, new SkillTypeRegistryModule());
+    this.registry().module(EconomyFunction.class, EconomyFunctionRegistryModule.instance);
+    this.registry().module(LevelFunction.class, LevelFunctionRegistryModule.instance);
+    this.registry().module(SkillType.class, SkillTypeRegistryModule.instance);
 
     this.requestStaticInjection(SkillImpl.class);
   }
