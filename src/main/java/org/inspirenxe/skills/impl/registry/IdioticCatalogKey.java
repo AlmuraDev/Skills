@@ -24,6 +24,18 @@
  */
 package org.inspirenxe.skills.impl.registry;
 
+/**
+ * This is the story about how a {@link RegistryModule} in Sponge was added without
+ * any namespace which breaks any SANE plugin who rightfully expect catalogs to all
+ * HAVE said namespace.
+ *
+ * Now you may ask "Zidane, you control the source why don't you fix?"...Excellent
+ * question! I would but it is technically a plugin break so it must be done in a new
+ * API revision.
+ *
+ * So with that said, this will be kept until they can all be sorted.
+ */
+@Deprecated
 public final class IdioticCatalogKey extends CatalogKey {
 
   public IdioticCatalogKey(String combined) {
