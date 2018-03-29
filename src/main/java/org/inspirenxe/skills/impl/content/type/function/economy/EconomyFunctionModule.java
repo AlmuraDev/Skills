@@ -34,7 +34,7 @@ public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunctio
 
   @Override
   protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("firework"));
+    this.bindChildType(new ContentFunction.Child("economy"));
     this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
     });
     
