@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.type;
 
 import net.kyori.violet.AbstractModule;
+import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
 import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
 import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
 
@@ -34,5 +35,6 @@ public final class ContentTypeModule extends AbstractModule {
   protected void configure() {
     this.install(new FunctionModule());
     this.install(new SkillTypeModule());
+    this.install(new EffectTypeModule());
   }
 }

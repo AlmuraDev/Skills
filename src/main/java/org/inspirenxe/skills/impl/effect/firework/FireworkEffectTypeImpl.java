@@ -22,25 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.effect.firework;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import com.almuradev.droplet.registry.RegistryKey;
+import org.spongepowered.api.item.FireworkEffect;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class FireworkEffectTypeImpl implements SkillsFireworkEffectType {
+
+  private final RegistryKey registryKey;
+  private final FireworkEffect fireworkEffect;
+
+  public FireworkEffectTypeImpl(final RegistryKey registryKey, final FireworkEffect fireworkEffect) {
+    this.registryKey = registryKey;
+    this.fireworkEffect = fireworkEffect;
+  }
 
   @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("firework"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
-    
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+  public String getId() {
+    return this.registryKey.toString();
+  }
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+  @Override
+  public String getName() {
+    return this.registryKey.value();
+  }
+
+  @Override
+  public FireworkEffect getEffect() {
+    return this.fireworkEffect;
   }
 }

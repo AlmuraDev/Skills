@@ -22,25 +22,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.registry.module;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
+import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+
+  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
+
+  private final Map<String, FireworkEffectType> map = new HashMap<>();
 
   @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("firework"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
-    
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
+    checkNotNull(catalogType);
+    this.map.put(catalogType.getId(), catalogType);
+  }
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+  @Override
+  public Optional<FireworkEffectType> getById(String id) {
+    return Optional.ofNullable(this.map.get(id));
+  }
+
+  @Override
+  public Collection<FireworkEffectType> getAll() {
+    return Collections.unmodifiableCollection(this.map.values());
   }
 }

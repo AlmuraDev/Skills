@@ -22,25 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.content.type.effect.firework;
 
 import com.almuradev.droplet.content.inject.ChildModule;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
+import org.inspirenxe.skills.impl.content.type.effect.firework.processor.FireworkShapeProcessor;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> implements ParserBinder {
 
   @Override
   protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("firework"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
+    this.bindChildType(new ContentEffectType.Child("firework"));
+    this.bindChildLoader(new TypeLiteral<FireworkEffectTypeRootLoader>() {
     });
-    
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+    this.bindBuilder(ContentFireworkEffectTypeBuilder.class).to(ContentFireworkEffectTypeBuilderImpl.class);
+
+    this.bindProcessor(FireworkShapeProcessor.class);
+
+    this.bindFacet().toProvider(this.getProvider(FireworkEffectTypeRootLoader.class));
   }
 }

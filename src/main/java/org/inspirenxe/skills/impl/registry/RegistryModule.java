@@ -33,7 +33,9 @@ import net.kyori.violet.TypeArgument;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.function.economy.EconomyFunction;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.item.FireworkShape;
 import org.spongepowered.api.item.ItemType;
 
 public final class RegistryModule extends AbstractModule {
@@ -42,6 +44,9 @@ public final class RegistryModule extends AbstractModule {
   protected void configure() {
     this.bindRegistry(BlockType.class).to(new TypeLiteral<CatalogTypeRegistry<BlockType>>() {});
     this.bindRegistry(ItemType.class).to(new TypeLiteral<CatalogTypeRegistry<ItemType>>() {});
+    this.bindRegistry(FireworkEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<FireworkEffectType>>() {});
+    this.bindRegistry(FireworkShape.class).to(new TypeLiteral<CatalogTypeRegistry<FireworkShape>>() {});
+
     this.bindRegistry(LevelFunction.class).to(new TypeLiteral<CatalogTypeRegistry<LevelFunction>>() {});
     this.bindRegistry(EconomyFunction.class).to(new TypeLiteral<CatalogTypeRegistry<EconomyFunction>>() {});
     this.bindRegistry(SkillType.class).to(new TypeLiteral<CatalogTypeRegistry<SkillType>>() {});

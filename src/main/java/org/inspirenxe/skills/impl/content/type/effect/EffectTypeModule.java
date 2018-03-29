@@ -22,25 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.content.type.effect;
 
 import com.almuradev.droplet.content.inject.ChildModule;
+import com.almuradev.droplet.content.inject.ForChild;
+import com.almuradev.droplet.content.inject.ForRoot;
+import com.almuradev.droplet.content.inject.RootModule;
+import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.ParserBinder;
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import org.inspirenxe.skills.impl.content.type.effect.firework.FireworkEffectTypeModule;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> implements ParserBinder {
 
   @Override
   protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("firework"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
+    this.bindRootType(new ContentEffectType.Root());
+    this.bindRootLoader(new TypeLiteral<EffectTypeRootLoader>() {
     });
-    
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+    this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?>>>() {
+    }, ForRoot.class));
+
+    this.installChild(new FireworkEffectTypeModule(), new BaseChildModule());
+  }
+
+  private static class BaseChildModule extends ChildModule.Impl<ContentEffectType.Child> {
+
+    @Override
+    protected void configure0() {
+      this.inSet(Key.get(Processor.class, ForChild.class));
+    }
   }
 }

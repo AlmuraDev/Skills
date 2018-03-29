@@ -22,25 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.content.type.effect;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import com.google.inject.Singleton;
+import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+@Singleton
+public class EffectTypeRootLoader extends RootContentLoaderImpl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("firework"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
-    
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
-
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
-  }
 }

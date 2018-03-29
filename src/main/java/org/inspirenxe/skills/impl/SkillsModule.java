@@ -39,9 +39,11 @@ import org.inspirenxe.skills.impl.configuration.ForConfiguration;
 import org.inspirenxe.skills.impl.content.ContentModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
+import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.impl.parser.ParserModule;
 import org.inspirenxe.skills.impl.registry.RegistryModule;
 import org.inspirenxe.skills.impl.registry.module.EconomyFunctionRegistryModule;
+import org.inspirenxe.skills.impl.registry.module.FireworkEffectTypeRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.skill.SkillImpl;
@@ -73,6 +75,7 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
     this.command().rootProvider(SkillsCommandCreator.class, SkillsImpl.ID);
 
     // Register registry for skills building
+    this.registry().module(FireworkEffectType.class, FireworkEffectTypeRegistryModule.instance);
     this.registry().module(EconomyFunction.class, EconomyFunctionRegistryModule.instance);
     this.registry().module(LevelFunction.class, LevelFunctionRegistryModule.instance);
     this.registry().module(SkillType.class, SkillTypeRegistryModule.instance);

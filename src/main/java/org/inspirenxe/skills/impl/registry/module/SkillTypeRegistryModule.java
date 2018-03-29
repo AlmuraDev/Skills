@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<SkillType> {
+public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<SkillType> {
 
   public static final SkillTypeRegistryModule instance = new SkillTypeRegistryModule();
 

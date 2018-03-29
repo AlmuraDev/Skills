@@ -24,26 +24,23 @@
  */
 package org.inspirenxe.skills.impl.parser;
 
-import com.almuradev.droplet.parser.ParserException;
 import com.almuradev.droplet.parser.primitive.PrimitiveParser;
 import com.almuradev.droplet.registry.RegistryKey;
 import net.kyori.xml.node.Node;
 import org.inspirenxe.skills.impl.registry.CatalogKey;
+import org.inspirenxe.skills.impl.registry.IdioticCatalogKey;
 
 import javax.inject.Singleton;
 
 @Singleton
 public final class RegistryKeyParser implements PrimitiveParser<RegistryKey> {
 
-  private static void requireNamespaced(final String string) throws ParserException {
-    if (string.indexOf(':') == -1) {
-      throw new ParserException("Expected namespaced string");
-    }
-  }
-
   @Override
-  public RegistryKey parse(final Node node, final String string) throws ParserException {
-    requireNamespaced(string);
-    return new CatalogKey(string);
+  public RegistryKey parse(final Node node, final String string) {
+    if (string.indexOf(':') != -1) {
+      return new CatalogKey(string);
+    } else {
+      return new IdioticCatalogKey(string);
+    }
   }
 }

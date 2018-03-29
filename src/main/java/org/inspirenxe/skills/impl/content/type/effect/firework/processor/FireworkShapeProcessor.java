@@ -22,25 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.content.type.effect.firework.processor;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import com.almuradev.droplet.content.processor.Processor;
+import com.almuradev.droplet.parser.Parser;
+import com.almuradev.droplet.registry.Registry;
+import com.almuradev.droplet.registry.RegistryKey;
+import com.google.inject.Inject;
+import net.kyori.xml.XMLException;
+import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilder;
+import org.spongepowered.api.item.FireworkShape;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class FireworkShapeProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
+
+  private final Registry<FireworkShape> registry;
+  private final Parser<RegistryKey> keyParser;
+
+  @Inject
+  public FireworkShapeProcessor(final Registry<FireworkShape> registry, final Parser<RegistryKey> keyParser) {
+    this.registry = registry;
+    this.keyParser = keyParser;
+  }
 
   @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("firework"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
-    
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
-
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+  public void process(Node node, ContentFireworkEffectTypeBuilder builder) throws XMLException {
+    builder.shape(this.registry.ref(this.keyParser.parse(node.requireAttribute("shape"))));
   }
 }

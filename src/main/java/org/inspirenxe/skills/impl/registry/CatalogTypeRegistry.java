@@ -47,6 +47,10 @@ public final class CatalogTypeRegistry<C extends CatalogType> implements Registr
   @Nullable
   @Override
   public C get(RegistryKey key) {
+    if (key instanceof IdioticCatalogKey) {
+      return this.registry.getType((Class<C>) this.type.getRawType(), key.value()).orElse(null);
+    }
+
     return this.registry.getType((Class<C>) this.type.getRawType(), key.namespace() + ":" + key.value()).orElse(null);
   }
 
