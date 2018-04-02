@@ -22,60 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy;
+package org.inspirenxe.skills.impl.parser.lazy.block.value;
 
-import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;
 
 import java.util.Objects;
-import java.util.Optional;
 
-public final class WrappedStatefulLazyBlockState implements LazyBlockState {
+final class SimpleLazyStateValue<V extends Comparable<V>> implements LazyStateValue<V> {
 
-  private final BlockState state;
+  private final String string;
 
-  WrappedStatefulLazyBlockState(final BlockState state) {
-    this.state = state;
+  SimpleLazyStateValue(final String string) {
+    this.string = string;
   }
 
   @Override
-  public BlockType block() {
-    return this.state.getType();
+  public boolean test(final BlockTrait<V> property, final BlockState state) {
+    return Objects.equals(this.get(property), state.getTraitValue(property).orElse(null));
   }
 
   @Override
-  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
-    return Optional.of(new RealProperty<>(property));
-  }
-
-  @Override
-  public boolean test(final BlockState state) {
-    return this.state.equals(state);
-  }
-
-  @Override
-  public BlockState get() {
-    return this.state;
-  }
-
-  private class RealProperty<V extends Comparable<V>> implements LazyStateValue<V> {
-
-    private final V value;
-
-    private RealProperty(final BlockTrait<V> property) {
-      this.value = WrappedStatefulLazyBlockState.this.state.getTraitValue(property).orElse(null);
-    }
-
-    @Override
-    public boolean test(final BlockTrait<V> property, final BlockState state) {
-      return Objects.equals(this.value, state.getTraitValue(property).orElse(null));
-    }
-
-    @Override
-    public V get(final BlockTrait<V> property) {
-      return this.value;
-    }
+  public V get(final BlockTrait<V> property) {
+    return property.parseValue(this.string).orElse(null);
   }
 }

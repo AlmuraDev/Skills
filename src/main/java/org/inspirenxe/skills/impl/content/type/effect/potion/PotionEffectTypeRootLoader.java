@@ -22,40 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy;
+package org.inspirenxe.skills.impl.content.type.effect.potion;
 
-import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.trait.BlockTrait;
+import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
+import com.almuradev.droplet.registry.Registry;
+import com.almuradev.toolbox.inject.event.Witness;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
+import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
-import java.util.Optional;
+@Singleton
+public final class PotionEffectTypeRootLoader extends ChildContentLoaderImpl<ContentEffectType.Child> implements Witness {
 
-public final class WrappedStatelessLazyBlockState implements LazyBlockState {
+  private final Registry<PotionEffectType> registry;
 
-  private final BlockType block;
-
-  WrappedStatelessLazyBlockState(final BlockType block) {
-    this.block = block;
+  @Inject
+  public PotionEffectTypeRootLoader(final Registry<PotionEffectType> registry) {
+    this.registry = registry;
   }
 
-  @Override
-  public BlockType block() {
-    return this.block;
-  }
-
-  @Override
-  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
-    return Optional.empty();
-  }
-
-  @Override
-  public boolean test(final BlockState state) {
-    return this.block.equals(state.getType());
-  }
-
-  @Override
-  public BlockState get() {
-    return this.block().getDefaultState();
+  @Listener(order = Order.AFTER_PRE)
+  public void onGameStartingServer(GameStartingServerEvent event) {
+    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(PotionEffectType.class)));
   }
 }

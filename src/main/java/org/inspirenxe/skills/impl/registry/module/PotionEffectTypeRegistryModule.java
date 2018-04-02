@@ -22,38 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy;
+package org.inspirenxe.skills.impl.registry.module;
 
-import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.trait.BlockTrait;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
-public interface LazyBlockState extends Predicate<BlockState>, Supplier<BlockState> {
+@Singleton
+public final class PotionEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<PotionEffectType> {
 
-  static LazyBlockState from(final BlockType block) {
-    return new WrappedStatelessLazyBlockState(block);
+  public static final PotionEffectTypeRegistryModule instance = new PotionEffectTypeRegistryModule();
+
+  private final Map<String, PotionEffectType> map = new HashMap<>();
+
+  @Override
+  public void registerAdditionalCatalog(PotionEffectType catalogType) {
+    checkNotNull(catalogType);
+    this.map.put(catalogType.getId(), catalogType);
   }
 
-  static LazyBlockState from(final BlockState state) {
-    return new WrappedStatefulLazyBlockState(state);
+  @Override
+  public Optional<PotionEffectType> getById(String id) {
+    return Optional.ofNullable(this.map.get(id));
   }
 
-  BlockType block();
-
-  @SuppressWarnings("RedundantCast")
-  default Collection<BlockTrait<? extends Comparable<?>>> properties() {
-    return (Collection<BlockTrait<? extends Comparable<?>>>) this.block().getDefaultState().getTraits();
-  }
-
-  <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property);
-
-  default boolean matches(final LazyBlockState that) {
-    return this.test(that.get());
+  @Override
+  public Collection<PotionEffectType> getAll() {
+    return Collections.unmodifiableCollection(this.map.values());
   }
 }

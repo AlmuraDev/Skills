@@ -30,11 +30,11 @@ import org.spongepowered.api.item.FireworkEffect;
 public final class FireworkEffectTypeImpl implements SkillsFireworkEffectType {
 
   private final RegistryKey registryKey;
-  private final FireworkEffect fireworkEffect;
+  private final FireworkEffect effect;
 
-  public FireworkEffectTypeImpl(final RegistryKey registryKey, final FireworkEffect fireworkEffect) {
+  public FireworkEffectTypeImpl(final RegistryKey registryKey, final FireworkEffect effect) {
     this.registryKey = registryKey;
-    this.fireworkEffect = fireworkEffect;
+    this.effect = effect;
   }
 
   @Override
@@ -49,6 +49,6 @@ public final class FireworkEffectTypeImpl implements SkillsFireworkEffectType {
 
   @Override
   public FireworkEffect getEffect() {
-    return this.fireworkEffect;
+    return this.effect;
   }
 }

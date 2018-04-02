@@ -22,40 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.parser;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.parser.Parser;
+import com.almuradev.droplet.registry.Registry;
+import com.almuradev.droplet.registry.RegistryKey;
+import net.kyori.xml.node.Node;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+import javax.inject.Inject;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import static java.util.Objects.requireNonNull;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+public final class RegistryParser<T> implements Parser<T> {
+  private final Registry<T> registry;
+  private final Parser<RegistryKey> keyParser;
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  @Inject
+  private RegistryParser(final Registry<T> registry, final Parser<RegistryKey> keyParser) {
+    this.registry = registry;
+    this.keyParser = keyParser;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
-
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public T throwingParse(final Node node) {
+    final RegistryKey key = this.keyParser.parse(node);
+    return requireNonNull(this.registry.get(key), key.toString());
   }
 }

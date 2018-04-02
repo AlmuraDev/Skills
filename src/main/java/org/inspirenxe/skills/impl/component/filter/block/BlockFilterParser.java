@@ -27,13 +27,14 @@ package org.inspirenxe.skills.impl.component.filter.block;
 import com.almuradev.droplet.component.filter.FilterTypeParser;
 import com.almuradev.droplet.parser.Parser;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.impl.parser.lazy.LazyBlockState;
+import org.inspirenxe.skills.impl.parser.lazy.block.LazyBlockState;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public final class BlockFilterParser implements FilterTypeParser<BlockFilter> {
+
   private final Parser<LazyBlockState> parser;
 
   @Inject

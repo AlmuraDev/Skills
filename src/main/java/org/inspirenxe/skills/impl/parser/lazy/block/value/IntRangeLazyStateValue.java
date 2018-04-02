@@ -22,16 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy.value;
+package org.inspirenxe.skills.impl.parser.lazy.block.value;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import com.almuradev.droplet.component.range.IntRange;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.trait.BlockTrait;
 
-public interface LazyStateValue<V extends Comparable<V>> {
+import java.util.concurrent.ThreadLocalRandom;
 
-  boolean test(final BlockTrait<V> property, final BlockState state);
+final class IntRangeLazyStateValue implements RangeLazyStateValue<Integer> {
 
-  @Nullable
-  V get(final BlockTrait<V> property);
+  private final IntRange range;
+
+  IntRangeLazyStateValue(final IntRange range) {
+    this.range = range;
+  }
+
+  @Override
+  public Class<Integer> type() {
+    return Integer.class;
+  }
+
+  @Override
+  public Integer min() {
+    return this.range.min();
+  }
+
+  @Override
+  public Integer max() {
+    return this.range.max();
+  }
+
+  @Override
+  public boolean test(final BlockTrait<Integer> property, final BlockState state) {
+    final Integer value = state.getTraitValue(property).orElse(null);
+    return value != null && this.range.contains(value);
+  }
+
+  @Override
+  public Integer get(final BlockTrait<Integer> property) {
+    return this.range.random(ThreadLocalRandom.current());
+  }
 }

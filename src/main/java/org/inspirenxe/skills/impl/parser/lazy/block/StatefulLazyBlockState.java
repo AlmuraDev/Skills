@@ -22,12 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy;
+package org.inspirenxe.skills.impl.parser.lazy.block;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.Suppliers;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;

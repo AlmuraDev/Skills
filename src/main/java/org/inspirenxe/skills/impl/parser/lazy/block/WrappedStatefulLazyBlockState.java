@@ -22,30 +22,60 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.block;
+package org.inspirenxe.skills.impl.parser.lazy.block;
 
-import org.inspirenxe.skills.impl.parser.lazy.block.LazyBlockState;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-public final class BlockQueryImpl implements BlockQuery {
+import java.util.Objects;
+import java.util.Optional;
 
-  private final LazyBlockState state;
+public final class WrappedStatefulLazyBlockState implements LazyBlockState {
 
-  public BlockQueryImpl(final BlockType block) {
-    this(LazyBlockState.from(block));
-  }
+  private final BlockState state;
 
-  public BlockQueryImpl(final BlockState state) {
-    this(LazyBlockState.from(state));
-  }
-
-  public BlockQueryImpl(final LazyBlockState state) {
+  WrappedStatefulLazyBlockState(final BlockState state) {
     this.state = state;
   }
 
   @Override
-  public LazyBlockState state() {
+  public BlockType block() {
+    return this.state.getType();
+  }
+
+  @Override
+  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
+    return Optional.of(new RealProperty<>(property));
+  }
+
+  @Override
+  public boolean test(final BlockState state) {
+    return this.state.equals(state);
+  }
+
+  @Override
+  public BlockState get() {
     return this.state;
+  }
+
+  private class RealProperty<V extends Comparable<V>> implements LazyStateValue<V> {
+
+    private final V value;
+
+    private RealProperty(final BlockTrait<V> property) {
+      this.value = WrappedStatefulLazyBlockState.this.state.getTraitValue(property).orElse(null);
+    }
+
+    @Override
+    public boolean test(final BlockTrait<V> property, final BlockState state) {
+      return Objects.equals(this.value, state.getTraitValue(property).orElse(null));
+    }
+
+    @Override
+    public V get(final BlockTrait<V> property) {
+      return this.value;
+    }
   }
 }

@@ -22,40 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.effect.potion;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.registry.RegistryKey;
+import org.spongepowered.api.effect.potion.PotionEffect;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+public final class PotionEffectTypeImpl implements SkillsPotionEffectType {
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+  private final RegistryKey registryKey;
+  private final PotionEffect effect;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
-
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  public PotionEffectTypeImpl(final RegistryKey registryKey, final PotionEffect effect) {
+    this.registryKey = registryKey;
+    this.effect = effect;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
+  public String getId() {
+    return this.registryKey.toString();
   }
 
   @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public String getName() {
+    return this.registryKey.value();
+  }
+
+  @Override
+  public PotionEffect getEffect() {
+    return this.effect;
   }
 }

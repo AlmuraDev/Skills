@@ -22,34 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy;
+package org.inspirenxe.skills.impl.component.filter.item;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.trait.BlockTrait;
+import com.almuradev.droplet.component.filter.FilterQuery;
+import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterQuery;
+import org.spongepowered.api.item.ItemType;
 
-import java.util.Optional;
+public interface ItemQuery extends FilterQuery, RegistryKeyFilterQuery {
 
-public final class StatelessLazyBlockState extends AbstractLazyBlockState {
-
-  public StatelessLazyBlockState(final RegistryReference<BlockType> block) {
-    super(block);
-  }
-
-  @Override
-  BlockState createState() {
-    return this.block().getDefaultState();
-  }
-
-  @Override
-  public boolean testInternal(final BlockState state) {
-    return true; // We have no properties to test
-  }
-
-  @Override
-  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
-    return Optional.empty();
-  }
+  ItemType item();
 }

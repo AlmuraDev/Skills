@@ -22,40 +22,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.parser.lazy.block;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+public interface LazyBlockState extends Predicate<BlockState>, Supplier<BlockState> {
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  static LazyBlockState from(final BlockType block) {
+    return new WrappedStatelessLazyBlockState(block);
   }
 
-  @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
+  static LazyBlockState from(final BlockState state) {
+    return new WrappedStatefulLazyBlockState(state);
   }
 
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  BlockType block();
+
+  @SuppressWarnings("RedundantCast")
+  default Collection<BlockTrait<? extends Comparable<?>>> properties() {
+    return (Collection<BlockTrait<? extends Comparable<?>>>) this.block().getDefaultState().getTraits();
+  }
+
+  <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property);
+
+  default boolean matches(final LazyBlockState that) {
+    return this.test(that.get());
   }
 }

@@ -22,40 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.component.filter.item;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.component.filter.FilterTypeParser;
+import com.almuradev.droplet.parser.Parser;
+import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+public final class ItemFilterParser implements FilterTypeParser<ItemFilter> {
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
+  private final Parser<LazyItemStack> parser;
 
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  @Inject
+  private ItemFilterParser(final Parser<LazyItemStack> parser) {
+    this.parser = parser;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
-
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public ItemFilter throwingParse(final Node node) {
+    return new ItemFilter(this.parser.parse(node));
   }
 }

@@ -34,7 +34,7 @@ public interface ContentSkillType extends ContentType.Child {
   final class Root extends ContentType.Root.Impl<Child> implements ContentSkillType {
 
     Root() {
-      super("type", "skill", new TypeToken<ContentSkillType.Child>() {
+      super("skill", "skill", new TypeToken<ContentSkillType.Child>() {
       });
     }
   }

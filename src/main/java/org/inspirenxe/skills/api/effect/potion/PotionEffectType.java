@@ -22,28 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy.value;
+package org.inspirenxe.skills.api.effect.potion;
 
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.trait.BlockTrait;
+import org.inspirenxe.skills.api.effect.EffectType;
+import org.spongepowered.api.effect.potion.PotionEffect;
 
-import java.util.Objects;
+public interface PotionEffectType extends EffectType {
 
-final class SimpleLazyStateValue<V extends Comparable<V>> implements LazyStateValue<V> {
-
-  private final String string;
-
-  SimpleLazyStateValue(final String string) {
-    this.string = string;
-  }
-
-  @Override
-  public boolean test(final BlockTrait<V> property, final BlockState state) {
-    return Objects.equals(this.get(property), state.getTraitValue(property).orElse(null));
-  }
-
-  @Override
-  public V get(final BlockTrait<V> property) {
-    return property.parseValue(this.string).orElse(null);
-  }
+  PotionEffect getEffect();
 }

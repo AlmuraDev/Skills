@@ -22,40 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.content.type.effect.potion;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.impl.content.type.effect.ContentEffectTypeBuilder;
+import org.inspirenxe.skills.impl.effect.potion.SkillsPotionEffectType;
+import org.spongepowered.api.effect.potion.PotionEffectType;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+public interface ContentPotionEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsPotionEffectType> {
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+  void potion(final RegistryReference<PotionEffectType> potion);
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+  void duration(final int duration);
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
+  void amplifier(final int amplifier);
 
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
+  void isAmbient(final boolean isAmbient);
 
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
-
-  @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
-
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+  void showParticles(final boolean showParticles);
 }

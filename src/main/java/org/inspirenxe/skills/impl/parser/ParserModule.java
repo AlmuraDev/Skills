@@ -31,9 +31,14 @@ import com.google.inject.TypeLiteral;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
-import org.inspirenxe.skills.impl.parser.lazy.LazyBlockState;
-import org.inspirenxe.skills.impl.parser.lazy.LazyBlockStateParser;
+import org.inspirenxe.skills.impl.parser.lazy.block.LazyBlockState;
+import org.inspirenxe.skills.impl.parser.lazy.block.LazyBlockStateParser;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValueParser;
+import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
+import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStackParser;
 import org.jooq.SQLDialect;
+import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public final class ParserModule extends AbstractModule implements ParserBinder {
 
@@ -44,5 +49,8 @@ public final class ParserModule extends AbstractModule implements ParserBinder {
     });
     this.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
     this.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
+    this.bindParser(new TypeLiteral<LazyStateValue<?>>() {}).to(LazyStateValueParser.class);
+    this.bindParser(LazyItemStack.class).to(LazyItemStackParser.class);
+    this.bindParser(PotionEffectType.class).to(new TypeLiteral<RegistryParser<PotionEffectType>>() {});
   }
 }

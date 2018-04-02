@@ -22,40 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy;
+package org.inspirenxe.skills.impl.parser.lazy.block.value;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import com.google.common.base.Suppliers;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-import java.util.function.Supplier;
+public interface LazyStateValue<V extends Comparable<V>> {
 
-public abstract class AbstractLazyBlockState implements LazyBlockState {
+  boolean test(final BlockTrait<V> property, final BlockState state);
 
-  private final RegistryReference<BlockType> block;
-  private final Supplier<BlockState> state = Suppliers.memoize(this::createState);
-
-  AbstractLazyBlockState(final RegistryReference<BlockType> block) {
-    this.block = block;
-  }
-
-  @Override
-  public final BlockType block() {
-    return this.block.require();
-  }
-
-  @Override
-  public final BlockState get() {
-    return this.state.get();
-  }
-
-  abstract <T extends Comparable<T>> BlockState createState();
-
-  @Override
-  public final boolean test(final BlockState state) {
-    return this.block().equals(state.getType()) && this.testInternal(state);
-  }
-
-  abstract <V extends Comparable<V>> boolean testInternal(final BlockState state);
+  @Nullable
+  V get(final BlockTrait<V> property);
 }

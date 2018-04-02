@@ -22,47 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy.value;
+package org.inspirenxe.skills.impl.component.filter.potion;
 
-import com.almuradev.droplet.component.range.IntRange;
+import com.almuradev.droplet.component.filter.FilterTypeParser;
 import com.almuradev.droplet.parser.Parser;
-import com.google.common.collect.MoreCollectors;
 import net.kyori.xml.node.Node;
+import org.spongepowered.api.effect.potion.PotionEffectType;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public final class LazyStateValueParser implements Parser<LazyStateValue<?>> {
+public final class PotionFilterParser implements FilterTypeParser<PotionFilter> {
 
-  private final Parser<IntRange> intRangeParser;
+  private final Parser<PotionEffectType> parser;
 
   @Inject
-  private LazyStateValueParser(final Parser<IntRange> intRangeParser) {
-    this.intRangeParser = intRangeParser;
+  private PotionFilterParser(final Parser<PotionEffectType> parser) {
+    this.parser = parser;
   }
 
   @Override
-  public LazyStateValue<?> throwingParse(final Node node) {
-    LazyStateValue<?> value = this.parseSimple(node);
-    if (value != null) {
-      return value;
-    }
-    value = this.parseRange(node);
-    if (value != null) {
-      return value;
-    }
-    return null;
-  }
-
-  private LazyStateValue<?> parseSimple(final Node node) {
-    return node.nodes("value").collect(MoreCollectors.toOptional())
-        .map(value -> new SimpleLazyStateValue<>(value.value())).orElse(null);
-  }
-
-  private LazyStateValue<?> parseRange(final Node node) {
-    return node.nodes("range").collect(MoreCollectors.toOptional())
-        .map(value -> new IntRangeLazyStateValue(this.intRangeParser.parse(value)))
-        .orElse(null);
+  public PotionFilter throwingParse(final Node node) {
+    return new PotionFilter(this.parser.parse(node));
   }
 }

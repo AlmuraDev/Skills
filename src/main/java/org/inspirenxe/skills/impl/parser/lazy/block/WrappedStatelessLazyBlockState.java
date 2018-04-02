@@ -22,40 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.parser.lazy.block;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+public final class WrappedStatelessLazyBlockState implements LazyBlockState {
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
+  private final BlockType block;
 
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  WrappedStatelessLazyBlockState(final BlockType block) {
+    this.block = block;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
+  public BlockType block() {
+    return this.block;
   }
 
   @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
+    return Optional.empty();
+  }
+
+  @Override
+  public boolean test(final BlockState state) {
+    return this.block.equals(state.getType());
+  }
+
+  @Override
+  public BlockState get() {
+    return this.block().getDefaultState();
   }
 }

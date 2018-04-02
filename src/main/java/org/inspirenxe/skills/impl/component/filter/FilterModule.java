@@ -28,8 +28,10 @@ import com.almuradev.droplet.component.filter.FilterBinder;
 import com.almuradev.droplet.parser.ParserBinder;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.component.filter.block.BlockFilterParser;
+import org.inspirenxe.skills.impl.component.filter.item.ItemFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.NamespaceFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterParser;
+import org.inspirenxe.skills.impl.component.filter.potion.PotionFilterParser;
 
 public final class FilterModule extends AbstractModule implements FilterBinder, ParserBinder {
 
@@ -38,5 +40,7 @@ public final class FilterModule extends AbstractModule implements FilterBinder, 
     this.bindFilter("key").to(RegistryKeyFilterParser.class);
     this.bindFilter("namespace").to(NamespaceFilterParser.class);
     this.bindFilter("block").to(BlockFilterParser.class);
+    this.bindFilter("item").to(ItemFilterParser.class);
+    this.bindFilter("potion").to(PotionFilterParser.class);
   }
 }

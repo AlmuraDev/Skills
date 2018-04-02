@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy.value;
+package org.inspirenxe.skills.impl.parser.lazy.block.value;
 
 public interface RangeLazyStateValue<V extends Comparable<V>> extends LazyStateValue<V> {
 

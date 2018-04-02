@@ -22,40 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.content.type.effect.potion.processor;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.content.processor.Processor;
+import com.almuradev.droplet.parser.Parser;
+import com.google.common.collect.MoreCollectors;
+import com.google.inject.Inject;
+import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.content.type.effect.potion.ContentPotionEffectTypeBuilder;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+public final class DurationProcessor implements Processor<ContentPotionEffectTypeBuilder> {
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+  private final Parser<Integer> intParser;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
-
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  @Inject
+  public DurationProcessor(final Parser<Integer> intParser) {
+    this.intParser = intParser;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
-
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public void process(Node node, ContentPotionEffectTypeBuilder builder) {
+    node.nodes("duration").collect(MoreCollectors.toOptional()).ifPresent(duration -> builder.duration(this.intParser.parse(duration)));
   }
 }

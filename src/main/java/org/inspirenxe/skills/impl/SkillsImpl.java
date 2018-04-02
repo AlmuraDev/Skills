@@ -35,19 +35,18 @@ import org.spongepowered.api.plugin.Plugin;
 @Plugin(id = SkillsImpl.ID)
 public class SkillsImpl {
 
-  public static final String ID = "skills";
+  static final String ID = "skills";
 
   @Inject
   private Injector baseInjector;
-  private Injector injector;
 
   private Facets facets;
 
   @Listener
   public void onGameConstruction(GameConstructionEvent event) {
-    this.injector = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule());
+    final Injector injector = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule());
 
-    this.facets = this.injector.getInstance(Facets.class);
+    this.facets = injector.getInstance(Facets.class);
 
     this.facets.enable();
   }

@@ -22,40 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.component.filter.item;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.component.filter.AbstractFilter;
+import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+public final class ItemFilter implements AbstractFilter<ItemQuery> {
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+  private final LazyItemStack item;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
-
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  ItemFilter(final LazyItemStack item) {
+    this.item = item;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
-
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public boolean testInternal(final ItemQuery query) {
+    return this.item.matches(query.item());
   }
 }

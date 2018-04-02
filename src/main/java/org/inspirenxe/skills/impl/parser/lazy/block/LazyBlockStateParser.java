@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser.lazy;
+package org.inspirenxe.skills.impl.parser.lazy.block;
 
 import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.parser.ParserException;
@@ -30,7 +30,7 @@ import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
 import org.spongepowered.api.block.BlockType;
 
 import java.util.AbstractMap;

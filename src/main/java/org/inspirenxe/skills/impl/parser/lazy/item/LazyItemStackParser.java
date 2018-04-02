@@ -22,28 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.key;
+package org.inspirenxe.skills.impl.parser.lazy.item;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
 import com.almuradev.droplet.parser.Parser;
+import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import com.google.common.collect.MoreCollectors;
 import net.kyori.xml.node.Node;
+import org.spongepowered.api.item.ItemType;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public final class RegistryKeyFilterParser implements FilterTypeParser<RegistryKeyFilter> {
+public final class LazyItemStackParser implements Parser<LazyItemStack> {
 
-  private final Parser<RegistryKey> parser;
+  private final Registry<ItemType> registry;
+  private final Parser<RegistryKey> keyParser;
+  private final Parser<Integer> intParser;
 
   @Inject
-  private RegistryKeyFilterParser(final Parser<RegistryKey> parser) {
-    this.parser = parser;
+  private LazyItemStackParser(final Registry<ItemType> registry, final Parser<RegistryKey> keyParser, final Parser<Integer> intParser) {
+    this.registry = registry;
+    this.keyParser = keyParser;
+    this.intParser = intParser;
   }
 
   @Override
-  public RegistryKeyFilter throwingParse(final Node node) {
-    return new RegistryKeyFilter(this.parser.parse(node));
+  public LazyItemStack throwingParse(final Node node) {
+    final RegistryReference<ItemType> item = this.registry.ref(this.keyParser.parse(node.nodes("item").collect(MoreCollectors.onlyElement())));
+    @Deprecated final int data =
+        node.nodes("data").collect(MoreCollectors.toOptional()).map(this.intParser::parse).orElse(LazyItemStack.DEFAULT_DATA);
+    final int quantity =
+        node.nodes("quantity").collect(MoreCollectors.toOptional()).map(this.intParser::parse).orElse(LazyItemStack.DEFAULT_QUANTITY);
+    return new LazyItemStackImpl(item, data, quantity);
   }
 }

@@ -22,40 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.parser.lazy.item;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.spongepowered.api.item.ItemType;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+public final class LazyItemStackImpl implements LazyItemStack {
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+  private final RegistryReference<ItemType> item;
+  @Deprecated private final int data;
+  private final int quantity;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
-
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  LazyItemStackImpl(final RegistryReference<ItemType> item, @Deprecated final int data, final int quantity) {
+    this.item = item;
+    this.data = data;
+    this.quantity = quantity;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
+  public ItemType item() {
+    return this.item.require();
+  }
+
+  @Deprecated
+  @Override
+  public int data() {
+    return this.data;
   }
 
   @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public int quantity() {
+    return this.quantity;
   }
 }

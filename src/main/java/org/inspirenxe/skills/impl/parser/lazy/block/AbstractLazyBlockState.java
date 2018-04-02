@@ -22,40 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.parser.lazy.block;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import com.google.common.base.Suppliers;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+import java.util.function.Supplier;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+public abstract class AbstractLazyBlockState implements LazyBlockState {
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+  private final RegistryReference<BlockType> block;
+  private final Supplier<BlockState> state = Suppliers.memoize(this::createState);
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  AbstractLazyBlockState(final RegistryReference<BlockType> block) {
+    this.block = block;
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
+  public final BlockType block() {
+    return this.block.require();
   }
 
   @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public final BlockState get() {
+    return this.state.get();
   }
+
+  abstract <T extends Comparable<T>> BlockState createState();
+
+  @Override
+  public final boolean test(final BlockState state) {
+    return this.block().equals(state.getType()) && this.testInternal(state);
+  }
+
+  abstract <V extends Comparable<V>> boolean testInternal(final BlockState state);
 }

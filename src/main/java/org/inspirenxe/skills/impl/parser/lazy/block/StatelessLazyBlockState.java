@@ -22,40 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.parser.lazy.block;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+public final class StatelessLazyBlockState extends AbstractLazyBlockState {
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
-
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
-
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  public StatelessLazyBlockState(final RegistryReference<BlockType> block) {
+    super(block);
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
+  BlockState createState() {
+    return this.block().getDefaultState();
   }
 
   @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  public boolean testInternal(final BlockState state) {
+    return true; // We have no properties to test
+  }
+
+  @Override
+  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
+    return Optional.empty();
   }
 }

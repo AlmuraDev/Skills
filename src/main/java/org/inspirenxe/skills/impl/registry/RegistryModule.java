@@ -32,6 +32,7 @@ import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.color.ColorType;
+import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
 import org.inspirenxe.skills.api.function.economy.EconomyFunction;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
@@ -52,6 +53,10 @@ public final class RegistryModule extends AbstractModule {
     this.bindRegistry(ItemType.class).to(new TypeLiteral<CatalogTypeRegistry<ItemType>>() {});
     this.bindRegistry(Key.class).to(new TypeLiteral<CatalogTypeRegistry<Key>>() {});
     this.bindRegistry(LevelFunction.class).to(new TypeLiteral<CatalogTypeRegistry<LevelFunction>>() {});
+    // TODO API interface name is retarded, should be PotionType. Fix in API 8.
+    this.bindRegistry(org.spongepowered.api.effect.potion.PotionEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<org.spongepowered.api
+        .effect.potion.PotionEffectType>>() {});
+    this.bindRegistry(PotionEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<PotionEffectType>>() {});
     this.bindRegistry(SkillType.class).to(new TypeLiteral<CatalogTypeRegistry<SkillType>>() {});
   }
 

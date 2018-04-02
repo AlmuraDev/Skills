@@ -57,7 +57,7 @@ public final class SkillTypeModule extends RootModule.Impl<ContentSkillType.Chil
 
     @Override
     protected void configure0() {
-      this.bindChildType(new ContentSkillType.Child("type", Collections.emptyList()));
+      this.bindChildType(new ContentSkillType.Child("skill", Collections.emptyList()));
       this.bindChildLoader(new TypeLiteral<ChildContentLoaderImpl<ContentSkillType.Child>>() {
       });
       this.bindBuilder(ContentSkillTypeBuilder.class).to(ContentSkillTypeBuilderImpl.class);

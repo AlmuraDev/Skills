@@ -22,39 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.effect;
+package org.inspirenxe.skills.impl.content.type.effect.potion;
 
 import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.content.inject.ForChild;
-import com.almuradev.droplet.content.inject.ForRoot;
-import com.almuradev.droplet.content.inject.RootModule;
-import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.effect.firework.FireworkEffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.potion.PotionEffectTypeModule;
+import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
+import org.inspirenxe.skills.impl.content.type.effect.potion.processor.AmplifierProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.potion.processor.DurationProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.potion.processor.IsAmbientProccessor;
+import org.inspirenxe.skills.impl.content.type.effect.potion.processor.PotionProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.potion.processor.ShowParticlesProcessor;
 
-public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> implements ParserBinder {
+public final class PotionEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> implements ParserBinder {
 
   @Override
   protected void configure0() {
-    this.bindRootType(new ContentEffectType.Root());
-    this.bindRootLoader(new TypeLiteral<EffectTypeRootLoader>() {
+    this.bindChildType(new ContentEffectType.Child("potion"));
+    this.bindChildLoader(new TypeLiteral<PotionEffectTypeRootLoader>() {
     });
 
-    this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?>>>() {
-    }, ForRoot.class));
+    this.bindBuilder(ContentPotionEffectTypeBuilder.class).to(ContentPotionEffectTypeBuilderImpl.class);
 
-    this.installChild(new FireworkEffectTypeModule(), new BaseChildModule());
-    this.installChild(new PotionEffectTypeModule(), new BaseChildModule());
-  }
+    this.bindProcessor(AmplifierProcessor.class);
+    this.bindProcessor(DurationProcessor.class);
+    this.bindProcessor(IsAmbientProccessor.class);
+    this.bindProcessor(PotionProcessor.class);
+    this.bindProcessor(ShowParticlesProcessor.class);
 
-  private static class BaseChildModule extends ChildModule.Impl<ContentEffectType.Child> {
-
-    @Override
-    protected void configure0() {
-      this.inSet(Key.get(Processor.class, ForChild.class));
-    }
+    this.bindFacet().toProvider(this.getProvider(PotionEffectTypeRootLoader.class));
   }
 }

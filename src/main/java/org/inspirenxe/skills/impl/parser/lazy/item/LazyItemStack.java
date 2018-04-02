@@ -22,40 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.registry.module;
+package org.inspirenxe.skills.impl.parser.lazy.item;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+import java.util.function.Predicate;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+public interface LazyItemStack extends Predicate<ItemStack> {
 
-@Singleton
-public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
+  @Deprecated // 1.13
+      int DEFAULT_DATA = 0;
+  int DEFAULT_QUANTITY = 1;
 
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
+  ItemType item();
 
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
+  @Deprecated // 1.13
+  int data();
 
-  @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
+  int quantity();
+
+  default ItemStack stack() {
+    return ItemStack.builder()
+        .itemType(this.item())
+        .quantity(this.quantity())
+        .add(Keys.ITEM_DURABILITY, this.data())
+        .build();
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
-    return Optional.ofNullable(this.map.get(id));
+  default boolean test(final ItemStack item) {
+    return item.getType() == this.item() && item.get(Keys.ITEM_DURABILITY).orElse(null) == this.data();
   }
 
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
+  default boolean matches(final ItemType that) {
+    return this.item() == that;
+  }
+
+  default boolean matches(final LazyItemStack that) {
+    return this.item() == that.item() && this.data() == that.data();
   }
 }
