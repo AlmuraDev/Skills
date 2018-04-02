@@ -34,7 +34,7 @@ public interface ContentFunction extends ContentType.Child {
   final class Root extends ContentType.Root.Impl<Child> implements ContentFunction {
 
     Root() {
-      super("function", new TypeToken<ContentFunction.Child>() {
+      super("function", "function", new TypeToken<ContentFunction.Child>() {
       });
     }
   }

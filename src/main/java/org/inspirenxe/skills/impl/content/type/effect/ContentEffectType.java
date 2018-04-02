@@ -34,7 +34,7 @@ public interface ContentEffectType extends ContentType.Child {
   final class Root extends ContentType.Root.Impl<Child> implements ContentEffectType {
 
     Root() {
-      super("effect", new TypeToken<ContentEffectType.Child>() {
+      super("effect", "effect", new TypeToken<ContentEffectType.Child>() {
       });
     }
   }

@@ -32,6 +32,7 @@ import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
 @Singleton
@@ -44,7 +45,7 @@ public final class FireworkEffectTypeRootLoader extends ChildContentLoaderImpl<C
     this.registry = registry;
   }
 
-  @Listener
+  @Listener(order = Order.AFTER_PRE)
   public void onGameStartingServer(GameStartingServerEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(FireworkEffectType.class)));
   }

@@ -22,31 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.effect.firework.processor;
+package org.inspirenxe.skills.impl.content.type.color.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.Parser;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.Inject;
-import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilder;
-import org.spongepowered.api.item.FireworkShape;
+import org.inspirenxe.skills.impl.content.type.color.ContentColorTypeBuilder;
 
-public final class FireworkShapeProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
+public final class BProcessor implements Processor<ContentColorTypeBuilder> {
 
-  private final Registry<FireworkShape> registry;
-  private final Parser<RegistryKey> keyParser;
+  private final Parser<Integer> intParser;
 
   @Inject
-  public FireworkShapeProcessor(final Registry<FireworkShape> registry, final Parser<RegistryKey> keyParser) {
-    this.registry = registry;
-    this.keyParser = keyParser;
+  public BProcessor(final Parser<Integer> intParser) {
+    this.intParser = intParser;
   }
 
   @Override
-  public void process(Node node, ContentFireworkEffectTypeBuilder builder) throws XMLException {
-    builder.shape(this.registry.ref(this.keyParser.parse(node.requireAttribute("shape"))));
+  public void process(Node node, ContentColorTypeBuilder builder) {
+    node.attribute("b").ifPresent(b -> builder.b(this.intParser.parse(b)));
   }
 }

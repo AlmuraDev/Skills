@@ -22,21 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type;
+package org.inspirenxe.skills.api.color;
 
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.util.Color;
 
-public final class ContentTypeModule extends AbstractModule {
+public interface ColorType extends CatalogType {
 
-  @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
-  }
+  Color getColor();
 }

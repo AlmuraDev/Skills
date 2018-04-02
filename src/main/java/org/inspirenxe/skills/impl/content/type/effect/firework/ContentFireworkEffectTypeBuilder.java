@@ -25,11 +25,22 @@
 package org.inspirenxe.skills.impl.content.type.effect.firework;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectTypeBuilder;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
 import org.spongepowered.api.item.FireworkShape;
 
+import java.util.List;
+
 public interface ContentFireworkEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsFireworkEffectType> {
 
   void shape(final RegistryReference<FireworkShape> shape);
+
+  void colors(final List<RegistryReference<ColorType>> colors);
+
+  void fadeColors(final List<RegistryReference<ColorType>> fadeColors);
+
+  void flickers(final boolean flickers);
+
+  void trails(final boolean trails);
 }

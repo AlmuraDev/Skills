@@ -22,21 +22,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type;
+package org.inspirenxe.skills.impl.content.type.color;
 
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
+import com.almuradev.droplet.content.type.AbstractContentBuilder;
+import org.inspirenxe.skills.impl.color.ColorTypeImpl;
+import org.spongepowered.api.util.Color;
 
-public final class ContentTypeModule extends AbstractModule {
+public final class ContentColorTypeBuilderImpl extends AbstractContentBuilder<ColorTypeImpl> implements ContentColorTypeBuilder {
+
+  private static final int NOT_SET = -1;
+
+  private int b = NOT_SET;
+  private int g = NOT_SET;
+  private int hex = NOT_SET;
+  private int r = NOT_SET;
 
   @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
+  public void b(int b) {
+    this.b = b;
+  }
+
+  @Override
+  public void g(int g) {
+    this.g = g;
+  }
+
+  @Override
+  public void hex(int hex) {
+    this.hex = hex;
+  }
+
+  @Override
+  public void r(int r) {
+    this.r = r;
+  }
+
+  @Override
+  public ColorTypeImpl build() {
+    final Color color;
+
+    if (this.hex > NOT_SET) {
+      color = Color.ofRgb(this.hex);
+    } else {
+      if (this.b <= NOT_SET || this.g <= NOT_SET || this.r <= NOT_SET) {
+        throw new IllegalStateException("Must provide a value for each component of a color!");
+      }
+
+      color = Color.ofRgb(this.r, this.g, this.b);
+    }
+
+    return new ColorTypeImpl(this.key(), color);
   }
 }

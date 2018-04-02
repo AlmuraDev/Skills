@@ -22,21 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type;
+package org.inspirenxe.skills.impl.content.type.effect.firework.processor;
 
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
+import com.almuradev.droplet.content.processor.Processor;
+import com.almuradev.droplet.parser.Parser;
+import com.google.common.collect.MoreCollectors;
+import com.google.inject.Inject;
+import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilder;
 
-public final class ContentTypeModule extends AbstractModule {
+public final class FlickersProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
+
+  private final Parser<Boolean> booleanParser;
+
+  @Inject
+  public FlickersProcessor(final Parser<Boolean> booleanParser) {
+    this.booleanParser = booleanParser;
+  }
 
   @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
+  public void process(Node node, ContentFireworkEffectTypeBuilder builder) {
+    node.nodes("flickers").collect(MoreCollectors.toOptional()).ifPresent(flickers -> builder.flickers(this.booleanParser.parse(flickers)));
   }
 }

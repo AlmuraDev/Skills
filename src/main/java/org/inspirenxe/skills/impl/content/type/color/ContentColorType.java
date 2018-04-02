@@ -22,21 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type;
+package org.inspirenxe.skills.impl.content.type.color;
 
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
+import com.almuradev.droplet.content.type.ContentType;
+import com.google.common.reflect.TypeToken;
+import org.inspirenxe.skills.api.color.ColorType;
 
-public final class ContentTypeModule extends AbstractModule {
+import java.util.List;
 
-  @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
+public interface ContentColorType extends ContentType.Child {
+
+  final class Root extends ContentType.Root.Impl<Child> implements ContentColorType {
+
+    Root() {
+      super("color", "color", new TypeToken<ContentColorType.Child>() {
+      });
+    }
+  }
+
+  final class Child extends Impl implements ContentColorType {
+
+    public Child(final String id) {
+      super(id);
+    }
+
+    public Child(final String id, final List<String> path) {
+      super(id, path);
+    }
   }
 }

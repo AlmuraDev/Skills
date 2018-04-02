@@ -22,21 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type;
+package org.inspirenxe.skills.impl.color;
 
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
+import com.almuradev.droplet.registry.RegistryKey;
+import org.spongepowered.api.util.Color;
 
-public final class ContentTypeModule extends AbstractModule {
+public final class ColorTypeImpl implements SkillsColorType {
+
+  private final RegistryKey registryKey;
+  private final Color color;
+
+  public ColorTypeImpl(final RegistryKey registryKey, final Color color) {
+    this.registryKey = registryKey;
+    this.color = color;
+  }
 
   @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
+  public String getId() {
+    return this.registryKey.toString();
+  }
+
+  @Override
+  public String getName() {
+    return this.registryKey.value();
+  }
+
+  @Override
+  public Color getColor() {
+    return this.color;
   }
 }

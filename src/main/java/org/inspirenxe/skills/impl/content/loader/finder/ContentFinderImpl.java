@@ -63,6 +63,7 @@ public final class ContentFinderImpl implements ContentFinder {
     this.logger.debug("{}Discovering {} content...", Logging.indent(1), rootType.id());
     this.configuration.searchPaths().forEach(Exceptions.rethrowConsumer(path -> {
       visitor.visitCore(path);
+      visitor.visitNamespace(path);
       visitor.visitContent(path);
       final Path root = rootType.path(path).toAbsolutePath();
       visitor.visitRoot(rootType, root);
@@ -75,6 +76,15 @@ public final class ContentFinderImpl implements ContentFinder {
           public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
             ContentFinderImpl.this.logger.debug("{}Found {}", Logging.indent(3), childPath.relativize(file));
             visitor.visitEntry(file, child.builder());
+            return FileVisitResult.CONTINUE;
+          }
+
+          @Override
+          public FileVisitResult preVisitDirectory(final Path directory, final BasicFileAttributes attributes) {
+            if (directory.getFileName().toString().equals("include")) {
+              ContentFinderImpl.this.logger.debug("{}Skipping include directory", Logging.indent(4));
+              return FileVisitResult.SKIP_SUBTREE;
+            }
             return FileVisitResult.CONTINUE;
           }
         });

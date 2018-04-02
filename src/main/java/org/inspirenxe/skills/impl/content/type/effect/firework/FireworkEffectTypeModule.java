@@ -28,7 +28,11 @@ import com.almuradev.droplet.content.inject.ChildModule;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
-import org.inspirenxe.skills.impl.content.type.effect.firework.processor.FireworkShapeProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.firework.processor.ColorsProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.firework.processor.FadeColorsProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.firework.processor.FlickersProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.firework.processor.ShapeProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.firework.processor.TrailsProcessor;
 
 public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> implements ParserBinder {
 
@@ -40,7 +44,11 @@ public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffe
 
     this.bindBuilder(ContentFireworkEffectTypeBuilder.class).to(ContentFireworkEffectTypeBuilderImpl.class);
 
-    this.bindProcessor(FireworkShapeProcessor.class);
+    this.bindProcessor(ShapeProcessor.class);
+    this.bindProcessor(ColorsProcessor.class);
+    this.bindProcessor(FadeColorsProcessor.class);
+    this.bindProcessor(FlickersProcessor.class);
+    this.bindProcessor(TrailsProcessor.class);
 
     this.bindFacet().toProvider(this.getProvider(FireworkEffectTypeRootLoader.class));
   }

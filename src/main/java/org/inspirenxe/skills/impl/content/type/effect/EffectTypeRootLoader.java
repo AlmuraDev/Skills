@@ -28,6 +28,6 @@ import com.google.inject.Singleton;
 import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
 
 @Singleton
-public class EffectTypeRootLoader extends RootContentLoaderImpl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
+public final class EffectTypeRootLoader extends RootContentLoaderImpl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
 
 }

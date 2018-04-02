@@ -33,8 +33,12 @@ import org.inspirenxe.skills.impl.content.type.function.ContentFunctionBuilder;
 
 public final class FormulaProcessor implements Processor<ContentFunctionBuilder<?>> {
 
+  private final Parser<String> stringParser;
+
   @Inject
-  private Parser<String> stringParser;
+  public FormulaProcessor(final Parser<String> stringParser) {
+    this.stringParser = stringParser;
+  }
 
   @Override
   public void process(Node node, ContentFunctionBuilder<?> builder) throws XMLException {

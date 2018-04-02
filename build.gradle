@@ -47,8 +47,7 @@ license {
 processResources {
     filesMatching('**/mcmod.info') {
         filter ReplaceTokens, tokens: [
-                'build'           : project.internalBuild,
-                'minecraftVersion': project.minecraftVersion
+                'version': project.version
         ]
     }
 }

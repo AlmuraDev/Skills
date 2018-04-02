@@ -33,10 +33,11 @@ import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
 import org.inspirenxe.skills.impl.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
 @Singleton
-public class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {
+public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {
 
   private final Registry<SkillType> registry;
 
@@ -45,7 +46,7 @@ public class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.
     this.registry = registry;
   }
 
-  @Listener
+  @Listener(order = Order.FIRST)
   public void onGameStartingServer(GameStartingServerEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SkillTypeImpl.class)));
   }

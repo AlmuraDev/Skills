@@ -33,6 +33,7 @@ import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
 import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
 @Singleton
@@ -45,7 +46,7 @@ public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<Conten
     this.registry = registry;
   }
 
-  @Listener
+  @Listener(order = Order.PRE)
   public void onGameStartingServer(GameStartingServerEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunction.class)));
   }

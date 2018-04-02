@@ -27,16 +27,26 @@ package org.inspirenxe.skills.impl.content.type.effect.firework;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.impl.content.type.effect.AbstractContentEffectTypeBuilder;
 import org.inspirenxe.skills.impl.effect.firework.FireworkEffectTypeImpl;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
 import org.spongepowered.api.item.FireworkEffect;
 import org.spongepowered.api.item.FireworkShape;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 public final class ContentFireworkEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsFireworkEffectType>
     implements ContentFireworkEffectTypeBuilder {
 
-  private RegistryReference<FireworkShape> shape;
+  @Nullable private RegistryReference<FireworkShape> shape;
+  @Nullable private List<RegistryReference<ColorType>> colors;
+  @Nullable private List<RegistryReference<ColorType>> fadeColors;
+  private boolean flickers;
+  private boolean trails;
 
   @Override
   public void shape(RegistryReference<FireworkShape> shape) {
@@ -44,13 +54,40 @@ public final class ContentFireworkEffectTypeBuilderImpl extends AbstractContentE
   }
 
   @Override
+  public void colors(List<RegistryReference<ColorType>> colors) {
+    this.colors = colors;
+  }
+
+  @Override
+  public void fadeColors(List<RegistryReference<ColorType>> fadeColors) {
+    this.fadeColors = fadeColors;
+  }
+
+  @Override
+  public void flickers(boolean flickers) {
+    this.flickers = flickers;
+  }
+
+  @Override
+  public void trails(boolean trails) {
+    this.trails = trails;
+  }
+
+  @Override
   public SkillsFireworkEffectType build() {
-    checkNotNull(this.key());
+    checkNotNull(this.shape);
+    checkNotNull(this.colors);
 
-    final FireworkEffect effect = FireworkEffect.builder()
+    final FireworkEffect.Builder builder = FireworkEffect.builder()
         .shape(this.shape.require())
-        .build();
+        .colors(this.colors.stream().map(RegistryReference::require).map(ColorType::getColor).collect(Collectors.toList()));
+    if (this.fadeColors != null) {
+      builder.fades(this.fadeColors.stream().map(RegistryReference::require).map(ColorType::getColor).collect(Collectors.toList()));
+    }
+    builder
+        .flicker(this.flickers)
+        .trail(this.trails);
 
-    return new FireworkEffectTypeImpl(this.key(), effect);
+    return new FireworkEffectTypeImpl(this.key(), builder.build());
   }
 }

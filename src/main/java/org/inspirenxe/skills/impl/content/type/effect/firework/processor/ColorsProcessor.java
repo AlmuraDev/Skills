@@ -22,31 +22,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor;
+package org.inspirenxe.skills.impl.content.type.effect.firework.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
-import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
+import org.inspirenxe.skills.api.color.ColorType;
+import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilder;
 
-public final class LevelFunctionProcessor implements Processor<ContentSkillTypeBuilder> {
+public final class ColorsProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
 
-  private final Registry<LevelFunction> registry;
-  private final Parser<RegistryKey> keyParser;
+  private final Registry<ColorType> registry;
+  private final Parser<RegistryKey> registryKeyParser;
 
   @Inject
-  public LevelFunctionProcessor(final Registry<LevelFunction> registry, final Parser<RegistryKey> keyParser) {
+  public ColorsProcessor(final Registry<ColorType> registry, final Parser<RegistryKey> registryKeyParser) {
     this.registry = registry;
-    this.keyParser = keyParser;
+    this.registryKeyParser = registryKeyParser;
   }
 
   @Override
-  public void process(final Node node, final ContentSkillTypeBuilder builder) throws XMLException {
-    builder.levelFunction(this.registry.ref(keyParser.parse(node.requireAttribute("level-function"))));
+  public void process(Node node, ContentFireworkEffectTypeBuilder builder) {
+    node.nodes("colors").collect(MoreCollectors.toOptional()).ifPresent(colors -> {
+      final ImmutableList.Builder<RegistryReference<ColorType>> colorsList = ImmutableList.builder();
+
+      node.nodes("color").forEach(color -> colorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
+      builder.colors(colorsList.build());
+    });
   }
 }

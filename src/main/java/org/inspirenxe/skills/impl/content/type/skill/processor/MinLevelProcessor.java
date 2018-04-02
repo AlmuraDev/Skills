@@ -42,6 +42,6 @@ public final class MinLevelProcessor implements Processor<ContentSkillTypeBuilde
 
   @Override
   public void process(final Node node, final ContentSkillTypeBuilder builder) throws XMLException {
-    builder.minLevel(this.intParser.parse(node.requireAttribute("min_level")));
+    builder.minLevel(this.intParser.parse(node.requireAttribute("min-level")));
   }
 }

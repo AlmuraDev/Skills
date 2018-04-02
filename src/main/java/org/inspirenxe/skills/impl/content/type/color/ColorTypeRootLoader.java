@@ -22,21 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type;
+package org.inspirenxe.skills.impl.content.type.color;
 
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
+import com.almuradev.droplet.registry.Registry;
+import com.almuradev.toolbox.inject.event.Witness;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.color.ColorType;
+import org.inspirenxe.skills.impl.color.ColorTypeImpl;
+import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
+import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
-public final class ContentTypeModule extends AbstractModule {
+@Singleton
+public final class ColorTypeRootLoader extends RootContentLoaderImpl<ContentColorType.Child, ContentColorTypeBuilder> implements Witness {
 
-  @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
+  private final Registry<ColorType> registry;
+
+  @Inject
+  public ColorTypeRootLoader(final Registry<ColorType> registry) {
+    this.registry = registry;
+  }
+
+  @Listener(order = Order.FIRST)
+  public void onGameStartingServer(GameStartingServerEvent event) {
+    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(ColorTypeImpl.class)));
   }
 }

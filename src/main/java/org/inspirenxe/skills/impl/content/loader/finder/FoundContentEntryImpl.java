@@ -24,6 +24,9 @@
  */
 package org.inspirenxe.skills.impl.content.loader.finder;
 
+import com.almuradev.droplet.content.feature.context.FeatureContext;
+import com.almuradev.droplet.content.feature.context.FeatureContextImpl;
+import com.almuradev.droplet.content.loader.DocumentFactory;
 import com.almuradev.droplet.content.loader.finder.FoundContent;
 import com.almuradev.droplet.content.type.Content;
 import com.almuradev.droplet.content.type.ContentBuilder;
@@ -31,39 +34,37 @@ import com.almuradev.droplet.content.type.ContentType;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.google.common.base.Suppliers;
 import net.kyori.lunar.exception.Exceptions;
-import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.registry.CatalogKey;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-public class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends ContentType.Child> implements FoundContent.Entry<R, C> {
-
+public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends ContentType.Child> implements FoundContent.Entry<R, C> {
+  private final String namespace;
   private final RegistryKey key;
   private final R rootType;
   private final C childType;
   private final Path absolutePath;
   private final Supplier<Element> rootElement;
+  private final FeatureContext context = new FeatureContextImpl();
   private final ContentBuilder builder;
   private Content result;
 
-  FoundContentEntryImpl(final R rootType, final Path rootPath, final C childType, final Path absolutePath, final ContentBuilder builder) {
-    this.key = new CatalogKey(SkillsImpl.ID, rootPath.relativize(absolutePath).toString().replace(".xml", "").replace('\\', '/'));
+  FoundContentEntryImpl(final String namespace, final R rootType, final Path rootPath, final C childType, final Path absolutePath, final DocumentFactory documentFactory, final ContentBuilder builder) {
+    this.namespace = namespace;
+    this.key = new CatalogKey(namespace + ':' + rootPath.relativize(absolutePath).toString().replace(".xml", "").replace('\\', '/'));
     this.rootType = rootType;
     this.childType = childType;
     this.absolutePath = absolutePath;
-    this.rootElement = Suppliers.memoize(Exceptions.rethrowSupplier(this::rootElement0)::get);
+    this.rootElement = Suppliers.memoize(Exceptions.rethrowSupplier(() -> documentFactory.read(this.absolutePath).getRootElement())::get);
     this.builder = builder;
     this.builder.key(this.key);
   }
 
   @Override
   public String namespace() {
-    return SkillsImpl.ID;
+    return this.namespace;
   }
 
   @Override
@@ -91,9 +92,9 @@ public class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends Cont
     return this.rootElement.get();
   }
 
-  private Element rootElement0() throws IOException, JDOMException {
-    final SAXBuilder sb = new SAXBuilder();
-    return sb.build(this.absolutePath.toFile()).getRootElement();
+  @Override
+  public FeatureContext context() {
+    return this.context;
   }
 
   @Override
@@ -103,7 +104,7 @@ public class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends Cont
 
   @Override
   public Content result() {
-    if (this.result == null) {
+    if(this.result == null) {
       this.result = this.builder.build();
     }
     return this.result;

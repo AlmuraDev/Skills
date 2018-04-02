@@ -42,6 +42,6 @@ public final class MaxLevelProcessor implements Processor<ContentSkillTypeBuilde
 
   @Override
   public void process(final Node node, final ContentSkillTypeBuilder builder) throws XMLException {
-    builder.maxLevel(this.intParser.parse(node.requireAttribute("max_level")));
+    builder.maxLevel(this.intParser.parse(node.requireAttribute("max-level")));
   }
 }

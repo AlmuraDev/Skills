@@ -22,21 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type;
+package org.inspirenxe.skills.impl.content.type.color.processor;
 
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
-import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
-import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
+import com.almuradev.droplet.content.processor.Processor;
+import com.almuradev.droplet.parser.Parser;
+import com.google.inject.Inject;
+import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.content.type.color.ContentColorTypeBuilder;
 
-public final class ContentTypeModule extends AbstractModule {
+public final class GProcessor implements Processor<ContentColorTypeBuilder> {
+
+  private final Parser<Integer> intParser;
+
+  @Inject
+  public GProcessor(final Parser<Integer> intParser) {
+    this.intParser = intParser;
+  }
 
   @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
+  public void process(Node node, ContentColorTypeBuilder builder) {
+    node.attribute("g").ifPresent(g -> builder.g(this.intParser.parse(g)));
   }
 }

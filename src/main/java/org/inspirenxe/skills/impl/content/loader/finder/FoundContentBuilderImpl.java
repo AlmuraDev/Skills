@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.loader.finder;
 
 import com.almuradev.droplet.content.loader.ChildContentLoader;
+import com.almuradev.droplet.content.loader.DocumentFactory;
 import com.almuradev.droplet.content.loader.finder.FoundContent;
 import com.almuradev.droplet.content.loader.finder.FoundContentBuilder;
 import com.almuradev.droplet.content.type.ContentBuilder;
@@ -32,6 +33,8 @@ import com.almuradev.droplet.content.type.ContentType;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Provider;
@@ -39,13 +42,17 @@ import javax.inject.Provider;
 final class FoundContentBuilderImpl<R extends ContentType.Root<C>, C extends ContentType.Child> implements FoundContentBuilder<R, C> {
 
   private final List<FoundContent.Entry<R, C>> entries = new ArrayList<>();
+  private String namespace;
+  private Path namespacePath;
   private R root;
   private Path rootPath;
   private ChildContentLoader<C> childLoader;
   private C child;
 
   @Override
-  public void namespace(final String namespace, final Path path) {
+  public void namespace(final String namespace, final Path namespacePath) {
+    this.namespace = namespace;
+    this.namespacePath = namespacePath;
   }
 
   @Override
@@ -63,10 +70,12 @@ final class FoundContentBuilderImpl<R extends ContentType.Root<C>, C extends Con
   @Override
   public void entry(final Path path, final Provider<ContentBuilder> builder) {
     final FoundContent.Entry<R, C> entry = new FoundContentEntryImpl<>(
+        this.namespace,
         this.root,
         this.rootPath,
         this.child,
         path.toAbsolutePath(),
+        new DocumentFactory(Collections.singletonList(this.rootPath)),
         builder.get()
     );
     this.childLoader.foundContent().offer(entry);
