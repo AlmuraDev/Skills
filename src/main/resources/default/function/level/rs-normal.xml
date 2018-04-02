@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet spec="1.0.0">
+  <function formula="1/8L(L-1)+75((2^((L-1)/7)-1)/(1-2^(-(1/7))))"/>
+</droplet>

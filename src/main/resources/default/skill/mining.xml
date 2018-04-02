@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet spec="1.0.0" xmlns:skills="skills">
+  <skill name="Mining" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99">
+    <world-share>
+      <world name="DIM1">
+        <inherit>world</inherit>
+      </world>
+      <world name="DIM-1">
+        <inherit>world</inherit>
+      </world>
+    </world-share>
+    <events>
+      <change-block>
+        <filter key="change-block-break">
+          <all>
+            <skills:break-block/>
+            <skills:player/>
+            <skills:data key="sponge:gamemode" value="minecraft:survival"/>
+            <skills:owner value="none"/>
+          </all>
+        </filter>
+        <filter-apply>
+          <apply>
+            <if>
+              <not>
+                <filter key="change-block-break"/>
+              </not>
+            </if>
+            <then>
+              <skills:is-cancelled value="true"/>
+            </then>
+          </apply>
+        </filter-apply>
+        <block>
+          <filter key="stone-gravel-block">
+            <any>
+              <dictionary>stone</dictionary>
+              <type>minecraft:gravel</type>
+            </any>
+          </filter>
+          <filter key="coal-block">
+            <all>
+              <dictionary>coal</dictionary>
+              <skills:level key="coal-block-level" min="10"/>
+            </all>
+          </filter>
+          <filter key="iron-ore-block">
+            <all>
+              <dictionary>iron-ore</dictionary>
+              <not>
+                <namespace>buildcraft</namespace>
+              </not>
+              <skills:level key="iron-ore-block-level" min="20"/>
+            </all>
+          </filter>
+          <filter key="gold-ore-block">
+            <all>
+              <type>minecraft:gold-ore</type>
+              <skills:level key="gold-ore-block-level" min="30"/>
+            </all>
+          </filter>
+          <filter key="diamond-ore-block">
+            <all>
+              <type>minecraft:diamond-ore</type>
+              <skills:level key="diamond-ore-block-level" min="40"/>
+            </all>
+          </filter>
+          <filter key="emerald-ore-block">
+            <all>
+              <type>minecraft:emerald-ore</type>
+              <skills:level key="emerald-ore-block-level" min="50"/>
+            </all>
+          </filter>
+          <filter-apply>
+            <apply>
+              <if>
+                <not>
+                  <any>
+                    <filter key="coal-block-level"/>
+                    <filter key="iron-ore-block-level"/>
+                    <filter key="gold-ore-block-level"/>
+                    <filter key="diamond-ore-block-level"/>
+                    <filter key="emerald-ore-block-level"/>
+                  </any>
+                </not>
+              </if>
+              <then>
+                <skills:cancel-transaction value="true"/>
+              </then>
+            </apply>
+            <apply>
+              <if>
+                <filter key="stone-gravel-block"/>
+              </if>
+              <then>
+                <skills:experience op="add" value="5"/>
+                <skills:economy-modifier value="0.05"/>
+              </then>
+            </apply>
+            <apply>
+              <if>
+                <filter key="coal-block"/>
+              </if>
+              <then>
+                <skills:experience op="add" value="10"/>
+                <skills:economy-modifier value="0.15"/>
+              </then>
+            </apply>
+            <apply>
+              <if>
+                <filter key="iron-ore-block"/>
+              </if>
+              <then>
+                <skills:experience op="add" value="20"/>
+                <skills:economy-modifier value="0.25"/>
+              </then>
+            </apply>
+            <apply>
+              <if>
+                <filter key="gold-ore-block"/>
+              </if>
+              <then>
+                <skills:experience op="add" value="40"/>
+                <skills:economy-modifier value="0.35"/>
+              </then>
+            </apply>
+            <apply>
+              <if>
+                <filter key="diamond-ore-block"/>
+              </if>
+              <then>
+                <skills:experience op="add" value="60"/>
+                <skills:economy-modifier value="0.45"/>
+              </then>
+            </apply>
+            <apply>
+              <if>
+                <filter key="emerald-ore-block"/>
+              </if>
+              <then>
+                <skills:experience op="add" value="100"/>
+                <skills:economy-modifier value="0.55"/>
+              </then>
+            </apply>
+          </filter-apply>
+        </block>
+      </change-block>
+      <interact>
+        <filter key="interact-item">
+          <all>
+            <skills:interact-item/>
+            <skills:player/>
+            <skills:data key="sponge:gamemode" value="minecraft:survival"/>
+          </all>
+        </filter>
+        <filter-apply>
+          <apply>
+            <if>
+              <not>
+                  <filter key="interact-item"/>
+              </not>
+            </if>
+            <then>
+              <skills:is-cancelled value="true"/>
+            </then>
+          </apply>
+        </filter-apply>
+        <item>
+          <filter key="wooden-pickaxe">
+            <all>
+              <type>minecraft:wooden-pickaxe</type>
+            </all>
+          </filter>
+          <filter key="stone-pickaxe">
+            <all>
+              <type>minecraft:stone-pickaxe</type>
+              <skills:level key="stone-pickaxe-level" op="greater-than" value="9"/>
+            </all>
+          </filter>
+          <filter key="iron-pickaxe">
+            <all>
+              <type>minecraft:iron-pickaxe</type>
+              <skills:level key="iron-pickaxe-level" op="greater-than" value="19"/>
+            </all>
+          </filter>
+          <filter key="gold-pickaxe">
+            <all>
+              <type>minecraft:gold-pickaxe</type>
+              <skills:level key="gold-pickaxe-level" op="greater-than" value="29"/>
+            </all>
+          </filter>
+          <filter key="diamond-pickaxe">
+            <all>
+              <type>minecraft:diamond-pickaxe</type>
+              <skills:level key="diamond-pickaxe-level" op="greater-than" value="39"/>
+            </all>
+          </filter>
+          <filter-apply>
+            <apply>
+              <if>
+                <not>
+                  <any>
+                    <filter key="stone-pickaxe-level"/>
+                    <filter key="iron-pickaxe-level"/>
+                    <filter key="gold-pickaxe-level"/>
+                    <filter key="diamond-pickaxe-level"/>
+                  </any>
+                </not>
+              </if>
+              <then>
+                <skills:cancel-transaction value="true"/>
+                <skills:data key="sponge:durability" op="add" value="-5"/>
+              </then>
+            </apply>
+          </filter-apply>
+        </item>
+      </interact>
+      <change-experience>
+        <effects>
+          <effect key="skills:firework/mining-level-up" position="0,2.5,0">
+            <filter>
+              <all>
+                <skills:player/>
+                <skills:data key="sponge:is-sneaking" value="false"/>
+              </all>
+            </filter>
+          </effect>
+          <effect key="skills:firework/mining-level-max" position="0,2.5,0">
+            <filter>
+              <all>
+                <skills:player/>
+                <skills:level value="99"/>
+                <skills:data key="sponge:is-sneaking" value="false"/>
+              </all>
+            </filter>
+          </effect>
+        </effects>
+        <messages>
+          <message key="chat" text="Congratulations! You've just advanced a `b{name}`r level and are now `2{new-level}`r.">
+            <filter>
+            <all>
+              <skills:player/>
+              <skills:level-change/>
+            </all>
+            </filter>
+          </message>
+          <message key="action-bar" text="+ {exp-diff}xp (`b{name}`r)">
+            <filter>
+            <all>
+              <skills:player/>
+              <skills:level-change/>
+            </all>
+            </filter>
+          </message>
+        </messages>
+      </change-experience>
+    </events>
+  </skill>
+</droplet>
