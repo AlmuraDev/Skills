@@ -31,6 +31,8 @@ import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.impl.color.ColorTypeImpl;
 import org.inspirenxe.skills.impl.registry.CatalogKey;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+import org.spongepowered.api.registry.RegistrationPhase;
+import org.spongepowered.api.registry.util.DelayedRegistration;
 import org.spongepowered.api.util.Color;
 
 import java.util.Collection;
@@ -46,6 +48,7 @@ public final class ColorTypeRegistryModule implements AdditionalCatalogRegistryM
 
   private final Map<String, ColorType> map = new HashMap<>();
 
+  @DelayedRegistration(RegistrationPhase.PRE_INIT)
   @Override
   public void registerDefaults() {
     this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:black"), Color.BLACK));
