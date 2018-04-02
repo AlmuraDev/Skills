@@ -49,8 +49,10 @@ public final class ParserModule extends AbstractModule implements ParserBinder {
     });
     this.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
     this.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
-    this.bindParser(new TypeLiteral<LazyStateValue<?>>() {}).to(LazyStateValueParser.class);
+    this.bindParser(new TypeLiteral<LazyStateValue<?>>() {
+    }).to(LazyStateValueParser.class);
     this.bindParser(LazyItemStack.class).to(LazyItemStackParser.class);
-    this.bindParser(PotionEffectType.class).to(new TypeLiteral<RegistryParser<PotionEffectType>>() {});
+    this.bindParser(PotionEffectType.class).to(new TypeLiteral<RegistryParser<PotionEffectType>>() {
+    });
   }
 }

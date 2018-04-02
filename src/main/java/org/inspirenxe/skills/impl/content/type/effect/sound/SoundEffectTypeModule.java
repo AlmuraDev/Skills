@@ -22,25 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.content.type.effect.sound;
 
 import com.almuradev.droplet.content.inject.ChildModule;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
+import org.inspirenxe.skills.impl.content.type.effect.sound.processor.CategoryProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.sound.processor.MinVolumeProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.sound.processor.PitchProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.sound.processor.SoundProcessor;
+import org.inspirenxe.skills.impl.content.type.effect.sound.processor.VolumeProcessor;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class SoundEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> implements ParserBinder {
 
   @Override
   protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("economy"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
+    this.bindChildType(new ContentEffectType.Child("sound"));
+    this.bindChildLoader(new TypeLiteral<SoundEffectTypeRootLoader>() {
     });
 
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+    this.bindBuilder(ContentSoundEffectTypeBuilder.class).to(ContentSoundEffectTypeBuilderImpl.class);
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+    this.bindProcessor(CategoryProcessor.class);
+    this.bindProcessor(MinVolumeProcessor.class);
+    this.bindProcessor(PitchProcessor.class);
+    this.bindProcessor(SoundProcessor.class);
+    this.bindProcessor(VolumeProcessor.class);
+
+    this.bindFacet().toProvider(this.getProvider(SoundEffectTypeRootLoader.class));
   }
 }

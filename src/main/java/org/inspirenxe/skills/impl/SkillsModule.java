@@ -31,27 +31,14 @@ import com.google.inject.Provides;
 import net.kyori.violet.AbstractModule;
 import net.kyori.xml.node.Node;
 import org.inspirenxe.skills.api.SkillManager;
-import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.api.color.ColorType;
-import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
-import org.inspirenxe.skills.api.function.economy.EconomyFunction;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
 import org.inspirenxe.skills.impl.component.ComponentModule;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;
 import org.inspirenxe.skills.impl.content.ContentModule;
-import org.inspirenxe.skills.impl.content.type.effect.potion.PotionEffectTypeModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.impl.parser.ParserModule;
 import org.inspirenxe.skills.impl.registry.RegistryModule;
-import org.inspirenxe.skills.impl.registry.module.ColorTypeRegistryModule;
-import org.inspirenxe.skills.impl.registry.module.EconomyFunctionRegistryModule;
-import org.inspirenxe.skills.impl.registry.module.FireworkEffectTypeRegistryModule;
-import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
-import org.inspirenxe.skills.impl.registry.module.PotionEffectTypeRegistryModule;
-import org.inspirenxe.skills.impl.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.skill.SkillImpl;
 import org.inspirenxe.skills.impl.skill.SkillManagerImpl;
 import org.jdom2.JDOMException;
@@ -80,14 +67,6 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
     // Register command tree
     this.command().rootProvider(SkillsCommandCreator.class, SkillsImpl.ID);
-
-    // Register registry for skills building
-    this.registry().module(ColorType.class, ColorTypeRegistryModule.instance);
-    this.registry().module(EconomyFunction.class, EconomyFunctionRegistryModule.instance);
-    this.registry().module(FireworkEffectType.class, FireworkEffectTypeRegistryModule.instance);
-    this.registry().module(LevelFunction.class, LevelFunctionRegistryModule.instance);
-    this.registry().module(PotionEffectType.class, PotionEffectTypeRegistryModule.instance);
-    this.registry().module(SkillType.class, SkillTypeRegistryModule.instance);
 
     this.requestStaticInjection(SkillImpl.class);
   }

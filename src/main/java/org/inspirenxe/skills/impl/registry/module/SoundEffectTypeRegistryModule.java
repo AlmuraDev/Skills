@@ -22,25 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.registry.module;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
+import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+@Singleton
+public final class SoundEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<SoundEffectType> {
+
+  public static final SoundEffectTypeRegistryModule instance = new SoundEffectTypeRegistryModule();
+
+  private final Map<String, SoundEffectType> map = new HashMap<>();
 
   @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("economy"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
+  public void registerAdditionalCatalog(SoundEffectType catalogType) {
+    checkNotNull(catalogType);
+    this.map.put(catalogType.getId(), catalogType);
+  }
 
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+  @Override
+  public Optional<SoundEffectType> getById(String id) {
+    return Optional.ofNullable(this.map.get(id));
+  }
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+  @Override
+  public Collection<SoundEffectType> getAll() {
+    return Collections.unmodifiableCollection(this.map.values());
   }
 }

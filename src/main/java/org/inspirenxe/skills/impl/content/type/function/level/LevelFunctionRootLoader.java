@@ -31,7 +31,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;

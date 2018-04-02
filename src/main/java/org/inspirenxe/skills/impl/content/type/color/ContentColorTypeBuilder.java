@@ -25,10 +25,7 @@
 package org.inspirenxe.skills.impl.content.type.color;
 
 import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.inspirenxe.skills.impl.color.ColorTypeImpl;
-import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
 
 public interface ContentColorTypeBuilder extends ContentBuilder<ColorTypeImpl> {
 

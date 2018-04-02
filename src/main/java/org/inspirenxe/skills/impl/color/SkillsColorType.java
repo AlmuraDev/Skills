@@ -28,4 +28,5 @@ import com.almuradev.droplet.content.type.Content;
 import org.inspirenxe.skills.api.color.ColorType;
 
 public interface SkillsColorType extends ColorType, Content {
+
 }

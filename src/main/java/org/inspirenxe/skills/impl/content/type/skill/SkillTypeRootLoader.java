@@ -30,7 +30,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
-import org.inspirenxe.skills.impl.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;

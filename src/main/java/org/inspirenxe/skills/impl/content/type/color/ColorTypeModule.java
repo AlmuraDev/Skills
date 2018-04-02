@@ -36,9 +36,6 @@ import org.inspirenxe.skills.impl.content.type.color.processor.BProcessor;
 import org.inspirenxe.skills.impl.content.type.color.processor.GProcessor;
 import org.inspirenxe.skills.impl.content.type.color.processor.HexProcessor;
 import org.inspirenxe.skills.impl.content.type.color.processor.RProcessor;
-import org.inspirenxe.skills.impl.content.type.skill.processor.LevelFunctionProcessor;
-import org.inspirenxe.skills.impl.content.type.skill.processor.MaxLevelProcessor;
-import org.inspirenxe.skills.impl.content.type.skill.processor.MinLevelProcessor;
 
 import java.util.Collections;
 

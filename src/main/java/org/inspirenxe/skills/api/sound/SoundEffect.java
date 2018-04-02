@@ -22,25 +22,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.api.sound;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataSerializable;
+import org.spongepowered.api.effect.sound.SoundCategory;
+import org.spongepowered.api.effect.sound.SoundType;
+import org.spongepowered.api.util.ResettableBuilder;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+// TODO This needs to go to API...
+public interface SoundEffect extends DataSerializable {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("economy"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
+  static Builder builder() {
+    return Sponge.getRegistry().createBuilder(Builder.class);
+  }
 
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+  SoundType getType();
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+  SoundCategory getCategory();
+
+  double getMinVolume();
+
+  double getVolume();
+
+  double getPitch();
+
+  interface Builder extends ResettableBuilder<SoundEffect, Builder> {
+
+    Builder soundType(SoundType soundType);
+
+    Builder soundCategory(SoundCategory soundCategory);
+
+    Builder minVolume(double minVolume);
+
+    Builder volume(double volume);
+
+    Builder pitch(double pitch);
+
+    SoundEffect build();
   }
 }

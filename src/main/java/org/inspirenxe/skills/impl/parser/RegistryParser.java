@@ -24,6 +24,8 @@
  */
 package org.inspirenxe.skills.impl.parser;
 
+import static java.util.Objects.requireNonNull;
+
 import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
@@ -31,9 +33,8 @@ import net.kyori.xml.node.Node;
 
 import javax.inject.Inject;
 
-import static java.util.Objects.requireNonNull;
-
 public final class RegistryParser<T> implements Parser<T> {
+
   private final Registry<T> registry;
   private final Parser<RegistryKey> keyParser;
 

@@ -32,8 +32,6 @@ import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.content.type.function.level.LevelFunctionRootLoader;
 import org.inspirenxe.skills.impl.content.type.skill.processor.LevelFunctionProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.MaxLevelProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.MinLevelProcessor;

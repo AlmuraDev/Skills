@@ -22,25 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.effect.sound;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import com.almuradev.droplet.registry.RegistryKey;
+import org.inspirenxe.skills.api.sound.SoundEffect;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class SoundEffectTypeImpl implements SkillsSoundEffectType {
+
+  private final RegistryKey registryKey;
+  private final SoundEffect effect;
+
+  public SoundEffectTypeImpl(final RegistryKey registryKey, final SoundEffect effect) {
+    this.registryKey = registryKey;
+    this.effect = effect;
+  }
 
   @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("economy"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
+  public String getId() {
+    return this.registryKey.toString();
+  }
 
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+  @Override
+  public String getName() {
+    return this.registryKey.value();
+  }
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+  @Override
+  public SoundEffect getEffect() {
+    return this.effect;
   }
 }

@@ -34,6 +34,7 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.effect.firework.FireworkEffectTypeModule;
 import org.inspirenxe.skills.impl.content.type.effect.potion.PotionEffectTypeModule;
+import org.inspirenxe.skills.impl.content.type.effect.sound.SoundEffectTypeModule;
 
 public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> implements ParserBinder {
 
@@ -48,6 +49,7 @@ public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Ch
 
     this.installChild(new FireworkEffectTypeModule(), new BaseChildModule());
     this.installChild(new PotionEffectTypeModule(), new BaseChildModule());
+    this.installChild(new SoundEffectTypeModule(), new BaseChildModule());
   }
 
   private static class BaseChildModule extends ChildModule.Impl<ContentEffectType.Child> {

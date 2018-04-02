@@ -22,25 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.content.type.effect.sound;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.impl.content.type.effect.ContentEffectTypeBuilder;
+import org.inspirenxe.skills.impl.effect.sound.SkillsSoundEffectType;
+import org.spongepowered.api.effect.sound.SoundCategory;
+import org.spongepowered.api.effect.sound.SoundType;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public interface ContentSoundEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsSoundEffectType> {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("economy"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
+  void sound(final RegistryReference<SoundType> sound);
 
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+  void category(final RegistryReference<SoundCategory> category);
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
-  }
+  void minVolume(final double minVolume);
+
+  void volume(final double volume);
+
+  void pitch(final double pitch);
 }

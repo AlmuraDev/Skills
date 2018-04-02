@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.type.color;
 
 import com.almuradev.droplet.content.type.ContentType;
 import com.google.common.reflect.TypeToken;
-import org.inspirenxe.skills.api.color.ColorType;
 
 import java.util.List;
 

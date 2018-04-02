@@ -22,25 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.function.economy;
+package org.inspirenxe.skills.impl.content.type.effect.sound;
 
-import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
-import com.google.inject.TypeLiteral;
-import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
+import com.almuradev.droplet.registry.Registry;
+import com.almuradev.toolbox.inject.event.Witness;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
+import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+@Singleton
+public final class SoundEffectTypeRootLoader extends ChildContentLoaderImpl<ContentEffectType.Child> implements Witness {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("economy"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
+  private final Registry<SoundEffectType> registry;
 
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+  @Inject
+  public SoundEffectTypeRootLoader(final Registry<SoundEffectType> registry) {
+    this.registry = registry;
+  }
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+  @Listener(order = Order.AFTER_PRE)
+  public void onGameStartingServer(GameStartingServerEvent event) {
+    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SoundEffectType.class)));
   }
 }

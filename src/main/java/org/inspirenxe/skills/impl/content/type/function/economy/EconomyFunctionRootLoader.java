@@ -31,7 +31,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.function.economy.EconomyFunction;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.registry.module.EconomyFunctionRegistryModule;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
