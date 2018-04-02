@@ -36,6 +36,7 @@ import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.api.function.economy.EconomyFunction;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
+import org.inspirenxe.skills.impl.component.ComponentModule;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;
 import org.inspirenxe.skills.impl.content.ContentModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
@@ -72,6 +73,7 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
     this.install(new ContentModule());
     this.install(new RegistryModule());
     this.install(new ParserModule());
+    this.install(new ComponentModule());
 
     // Register command tree
     this.command().rootProvider(SkillsCommandCreator.class, SkillsImpl.ID);
