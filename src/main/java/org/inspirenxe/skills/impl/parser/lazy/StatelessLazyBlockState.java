@@ -22,39 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.block.lazy;
+package org.inspirenxe.skills.impl.parser.lazy;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
-import com.google.common.base.Suppliers;
+import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-import java.util.function.Supplier;
+import java.util.Optional;
 
-public abstract class AbstractLazyBlockState implements LazyBlockState {
-  private final RegistryReference<BlockType> block;
-  private final Supplier<BlockState> state = Suppliers.memoize(this::createState);
+public final class StatelessLazyBlockState extends AbstractLazyBlockState {
 
-  AbstractLazyBlockState(final RegistryReference<BlockType> block) {
-    this.block = block;
+  public StatelessLazyBlockState(final RegistryReference<BlockType> block) {
+    super(block);
   }
 
   @Override
-  public final BlockType block() {
-    return this.block.require();
+  BlockState createState() {
+    return this.block().getDefaultState();
   }
 
   @Override
-  public final BlockState get() {
-    return this.state.get();
+  public boolean testInternal(final BlockState state) {
+    return true; // We have no properties to test
   }
-
-  abstract <T extends Comparable<T>> BlockState createState();
 
   @Override
-  public final boolean test(final BlockState state) {
-    return this.block().equals(state.getType()) && this.testInternal(state);
+  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
+    return Optional.empty();
   }
-
-  abstract <V extends Comparable<V>> boolean testInternal(final BlockState state);
 }

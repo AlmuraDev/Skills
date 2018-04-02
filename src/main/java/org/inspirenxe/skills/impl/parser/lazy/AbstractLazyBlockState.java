@@ -22,44 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.block.lazy.value;
+package org.inspirenxe.skills.impl.parser.lazy;
 
-import com.almuradev.droplet.component.range.IntRange;
+import com.almuradev.droplet.registry.reference.RegistryReference;
+import com.google.common.base.Suppliers;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.trait.BlockTrait;
+import org.spongepowered.api.block.BlockType;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
 
-final class IntRangeLazyStateValue implements RangeLazyStateValue<Integer> {
-  private final IntRange range;
+public abstract class AbstractLazyBlockState implements LazyBlockState {
 
-  IntRangeLazyStateValue(final IntRange range) {
-    this.range = range;
+  private final RegistryReference<BlockType> block;
+  private final Supplier<BlockState> state = Suppliers.memoize(this::createState);
+
+  AbstractLazyBlockState(final RegistryReference<BlockType> block) {
+    this.block = block;
   }
 
   @Override
-  public Class<Integer> type() {
-    return Integer.class;
+  public final BlockType block() {
+    return this.block.require();
   }
 
   @Override
-  public Integer min() {
-    return this.range.min();
+  public final BlockState get() {
+    return this.state.get();
   }
 
-  @Override
-  public Integer max() {
-    return this.range.max();
-  }
+  abstract <T extends Comparable<T>> BlockState createState();
 
   @Override
-  public boolean test(final BlockTrait<Integer> property, final BlockState state) {
-    final Integer value = state.getTraitValue(property).orElse(null);
-    return value != null && this.range.contains(value);
+  public final boolean test(final BlockState state) {
+    return this.block().equals(state.getType()) && this.testInternal(state);
   }
 
-  @Override
-  public Integer get(final BlockTrait<Integer> property) {
-    return this.range.random(ThreadLocalRandom.current());
-  }
+  abstract <V extends Comparable<V>> boolean testInternal(final BlockState state);
 }

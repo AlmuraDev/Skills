@@ -22,46 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.block.lazy.value;
+package org.inspirenxe.skills.impl.parser.lazy.value;
 
 import com.almuradev.droplet.component.range.IntRange;
-import com.almuradev.droplet.parser.Parser;
-import com.google.common.collect.MoreCollectors;
-import net.kyori.xml.node.Node;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.concurrent.ThreadLocalRandom;
 
-@Singleton
-public final class LazyStateValueParser implements Parser<LazyStateValue<?>> {
-  private final Parser<IntRange> intRangeParser;
+final class IntRangeLazyStateValue implements RangeLazyStateValue<Integer> {
 
-  @Inject
-  private LazyStateValueParser(final Parser<IntRange> intRangeParser) {
-    this.intRangeParser = intRangeParser;
+  private final IntRange range;
+
+  IntRangeLazyStateValue(final IntRange range) {
+    this.range = range;
   }
 
   @Override
-  public LazyStateValue<?> throwingParse(final Node node) {
-    LazyStateValue<?> value = this.parseSimple(node);
-    if(value != null) {
-      return value;
-    }
-    value = this.parseRange(node);
-    if(value != null) {
-      return value;
-    }
-    return null;
+  public Class<Integer> type() {
+    return Integer.class;
   }
 
-  private LazyStateValue<?> parseSimple(final Node node) {
-    return node.nodes("value").collect(MoreCollectors.toOptional())
-      .map(value -> new SimpleLazyStateValue<>(value.value())).orElse(null);
+  @Override
+  public Integer min() {
+    return this.range.min();
   }
 
-  private LazyStateValue<?> parseRange(final Node node) {
-    return node.nodes("range").collect(MoreCollectors.toOptional())
-      .map(value -> new IntRangeLazyStateValue(this.intRangeParser.parse(value)))
-      .orElse(null);
+  @Override
+  public Integer max() {
+    return this.range.max();
+  }
+
+  @Override
+  public boolean test(final BlockTrait<Integer> property, final BlockState state) {
+    final Integer value = state.getTraitValue(property).orElse(null);
+    return value != null && this.range.contains(value);
+  }
+
+  @Override
+  public Integer get(final BlockTrait<Integer> property) {
+    return this.range.random(ThreadLocalRandom.current());
   }
 }

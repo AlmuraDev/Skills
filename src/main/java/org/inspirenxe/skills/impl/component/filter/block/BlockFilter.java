@@ -25,7 +25,7 @@
 package org.inspirenxe.skills.impl.component.filter.block;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
-import org.inspirenxe.skills.impl.content.type.block.lazy.LazyBlockState;
+import org.inspirenxe.skills.impl.parser.lazy.LazyBlockState;
 
 public final class BlockFilter implements AbstractFilter<BlockQuery> {
   private final LazyBlockState state;

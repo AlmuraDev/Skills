@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.component.filter.block;
 
-import org.inspirenxe.skills.impl.content.type.block.lazy.LazyBlockState;
+import org.inspirenxe.skills.impl.parser.lazy.LazyBlockState;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 

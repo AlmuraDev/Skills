@@ -31,6 +31,8 @@ import com.google.inject.TypeLiteral;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
+import org.inspirenxe.skills.impl.parser.lazy.LazyBlockState;
+import org.inspirenxe.skills.impl.parser.lazy.LazyBlockStateParser;
 import org.jooq.SQLDialect;
 
 public final class ParserModule extends AbstractModule implements ParserBinder {
@@ -41,5 +43,6 @@ public final class ParserModule extends AbstractModule implements ParserBinder {
     this.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {
     });
     this.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
+    this.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
   }
 }

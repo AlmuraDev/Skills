@@ -22,27 +22,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.block;
+package org.inspirenxe.skills.impl.parser.lazy.value;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
+import com.almuradev.droplet.component.range.IntRange;
 import com.almuradev.droplet.parser.Parser;
+import com.google.common.collect.MoreCollectors;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.impl.parser.lazy.LazyBlockState;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public final class BlockFilterParser implements FilterTypeParser<BlockFilter> {
-  private final Parser<LazyBlockState> parser;
+public final class LazyStateValueParser implements Parser<LazyStateValue<?>> {
+
+  private final Parser<IntRange> intRangeParser;
 
   @Inject
-  private BlockFilterParser(final Parser<LazyBlockState> parser) {
-    this.parser = parser;
+  private LazyStateValueParser(final Parser<IntRange> intRangeParser) {
+    this.intRangeParser = intRangeParser;
   }
 
   @Override
-  public BlockFilter throwingParse(final Node node) {
-    return new BlockFilter(this.parser.parse(node));
+  public LazyStateValue<?> throwingParse(final Node node) {
+    LazyStateValue<?> value = this.parseSimple(node);
+    if (value != null) {
+      return value;
+    }
+    value = this.parseRange(node);
+    if (value != null) {
+      return value;
+    }
+    return null;
+  }
+
+  private LazyStateValue<?> parseSimple(final Node node) {
+    return node.nodes("value").collect(MoreCollectors.toOptional())
+        .map(value -> new SimpleLazyStateValue<>(value.value())).orElse(null);
+  }
+
+  private LazyStateValue<?> parseRange(final Node node) {
+    return node.nodes("range").collect(MoreCollectors.toOptional())
+        .map(value -> new IntRangeLazyStateValue(this.intRangeParser.parse(value)))
+        .orElse(null);
   }
 }

@@ -22,15 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.block.lazy.value;
+package org.inspirenxe.skills.impl.parser.lazy;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;
 
-public interface LazyStateValue<V extends Comparable<V>> {
-  boolean test(final BlockTrait<V> property, final BlockState state);
+import java.util.Optional;
 
-  @Nullable
-  V get(final BlockTrait<V> property);
+public final class WrappedStatelessLazyBlockState implements LazyBlockState {
+
+  private final BlockType block;
+
+  WrappedStatelessLazyBlockState(final BlockType block) {
+    this.block = block;
+  }
+
+  @Override
+  public BlockType block() {
+    return this.block;
+  }
+
+  @Override
+  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
+    return Optional.empty();
+  }
+
+  @Override
+  public boolean test(final BlockState state) {
+    return this.block.equals(state.getType());
+  }
+
+  @Override
+  public BlockState get() {
+    return this.block().getDefaultState();
+  }
 }

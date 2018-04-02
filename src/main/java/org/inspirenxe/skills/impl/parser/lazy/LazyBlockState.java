@@ -22,39 +22,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.block.lazy;
+package org.inspirenxe.skills.impl.parser.lazy;
 
-import org.inspirenxe.skills.impl.content.type.block.lazy.value.LazyStateValue;
+import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-public final class WrappedStatelessLazyBlockState implements LazyBlockState {
-  private final BlockType block;
+public interface LazyBlockState extends Predicate<BlockState>, Supplier<BlockState> {
 
-  WrappedStatelessLazyBlockState(final BlockType block) {
-    this.block = block;
+  static LazyBlockState from(final BlockType block) {
+    return new WrappedStatelessLazyBlockState(block);
   }
 
-  @Override
-  public BlockType block() {
-    return this.block;
+  static LazyBlockState from(final BlockState state) {
+    return new WrappedStatefulLazyBlockState(state);
   }
 
-  @Override
-  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
-    return Optional.empty();
+  BlockType block();
+
+  @SuppressWarnings("RedundantCast")
+  default Collection<BlockTrait<? extends Comparable<?>>> properties() {
+    return (Collection<BlockTrait<? extends Comparable<?>>>) this.block().getDefaultState().getTraits();
   }
 
-  @Override
-  public boolean test(final BlockState state) {
-    return this.block.equals(state.getType());
-  }
+  <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property);
 
-  @Override
-  public BlockState get() {
-    return this.block().getDefaultState();
+  default boolean matches(final LazyBlockState that) {
+    return this.test(that.get());
   }
 }

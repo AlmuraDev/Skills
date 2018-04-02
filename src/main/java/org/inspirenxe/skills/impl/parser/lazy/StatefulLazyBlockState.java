@@ -22,12 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.block.lazy;
+package org.inspirenxe.skills.impl.parser.lazy;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.Suppliers;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.inspirenxe.skills.impl.content.type.block.lazy.value.LazyStateValue;
+import org.inspirenxe.skills.impl.parser.lazy.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;
@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 final class StatefulLazyBlockState extends AbstractLazyBlockState {
+
   private final Supplier<Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>>> properties;
 
   StatefulLazyBlockState(final RegistryReference<BlockType> block, final Map<String, LazyStateValue<? extends Comparable<?>>> properties) {
@@ -45,21 +46,21 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
     this.properties = Suppliers.memoize(() -> this.resolveProperties(properties));
   }
 
-  private <T extends Comparable<T>> Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> resolveProperties(final Map<String, LazyStateValue<? extends Comparable<?>>> source) {
+  private <T extends Comparable<T>> Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> resolveProperties(
+      final Map<String, LazyStateValue<? extends Comparable<?>>> source) {
     final Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> target = new HashMap<>();
     final BlockState definition = this.block().getDefaultState();
     for (final Map.Entry<String, LazyStateValue<? extends Comparable<?>>> entry : source.entrySet()) {
       @Nullable final BlockTrait<T> property = (BlockTrait<T>) definition.getTraits().stream().filter(trait -> trait.getName().equalsIgnoreCase
           (entry.getKey())).findFirst().orElse(null);
-      if(property != null) {
+      if (property != null) {
         target.put(property, entry.getValue());
       }
     }
     return target;
   }
 
-  @Override
-  <T extends Comparable<T>> BlockState createState() {
+  @Override <T extends Comparable<T>> BlockState createState() {
     BlockState state = this.block().getDefaultState();
     for (final Map.Entry<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> entry : this.properties.get().entrySet()) {
       if (state == null) {
@@ -77,12 +78,11 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
     return state;
   }
 
-  @Override
-  <V extends Comparable<V>> boolean testInternal(final BlockState state) {
-    for(final Map.Entry<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> entry : this.properties.get().entrySet()) {
+  @Override <V extends Comparable<V>> boolean testInternal(final BlockState state) {
+    for (final Map.Entry<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> entry : this.properties.get().entrySet()) {
       final BlockTrait<V> property = (BlockTrait<V>) entry.getKey();
       final LazyStateValue<V> value = (LazyStateValue<V>) entry.getValue();
-      if(!value.test(property, state)) {
+      if (!value.test(property, state)) {
         return false;
       }
     }

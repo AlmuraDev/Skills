@@ -22,12 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.block.lazy.value;
+package org.inspirenxe.skills.impl.parser.lazy.value;
 
-public interface RangeLazyStateValue<V extends Comparable<V>> extends LazyStateValue<V> {
-  Class<V> type();
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-  V min();
+public interface LazyStateValue<V extends Comparable<V>> {
 
-  V max();
+  boolean test(final BlockTrait<V> property, final BlockState state);
+
+  @Nullable
+  V get(final BlockTrait<V> property);
 }
