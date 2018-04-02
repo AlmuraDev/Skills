@@ -46,11 +46,11 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
   }
 
   private <T extends Comparable<T>> Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> resolveProperties(final Map<String, LazyStateValue<? extends Comparable<?>>> source) {
-    // TODO
     final Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> target = new HashMap<>();
-    final BlockStateContainer definition = this.block().getBlockState();
-    for(final Map.Entry<String, LazyStateValue<? extends Comparable<?>>> entry : source.entrySet()) {
-      @Nullable final BlockTrait<T> property = (BlockTrait<T>) definition.getProperty(entry.getKey());
+    final BlockState definition = this.block().getDefaultState();
+    for (final Map.Entry<String, LazyStateValue<? extends Comparable<?>>> entry : source.entrySet()) {
+      @Nullable final BlockTrait<T> property = (BlockTrait<T>) definition.getTraits().stream().filter(trait -> trait.getName().equalsIgnoreCase
+          (entry.getKey())).findFirst().orElse(null);
       if(property != null) {
         target.put(property, entry.getValue());
       }
@@ -60,14 +60,17 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
 
   @Override
   <T extends Comparable<T>> BlockState createState() {
-    // TODO
     BlockState state = this.block().getDefaultState();
-    for(final Map.Entry<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> entry : this.properties.get().entrySet()) {
+    for (final Map.Entry<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> entry : this.properties.get().entrySet()) {
+      if (state == null) {
+        break;
+      }
+
       @Nullable final BlockTrait<T> property = (BlockTrait<T>) entry.getKey();
-      if(property != null) {
+      if (property != null) {
         @Nullable final T value = ((LazyStateValue<T>) entry.getValue()).get(property);
-        if(value != null) {
-          state = state.withProperty(property, value);
+        if (value != null) {
+          state = state.withTrait(property, value).orElse(null);
         }
       }
     }
