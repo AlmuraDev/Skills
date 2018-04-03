@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.component.filter.data;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -53,6 +54,11 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
   DataFilter(final RegistryReference<Key> dataKey, final String rawValue) {
     this.dataKey = dataKey;
     this.rawValue = rawValue;
+  }
+
+  @Override
+  public boolean canQuery(final FilterQuery query) {
+    return query instanceof DataQuery;
   }
 
   @Override

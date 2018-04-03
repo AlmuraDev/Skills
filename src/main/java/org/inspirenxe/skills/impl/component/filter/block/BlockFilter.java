@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.component.filter.block;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
 import org.inspirenxe.skills.impl.parser.lazy.block.LazyBlockState;
 
 public final class BlockFilter implements AbstractFilter<BlockQuery> {
@@ -33,6 +34,11 @@ public final class BlockFilter implements AbstractFilter<BlockQuery> {
 
   BlockFilter(final LazyBlockState state) {
     this.state = state;
+  }
+
+  @Override
+  public boolean canQuery(final FilterQuery query) {
+    return query instanceof BlockQuery;
   }
 
   @Override

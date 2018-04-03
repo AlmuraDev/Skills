@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.component.filter.potion;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public final class PotionFilter implements AbstractFilter<PotionQuery> {
@@ -33,6 +34,11 @@ public final class PotionFilter implements AbstractFilter<PotionQuery> {
 
   PotionFilter(final PotionEffectType potion) {
     this.potion = potion;
+  }
+
+  @Override
+  public boolean canQuery(final FilterQuery query) {
+    return query instanceof PotionQuery;
   }
 
   @Override

@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.component.filter.key;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.registry.RegistryKey;
 
 public final class RegistryKeyFilter implements AbstractFilter<RegistryKeyFilterQuery> {
@@ -33,6 +34,11 @@ public final class RegistryKeyFilter implements AbstractFilter<RegistryKeyFilter
 
   RegistryKeyFilter(final RegistryKey key) {
     this.key = key;
+  }
+
+  @Override
+  public boolean canQuery(final FilterQuery query) {
+    return query instanceof RegistryKeyFilterQuery;
   }
 
   @Override

@@ -41,18 +41,15 @@ public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extend
 
   private final String namespace;
   private final RegistryKey key;
-  private final R rootType;
-  private final C childType;
   private final Path absolutePath;
   private final Supplier<Element> rootElement;
   private final ContentBuilder builder;
 
   FoundContentEntryImpl(final String namespace, final R rootType, final Path rootPath, final C childType, final Path absolutePath,
       final DocumentFactory documentFactory, final ContentBuilder builder) {
+    super(rootType, childType);
     this.namespace = namespace;
     this.key = new CatalogKey(namespace + ':' + rootPath.relativize(absolutePath).toString().replace(".xml", "").replace('\\', '/'));
-    this.rootType = rootType;
-    this.childType = childType;
     this.absolutePath = absolutePath;
     this.rootElement = Suppliers.memoize(Exceptions.rethrowSupplier(() -> documentFactory.read(this.absolutePath).getRootElement())::get);
     this.builder = builder;
@@ -67,16 +64,6 @@ public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extend
   @Override
   public RegistryKey key() {
     return this.key;
-  }
-
-  @Override
-  public R rootType() {
-    return this.rootType;
-  }
-
-  @Override
-  public C childType() {
-    return this.childType;
   }
 
   @Override

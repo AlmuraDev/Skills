@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.component.filter.item;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
 import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
 
 public final class ItemFilter implements AbstractFilter<ItemQuery> {
@@ -33,6 +34,11 @@ public final class ItemFilter implements AbstractFilter<ItemQuery> {
 
   ItemFilter(final LazyItemStack item) {
     this.item = item;
+  }
+
+  @Override
+  public boolean canQuery(final FilterQuery query) {
+    return query instanceof ItemQuery;
   }
 
   @Override
