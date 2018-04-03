@@ -28,6 +28,7 @@ import com.almuradev.droplet.component.filter.FilterBinder;
 import com.almuradev.droplet.parser.ParserBinder;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.component.filter.block.BlockFilterParser;
+import org.inspirenxe.skills.impl.component.filter.data.DataFilter;
 import org.inspirenxe.skills.impl.component.filter.data.DataFilterParser;
 import org.inspirenxe.skills.impl.component.filter.item.ItemFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.NamespaceFilterParser;
@@ -44,5 +45,7 @@ public final class FilterModule extends AbstractModule implements FilterBinder, 
     this.bindFilter("block").to(BlockFilterParser.class);
     this.bindFilter("item").to(ItemFilterParser.class);
     this.bindFilter("potion").to(PotionFilterParser.class);
+
+    this.installFactory(DataFilter.Factory.class);
   }
 }

@@ -25,7 +25,6 @@
 package org.inspirenxe.skills.impl.parser;
 
 import com.almuradev.droplet.parser.EnumParser;
-import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.TypeLiteral;
