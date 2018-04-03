@@ -24,9 +24,7 @@
  */
 package org.inspirenxe.skills.impl.component.filter.item;
 
-import com.almuradev.droplet.registry.RegistryKey;
 import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
-import org.inspirenxe.skills.impl.registry.CatalogKey;
 import org.spongepowered.api.item.ItemType;
 
 public final class ItemQueryImpl implements ItemQuery {
@@ -40,10 +38,5 @@ public final class ItemQueryImpl implements ItemQuery {
   @Override
   public ItemType item() {
     return this.item.item();
-  }
-
-  @Override
-  public RegistryKey key() {
-    return new CatalogKey(this.item.item().getId());
   }
 }

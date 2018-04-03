@@ -25,10 +25,16 @@
 package org.inspirenxe.skills.impl.component.filter.potion;
 
 import com.almuradev.droplet.component.filter.FilterQuery;
+import com.almuradev.droplet.registry.RegistryKey;
 import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterQuery;
+import org.inspirenxe.skills.impl.registry.CatalogKey;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public interface PotionQuery extends FilterQuery, RegistryKeyFilterQuery {
+
+  default RegistryKey key() {
+    return new CatalogKey(this.potion().getId());
+  }
 
   PotionEffectType potion();
 }

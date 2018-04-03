@@ -24,8 +24,6 @@
  */
 package org.inspirenxe.skills.impl.component.filter.potion;
 
-import com.almuradev.droplet.registry.RegistryKey;
-import org.inspirenxe.skills.impl.registry.CatalogKey;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public final class PotionQueryImpl implements PotionQuery {
@@ -39,10 +37,5 @@ public final class PotionQueryImpl implements PotionQuery {
   @Override
   public PotionEffectType potion() {
     return this.potion;
-  }
-
-  @Override
-  public RegistryKey key() {
-    return new CatalogKey(this.potion.getId());
   }
 }
