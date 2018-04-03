@@ -24,51 +24,21 @@
  */
 package org.inspirenxe.skills.impl.content.loader.finder;
 
-import com.almuradev.droplet.content.loader.ChildContentLoader;
 import com.almuradev.droplet.content.loader.DocumentFactory;
-import com.almuradev.droplet.content.loader.finder.FoundContent;
-import com.almuradev.droplet.content.loader.finder.FoundContentBuilder;
+import com.almuradev.droplet.content.loader.finder.AbstractFoundContentBuilder;
+import com.almuradev.droplet.content.loader.finder.FoundContentEntry;
 import com.almuradev.droplet.content.type.ContentBuilder;
 import com.almuradev.droplet.content.type.ContentType;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Provider;
 
-final class FoundContentBuilderImpl<R extends ContentType.Root<C>, C extends ContentType.Child> implements FoundContentBuilder<R, C> {
-
-  private final List<FoundContent.Entry<R, C>> entries = new ArrayList<>();
-  private String namespace;
-  private Path namespacePath;
-  private R root;
-  private Path rootPath;
-  private ChildContentLoader<C> childLoader;
-  private C child;
-
+final class FoundContentBuilderImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractFoundContentBuilder<R, C> {
   @Override
-  public void namespace(final String namespace, final Path namespacePath) {
-    this.namespace = namespace;
-    this.namespacePath = namespacePath;
-  }
-
-  @Override
-  public void root(final R root, final Path path) {
-    this.root = root;
-    this.rootPath = path;
-  }
-
-  @Override
-  public void child(final ChildContentLoader<C> loader, final C child, final Path path) {
-    this.childLoader = loader;
-    this.child = child;
-  }
-
-  @Override
-  public void entry(final Path path, final Provider<ContentBuilder> builder) {
-    final FoundContent.Entry<R, C> entry = new FoundContentEntryImpl<>(
+  protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
+    return new FoundContentEntryImpl<>(
         this.namespace,
         this.root,
         this.rootPath,
@@ -77,12 +47,5 @@ final class FoundContentBuilderImpl<R extends ContentType.Root<C>, C extends Con
         new DocumentFactory(Collections.singletonList(this.rootPath)),
         builder.get()
     );
-    this.childLoader.foundContent().offer(entry);
-    this.entries.add(entry);
-  }
-
-  @Override
-  public FoundContent<R, C> build() {
-    return new FoundContent<>(this.entries);
   }
 }

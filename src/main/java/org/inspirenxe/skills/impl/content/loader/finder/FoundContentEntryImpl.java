@@ -24,11 +24,8 @@
  */
 package org.inspirenxe.skills.impl.content.loader.finder;
 
-import com.almuradev.droplet.content.feature.context.FeatureContext;
-import com.almuradev.droplet.content.feature.context.FeatureContextImpl;
 import com.almuradev.droplet.content.loader.DocumentFactory;
-import com.almuradev.droplet.content.loader.finder.FoundContent;
-import com.almuradev.droplet.content.type.Content;
+import com.almuradev.droplet.content.loader.finder.AbstractFoundContentEntry;
 import com.almuradev.droplet.content.type.ContentBuilder;
 import com.almuradev.droplet.content.type.ContentType;
 import com.almuradev.droplet.registry.RegistryKey;
@@ -40,20 +37,16 @@ import org.jdom2.Element;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends ContentType.Child> implements FoundContent.Entry<R, C> {
-
+public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractFoundContentEntry<R, C> {
   private final String namespace;
   private final RegistryKey key;
   private final R rootType;
   private final C childType;
   private final Path absolutePath;
   private final Supplier<Element> rootElement;
-  private final FeatureContext context = new FeatureContextImpl();
   private final ContentBuilder builder;
-  private Content result;
 
-  FoundContentEntryImpl(final String namespace, final R rootType, final Path rootPath, final C childType, final Path absolutePath,
-      final DocumentFactory documentFactory, final ContentBuilder builder) {
+  FoundContentEntryImpl(final String namespace, final R rootType, final Path rootPath, final C childType, final Path absolutePath, final DocumentFactory documentFactory, final ContentBuilder builder) {
     this.namespace = namespace;
     this.key = new CatalogKey(namespace + ':' + rootPath.relativize(absolutePath).toString().replace(".xml", "").replace('\\', '/'));
     this.rootType = rootType;
@@ -95,20 +88,7 @@ public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extend
   }
 
   @Override
-  public FeatureContext context() {
-    return this.context;
-  }
-
-  @Override
   public ContentBuilder builder() {
     return this.builder;
-  }
-
-  @Override
-  public Content result() {
-    if (this.result == null) {
-      this.result = this.builder.build();
-    }
-    return this.result;
   }
 }
