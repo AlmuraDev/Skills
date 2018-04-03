@@ -86,17 +86,20 @@ import java.util.stream.Collectors;
 public final class SkillManagerImpl implements SkillManager, Witness {
 
   private final PluginContainer container;
+  private final DatabaseManager databaseManager;
+  private final SkillHolderImpl.Factory factory;
+
   private final Map<UUID, Set<SkillHolder>> holdersInContainer = new HashMap<>();
   private final Map<UUID, Task> savingTasks = new HashMap<>();
   private final Map<UUID, SaveContainerToDatabase> queueables = new HashMap<>();
-  private final DatabaseManager databaseManager;
 
   @Inject @AsynchronousExecutor private SpongeExecutorService executorService;
 
   @Inject
-  public SkillManagerImpl(final PluginContainer container, final DatabaseManager databaseManager) {
+  public SkillManagerImpl(final PluginContainer container, final DatabaseManager databaseManager, final SkillHolderImpl.Factory factory) {
     this.container = container;
     this.databaseManager = databaseManager;
+    this.factory = factory;
   }
 
   @Override
@@ -139,7 +142,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
     final UUID containerUniqueId = player.getWorld().getUniqueId();
     final UUID holderUniqueId = player.getUniqueId();
 
-    final SkillHolder holder = SkillHolderImpl.of(containerUniqueId, holderUniqueId);
+    final SkillHolder holder = this.factory.create(containerUniqueId, holderUniqueId);
 
     // Load skills for the holder in this new container
     this.holdersInContainer.computeIfAbsent(containerUniqueId, k -> {
@@ -246,7 +249,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
       }
     }
 
-    final SkillHolder holder = SkillHolderImpl.of(containerUniqueId, holderUniqueId);
+    final SkillHolder holder = this.factory.create(containerUniqueId, holderUniqueId);
 
     // Load skills for the holder in this new container
     // Load skills for the holder in this new container

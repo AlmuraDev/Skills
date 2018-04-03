@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
@@ -41,27 +42,19 @@ import java.util.Objects;
 
 public final class SkillImpl implements Skill {
 
-  @Inject
-  private static EventManager eventManager;
-
-  @Inject
-  private static SkillManagerImpl skillManager;
-
+  private final EventManager eventManager;
   private final SkillType skillType;
   private final SkillHolder skillHolder;
   private double experience;
   private boolean dirtyState, isInitialized;
 
-  private SkillImpl(final SkillType skillType, final SkillHolder skillHolder) {
+  @Inject
+  private SkillImpl(final EventManager eventManager, @Assisted final SkillType skillType, @Assisted final SkillHolder skillHolder) {
     checkNotNull(skillType);
     checkNotNull(skillHolder);
-
+    this.eventManager = eventManager;
     this.skillType = skillType;
     this.skillHolder = skillHolder;
-  }
-
-  public static SkillImpl of(final SkillType skillType, final SkillHolder skillHolder) {
-    return new SkillImpl(skillType, skillHolder);
   }
 
   @Override
@@ -89,13 +82,13 @@ public final class SkillImpl implements Skill {
 
     final double originalExperience = this.experience;
     final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(this, originalExperience, experience);
-    if (eventManager.post(event)) {
+    if (this.eventManager.post(event)) {
       return this;
     }
 
     this.experience = event.getExperience();
 
-    eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
+    this.eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
     return this;
   }
 
@@ -112,10 +105,6 @@ public final class SkillImpl implements Skill {
   @Override
   public void setDirtyState(final boolean dirtyState) {
     this.dirtyState = dirtyState;
-
-    if (this.dirtyState) {
-      skillManager.queueToSave(this.getHolder());
-    }
   }
 
   @Override
@@ -127,21 +116,25 @@ public final class SkillImpl implements Skill {
       return false;
     }
     final SkillImpl skill = (SkillImpl) o;
-    return Objects.equals(skillType, skill.skillType) &&
-        Objects.equals(skillHolder, skill.skillHolder);
+    return Objects.equals(this.skillHolder, skill.skillHolder) && Objects.equals(this.skillType, skill.skillType);
+
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(skillType, skillHolder);
+    return Objects.hash(this.skillHolder, this.skillType);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("skillType", this.skillType)
+        .add("type", this.skillType)
         .add("containerUniqueId", this.skillHolder.getContainerUniqueId())
         .add("holderUniqueId", this.skillHolder.getHolderUniqueId())
         .toString();
+  }
+
+  public interface Factory {
+    SkillImpl create(final SkillType skillType, final SkillHolder skillHolder);
   }
 }

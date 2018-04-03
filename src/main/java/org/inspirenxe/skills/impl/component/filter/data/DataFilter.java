@@ -28,7 +28,6 @@ import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.assistedinject.Assisted;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
 import org.inspirenxe.skills.impl.parser.value.StringToValueParser;
@@ -40,15 +39,18 @@ import javax.annotation.Nullable;
 
 public final class DataFilter implements AbstractFilter<DataQuery> {
 
-  private final Injector injector;
+  @Inject
+  private static Injector injector;
   private final RegistryReference<Key> dataKey;
   private final String rawValue;
   @Nullable private Object value;
   private boolean computedValue;
 
-  @Inject
-  DataFilter(final Injector injector, @Assisted final RegistryReference<Key> dataKey, @Assisted final String rawValue) {
-    this.injector = injector;
+  DataFilter(final RegistryReference<Key> dataKey) {
+    this(dataKey, null);
+  }
+
+  DataFilter(final RegistryReference<Key> dataKey, final String rawValue) {
     this.dataKey = dataKey;
     this.rawValue = rawValue;
   }
@@ -69,12 +71,5 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
     }
 
     return success;
-  }
-
-  public interface Factory {
-
-    DataFilter create(final RegistryReference<Key> dataKey);
-
-    DataFilter create(final RegistryReference<Key> dataKey, final String rawValue);
   }
 }

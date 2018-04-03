@@ -36,15 +36,13 @@ import org.spongepowered.api.data.key.Key;
 
 public final class DataFilterParser implements FilterTypeParser<DataFilter> {
 
-  private final DataFilter.Factory factory;
   private final Registry<Key> registry;
   private final Parser<RegistryKey> keyParser;
   private final Parser<String> stringParser;
 
   @Inject
-  public DataFilterParser(final DataFilter.Factory factory, final Registry<Key> registry, final Parser<RegistryKey> keyParser, final Parser<String>
+  public DataFilterParser(final Registry<Key> registry, final Parser<RegistryKey> keyParser, final Parser<String>
       stringParser) {
-    this.factory = factory;
     this.registry = registry;
     this.keyParser = keyParser;
     this.stringParser = stringParser;
@@ -55,9 +53,9 @@ public final class DataFilterParser implements FilterTypeParser<DataFilter> {
     final RegistryReference<Key> key = this.registry.ref(this.keyParser.parse(node.requireAttribute("key")));
     final Node valueNode = node.attribute("value").orElse(null);
     if (valueNode == null) {
-      return this.factory.create(key);
+      return new DataFilter(key, null);
     }
 
-    return this.factory.create(key, this.stringParser.parse(valueNode));
+    return new DataFilter(key, this.stringParser.parse(valueNode));
   }
 }

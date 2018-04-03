@@ -46,6 +46,6 @@ public final class FilterModule extends AbstractModule implements FilterBinder, 
     this.bindFilter("item").to(ItemFilterParser.class);
     this.bindFilter("potion").to(PotionFilterParser.class);
 
-    this.installFactory(DataFilter.Factory.class);
+    this.requestStaticInjection(DataFilter.class);
   }
 }

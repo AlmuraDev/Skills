@@ -25,6 +25,9 @@
 package org.inspirenxe.skills.impl.skill;
 
 import com.google.common.base.MoreObjects;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
@@ -38,16 +41,15 @@ import java.util.UUID;
 
 public final class SkillHolderImpl implements SkillHolder {
 
+  private final SkillImpl.Factory factory;
   private final UUID containerUniqueId, holderUniqueId;
   private final Map<SkillType, Skill> skills = new HashMap<>();
 
-  private SkillHolderImpl(UUID containerUniqueId, UUID holderUniqueId) {
+  @Inject
+  private SkillHolderImpl(final SkillImpl.Factory factory, @Assisted("container") UUID containerUniqueId, @Assisted("holder") UUID holderUniqueId) {
+    this.factory = factory;
     this.containerUniqueId = containerUniqueId;
     this.holderUniqueId = holderUniqueId;
-  }
-
-  public static SkillHolderImpl of(UUID containerUniqueId, UUID holderUniqueId) {
-    return new SkillHolderImpl(containerUniqueId, holderUniqueId);
   }
 
   @Override
@@ -72,7 +74,7 @@ public final class SkillHolderImpl implements SkillHolder {
 
   @Override
   public Skill addSkill(SkillType type) {
-    final Skill skill = SkillImpl.of(type, this);
+    final Skill skill = this.factory.create(type, this);
 
     this.skills.put(type, skill);
 
@@ -88,13 +90,13 @@ public final class SkillHolderImpl implements SkillHolder {
       return false;
     }
     final SkillHolderImpl that = (SkillHolderImpl) o;
-    return Objects.equals(containerUniqueId, that.containerUniqueId) &&
-        Objects.equals(holderUniqueId, that.holderUniqueId);
+    return Objects.equals(this.containerUniqueId, that.containerUniqueId) &&
+        Objects.equals(this.holderUniqueId, that.holderUniqueId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(containerUniqueId, holderUniqueId);
+    return Objects.hash(this.containerUniqueId, this.holderUniqueId);
   }
 
   @Override
@@ -104,5 +106,9 @@ public final class SkillHolderImpl implements SkillHolder {
         .add("holderUniqueId", this.holderUniqueId)
         .add("skills", this.skills)
         .toString();
+  }
+
+  public interface Factory {
+    SkillHolderImpl create(@Assisted("container") UUID containerUniqueId, @Assisted("holder") UUID holderUniqueId);
   }
 }
