@@ -34,7 +34,7 @@ import java.util.List;
 
 public interface ContentFireworkEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsFireworkEffectType> {
 
-  void shape(final RegistryReference<FireworkShape> shape);
+  void shape(final FireworkShape shape);
 
   void colors(final List<RegistryReference<ColorType>> colors);
 

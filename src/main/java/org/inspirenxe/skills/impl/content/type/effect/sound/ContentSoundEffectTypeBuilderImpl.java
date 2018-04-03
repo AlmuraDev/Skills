@@ -27,7 +27,6 @@ package org.inspirenxe.skills.impl.content.type.effect.sound;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.api.sound.SoundEffect;
 import org.inspirenxe.skills.impl.content.type.effect.AbstractContentEffectTypeBuilder;
 import org.inspirenxe.skills.impl.effect.sound.SkillsSoundEffectType;
@@ -38,17 +37,17 @@ import org.spongepowered.api.effect.sound.SoundType;
 public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsSoundEffectType>
     implements ContentSoundEffectTypeBuilder {
 
-  private RegistryReference<SoundType> sound;
-  private RegistryReference<SoundCategory> category;
+  private SoundType sound;
+  private SoundCategory category;
   private double minVolume, volume, pitch;
 
   @Override
-  public void sound(RegistryReference<SoundType> sound) {
+  public void sound(SoundType sound) {
     this.sound = sound;
   }
 
   @Override
-  public void category(RegistryReference<SoundCategory> category) {
+  public void category(SoundCategory category) {
     this.category = category;
   }
 
@@ -73,8 +72,8 @@ public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffe
     checkNotNull(this.category);
 
     final SoundEffect effect = SoundEffect.builder()
-        .soundType(this.sound.require())
-        .soundCategory(this.category.require())
+        .soundType(this.sound)
+        .soundCategory(this.category)
         .minVolume(this.minVolume)
         .volume(this.volume)
         .pitch(this.pitch)

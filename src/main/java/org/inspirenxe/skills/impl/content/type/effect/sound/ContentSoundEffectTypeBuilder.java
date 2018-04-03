@@ -24,7 +24,6 @@
  */
 package org.inspirenxe.skills.impl.content.type.effect.sound;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectTypeBuilder;
 import org.inspirenxe.skills.impl.effect.sound.SkillsSoundEffectType;
 import org.spongepowered.api.effect.sound.SoundCategory;
@@ -32,9 +31,9 @@ import org.spongepowered.api.effect.sound.SoundType;
 
 public interface ContentSoundEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsSoundEffectType> {
 
-  void sound(final RegistryReference<SoundType> sound);
+  void sound(final SoundType sound);
 
-  void category(final RegistryReference<SoundCategory> category);
+  void category(final SoundCategory category);
 
   void minVolume(final double minVolume);
 

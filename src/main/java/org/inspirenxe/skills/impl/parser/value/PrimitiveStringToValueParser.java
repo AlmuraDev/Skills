@@ -22,20 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.data;
+package org.inspirenxe.skills.impl.parser.value;
 
-import org.spongepowered.api.data.key.Key;
+import com.almuradev.droplet.parser.Parser;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
+import net.kyori.xml.node.Node;
+import org.jdom2.Element;
 
-public final class DataKeyQueryImpl implements DataKeyQuery {
+import java.util.Optional;
 
-  private final Key<?> dataKey;
+public final class PrimitiveStringToValueParser<V> implements StringToValueParser<V> {
 
-  public DataKeyQueryImpl(final Key<?> dataKey) {
-    this.dataKey = dataKey;
+  private final Parser<V> parser;
+
+  @Inject
+  public PrimitiveStringToValueParser(final Parser<V> parser) {
+    this.parser = parser;
   }
 
   @Override
-  public Key<?> dataKey() {
-    return this.dataKey;
+  public Optional<V> parse(final TypeToken<?> token, final String value) {
+    return Optional.ofNullable(this.parser.parse(Node.of(new Element("hack").setText(value))));
   }
 }

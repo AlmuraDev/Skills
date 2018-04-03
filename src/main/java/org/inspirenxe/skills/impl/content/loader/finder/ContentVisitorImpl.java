@@ -28,6 +28,7 @@ import com.almuradev.droplet.content.loader.finder.AbstractContentVisitor;
 import com.almuradev.droplet.content.type.ContentType;
 
 public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractContentVisitor<R, C> {
+
   public ContentVisitorImpl() {
     super(new FoundContentBuilderImpl<>());
   }

@@ -49,9 +49,6 @@ import org.inspirenxe.skills.impl.registry.module.SoundEffectTypeRegistryModule;
 import org.inspirenxe.skills.impl.sound.SoundEffectBuilderImpl;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.effect.sound.SoundCategory;
-import org.spongepowered.api.effect.sound.SoundType;
-import org.spongepowered.api.item.FireworkShape;
 import org.spongepowered.api.item.ItemType;
 
 public final class RegistryModule extends AbstractModule implements ToolboxBinder {
@@ -71,41 +68,19 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
     this.registry().module(SoundEffectType.class, SoundEffectTypeRegistryModule.instance);
 
     // Registry binders
-    this.bindRegistry(BlockType.class).to(new TypeLiteral<CatalogTypeRegistry<BlockType>>() {
-    });
-    this.bindRegistry(ColorType.class).to(new TypeLiteral<CatalogTypeRegistry<ColorType>>() {
-    });
-    this.bindRegistry(EconomyFunction.class).to(new TypeLiteral<CatalogTypeRegistry<EconomyFunction>>() {
-    });
-    this.bindRegistry(FireworkEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<FireworkEffectType>>() {
-    });
-    this.bindRegistry(FireworkShape.class).to(new TypeLiteral<CatalogTypeRegistry<FireworkShape>>() {
-    });
-    this.bindRegistry(ItemType.class).to(new TypeLiteral<CatalogTypeRegistry<ItemType>>() {
-    });
-    this.bindRegistry(Key.class).to(new TypeLiteral<CatalogTypeRegistry<Key>>() {
-    });
-    this.bindRegistry(LevelFunction.class).to(new TypeLiteral<CatalogTypeRegistry<LevelFunction>>() {
-    });
-    // TODO API interface name is retarded, should be PotionType. Fix in API 8.
-    this.bindRegistry(org.spongepowered.api.effect.potion.PotionEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<org.spongepowered.api
-        .effect.potion.PotionEffectType>>() {
-    });
-    this.bindRegistry(PotionEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<PotionEffectType>>() {
-    });
-    this.bindRegistry(SkillType.class).to(new TypeLiteral<CatalogTypeRegistry<SkillType>>() {
-    });
-    this.bindRegistry(SoundCategory.class).to(new TypeLiteral<CatalogTypeRegistry<SoundCategory>>() {
-    });
-    this.bindRegistry(SoundEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<SoundEffectType>>() {
-    });
-    this.bindRegistry(SoundType.class).to(new TypeLiteral<CatalogTypeRegistry<SoundType>>() {
-    });
+    this.bindRegistry(BlockType.class).to(new TypeLiteral<CatalogTypeRegistry<BlockType>>() {});
+    this.bindRegistry(ColorType.class).to(new TypeLiteral<CatalogTypeRegistry<ColorType>>() {});
+    this.bindRegistry(EconomyFunction.class).to(new TypeLiteral<CatalogTypeRegistry<EconomyFunction>>() {});
+    this.bindRegistry(FireworkEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<FireworkEffectType>>() {});
+    this.bindRegistry(ItemType.class).to(new TypeLiteral<CatalogTypeRegistry<ItemType>>() {});
+    this.bindRegistry(Key.class).to(new TypeLiteral<CatalogTypeRegistry<Key>>() {});
+    this.bindRegistry(LevelFunction.class).to(new TypeLiteral<CatalogTypeRegistry<LevelFunction>>() {});
+    this.bindRegistry(PotionEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<PotionEffectType>>() {});
+    this.bindRegistry(SkillType.class).to(new TypeLiteral<CatalogTypeRegistry<SkillType>>() {});
+    this.bindRegistry(SoundEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<SoundEffectType>>() {});
   }
 
   private <T> LinkedBindingBuilder<Registry<T>> bindRegistry(final Class<T> type) {
-    return this.bind(new FriendlyTypeLiteral<Registry<T>>() {
-    }.where(new TypeArgument<T>(type) {
-    }));
+    return this.bind(new FriendlyTypeLiteral<Registry<T>>() {}.where(new TypeArgument<T>(type) {}));
   }
 }

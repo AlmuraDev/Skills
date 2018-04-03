@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.type.effect.potion;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.impl.content.type.effect.AbstractContentEffectTypeBuilder;
 import org.inspirenxe.skills.impl.effect.potion.PotionEffectTypeImpl;
 import org.inspirenxe.skills.impl.effect.potion.SkillsPotionEffectType;
@@ -36,12 +35,12 @@ import org.spongepowered.api.effect.potion.PotionEffectType;
 public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsPotionEffectType>
     implements ContentPotionEffectTypeBuilder {
 
-  private RegistryReference<PotionEffectType> potion;
+  private PotionEffectType potion;
   private int duration, amplifier;
   private boolean isAmbient, showParticles;
 
   @Override
-  public void potion(final RegistryReference<PotionEffectType> potion) {
+  public void potion(final PotionEffectType potion) {
     this.potion = potion;
   }
 
@@ -70,7 +69,7 @@ public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEff
     checkNotNull(this.potion);
 
     final PotionEffect effect = PotionEffect.builder()
-        .potionType(this.potion.require())
+        .potionType(this.potion)
         .duration(this.duration)
         .amplifier(this.amplifier)
         .ambience(this.isAmbient)

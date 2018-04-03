@@ -24,14 +24,13 @@
  */
 package org.inspirenxe.skills.impl.content.type.effect.potion;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectTypeBuilder;
 import org.inspirenxe.skills.impl.effect.potion.SkillsPotionEffectType;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public interface ContentPotionEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsPotionEffectType> {
 
-  void potion(final RegistryReference<PotionEffectType> potion);
+  void potion(final PotionEffectType potion);
 
   void duration(final int duration);
 

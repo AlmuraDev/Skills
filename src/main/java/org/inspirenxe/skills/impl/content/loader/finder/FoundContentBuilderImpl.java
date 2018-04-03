@@ -36,6 +36,7 @@ import java.util.Collections;
 import javax.inject.Provider;
 
 final class FoundContentBuilderImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractFoundContentBuilder<R, C> {
+
   @Override
   protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
     return new FoundContentEntryImpl<>(

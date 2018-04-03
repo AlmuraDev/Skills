@@ -26,8 +26,6 @@ package org.inspirenxe.skills.impl.content.type.effect.firework.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.Parser;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
@@ -36,17 +34,15 @@ import org.spongepowered.api.item.FireworkShape;
 
 public final class ShapeProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
 
-  private final Registry<FireworkShape> registry;
-  private final Parser<RegistryKey> keyParser;
+  private final Parser<FireworkShape> shapeParser;
 
   @Inject
-  public ShapeProcessor(final Registry<FireworkShape> registry, final Parser<RegistryKey> keyParser) {
-    this.registry = registry;
-    this.keyParser = keyParser;
+  public ShapeProcessor(final Parser<FireworkShape> shapeParser) {
+    this.shapeParser = shapeParser;
   }
 
   @Override
   public void process(Node node, ContentFireworkEffectTypeBuilder builder) throws XMLException {
-    builder.shape(this.registry.ref(this.keyParser.parse(node.requireAttribute("shape"))));
+    builder.shape(this.shapeParser.parse(node.requireAttribute("shape")));
   }
 }

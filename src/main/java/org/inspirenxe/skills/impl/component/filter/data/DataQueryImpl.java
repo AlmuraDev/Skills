@@ -22,31 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.parser;
+package org.inspirenxe.skills.impl.component.filter.data;
 
-import static java.util.Objects.requireNonNull;
+import org.spongepowered.api.data.key.Key;
 
-import com.almuradev.droplet.parser.Parser;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.droplet.registry.RegistryKey;
-import net.kyori.xml.node.Node;
+public final class DataQueryImpl implements DataQuery {
 
-import javax.inject.Inject;
+  private final Key dataKey;
+  private final Object value;
 
-public final class RegistryParser<T> implements Parser<T> {
+  public DataQueryImpl(final Key dataKey) {
+    this.dataKey = dataKey;
+    this.value = null;
+  }
 
-  private final Registry<T> registry;
-  private final Parser<RegistryKey> keyParser;
-
-  @Inject
-  private RegistryParser(final Registry<T> registry, final Parser<RegistryKey> keyParser) {
-    this.registry = registry;
-    this.keyParser = keyParser;
+  public DataQueryImpl(final Key dataKey, final Object value) {
+    this.dataKey = dataKey;
+    this.value = value;
   }
 
   @Override
-  public T throwingParse(final Node node) {
-    final RegistryKey key = this.keyParser.parse(node);
-    return requireNonNull(this.registry.get(key), key.toString());
+  public Key dataKey() {
+    return this.dataKey;
+  }
+
+  @Override
+  public <V> V value() {
+    return (V) this.value;
   }
 }

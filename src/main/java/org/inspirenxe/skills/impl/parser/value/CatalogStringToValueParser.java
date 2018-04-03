@@ -22,27 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter;
+package org.inspirenxe.skills.impl.parser.value;
 
-import com.almuradev.droplet.component.filter.FilterBinder;
-import com.almuradev.droplet.parser.ParserBinder;
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.component.filter.block.BlockFilterParser;
-import org.inspirenxe.skills.impl.component.filter.data.DataFilterParser;
-import org.inspirenxe.skills.impl.component.filter.item.ItemFilterParser;
-import org.inspirenxe.skills.impl.component.filter.key.NamespaceFilterParser;
-import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterParser;
-import org.inspirenxe.skills.impl.component.filter.potion.PotionFilterParser;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.GameRegistry;
 
-public final class FilterModule extends AbstractModule implements FilterBinder, ParserBinder {
+import java.util.Optional;
+
+public final class CatalogStringToValueParser<V extends CatalogType> implements StringToValueParser<V> {
+
+  private final GameRegistry registry;
+
+  @Inject
+  public CatalogStringToValueParser(final GameRegistry registry) {
+    this.registry = registry;
+  }
 
   @Override
-  protected void configure() {
-    this.bindFilter("data").to(DataFilterParser.class);
-    this.bindFilter("key").to(RegistryKeyFilterParser.class);
-    this.bindFilter("namespace").to(NamespaceFilterParser.class);
-    this.bindFilter("block").to(BlockFilterParser.class);
-    this.bindFilter("item").to(ItemFilterParser.class);
-    this.bindFilter("potion").to(PotionFilterParser.class);
+  public Optional<V> parse(final TypeToken<?> token, final String value) {
+    return (Optional<V>) this.registry.getType((Class<CatalogType>) token.getRawType(), value);
   }
 }

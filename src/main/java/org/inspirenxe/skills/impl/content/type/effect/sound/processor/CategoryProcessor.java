@@ -26,8 +26,6 @@ package org.inspirenxe.skills.impl.content.type.effect.sound.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.Parser;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
@@ -36,17 +34,15 @@ import org.spongepowered.api.effect.sound.SoundCategory;
 
 public final class CategoryProcessor implements Processor<ContentSoundEffectTypeBuilder> {
 
-  private final Registry<SoundCategory> registry;
-  private final Parser<RegistryKey> keyParser;
+  private final Parser<SoundCategory> categoryParser;
 
   @Inject
-  public CategoryProcessor(final Registry<SoundCategory> registry, final Parser<RegistryKey> keyParser) {
-    this.registry = registry;
-    this.keyParser = keyParser;
+  public CategoryProcessor(final Parser<SoundCategory> categoryParser) {
+    this.categoryParser = categoryParser;
   }
 
   @Override
   public void process(Node node, ContentSoundEffectTypeBuilder builder) throws XMLException {
-    builder.category(this.registry.ref(this.keyParser.parse(node.requireAttribute("category"))));
+    builder.category(this.categoryParser.parse(node.requireAttribute("category")));
   }
 }

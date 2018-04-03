@@ -24,27 +24,18 @@
  */
 package org.inspirenxe.skills.impl.component.filter.data;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
-import com.almuradev.droplet.parser.Parser;
-import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
-import com.google.inject.Inject;
-import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterQuery;
+import org.inspirenxe.skills.impl.registry.CatalogKey;
 import org.spongepowered.api.data.key.Key;
 
-public final class DataKeyFilterParser implements FilterTypeParser<DataKeyFilter> {
+public interface DataQuery extends RegistryKeyFilterQuery {
 
-  private final Registry<Key<?>> registry;
-  private final Parser<RegistryKey> keyParser;
-
-  @Inject
-  public DataKeyFilterParser(final Registry<Key<?>> registry, final Parser<RegistryKey> keyParser) {
-    this.registry = registry;
-    this.keyParser = keyParser;
+  default RegistryKey key() {
+    return new CatalogKey(this.dataKey().getId());
   }
 
-  @Override
-  public DataKeyFilter throwingParse(Node node) {
-    return new DataKeyFilter(this.registry.ref(this.keyParser.parse(node)).require());
-  }
+  Key dataKey();
+
+  <V> V value();
 }

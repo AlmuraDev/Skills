@@ -26,8 +26,6 @@ package org.inspirenxe.skills.impl.content.type.effect.potion.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.Parser;
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
@@ -36,17 +34,15 @@ import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public final class PotionProcessor implements Processor<ContentPotionEffectTypeBuilder> {
 
-  private final Registry<PotionEffectType> registry;
-  private final Parser<RegistryKey> keyParser;
+  private final Parser<PotionEffectType> potionParser;
 
   @Inject
-  public PotionProcessor(final Registry<PotionEffectType> registry, final Parser<RegistryKey> keyParser) {
-    this.registry = registry;
-    this.keyParser = keyParser;
+  public PotionProcessor(final Parser<PotionEffectType> potionParser) {
+    this.potionParser = potionParser;
   }
 
   @Override
   public void process(Node node, ContentPotionEffectTypeBuilder builder) throws XMLException {
-    builder.potion(this.registry.ref(this.keyParser.parse(node.requireAttribute("potion"))));
+    builder.potion(this.potionParser.parse(node.requireAttribute("potion")));
   }
 }

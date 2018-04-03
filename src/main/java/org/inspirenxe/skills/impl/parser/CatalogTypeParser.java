@@ -22,27 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter;
+package org.inspirenxe.skills.impl.parser;
 
-import com.almuradev.droplet.component.filter.FilterBinder;
-import com.almuradev.droplet.parser.ParserBinder;
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.component.filter.block.BlockFilterParser;
-import org.inspirenxe.skills.impl.component.filter.data.DataFilterParser;
-import org.inspirenxe.skills.impl.component.filter.item.ItemFilterParser;
-import org.inspirenxe.skills.impl.component.filter.key.NamespaceFilterParser;
-import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterParser;
-import org.inspirenxe.skills.impl.component.filter.potion.PotionFilterParser;
+import com.almuradev.droplet.parser.Parser;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import net.kyori.xml.XMLException;
+import net.kyori.xml.node.Node;
+import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.GameRegistry;
 
-public final class FilterModule extends AbstractModule implements FilterBinder, ParserBinder {
+import javax.inject.Inject;
+
+@Singleton
+public final class CatalogTypeParser<C extends CatalogType> implements Parser<C> {
+
+  private final GameRegistry registry;
+  private final TypeLiteral<C> type;
+
+  @Inject
+  private CatalogTypeParser(final GameRegistry registry, final TypeLiteral<C> type) {
+    this.registry = registry;
+    this.type = type;
+  }
 
   @Override
-  protected void configure() {
-    this.bindFilter("data").to(DataFilterParser.class);
-    this.bindFilter("key").to(RegistryKeyFilterParser.class);
-    this.bindFilter("namespace").to(NamespaceFilterParser.class);
-    this.bindFilter("block").to(BlockFilterParser.class);
-    this.bindFilter("item").to(ItemFilterParser.class);
-    this.bindFilter("potion").to(PotionFilterParser.class);
+  public C throwingParse(final Node node) throws XMLException {
+    return this.registry.getType((Class<C>) this.type.getRawType(), node.value())
+        .orElseThrow(() -> new XMLException("Could not parse " + this.type.getRawType()));
   }
 }

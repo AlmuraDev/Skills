@@ -22,21 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.data;
+package org.inspirenxe.skills.impl.parser.value;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import org.spongepowered.api.data.key.Key;
+import com.google.common.reflect.TypeToken;
 
-public final class DataKeyFilter implements AbstractFilter<DataKeyQuery> {
+import java.util.Optional;
 
-  private final Key<?> dataKey;
+public interface StringToValueParser<V> {
 
-  DataKeyFilter(final Key<?> dataKey) {
-    this.dataKey = dataKey;
-  }
-
-  @Override
-  public boolean testInternal(DataKeyQuery query) {
-    return this.dataKey.getId().equalsIgnoreCase(query.dataKey().getId());
-  }
+  Optional<V> parse(final TypeToken<?> token, final String value);
 }
