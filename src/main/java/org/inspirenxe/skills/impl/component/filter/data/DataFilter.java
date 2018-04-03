@@ -59,7 +59,7 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
 
   @Override
   public boolean testInternal(final DataQuery query) {
-    final Key<?> key = this.dataKey.require();
+    final Key key = this.dataKey.require();
     boolean success = key.getId().equalsIgnoreCase(query.dataKey().getId());
 
     if (success && this.rawValue != null) {
