@@ -32,21 +32,25 @@ import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 
+import javax.annotation.Nullable;
+
 @Plugin(id = SkillsImpl.ID)
 public class SkillsImpl {
 
   static final String ID = "skills";
 
-  @Inject
-  private Injector baseInjector;
+  private final Injector baseInjector;
 
-  private Facets facets;
+  @Nullable private Facets facets;
+
+  @Inject
+  public SkillsImpl(final Injector baseInjector) {
+    this.baseInjector = baseInjector;
+  }
 
   @Listener
   public void onGameConstruction(GameConstructionEvent event) {
-    final Injector injector = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule());
-
-    this.facets = injector.getInstance(Facets.class);
+    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
 
     this.facets.enable();
   }

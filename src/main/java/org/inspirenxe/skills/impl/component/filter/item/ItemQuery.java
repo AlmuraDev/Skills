@@ -24,16 +24,15 @@
  */
 package org.inspirenxe.skills.impl.component.filter.item;
 
-import com.almuradev.droplet.registry.RegistryKey;
-import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterQuery;
-import org.inspirenxe.skills.impl.registry.CatalogKey;
+import com.almuradev.droplet.component.filter.FilterQuery;
+import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
 import org.spongepowered.api.item.ItemType;
 
-public interface ItemQuery extends RegistryKeyFilterQuery {
+public interface ItemQuery extends FilterQuery {
 
-  default RegistryKey key() {
-    return new CatalogKey(this.item().getId());
+  default ItemType item() {
+    return this.stack().item();
   }
 
-  ItemType item();
+  LazyItemStack stack();
 }

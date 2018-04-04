@@ -22,31 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.item;
+package org.inspirenxe.skills.impl.component.filter.entity.player;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
-import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
+import org.inspirenxe.skills.impl.component.filter.block.BlockQuery;
+import org.inspirenxe.skills.impl.component.filter.entity.EntityQuery;
+import org.spongepowered.api.entity.living.player.Player;
 
-public final class ItemFilter implements AbstractFilter<ItemQuery> {
-
-  private final LazyItemStack stack;
-
-  ItemFilter(final LazyItemStack stack) {
-    this.stack = stack;
-  }
+public interface PlayerQuery extends BlockQuery, EntityQuery {
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
-    return query instanceof ItemQuery;
-  }
-
-  @Override
-  public FilterResponse queryInternal(ItemQuery query) {
-    if (this.stack.matches(query.stack())) {
-      return FilterResponse.ALLOW;
-    }
-    return FilterResponse.DENY;
-  }
+  Player entity();
 }

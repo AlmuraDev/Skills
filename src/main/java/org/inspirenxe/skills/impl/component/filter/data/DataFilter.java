@@ -69,7 +69,8 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
     if (success && this.rawValue != null) {
       if (!this.computedValue) {
         final StringToValueParser<?> parser = injector.getInstance(com.google.inject.Key.get(new FriendlyTypeLiteral<StringToValueParser<?>>() {
-        }.where(new TypeArgument(key.getElementToken()) {})));
+        }.where(new TypeArgument(key.getElementToken()) {
+        })));
         this.value = parser.parse(key.getElementToken(), rawValue).orElse(null);
         this.computedValue = true;
       }

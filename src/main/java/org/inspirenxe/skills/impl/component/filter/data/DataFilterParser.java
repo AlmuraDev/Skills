@@ -42,7 +42,7 @@ public final class DataFilterParser implements FilterTypeParser<DataFilter> {
 
   @Inject
   public DataFilterParser(final Registry<Key> registry, final Parser<RegistryKey> keyParser, final Parser<String>
-      stringParser) {
+    stringParser) {
     this.registry = registry;
     this.keyParser = keyParser;
     this.stringParser = stringParser;

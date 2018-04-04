@@ -27,16 +27,8 @@ package org.inspirenxe.skills.impl;
 import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.almuradev.toolbox.inject.command.CommandInstaller;
 import com.almuradev.toolbox.inject.event.WitnessModule;
-import com.almuradev.toolbox.inject.network.packet.indexed.ForIndexedPacketBinder;
 import com.almuradev.toolbox.inject.registry.RegistryInstaller;
-import com.google.inject.Provider;
-import com.google.inject.Scopes;
 import net.kyori.violet.AbstractModule;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.network.ChannelBinding;
-import org.spongepowered.api.plugin.PluginContainer;
-
-import javax.inject.Inject;
 
 public final class ToolboxModule extends AbstractModule implements ToolboxBinder {
 
@@ -44,17 +36,6 @@ public final class ToolboxModule extends AbstractModule implements ToolboxBinder
   protected void configure() {
     // Setup event injection
     this.install(new WitnessModule());
-
-    // Setup channel injection
-    this.bind(ChannelBinding.IndexedMessageChannel.class).annotatedWith(ForIndexedPacketBinder.class)
-        .toProvider(new Provider<ChannelBinding.IndexedMessageChannel>() {
-          @Inject private PluginContainer container;
-
-          @Override
-          public ChannelBinding.IndexedMessageChannel get() {
-            return Sponge.getChannelRegistrar().getOrCreate(this.container, "SKS");
-          }
-        }).in(Scopes.SINGLETON);
 
     // Setup installers
     this.facet()

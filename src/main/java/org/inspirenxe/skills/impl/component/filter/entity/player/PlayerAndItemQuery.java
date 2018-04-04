@@ -22,31 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.item;
+package org.inspirenxe.skills.impl.component.filter.entity.player;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
+import org.inspirenxe.skills.impl.component.filter.item.ItemQuery;
 import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
+import org.spongepowered.api.data.type.HandType;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.ItemStack;
 
-public final class ItemFilter implements AbstractFilter<ItemQuery> {
+public final class PlayerAndItemQuery extends PlayerQueryImpl implements ItemQuery {
 
-  private final LazyItemStack stack;
+  private final HandType hand;
 
-  ItemFilter(final LazyItemStack stack) {
-    this.stack = stack;
+  public PlayerAndItemQuery(final Player entity, final HandType hand) {
+    super(entity);
+    this.hand = hand;
   }
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
-    return query instanceof ItemQuery;
-  }
-
-  @Override
-  public FilterResponse queryInternal(ItemQuery query) {
-    if (this.stack.matches(query.stack())) {
-      return FilterResponse.ALLOW;
-    }
-    return FilterResponse.DENY;
+  public LazyItemStack stack() {
+    return LazyItemStack.from(this.entity().getItemInHand(this.hand).orElse(ItemStack.empty()));
   }
 }

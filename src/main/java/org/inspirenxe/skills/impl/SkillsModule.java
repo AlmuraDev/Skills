@@ -30,7 +30,6 @@ import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.google.inject.Provides;
 import net.kyori.violet.AbstractModule;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
 import org.inspirenxe.skills.impl.component.ComponentModule;

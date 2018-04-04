@@ -29,14 +29,14 @@ import org.spongepowered.api.item.ItemType;
 
 public final class LazyItemStackQuery implements ItemQuery {
 
-  private final LazyItemStack item;
+  private final LazyItemStack stack;
 
-  public LazyItemStackQuery(final LazyItemStack item) {
-    this.item = item;
+  public LazyItemStackQuery(final LazyItemStack stack) {
+    this.stack = stack;
   }
 
   @Override
-  public ItemType item() {
-    return this.item.item();
+  public LazyItemStack stack() {
+    return this.stack;
   }
 }

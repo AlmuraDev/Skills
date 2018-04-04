@@ -22,31 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.item;
+package org.inspirenxe.skills.impl.parser.lazy.item;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
-import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
 
-public final class ItemFilter implements AbstractFilter<ItemQuery> {
+public final class WrappedLazyItemStack implements LazyItemStack {
 
-  private final LazyItemStack stack;
+  private final ItemStack stack;
 
-  ItemFilter(final LazyItemStack stack) {
+  WrappedLazyItemStack(final ItemStack stack) {
     this.stack = stack;
   }
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
-    return query instanceof ItemQuery;
+  public ItemType item() {
+    return this.stack.getType();
   }
 
   @Override
-  public FilterResponse queryInternal(ItemQuery query) {
-    if (this.stack.matches(query.stack())) {
-      return FilterResponse.ALLOW;
-    }
-    return FilterResponse.DENY;
+  public int data() {
+    return this.stack.get(Keys.ITEM_DURABILITY).get();
+  }
+
+  @Override
+  public int quantity() {
+    return this.stack.getQuantity();
+  }
+
+  @Override
+  public ItemStack stack() {
+    return this.stack;
   }
 }

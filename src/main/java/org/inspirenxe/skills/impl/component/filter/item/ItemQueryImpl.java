@@ -25,18 +25,17 @@
 package org.inspirenxe.skills.impl.component.filter.item;
 
 import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
-import org.spongepowered.api.item.ItemType;
 
 public final class ItemQueryImpl implements ItemQuery {
 
-  private final LazyItemStack item;
+  private final LazyItemStack stack;
 
-  public ItemQueryImpl(final LazyItemStack item) {
-    this.item = item;
+  public ItemQueryImpl(final LazyItemStack stack) {
+    this.stack = stack;
   }
 
   @Override
-  public ItemType item() {
-    return this.item.item();
+  public LazyItemStack stack() {
+    return this.stack();
   }
 }

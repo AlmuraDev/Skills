@@ -32,8 +32,14 @@ import java.util.function.Predicate;
 
 public interface LazyItemStack extends Predicate<ItemStack> {
 
-  @Deprecated // 1.13
-      int DEFAULT_DATA = 0;
+  static LazyItemStack from(final ItemStack stack) {
+    return new WrappedLazyItemStack(stack);
+  }
+
+  // 1.13
+  @Deprecated
+  int DEFAULT_DATA = 0;
+
   int DEFAULT_QUANTITY = 1;
 
   ItemType item();
