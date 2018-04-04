@@ -55,4 +55,9 @@ public final class WrappedLazyItemStack implements LazyItemStack {
   public ItemStack stack() {
     return this.stack;
   }
+
+  @Override
+  public ItemStack get() {
+    return this.stack;
+  }
 }

@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.parser.lazy.item;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 public final class LazyItemStackImpl implements LazyItemStack {
 
@@ -53,5 +54,10 @@ public final class LazyItemStackImpl implements LazyItemStack {
   @Override
   public int quantity() {
     return this.quantity;
+  }
+
+  @Override
+  public ItemStack get() {
+    return this.stack();
   }
 }

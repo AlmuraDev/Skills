@@ -29,8 +29,9 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-public interface LazyItemStack extends Predicate<ItemStack> {
+public interface LazyItemStack extends Predicate<ItemStack>, Supplier<ItemStack> {
 
   static LazyItemStack from(final ItemStack stack) {
     return new WrappedLazyItemStack(stack);
@@ -44,7 +45,8 @@ public interface LazyItemStack extends Predicate<ItemStack> {
 
   ItemType item();
 
-  @Deprecated // 1.13
+  // 1.13
+  @Deprecated
   int data();
 
   int quantity();
