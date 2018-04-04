@@ -2,12 +2,8 @@
 <droplet spec="1.0.0" xmlns:skills="skills">
   <skill name="Mining" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99">
     <world-share>
-      <world name="DIM1">
-        <inherit>world</inherit>
-      </world>
-      <world name="DIM-1">
-        <inherit>world</inherit>
-      </world>
+      <world name="DIM1" from="world"/>
+      <world name="DIM-1" from ="world"/>
     </world-share>
     <events>
       <change-block>
@@ -34,19 +30,19 @@
         <block>
           <filter key="stone-gravel-block">
             <any>
-              <dictionary>stone</dictionary>
+              <type>minecraft:stone</type>
               <type>minecraft:gravel</type>
             </any>
           </filter>
           <filter key="coal-block">
             <all>
-              <dictionary>coal</dictionary>
+              <type>minecraft:coal</type>
               <skills:level key="coal-block-level" min="10"/>
             </all>
           </filter>
           <filter key="iron-ore-block">
             <all>
-              <dictionary>iron-ore</dictionary>
+              <type>minecraft:iron_ore</type>
               <not>
                 <namespace>buildcraft</namespace>
               </not>
@@ -55,19 +51,19 @@
           </filter>
           <filter key="gold-ore-block">
             <all>
-              <type>minecraft:gold-ore</type>
+              <type>minecraft:gold_ore</type>
               <skills:level key="gold-ore-block-level" min="30"/>
             </all>
           </filter>
           <filter key="diamond-ore-block">
             <all>
-              <type>minecraft:diamond-ore</type>
+              <type>minecraft:diamond_ore</type>
               <skills:level key="diamond-ore-block-level" min="40"/>
             </all>
           </filter>
           <filter key="emerald-ore-block">
             <all>
-              <type>minecraft:emerald-ore</type>
+              <type>minecraft:emerald_ore</type>
               <skills:level key="emerald-ore-block-level" min="50"/>
             </all>
           </filter>
@@ -168,30 +164,30 @@
         <item>
           <filter key="wooden-pickaxe">
             <all>
-              <type>minecraft:wooden-pickaxe</type>
+              <type>minecraft:wooden_pickaxe</type>
             </all>
           </filter>
           <filter key="stone-pickaxe">
             <all>
-              <type>minecraft:stone-pickaxe</type>
+              <type>minecraft:stone_pickaxe</type>
               <skills:level key="stone-pickaxe-level" op="greater-than" value="9"/>
             </all>
           </filter>
           <filter key="iron-pickaxe">
             <all>
-              <type>minecraft:iron-pickaxe</type>
+              <type>minecraft:iron_pickaxe</type>
               <skills:level key="iron-pickaxe-level" op="greater-than" value="19"/>
             </all>
           </filter>
           <filter key="gold-pickaxe">
             <all>
-              <type>minecraft:gold-pickaxe</type>
+              <type>minecraft:gold_pickaxe</type>
               <skills:level key="gold-pickaxe-level" op="greater-than" value="29"/>
             </all>
           </filter>
           <filter key="diamond-pickaxe">
             <all>
-              <type>minecraft:diamond-pickaxe</type>
+              <type>minecraft:diamond_pickaxe</type>
               <skills:level key="diamond-pickaxe-level" op="greater-than" value="39"/>
             </all>
           </filter>

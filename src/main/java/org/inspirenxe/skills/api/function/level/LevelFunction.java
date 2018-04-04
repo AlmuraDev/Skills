@@ -26,12 +26,12 @@ package org.inspirenxe.skills.api.function.level;
 
 import org.inspirenxe.skills.api.function.CatalogFunction;
 
-import java.util.function.Function;
+import java.util.function.IntToDoubleFunction;
 
 /**
  * {@link CatalogFunction} meant to process an integer level and return a double representing total experience at that level.
  */
-public interface LevelFunction extends CatalogFunction, Function<Integer, Double> {
+public interface LevelFunction extends CatalogFunction, IntToDoubleFunction {
 
   double UNKNOWN_EXP = -1;
 
@@ -66,11 +66,12 @@ public interface LevelFunction extends CatalogFunction, Function<Integer, Double
    * @return The experience
    */
   default double getXPBetween(final int lower, final int upper) {
-    final double xpDiff = this.apply(upper) - this.apply(lower);
+    final double xpDiff = this.applyAsDouble(upper) - this.applyAsDouble(lower);
     return xpDiff < 0 ? UNKNOWN_EXP : xpDiff;
   }
 
-  default Double apply(final Integer value) {
+  @Override
+  default double applyAsDouble(final int value) {
     return this.getXPFor(value);
   }
 
