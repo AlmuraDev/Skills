@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet spec="1.0.0">
   <effect shape="star">
-      <colors>
-          <color>minecraft:red</color>
-          <color>minecraft:yellow</color>
-      </colors>
-      <fade-colors>
-          <color>minecraft:yellow</color>
-          <color>minecraft:blue</color>
-      </fade-colors>
-      <flickers>false</flickers>
-      <trails>false</trails>
+    <colors>
+      <color>minecraft:red</color>
+      <color>minecraft:yellow</color>
+    </colors>
+    <fade-colors>
+      <color>minecraft:yellow</color>
+      <color>minecraft:blue</color>
+    </fade-colors>
+    <flickers>false</flickers>
+    <trails>false</trails>
   </effect>
 </droplet>

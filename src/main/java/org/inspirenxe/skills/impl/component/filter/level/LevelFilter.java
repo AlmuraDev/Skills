@@ -27,7 +27,6 @@ package org.inspirenxe.skills.impl.component.filter.level;
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.component.range.IntRange;
-import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public final class LevelFilter implements AbstractFilter<LevelQuery> {
 

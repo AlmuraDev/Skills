@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet spec="1.0.0">
   <effect potion="minecraft:haste">
-      <duration>5000</duration>
-      <amplifier>50</amplifier>
-      <is-ambient>true</is-ambient>
-      <show-particles>true</show-particles>
+    <duration>5000</duration>
+    <amplifier>50</amplifier>
+    <is-ambient>true</is-ambient>
+    <show-particles>true</show-particles>
   </effect>
 </droplet>
