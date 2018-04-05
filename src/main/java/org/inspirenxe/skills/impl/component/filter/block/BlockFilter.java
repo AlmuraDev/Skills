@@ -43,10 +43,7 @@ public final class BlockFilter implements AbstractFilter<BlockQuery> {
   }
 
   @Override
-  public FilterResponse queryInternal(BlockQuery query) {
-    if (this.state.matches(query.state())) {
-      return FilterResponse.ALLOW;
-    }
-    return FilterResponse.DENY;
+  public FilterResponse queryInternal(final BlockQuery query) {
+    return FilterResponse.from(this.state.matches(query.state()));
   }
 }

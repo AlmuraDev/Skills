@@ -43,10 +43,7 @@ public final class ItemFilter implements AbstractFilter<ItemQuery> {
   }
 
   @Override
-  public FilterResponse queryInternal(ItemQuery query) {
-    if (this.stack.matches(query.stack())) {
-      return FilterResponse.ALLOW;
-    }
-    return FilterResponse.DENY;
+  public FilterResponse queryInternal(final ItemQuery query) {
+    return FilterResponse.from(this.stack.matches(query.stack()));
   }
 }

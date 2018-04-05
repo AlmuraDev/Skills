@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.component.filter.key;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
+import com.almuradev.droplet.component.filter.FilterResponse;
 
 public final class NamespaceFilter implements AbstractFilter<RegistryKeyFilterQuery> {
 
@@ -41,7 +42,7 @@ public final class NamespaceFilter implements AbstractFilter<RegistryKeyFilterQu
   }
 
   @Override
-  public boolean testInternal(final RegistryKeyFilterQuery query) {
-    return this.namespace.equals(query.key().namespace());
+  public FilterResponse queryInternal(final RegistryKeyFilterQuery query) {
+    return FilterResponse.from(this.namespace.equalsIgnoreCase(query.key().namespace()));
   }
 }

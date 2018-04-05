@@ -33,7 +33,6 @@ import org.inspirenxe.skills.impl.component.filter.data.DataFilterParser;
 import org.inspirenxe.skills.impl.component.filter.item.ItemFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.NamespaceFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterParser;
-import org.inspirenxe.skills.impl.component.filter.level.LevelFilterParser;
 import org.inspirenxe.skills.impl.component.filter.potion.PotionFilterParser;
 
 public final class FilterModule extends AbstractModule implements FilterBinder, ParserBinder {
@@ -44,7 +43,6 @@ public final class FilterModule extends AbstractModule implements FilterBinder, 
     this.bindFilter("data").to(DataFilterParser.class);
     this.bindFilter("item").to(ItemFilterParser.class);
     this.bindFilter("key").to(RegistryKeyFilterParser.class);
-    this.bindFilter("level").to(LevelFilterParser.class);
     this.bindFilter("namespace").to(NamespaceFilterParser.class);
     this.bindFilter("potion").to(PotionFilterParser.class);
 

@@ -22,31 +22,50 @@
       <skills:notifier value="none"/>
     </all>
     <any id="stone-gravel-block">
-      <type>minecraft:stone</type>
-      <type>minecraft:gravel</type>
+      <block>minecraft:stone</block>
+      <block>minecraft:gravel</block>
     </any>
-    <all id="coal-block">
-      <type>minecraft:coal</type>
-      <skills:level id="coal-block-level" min="10"/>
+    <all id="coal-ore-block">
+      <block>minecraft:coal_ore</block>
+    </all>
+    <all id="coal-ore-block-level">
+      <filter id="coal-ore-block"/>
+      <skills:level op="greater-than" self="true" value="10"/>
     </all>
     <all id="iron-ore-block">
-      <type>minecraft:iron_ore</type>
-      <not>
-        <namespace>buildcraft</namespace>
-      </not>
-      <skills:level id="iron-ore-block-level" min="20"/>
+      <block>minecraft:iron_ore</block>
+    </all>
+    <all id="iron-ore-block-level">
+      <filter id="iron-ore-block"/>
+      <skills:level op="greater-than" self="true" value="20"/>
     </all>
     <all id="gold-ore-block">
-      <type>minecraft:gold_ore</type>
-      <skills:level id="gold-ore-block-level" min="30"/>
+      <block>minecraft:gold_ore</block>
+    </all>
+    <all id="gold-ore-block-level">
+      <filter id="gold-ore-block"/>
+      <skills:level op="greater-than" self="true" value="30"/>
     </all>
     <all id="diamond-ore-block">
-      <type>minecraft:diamond_ore</type>
-      <skills:level id="diamond-ore-block-level" min="40"/>
+      <block>minecraft:diamond_ore</block>
     </all>
+    <all id="diamond-ore-block-level">
+      <filter id="diamond-ore-block"/>
+      <skills:level op="greater-than" self="true" value="40"/>
+    </all>
+    <all id="obsidian-block">
+      <block>minecraft:obsidian</block>
+    </all>
+    <all id="obsidian-block-level">
+      <filter id="obsidian-block"/>
+      <skills:level op="greater-than" self="true" value="50"/>
+    </all>    
     <all id="emerald-ore-block">
-      <type>minecraft:emerald_ore</type>
-      <skills:level id="emerald-ore-block-level" min="50"/>
+      <block>minecraft:emerald_ore</block>
+    </all>
+    <all id="emerald-ore-block-level">
+      <filter id="emerald-ore-block"/>
+      <skills:level op="greater-than" self="true" value="60"/>
     </all>
     <all id="interact-item">
       <filter id="player"/>
@@ -54,24 +73,36 @@
       <skills:data key="sponge:gamemode" value="minecraft:survival"/>
     </all>
     <all id="wooden-pickaxe">
-      <type>minecraft:wooden_pickaxe</type>
+      <item>minecraft:wooden_pickaxe</item>
     </all>
     <all id="stone-pickaxe">
-      <type>minecraft:stone_pickaxe</type>
-      <skills:level id="stone-pickaxe-level" op="greater-than" value="9"/>
+      <item>minecraft:wooden_pickaxe</item>
+    </all>    
+    <all id="stone-pickaxe-level">
+      <filter id="stone-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="15"/>
     </all>
     <all id="iron-pickaxe">
-      <type>minecraft:iron_pickaxe</type>
-      <skills:level id="iron-pickaxe-level" op="greater-than" value="19"/>
+      <item>minecraft:iron_pickaxe</item>
+    </all>    
+    <all id="iron-pickaxe-level">
+      <filter id="iron-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="30"/>
     </all>
     <all id="gold-pickaxe">
-      <type>minecraft:gold_pickaxe</type>
-      <skills:level id="gold-pickaxe-level" op="greater-than" value="29"/>
+      <item>minecraft:gold_pickaxe</item>
+    </all>    
+    <all id="gold-pickaxe-level">
+      <filter id="gold-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="45"/>
     </all>
     <all id="diamond-pickaxe">
-      <type>minecraft:diamond_pickaxe</type>
-      <skills:level id="diamond-pickaxe-level" op="greater-than" value="39"/>
-    </all>
+      <item>minecraft:diamond_pickaxe</item>
+    </all>    
+    <all id="diamond-pickaxe-level">
+      <filter id="diamond-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="60"/>
+    </all>   
   </filters>
   <skill name="Mining" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99">
     <world-share>
@@ -108,13 +139,13 @@
                       <filter id="stone-gravel-block"/>
                     </if>
                     <then>
-                      <skills:experience op="add" value="5"/>
+                      <skills:experience op="add" value="1"/>
                       <skills:economy-modifier value="0.05"/>
                     </then>
                   </apply>
                   <apply>
                     <if>
-                      <filter id="coal-block"/>
+                      <filter id="coal-ore-block"/>
                     </if>
                     <then>
                       <skills:experience op="add" value="10"/>
@@ -144,16 +175,25 @@
                       <filter id="diamond-ore-block"/>
                     </if>
                     <then>
-                      <skills:experience op="add" value="60"/>
+                      <skills:experience op="add" value="80"/>
                       <skills:economy-modifier value="0.45"/>
                     </then>
                   </apply>
                   <apply>
                     <if>
+                      <filter id="obsidian-block"/>
+                    </if>
+                    <then>
+                      <skills:experience op="add" value="60"/>
+                      <skills:economy-modifier value="0.55"/>
+                    </then>
+                  </apply>                  
+                  <apply>
+                    <if>
                       <filter id="emerald-ore-block"/>
                     </if>
                     <then>
-                      <skills:experience op="add" value="100"/>
+                      <skills:experience op="add" value="160"/>
                       <skills:economy-modifier value="0.55"/>
                     </then>
                   </apply>

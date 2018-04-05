@@ -49,7 +49,7 @@ public final class DataFilterParser implements FilterTypeParser<DataFilter> {
   }
 
   @Override
-  public DataFilter throwingParse(Node node) throws XMLException {
+  public DataFilter throwingParse(final Node node) throws XMLException {
     final RegistryReference<Key> key = this.registry.ref(this.keyParser.parse(node.requireAttribute("key")));
     final Node valueNode = node.attribute("value").orElse(null);
     if (valueNode == null) {

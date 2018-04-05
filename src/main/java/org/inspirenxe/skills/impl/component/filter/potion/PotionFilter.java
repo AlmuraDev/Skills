@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.component.filter.potion;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
+import com.almuradev.droplet.component.filter.FilterResponse;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public final class PotionFilter implements AbstractFilter<PotionQuery> {
@@ -42,7 +43,7 @@ public final class PotionFilter implements AbstractFilter<PotionQuery> {
   }
 
   @Override
-  public boolean testInternal(final PotionQuery query) {
-    return query.potion() == this.potion;
+  public FilterResponse queryInternal(PotionQuery query) {
+    return FilterResponse.from(this.potion == query.potion());
   }
 }

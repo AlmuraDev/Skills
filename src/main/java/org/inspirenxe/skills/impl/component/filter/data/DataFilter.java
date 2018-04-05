@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.component.filter.data;
 
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
+import com.almuradev.droplet.component.filter.FilterResponse;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -43,15 +44,11 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
   @Inject
   private static Injector injector;
   private final RegistryReference<Key> dataKey;
-  private final String rawValue;
+  @Nullable private final String rawValue;
   @Nullable private Object value;
   private boolean computedValue;
 
-  DataFilter(final RegistryReference<Key> dataKey) {
-    this(dataKey, null);
-  }
-
-  DataFilter(final RegistryReference<Key> dataKey, final String rawValue) {
+  DataFilter(final RegistryReference<Key> dataKey, @Nullable final String rawValue) {
     this.dataKey = dataKey;
     this.rawValue = rawValue;
   }
@@ -62,21 +59,20 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
   }
 
   @Override
-  public boolean testInternal(final DataQuery query) {
+  public FilterResponse queryInternal(final DataQuery query) {
     final Key key = this.dataKey.require();
-    boolean success = key.getId().equalsIgnoreCase(query.dataKey().getId());
+    FilterResponse response = FilterResponse.from(key.getId().equalsIgnoreCase(query.dataKey().getId()));
 
-    if (success && this.rawValue != null) {
+    if (response == FilterResponse.ALLOW && this.rawValue != null) {
       if (!this.computedValue) {
         final StringToValueParser<?> parser = injector.getInstance(com.google.inject.Key.get(new FriendlyTypeLiteral<StringToValueParser<?>>() {
-        }.where(new TypeArgument(key.getElementToken()) {
-        })));
+        }.where(new TypeArgument(key.getElementToken()) {})));
         this.value = parser.parse(key.getElementToken(), rawValue).orElse(null);
         this.computedValue = true;
       }
-      success = Objects.equals(this.value, query.value());
+      response = FilterResponse.from(Objects.equals(this.value, query.value()));
     }
 
-    return success;
+    return response;
   }
 }
