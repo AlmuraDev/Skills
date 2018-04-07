@@ -24,16 +24,9 @@
  */
 package org.inspirenxe.skills.impl.content.loader;
 
-import com.almuradev.droplet.content.loader.finder.ContentVisitor;
 import com.almuradev.droplet.content.type.ContentBuilder;
 import com.almuradev.droplet.content.type.ContentType;
-import org.inspirenxe.skills.impl.content.loader.finder.ContentVisitorImpl;
 
 public class RootContentLoaderImpl<C extends ContentType.Child, B extends ContentBuilder<?>> extends com.almuradev.droplet.content.loader
     .RootContentLoaderImpl<C, B> {
-
-  @Override
-  protected ContentVisitor<ContentType.Root<C>, C> contentVisitor() {
-    return new ContentVisitorImpl<>();
-  }
 }

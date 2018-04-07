@@ -22,30 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.loader.finder;
+package org.inspirenxe.skills.impl.component.filter.skill;
 
-import com.almuradev.droplet.content.loader.DocumentFactory;
-import com.almuradev.droplet.content.loader.finder.AbstractContentVisitor;
-import com.almuradev.droplet.content.loader.finder.FoundContentEntry;
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.content.type.ContentType;
+import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.impl.component.filter.experience.ExperienceQuery;
+import org.inspirenxe.skills.impl.component.filter.experience.LevelQuery;
 
-import java.nio.file.Path;
-import java.util.Collections;
+public interface SkillQuery extends ExperienceQuery, LevelQuery {
 
-import javax.inject.Provider;
-
-public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractContentVisitor<R, C> {
-  @Override
-  protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
-    return new FoundContentEntryImpl<>(
-      this.namespace,
-      this.type,
-      this.typePath,
-      this.child,
-      path.toAbsolutePath(),
-      new DocumentFactory(Collections.singletonList(this.typePath)),
-      builder.get()
-    );
+  default double experience() {
+    return this.skill().getCurrentExperience();
   }
+
+  default int level() {
+    return this.skill().getCurrentLevel();
+  }
+
+  Skill skill();
 }

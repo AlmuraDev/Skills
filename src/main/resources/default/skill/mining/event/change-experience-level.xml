@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet xmlns:skills="skills" spec="1.0.0">
-  <skill>
-    <event>
-      <change-experience>
-        <level>
-          <filter-apply>
-            <apply>
-              <if filter="player"/>
+  <event>
+    <change-experience>
+      <level>
+        <filter-apply>
+          <apply>
+            <if filter="player"/>
+            <then>
+              <message key="action_bar" text="+ {exp-diff}xp (`b{name}`r)"/>
+              <message key="chat" text="Congratulations! You've just advanced a `b{name}`r level and are now `2{new-level}`r."/>
+            </then>
+          </apply>
+          <apply>
+            <if filter="player-not-sneaking-level-99"/>
+            <then>
+              <effect key="skills:firework/mining-level-max" x="0" y="2.5" z="0"/>
+            </then>
+            <else>
+              <if filter="player-not-sneaking"/>
               <then>
-                <message key="action_bar" text="+ {exp-diff}xp (`b{name}`r)"/>
-                <message key="chat" text="Congratulations! You've just advanced a `b{name}`r level and are now `2{new-level}`r."/>
+                <effect key="skills:firework/mining-level-up" x="0" y="2.5" z="0"/>
               </then>
-            </apply>
-            <apply>
-              <if filter="player-not-sneaking-level-99"/>
-              <then>
-                <effect key="skills:firework/mining-level-max" x="0" y="2.5" z="0"/>
-              </then>
-              <else>
-                <if filter="player-not-sneaking"/>
-                <then>
-                  <effect key="skills:firework/mining-level-up" x="0" y="2.5" z="0"/>
-                </then>
-              </else>
-            </apply>
-          </filter-apply>
-        </level>
-      </change-experience>
-    </event>
-  </skill>
+            </else>
+          </apply>
+        </filter-apply>
+      </level>
+    </change-experience>
+  </event>
 </droplet>

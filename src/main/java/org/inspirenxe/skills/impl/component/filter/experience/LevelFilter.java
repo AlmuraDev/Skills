@@ -22,30 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.loader.finder;
+package org.inspirenxe.skills.impl.component.filter.experience;
 
-import com.almuradev.droplet.content.loader.DocumentFactory;
-import com.almuradev.droplet.content.loader.finder.AbstractContentVisitor;
-import com.almuradev.droplet.content.loader.finder.FoundContentEntry;
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.content.type.ContentType;
+import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
+import com.almuradev.droplet.component.filter.FilterResponse;
 
-import java.nio.file.Path;
-import java.util.Collections;
+public final class LevelFilter implements AbstractFilter<LevelQuery> {
 
-import javax.inject.Provider;
+  private int level;
 
-public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractContentVisitor<R, C> {
+  LevelFilter(final int level) {
+    this.level = level;
+  }
+
   @Override
-  protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
-    return new FoundContentEntryImpl<>(
-      this.namespace,
-      this.type,
-      this.typePath,
-      this.child,
-      path.toAbsolutePath(),
-      new DocumentFactory(Collections.singletonList(this.typePath)),
-      builder.get()
-    );
+  public boolean canQuery(FilterQuery query) {
+    return query instanceof LevelQuery;
+  }
+
+  @Override
+  public FilterResponse queryInternal(LevelQuery query) {
+    // TODO Operators
+    return FilterResponse.from(this.level == query.level());
   }
 }

@@ -58,15 +58,15 @@ public final class ContentFinderImpl implements ContentFinder {
   }
 
   @Override
-  public <C extends ContentType.Child, R extends ContentType.Root<C>, V extends ContentVisitor<R, C>> FoundContent<R, C> find(final V visitor,
-      final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
+  public <C extends ContentType.Child, R extends ContentType.Root<C>> FoundContent<R, C> find(final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
+    final ContentVisitor<R, C> visitor = new ContentVisitorImpl<>();
     this.logger.debug("{}Discovering {} content...", Logging.indent(1), rootType.id());
     this.configuration.searchPaths().forEach(Exceptions.rethrowConsumer(path -> {
-      visitor.visitCore(path);
+      visitor.visitRoot(path);
       visitor.visitNamespace(path);
       visitor.visitContent(path);
       final Path root = rootType.path(path).toAbsolutePath();
-      visitor.visitRoot(rootType, root);
+      visitor.visitType(rootType, root);
       childrenTypes.forEach(Exceptions.rethrowConsumer(child -> {
         ContentFinderImpl.this.logger.debug("{}Discovering {} content...", Logging.indent(2), child.type().id());
         final Path childPath = child.type().path(root).toAbsolutePath();
@@ -76,15 +76,6 @@ public final class ContentFinderImpl implements ContentFinder {
           public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
             ContentFinderImpl.this.logger.debug("{}Found {}", Logging.indent(3), childPath.relativize(file));
             visitor.visitEntry(file, child.builder());
-            return FileVisitResult.CONTINUE;
-          }
-
-          @Override
-          public FileVisitResult preVisitDirectory(final Path directory, final BasicFileAttributes attributes) {
-            if (directory.getFileName().toString().equals("include")) {
-              ContentFinderImpl.this.logger.debug("{}Skipping include directory", Logging.indent(4));
-              return FileVisitResult.SKIP_SUBTREE;
-            }
             return FileVisitResult.CONTINUE;
           }
         });

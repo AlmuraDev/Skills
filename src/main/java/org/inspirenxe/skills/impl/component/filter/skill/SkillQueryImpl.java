@@ -22,30 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.loader.finder;
+package org.inspirenxe.skills.impl.component.filter.skill;
 
-import com.almuradev.droplet.content.loader.DocumentFactory;
-import com.almuradev.droplet.content.loader.finder.AbstractContentVisitor;
-import com.almuradev.droplet.content.loader.finder.FoundContentEntry;
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.content.type.ContentType;
+import org.inspirenxe.skills.api.Skill;
 
-import java.nio.file.Path;
-import java.util.Collections;
+public final class SkillQueryImpl implements SkillQuery {
 
-import javax.inject.Provider;
+  private final Skill skill;
 
-public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractContentVisitor<R, C> {
+  public SkillQueryImpl(final Skill skill) {
+    this.skill = skill;
+  }
+
   @Override
-  protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
-    return new FoundContentEntryImpl<>(
-      this.namespace,
-      this.type,
-      this.typePath,
-      this.child,
-      path.toAbsolutePath(),
-      new DocumentFactory(Collections.singletonList(this.typePath)),
-      builder.get()
-    );
+  public Skill skill() {
+    return this.skill;
   }
 }

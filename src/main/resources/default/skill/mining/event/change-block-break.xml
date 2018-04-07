@@ -1,98 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet xmlns:skills="skills" spec="1.0.0">
-  <skill>
-    <event>
-      <change-block>
-        <break>
-          <filter-apply>
-            <apply>
-              <if>
-                <all>
-                  <filter id="player-survival"/>
-                </all>
-              </if>
-              <then>
-                <apply>
-                  <if>
-                    <all>
-                      <filter id="no-owner-and-notifier"/>
-                      <any>
-                        <filter id="coal-block-level"/>
-                        <filter id="iron-ore-block-level"/>
-                        <filter id="gold-ore-block-level"/>
-                        <filter id="diamond-ore-block-level"/>
-                        <filter id="emerald-ore-block-level"/>
-                      </any>
-                    </all>
-                  </if>
-                  <then>
-                    <apply>
-                      <if filter="stone-block"/>
-                      <then>
-                        <skills:experience op="add" value="1"/>
-                        <skills:economy-modifier value="0.05"/>
-                      </then>
-                    </apply>
-                    <apply>
-                      <if filter="gravel-block"/>
-                      <then>
-                        <skills:experience op="add" value="1"/>
-                        <skills:economy-modifier value="0.05"/>
-                      </then>
-                    </apply>
-                    <apply>
-                      <if filter="coal-ore-block"/>
-                      <then>
-                        <skills:experience op="add" value="10"/>
-                        <skills:economy-modifier value="0.15"/>
-                      </then>
-                    </apply>
-                    <apply>
-                      <if filter="iron-ore-block"/>
-                      <then>
-                        <skills:experience op="add" value="20"/>
-                        <skills:economy-modifier value="0.25"/>
-                      </then>
-                    </apply>
-                    <apply>
-                      <if filter="gold-ore-block"/>
-                      <then>
-                        <skills:experience op="add" value="40"/>
-                        <skills:economy-modifier value="0.35"/>
-                      </then>
-                    </apply>
-                    <apply>
-                      <if filter="diamond-ore-block"/>
-                      <then>
-                        <skills:experience op="add" value="80"/>
-                        <skills:economy-modifier value="0.45"/>
-                      </then>
-                    </apply>
-                    <apply>
-                      <if filter="obsidian-block"/>
-                      <then>
-                        <skills:experience op="add" value="60"/>
-                        <skills:economy-modifier value="0.55"/>
-                      </then>
-                    </apply>
-                    <apply>
-                      <if filter="emerald-ore-block"/>
-                      <then>
-                        <skills:experience op="add" value="160"/>
-                        <skills:economy-modifier value="0.55"/>
-                      </then>
-                    </apply>
-                  </then>
-                  <else>
-                    <skills:cancel-transaction value="true"/>
-                    <message key="action_bar" text="You lack the experience to break this block!"/>
-                  </else>
-                </apply>
-              </then>
-            </apply>
-          </filter-apply>
-        </break>
-      </change-block>
-    </event>
-  </skill>
+  <event>
+    <change-block>
+      <break>
+        <filter-apply>
+          <apply>
+            <if>
+              <all>
+                <filter id="player-survival"/>
+              </all>
+            </if>
+            <then>
+              <apply>
+                <if>
+                  <all>
+                    <filter id="no-owner-and-notifier"/>
+                    <any>
+                      <filter id="coal-block-level"/>
+                      <filter id="iron-ore-block-level"/>
+                      <filter id="gold-ore-block-level"/>
+                      <filter id="diamond-ore-block-level"/>
+                      <filter id="emerald-ore-block-level"/>
+                    </any>
+                  </all>
+                </if>
+                <then>
+                  <apply>
+                    <if filter="stone-block"/>
+                    <then>
+                      <skills:experience op="add" value="1"/>
+                      <skills:economy-modifier value="0.05"/>
+                    </then>
+                  </apply>
+                  <apply>
+                    <if filter="gravel-block"/>
+                    <then>
+                      <skills:experience op="add" value="1"/>
+                      <skills:economy-modifier value="0.05"/>
+                    </then>
+                  </apply>
+                  <apply>
+                    <if filter="coal-ore-block"/>
+                    <then>
+                      <skills:experience op="add" value="10"/>
+                      <skills:economy-modifier value="0.15"/>
+                    </then>
+                  </apply>
+                  <apply>
+                    <if filter="iron-ore-block"/>
+                    <then>
+                      <skills:experience op="add" value="20"/>
+                      <skills:economy-modifier value="0.25"/>
+                    </then>
+                  </apply>
+                  <apply>
+                    <if filter="gold-ore-block"/>
+                    <then>
+                      <skills:experience op="add" value="40"/>
+                      <skills:economy-modifier value="0.35"/>
+                    </then>
+                  </apply>
+                  <apply>
+                    <if filter="diamond-ore-block"/>
+                    <then>
+                      <skills:experience op="add" value="80"/>
+                      <skills:economy-modifier value="0.45"/>
+                    </then>
+                  </apply>
+                  <apply>
+                    <if filter="obsidian-block"/>
+                    <then>
+                      <skills:experience op="add" value="60"/>
+                      <skills:economy-modifier value="0.55"/>
+                    </then>
+                  </apply>
+                  <apply>
+                    <if filter="emerald-ore-block"/>
+                    <then>
+                      <skills:experience op="add" value="160"/>
+                      <skills:economy-modifier value="0.55"/>
+                    </then>
+                  </apply>
+                </then>
+                <else>
+                  <skills:cancel-transaction value="true"/>
+                  <message key="action_bar" text="You lack the experience to break this block!"/>
+                </else>
+              </apply>
+            </then>
+          </apply>
+        </filter-apply>
+      </break>
+    </change-block>
+  </event>
 </droplet>

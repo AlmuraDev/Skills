@@ -22,30 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.loader.finder;
+package org.inspirenxe.skills.impl.component.filter.experience;
 
-import com.almuradev.droplet.content.loader.DocumentFactory;
-import com.almuradev.droplet.content.loader.finder.AbstractContentVisitor;
-import com.almuradev.droplet.content.loader.finder.FoundContentEntry;
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.content.type.ContentType;
+import com.almuradev.droplet.component.filter.FilterTypeParser;
+import com.almuradev.droplet.parser.Parser;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import net.kyori.xml.XMLException;
+import net.kyori.xml.node.Node;
 
-import java.nio.file.Path;
-import java.util.Collections;
+@Singleton
+public final class ExperienceFilterParser implements FilterTypeParser<ExperienceFilter> {
 
-import javax.inject.Provider;
+  private final Parser<Double> doubleParser;
 
-public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractContentVisitor<R, C> {
+  @Inject
+  public ExperienceFilterParser(final Parser<Double> doubleParser) {
+    this.doubleParser = doubleParser;
+  }
+
   @Override
-  protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
-    return new FoundContentEntryImpl<>(
-      this.namespace,
-      this.type,
-      this.typePath,
-      this.child,
-      path.toAbsolutePath(),
-      new DocumentFactory(Collections.singletonList(this.typePath)),
-      builder.get()
-    );
+  public ExperienceFilter throwingParse(Node node) throws XMLException {
+    return new ExperienceFilter(this.doubleParser.parse(node.requireAttribute("value")));
   }
 }

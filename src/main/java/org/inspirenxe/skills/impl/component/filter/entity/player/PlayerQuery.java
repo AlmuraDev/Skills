@@ -24,11 +24,10 @@
  */
 package org.inspirenxe.skills.impl.component.filter.entity.player;
 
-import org.inspirenxe.skills.impl.component.filter.block.BlockQuery;
 import org.inspirenxe.skills.impl.component.filter.entity.EntityQuery;
 import org.spongepowered.api.entity.living.player.Player;
 
-public interface PlayerQuery extends BlockQuery, EntityQuery {
+public interface PlayerQuery extends EntityQuery {
 
   @Override
   Player entity();

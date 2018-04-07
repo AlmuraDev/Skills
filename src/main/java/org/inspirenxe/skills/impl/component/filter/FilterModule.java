@@ -25,24 +25,27 @@
 package org.inspirenxe.skills.impl.component.filter;
 
 import com.almuradev.droplet.component.filter.FilterBinder;
-import com.almuradev.droplet.parser.ParserBinder;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.component.filter.block.BlockFilterParser;
 import org.inspirenxe.skills.impl.component.filter.data.DataFilter;
 import org.inspirenxe.skills.impl.component.filter.data.DataFilterParser;
+import org.inspirenxe.skills.impl.component.filter.experience.ExperienceFilterParser;
+import org.inspirenxe.skills.impl.component.filter.experience.LevelFilterParser;
 import org.inspirenxe.skills.impl.component.filter.item.ItemFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.NamespaceFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterParser;
 import org.inspirenxe.skills.impl.component.filter.potion.PotionFilterParser;
 
-public final class FilterModule extends AbstractModule implements FilterBinder, ParserBinder {
+public final class FilterModule extends AbstractModule implements FilterBinder {
 
   @Override
   protected void configure() {
     this.bindFilter("block").to(BlockFilterParser.class);
     this.bindFilter("data").to(DataFilterParser.class);
+    this.bindFilter("experience").to(ExperienceFilterParser.class);
     this.bindFilter("item").to(ItemFilterParser.class);
     this.bindFilter("key").to(RegistryKeyFilterParser.class);
+    this.bindFilter("level").to(LevelFilterParser.class);
     this.bindFilter("namespace").to(NamespaceFilterParser.class);
     this.bindFilter("potion").to(PotionFilterParser.class);
 

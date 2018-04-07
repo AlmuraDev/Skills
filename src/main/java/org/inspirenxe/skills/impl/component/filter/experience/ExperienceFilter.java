@@ -22,31 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.loader.finder;
+package org.inspirenxe.skills.impl.component.filter.experience;
 
-import com.almuradev.droplet.content.loader.DocumentFactory;
-import com.almuradev.droplet.content.loader.finder.AbstractFoundContentBuilder;
-import com.almuradev.droplet.content.loader.finder.FoundContentEntry;
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.content.type.ContentType;
+import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
+import com.almuradev.droplet.component.filter.FilterResponse;
 
-import java.nio.file.Path;
-import java.util.Collections;
+public final class ExperienceFilter implements AbstractFilter<ExperienceQuery> {
 
-import javax.inject.Provider;
+  private final double experience;
 
-final class FoundContentBuilderImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractFoundContentBuilder<R, C> {
+  ExperienceFilter(final double experience) {
+    this.experience = experience;
+  }
 
   @Override
-  protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
-    return new FoundContentEntryImpl<>(
-        this.namespace,
-        this.root,
-        this.rootPath,
-        this.child,
-        path.toAbsolutePath(),
-        new DocumentFactory(Collections.singletonList(this.rootPath)),
-        builder.get()
-    );
+  public boolean canQuery(FilterQuery query) {
+    return query instanceof ExperienceQuery;
+  }
+
+  @Override
+  public FilterResponse queryInternal(ExperienceQuery query) {
+    // TODO Operators
+    return FilterResponse.from(this.experience == query.experience());
   }
 }

@@ -24,24 +24,18 @@
  */
 package org.inspirenxe.skills.impl.component.filter.entity.player;
 
-import org.inspirenxe.skills.impl.parser.lazy.block.LazyBlockState;
 import org.spongepowered.api.entity.living.player.Player;
 
 public class PlayerQueryImpl implements PlayerQuery {
 
   private final Player entity;
 
-  public PlayerQueryImpl(final Player entity) {
+  PlayerQueryImpl(final Player entity) {
     this.entity = entity;
   }
 
   @Override
   public Player entity() {
     return this.entity;
-  }
-
-  @Override
-  public LazyBlockState state() {
-    return LazyBlockState.from(this.getLocation().getBlock());
   }
 }
