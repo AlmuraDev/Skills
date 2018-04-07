@@ -24,6 +24,7 @@
  */
 package org.inspirenxe.skills.impl.parser.lazy.item;
 
+import com.almuradev.droplet.parser.Nodes;
 import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
@@ -51,11 +52,9 @@ public final class LazyItemStackParser implements Parser<LazyItemStack> {
 
   @Override
   public LazyItemStack throwingParse(final Node node) {
-    final RegistryReference<ItemType> item = this.registry.ref(this.keyParser.parse(node.nodes("item").collect(MoreCollectors.onlyElement())));
-    @Deprecated final int data =
-        node.nodes("data").collect(MoreCollectors.toOptional()).map(this.intParser::parse).orElse(LazyItemStack.DEFAULT_DATA);
-    final int quantity =
-        node.nodes("quantity").collect(MoreCollectors.toOptional()).map(this.intParser::parse).orElse(LazyItemStack.DEFAULT_QUANTITY);
+    final RegistryReference<ItemType> item = this.registry.ref(this.keyParser.parse(Nodes.firstNonEmpty(node, "item")));
+    @Deprecated final int data = node.nodes("data").collect(MoreCollectors.toOptional()).map(this.intParser::parse).orElse(LazyItemStack.DEFAULT_DATA);
+    final int quantity = node.nodes("quantity").collect(MoreCollectors.toOptional()).map(this.intParser::parse).orElse(LazyItemStack.DEFAULT_QUANTITY);
     return new LazyItemStackImpl(item, data, quantity);
   }
 }

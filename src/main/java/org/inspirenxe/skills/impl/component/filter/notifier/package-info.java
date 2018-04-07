@@ -22,23 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.owner;
-
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-
-public final class OwnerQueryImpl implements OwnerQuery {
-
-  private final Optional<UUID> owner;
-
-  public OwnerQueryImpl(@Nullable final UUID owner) {
-    this.owner = Optional.ofNullable(owner);
-  }
-
-  @Override
-  public Optional<UUID> owner() {
-    return this.owner;
-  }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.component.filter.notifier;

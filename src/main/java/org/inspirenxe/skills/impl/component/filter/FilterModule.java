@@ -35,6 +35,7 @@ import org.inspirenxe.skills.impl.component.filter.experience.LevelFilterParser;
 import org.inspirenxe.skills.impl.component.filter.item.ItemFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.NamespaceFilterParser;
 import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterParser;
+import org.inspirenxe.skills.impl.component.filter.notifier.NotifierFilterParser;
 import org.inspirenxe.skills.impl.component.filter.owner.OwnerFilterParser;
 import org.inspirenxe.skills.impl.component.filter.potion.PotionFilterParser;
 
@@ -51,6 +52,7 @@ public final class FilterModule extends AbstractModule implements FilterBinder {
     this.bindFilter("level").to(LevelFilterParser.class);
     this.bindFilter("owner").to(OwnerFilterParser.class);
     this.bindFilter("namespace").to(NamespaceFilterParser.class);
+    this.bindFilter("notifier").to(NotifierFilterParser.class);
     this.bindFilter("potion").to(PotionFilterParser.class);
 
     this.requestStaticInjection(DataFilter.class);

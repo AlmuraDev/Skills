@@ -2,10 +2,10 @@
 <droplet xmlns:skills="skills" spec="1.0.0">
   <filters>
     <all id="player-direct-cause">
-      <skills:cause root="player"/>
+      <skills:cause op="root" type="player"/>
     </all>
     <all id="player-indirect-cause">
-      <skills:cause first="player"/>
+      <skills:cause op="first" type="player"/>
     </all>
     <all id="no-owner-and-notifier">
       <skills:owner value="none"/>

@@ -22,23 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.owner;
+package org.inspirenxe.skills.impl.component.filter.notifier;
 
-import java.util.Optional;
+import com.almuradev.droplet.component.filter.FilterTypeParser;
+import com.almuradev.droplet.parser.Parser;
+import com.google.inject.Inject;
+import net.kyori.xml.XMLException;
+import net.kyori.xml.node.Node;
+
 import java.util.UUID;
 
-import javax.annotation.Nullable;
+public final class NotifierFilterParser implements FilterTypeParser<NotifierFilter> {
 
-public final class OwnerQueryImpl implements OwnerQuery {
+  private final Parser<String> stringParser;
 
-  private final Optional<UUID> owner;
-
-  public OwnerQueryImpl(@Nullable final UUID owner) {
-    this.owner = Optional.ofNullable(owner);
+  @Inject
+  public NotifierFilterParser(final Parser<String> stringParser) {
+    this.stringParser = stringParser;
   }
 
   @Override
-  public Optional<UUID> owner() {
-    return this.owner;
+  public NotifierFilter throwingParse(Node node) throws XMLException {
+    final String value = this.stringParser.parse(node.requireAttribute("value"));
+    if (value.equalsIgnoreCase("none")) {
+      return new NotifierFilter(null);
+    }
+    return new NotifierFilter(UUID.fromString(value));
   }
 }

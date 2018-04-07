@@ -11,7 +11,7 @@
       <item>minecraft:iron_pickaxe</item>
     </all>
     <all id="stone-pickaxe">
-      <item>minecraft:wooden_pickaxe</item>
+      <item>minecraft:stone_pickaxe</item>
     </all>
     <all id="wooden-pickaxe">
       <item>minecraft:wooden_pickaxe</item>

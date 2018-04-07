@@ -32,11 +32,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 public final class OwnerFilter implements AbstractFilter<OwnerQuery> {
 
   private final Optional<UUID> owner;
 
-  OwnerFilter(final UUID owner) {
+  OwnerFilter(@Nullable final UUID owner) {
     this.owner = Optional.ofNullable(owner);
   }
 

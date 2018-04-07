@@ -22,23 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.owner;
+package org.inspirenxe.skills.impl.component.filter.notifier;
 
+import com.almuradev.droplet.component.filter.AbstractFilter;
+import com.almuradev.droplet.component.filter.FilterQuery;
+import com.almuradev.droplet.component.filter.FilterResponse;
+
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public final class OwnerQueryImpl implements OwnerQuery {
+public final class NotifierFilter implements AbstractFilter<NotifierQuery> {
 
-  private final Optional<UUID> owner;
+  private final Optional<UUID> notifier;
 
-  public OwnerQueryImpl(@Nullable final UUID owner) {
-    this.owner = Optional.ofNullable(owner);
+  NotifierFilter(@Nullable final UUID notifier) {
+    this.notifier = Optional.ofNullable(notifier);
   }
 
   @Override
-  public Optional<UUID> owner() {
-    return this.owner;
+  public boolean canQuery(FilterQuery query) {
+    return query instanceof NotifierQuery;
+  }
+
+  @Override
+  public FilterResponse queryInternal(NotifierQuery query) {
+    return FilterResponse.from(Objects.equals(this.notifier, query.notifier()));
   }
 }
