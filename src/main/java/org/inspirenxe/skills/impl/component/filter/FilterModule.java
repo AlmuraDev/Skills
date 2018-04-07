@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.component.filter;
 import com.almuradev.droplet.component.filter.FilterBinder;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.component.filter.block.BlockFilterParser;
+import org.inspirenxe.skills.impl.component.filter.cause.CauseFilterParser;
 import org.inspirenxe.skills.impl.component.filter.data.DataFilter;
 import org.inspirenxe.skills.impl.component.filter.data.DataFilterParser;
 import org.inspirenxe.skills.impl.component.filter.experience.ExperienceFilterParser;
@@ -41,6 +42,7 @@ public final class FilterModule extends AbstractModule implements FilterBinder {
   @Override
   protected void configure() {
     this.bindFilter("block").to(BlockFilterParser.class);
+    this.bindFilter("cause").to(CauseFilterParser.class);
     this.bindFilter("data").to(DataFilterParser.class);
     this.bindFilter("experience").to(ExperienceFilterParser.class);
     this.bindFilter("item").to(ItemFilterParser.class);

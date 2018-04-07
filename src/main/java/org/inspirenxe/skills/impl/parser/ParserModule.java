@@ -33,6 +33,8 @@ import net.kyori.violet.AbstractModule;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
 import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.impl.cause.CauseOperatorType;
+import org.inspirenxe.skills.impl.cause.CauseType;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
 import org.inspirenxe.skills.impl.parser.lazy.block.LazyBlockState;
@@ -55,6 +57,8 @@ public final class ParserModule extends AbstractModule implements ParserBinder {
 
   @Override
   protected void configure() {
+    this.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
+    this.bindParser(CauseType.class).to(new TypeLiteral<EnumParser<CauseType>>() {});
     this.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
     this.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {});
     this.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
