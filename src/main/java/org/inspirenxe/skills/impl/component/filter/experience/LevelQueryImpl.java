@@ -22,20 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.level;
+package org.inspirenxe.skills.impl.component.filter.experience;
 
-import com.almuradev.droplet.component.range.IntRange;
+import org.inspirenxe.skills.api.Skill;
 
 public final class LevelQueryImpl implements LevelQuery {
 
-  private final IntRange range;
+  private final int level;
 
-  public LevelQueryImpl(final IntRange range) {
-    this.range = range;
+  public LevelQueryImpl(final Skill skill) {
+    this.level = skill.getCurrentLevel();
   }
 
   @Override
-  public IntRange range() {
-    return this.range;
+  public int level() {
+    return this.level;
   }
 }

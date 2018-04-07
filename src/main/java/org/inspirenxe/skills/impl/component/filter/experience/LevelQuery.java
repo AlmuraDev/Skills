@@ -22,12 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.component.filter.level;
+package org.inspirenxe.skills.impl.component.filter.experience;
 
 import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.range.IntRange;
 
 public interface LevelQuery extends FilterQuery {
 
-  IntRange range();
+  int level();
 }
