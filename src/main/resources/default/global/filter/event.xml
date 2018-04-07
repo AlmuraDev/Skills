@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet xmlns:skills="skills" spec="1.0.0">
+  <filters>
+    <all id="no-owner-and-notifier">
+      <skills:owner value="none"/>
+      <skills:notifier value="none"/>
+    </all>
+  </filters>
+</droplet>

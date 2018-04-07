@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet xmlns:skills="skills" spec="1.0.0">
+  <filters>
+    <all id="coal-ore-block-level">
+      <filter id="coal-ore-block"/>
+      <skills:level op="greater-than" self="true" value="10"/>
+    </all>
+    <all id="iron-ore-block-level">
+      <filter id="iron-ore-block"/>
+      <skills:level op="greater-than" self="true" value="20"/>
+    </all>
+    <all id="gold-ore-block-level">
+      <filter id="gold-ore-block"/>
+      <skills:level op="greater-than" self="true" value="30"/>
+    </all>
+    <all id="diamond-ore-block-level">
+      <filter id="diamond-ore-block"/>
+      <skills:level op="greater-than" self="true" value="40"/>
+    </all>
+    <all id="obsidian-block-level">
+      <filter id="obsidian-block"/>
+      <skills:level op="greater-than" self="true" value="50"/>
+    </all>
+    <all id="emerald-ore-block-level">
+      <filter id="emerald-ore-block"/>
+      <skills:level op="greater-than" self="true" value="60"/>
+    </all>
+  </filters>
+</droplet>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet spec="1.0.0">
+  <filters>
+    <all id="diamond-pickaxe">
+      <item>minecraft:diamond_pickaxe</item>
+    </all>
+    <all id="gold-pickaxe">
+      <item>minecraft:gold_pickaxe</item>
+    </all>
+    <all id="iron-pickaxe">
+      <item>minecraft:iron_pickaxe</item>
+    </all>
+    <all id="stone-pickaxe">
+      <item>minecraft:wooden_pickaxe</item>
+    </all>
+    <all id="wooden-pickaxe">
+      <item>minecraft:wooden_pickaxe</item>
+    </all>
+  </filters>
+</droplet>

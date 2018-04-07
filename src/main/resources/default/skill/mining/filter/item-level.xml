@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet xmlns:skills="skills" spec="1.0.0">
+  <filters>
+    <all id="stone-pickaxe-level">
+      <filter id="stone-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="15"/>
+    </all>
+    <all id="iron-pickaxe-level">
+      <filter id="iron-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="30"/>
+    </all>
+    <all id="gold-pickaxe-level">
+      <filter id="gold-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="45"/>
+    </all>
+    <all id="diamond-pickaxe-level">
+      <filter id="diamond-pickaxe"/>
+      <skills:level op="greater-than" self="true" value="60"/>
+    </all>
+  </filters>
+</droplet>
