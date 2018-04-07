@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet xmlns:skills="skills" spec="1.0.0">
+  <filters>
+    <all id="gamemode-survival">
+      <skills:data key="sponge:gamemode" value="minecraft:survival"/>
+    </all>
+    <all id="not-sneaking">
+      <skills:data key="sponge:is_sneaking" value="false"/>
+    </all>
+    <all id="not-sneaking-level-99">
+      <filter id="not-sneaking"/>
+      <skills:level op="equals" value="99"/>
+    </all>
+  </filters>
+</droplet>

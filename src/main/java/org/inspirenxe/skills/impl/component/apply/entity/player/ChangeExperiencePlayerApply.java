@@ -65,4 +65,8 @@ public final class ChangeExperiencePlayerApply implements PlayerApply {
     // TODO Operators
     skill.addExperience(this.experience);
   }
+
+  interface Factory {
+    ChangeExperiencePlayerApply create(final SkillType type, final double experience);
+  }
 }

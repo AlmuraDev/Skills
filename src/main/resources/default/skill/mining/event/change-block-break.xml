@@ -7,7 +7,8 @@
           <apply>
             <if>
               <all>
-                <filter id="player-survival"/>
+                <filter id="player-direct-cause"/>
+                <filter id="gamemode-survival"/>
               </all>
             </if>
             <then>

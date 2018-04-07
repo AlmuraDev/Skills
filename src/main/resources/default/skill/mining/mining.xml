@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet spec="1.0.0">
-  <include src="global/filter/player.xml"/>
   <include src="global/filter/block.xml"/>
+  <include src="global/filter/data.xml"/>
   <include src="global/filter/event.xml"/>
   <include src="global/filter/item.xml"/>
   <include src="filter/block-level.xml"/>

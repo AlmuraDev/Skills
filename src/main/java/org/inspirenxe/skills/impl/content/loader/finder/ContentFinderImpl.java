@@ -30,6 +30,7 @@ import com.almuradev.droplet.content.loader.finder.ContentFinder;
 import com.almuradev.droplet.content.loader.finder.ContentVisitor;
 import com.almuradev.droplet.content.loader.finder.FoundContent;
 import com.almuradev.droplet.content.type.ContentType;
+import com.almuradev.droplet.util.IndentingLogger;
 import com.almuradev.droplet.util.Logging;
 import com.almuradev.droplet.util.PathVisitor;
 import net.kyori.lunar.exception.Exceptions;
@@ -59,28 +60,33 @@ public final class ContentFinderImpl implements ContentFinder {
 
   @Override
   public <C extends ContentType.Child, R extends ContentType.Root<C>> FoundContent<R, C> find(final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
+    final IndentingLogger logger = new IndentingLogger(this.logger, 1);
     final ContentVisitor<R, C> visitor = new ContentVisitorImpl<>();
-    this.logger.debug("{}Discovering {} content...", Logging.indent(1), rootType.id());
     this.configuration.searchPaths().forEach(Exceptions.rethrowConsumer(path -> {
       visitor.visitRoot(path);
       visitor.visitNamespace(path);
       visitor.visitContent(path);
       final Path root = rootType.path(path).toAbsolutePath();
       visitor.visitType(rootType, root);
-      childrenTypes.forEach(Exceptions.rethrowConsumer(child -> {
-        ContentFinderImpl.this.logger.debug("{}Discovering {} content...", Logging.indent(2), child.type().id());
-        final Path childPath = child.type().path(root).toAbsolutePath();
-        visitor.visitChild(child, child.type(), childPath);
-        Files.walkFileTree(childPath, Collections.emptySet(), this.configuration.maxDepth(), new PathVisitor() {
-          @Override
-          public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
-            ContentFinderImpl.this.logger.debug("{}Found {}", Logging.indent(3), childPath.relativize(file));
-            visitor.visitEntry(file, child.builder());
-            return FileVisitResult.CONTINUE;
-          }
-        });
-      }));
+      childrenTypes.forEach(Exceptions.rethrowConsumer(child -> logger.pushing(typeLogger -> {
+        typeLogger.debug("Discovering {} content...", child.type().id());
+        typeLogger.pushing(Exceptions.rethrowConsumer(childLogger -> {
+          final Path childPath = child.type().path(root).toAbsolutePath();
+          visitor.visitChild(child, child.type(), childPath);
+          Files.walkFileTree(childPath, Collections.emptySet(), this.configuration.maxDepth(), new PathVisitor() {
+            @Override
+            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
+              if (ContentFinder.XML_MATCHER.matches(file)) {
+                childLogger.debug("Found {}", childPath.relativize(file));
+                visitor.visitEntry(file, child.builder());
+              }
+              return FileVisitResult.CONTINUE;
+            }
+          });
+        }));
+      })));
     }));
+
     return visitor.foundContent();
   }
 }

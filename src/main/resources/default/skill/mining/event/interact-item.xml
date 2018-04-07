@@ -5,7 +5,12 @@
       <item>
         <filter-apply>
           <apply>
-            <if filter="player-survival"/>
+            <if>
+              <all>
+                <filter id="player-direct-cause"/>
+                <filter id="gamemode-survival"/>
+              </all>
+            </if>
             <then>
               <apply>
                 <if>

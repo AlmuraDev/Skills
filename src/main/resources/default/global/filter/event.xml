@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet xmlns:skills="skills" spec="1.0.0">
   <filters>
+    <all id="player-direct-cause">
+      <skills:cause root="player"/>
+    </all>
+    <all id="player-indirect-cause">
+      <skills:cause first="player"/>
+    </all>
     <all id="no-owner-and-notifier">
       <skills:owner value="none"/>
       <skills:notifier value="none"/>
