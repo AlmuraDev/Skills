@@ -27,9 +27,24 @@ package org.inspirenxe.skills.impl.event.experience.change;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 
-public class ChangeExperiencePostEventImpl extends ChangeExperienceEventImpl implements ExperienceEvent.Change.Post {
+public final class ChangeExperiencePostLevelEventImpl extends ChangeExperiencePostEventImpl implements ExperienceEvent.Change.Post.Level {
 
-  public ChangeExperiencePostEventImpl(final Skill skill, final double originalExperience, final double experience) {
+  private final int originalLevel, level;
+
+  public ChangeExperiencePostLevelEventImpl(final Skill skill, final double originalExperience, final double experience, final int originalLevel,
+    final int level) {
     super(skill, originalExperience, experience);
+    this.originalLevel = originalLevel;
+    this.level = level;
+  }
+
+  @Override
+  public int getOriginalLevel() {
+    return this.originalLevel;
+  }
+
+  @Override
+  public int getLevel() {
+    return this.level;
   }
 }

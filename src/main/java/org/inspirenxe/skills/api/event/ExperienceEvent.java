@@ -114,6 +114,27 @@ public interface ExperienceEvent extends Event {
      */
     interface Post extends Change {
 
+      /**
+       * Called after the change in experience occurs and the level changed.
+       *
+       * <Note>
+       *   This will always be called on the main thread.
+       * </Note>
+       */
+      interface Level extends Post {
+
+        /**
+         * Gets the original level.
+         * @return The original level
+         */
+        int getOriginalLevel();
+
+        /**
+         * Gets the new level.
+         * @return The new level
+         */
+        int getLevel();
+      }
     }
   }
 

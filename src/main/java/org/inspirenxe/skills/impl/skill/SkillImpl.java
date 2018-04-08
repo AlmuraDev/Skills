@@ -35,6 +35,7 @@ import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostEventImpl;
+import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostLevelEventImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePreEventImpl;
 import org.spongepowered.api.event.EventManager;
 
@@ -80,6 +81,7 @@ public final class SkillImpl implements Skill {
       this.isInitialized = true;
     }
 
+    final int originalLevel = this.getCurrentLevel();
     final double originalExperience = this.experience;
     final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(this, originalExperience, experience);
     if (this.eventManager.post(event)) {
@@ -87,8 +89,14 @@ public final class SkillImpl implements Skill {
     }
 
     this.experience = event.getExperience();
+    final int level = this.getCurrentLevel();
 
-    this.eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
+    if (originalLevel != level) {
+      this.eventManager.post(new ChangeExperiencePostLevelEventImpl(this, originalExperience, this.experience, originalLevel, level));
+    } else {
+      this.eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
+    }
+
     return this;
   }
 
