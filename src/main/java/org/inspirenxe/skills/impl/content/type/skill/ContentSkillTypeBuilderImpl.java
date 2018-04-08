@@ -31,8 +31,14 @@ import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
 
 public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<SkillTypeImpl> implements ContentSkillTypeBuilder {
 
+  private String name;
   private RegistryReference<LevelFunction> levelFunction;
   private int minLevel, maxLevel;
+
+  @Override
+  public void name(String name) {
+    this.name = name;
+  }
 
   @Override
   public void levelFunction(final RegistryReference<LevelFunction> levelFunction) {
@@ -51,6 +57,6 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
 
   @Override
   public SkillTypeImpl build() {
-    return new SkillTypeImpl(this.key(), this.levelFunction, this.minLevel, this.maxLevel);
+    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel);
   }
 }

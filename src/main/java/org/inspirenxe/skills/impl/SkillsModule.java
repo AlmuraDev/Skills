@@ -46,6 +46,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.AsynchronousExecutor;
+import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.service.sql.SqlService;
 
@@ -58,6 +60,8 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
   @Override
   protected void configure() {
+
+    this.bind(SkillManager.class).to(SkillManagerImpl.class);
 
     // Register content loader
     this.install(new DropletModule());
@@ -96,7 +100,8 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
   @Provides
   @Singleton
-  SkillManager skillManager(final PluginContainer container, final DatabaseManager databaseManager, final SkillHolderImpl.Factory factory) {
-    return new SkillManagerImpl(container, databaseManager, factory);
+  SkillManagerImpl skillManager(final PluginContainer container, final DatabaseManager databaseManager,
+    @AsynchronousExecutor final SpongeExecutorService executor, final SkillHolderImpl.Factory factory) {
+    return new SkillManagerImpl(container, databaseManager, executor, factory);
   }
 }

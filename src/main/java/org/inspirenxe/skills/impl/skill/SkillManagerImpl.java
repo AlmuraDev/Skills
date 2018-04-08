@@ -60,7 +60,6 @@ import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.AsynchronousExecutor;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.scheduler.Task;
 
@@ -87,18 +86,19 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
   private final PluginContainer container;
   private final DatabaseManager databaseManager;
+  private final SpongeExecutorService executorService;
   private final SkillHolderImpl.Factory factory;
 
   private final Map<UUID, Set<SkillHolder>> holdersInContainer = new HashMap<>();
   private final Map<UUID, Task> savingTasks = new HashMap<>();
   private final Map<UUID, SaveContainerToDatabase> queueables = new HashMap<>();
 
-  @Inject @AsynchronousExecutor private SpongeExecutorService executorService;
-
   @Inject
-  public SkillManagerImpl(final PluginContainer container, final DatabaseManager databaseManager, final SkillHolderImpl.Factory factory) {
+  public SkillManagerImpl(final PluginContainer container, final DatabaseManager databaseManager, final SpongeExecutorService executorService,
+    final SkillHolderImpl.Factory factory) {
     this.container = container;
     this.databaseManager = databaseManager;
+    this.executorService = executorService;
     this.factory = factory;
   }
 

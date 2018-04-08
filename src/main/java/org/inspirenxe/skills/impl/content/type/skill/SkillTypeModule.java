@@ -35,6 +35,7 @@ import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.skill.processor.LevelFunctionProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.MaxLevelProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.MinLevelProcessor;
+import org.inspirenxe.skills.impl.content.type.skill.processor.NameProcessor;
 
 import java.util.Collections;
 
@@ -62,6 +63,7 @@ public final class SkillTypeModule extends RootModule.Impl<ContentSkillType.Chil
 
       this.bindFacet().toProvider(this.getProvider(SkillTypeRootLoader.class));
 
+      this.bindProcessor(NameProcessor.class);
       this.bindProcessor(LevelFunctionProcessor.class);
       this.bindProcessor(MinLevelProcessor.class);
       this.bindProcessor(MaxLevelProcessor.class);

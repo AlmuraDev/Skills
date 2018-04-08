@@ -36,11 +36,14 @@ import java.util.Objects;
 public final class SkillTypeImpl implements SkillType, Content {
 
   private final RegistryKey registryKey;
+  private final String name;
   private final RegistryReference<LevelFunction> levelFunction;
   private final int minlevel, maxLevel;
 
-  public SkillTypeImpl(final RegistryKey registryKey, final RegistryReference<LevelFunction> levelFunction, final int minLevel, final int maxLevel) {
+  public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunction> levelFunction, final int minLevel,
+    final int maxLevel) {
     this.registryKey = registryKey;
+    this.name = name;
     this.levelFunction = levelFunction;
     this.minlevel = minLevel;
     this.maxLevel = maxLevel;
@@ -53,7 +56,7 @@ public final class SkillTypeImpl implements SkillType, Content {
 
   @Override
   public String getName() {
-    return this.registryKey.value();
+    return this.name;
   }
 
   @Override

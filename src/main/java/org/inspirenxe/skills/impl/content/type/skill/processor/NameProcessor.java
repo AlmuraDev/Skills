@@ -22,20 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.impl.content.type.skill.processor;
 
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
+import com.almuradev.droplet.content.processor.Processor;
+import com.almuradev.droplet.parser.Parser;
+import com.google.common.collect.MoreCollectors;
+import com.google.inject.Inject;
+import net.kyori.xml.node.Node;
+import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
 
-public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
+public final class NameProcessor implements Processor<ContentSkillTypeBuilder> {
 
-  void name(final String name);
+  private final Parser<String> stringParser;
 
-  void levelFunction(final RegistryReference<LevelFunction> levelFunction);
+  @Inject
+  public NameProcessor(final Parser<String> stringParser) {
+    this.stringParser = stringParser;
+  }
 
-  void minLevel(final int minLevel);
-
-  void maxLevel(final int maxLevel);
+  @Override
+  public void process(Node node, ContentSkillTypeBuilder builder) {
+    builder.name(this.stringParser.parse(node.nodes("name").collect(MoreCollectors.onlyElement())));
+  }
 }
