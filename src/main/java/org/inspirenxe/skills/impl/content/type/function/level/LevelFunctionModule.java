@@ -28,7 +28,7 @@ import com.almuradev.droplet.content.inject.ChildModule;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.level.SkillsLevelFunction;
+import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 
 public final class LevelFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
 
@@ -39,7 +39,7 @@ public final class LevelFunctionModule extends ChildModule.Impl<ContentFunction.
     });
 
     this.bindBuilder(ContentLevelFunctionBuilder.class).to(ContentLevelFunctionBuilderImpl.class);
-    this.installFactory(SkillsLevelFunction.Factory.class);
+    this.installFactory(SkillsLevelFunctionType.Factory.class);
 
     this.bindFacet().toProvider(this.getProvider(LevelFunctionRootLoader.class));
   }

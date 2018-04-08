@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.impl.content.type.function;
 
 import com.almuradev.droplet.content.type.AbstractContentBuilder;
-import org.inspirenxe.skills.impl.function.SkillsCatalogFunction;
+import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 
-public abstract class AbstractContentFunctionBuilder<R extends SkillsCatalogFunction> extends AbstractContentBuilder<R> implements
+public abstract class AbstractContentFunctionBuilder<R extends SkillsFunctionType> extends AbstractContentBuilder<R> implements
     ContentFunctionBuilder<R> {
 
   protected String formula;

@@ -24,21 +24,21 @@
  */
 package org.inspirenxe.skills.api.function.level;
 
-import org.inspirenxe.skills.api.function.CatalogFunction;
+import org.inspirenxe.skills.api.function.FunctionType;
 
 import java.util.function.IntToDoubleFunction;
 
 /**
- * {@link CatalogFunction} meant to process an integer level and return a double representing total experience at that level.
+ * {@link FunctionType} meant to process an integer level and return a double representing total experience at that level.
  */
-public interface LevelFunction extends CatalogFunction, IntToDoubleFunction {
+public interface LevelFunctionType extends FunctionType, IntToDoubleFunction {
 
   double UNKNOWN_EXP = -1;
 
   int UNKNOWN_LEVEL = -1;
 
   /**
-   * Gets the experience for the level provided or {@link LevelFunction#UNKNOWN_EXP} if no experience amount reaches the level.
+   * Gets the experience for the level provided or {@link LevelFunctionType#UNKNOWN_EXP} if no experience amount reaches the level.
    *
    * <Note>
    *   Implementors should make every effort to ensure that the experience returned is at the start of the level
@@ -51,7 +51,7 @@ public interface LevelFunction extends CatalogFunction, IntToDoubleFunction {
   double getXPFor(final int level);
 
   /**
-   * Gets the level for the experience provided or {@link LevelFunction#UNKNOWN_LEVEL} if unknown.
+   * Gets the level for the experience provided or {@link LevelFunctionType#UNKNOWN_LEVEL} if unknown.
    *
    * @param xp The experience
    * @return The level
@@ -59,7 +59,7 @@ public interface LevelFunction extends CatalogFunction, IntToDoubleFunction {
   int getLevelFor(final double xp);
 
   /**
-   * Gets the experience between a lower and upper level or {@link LevelFunction#UNKNOWN_EXP} if unknown.
+   * Gets the experience between a lower and upper level or {@link LevelFunctionType#UNKNOWN_EXP} if unknown.
    *
    * @param lower The lower level
    * @param upper The upper level

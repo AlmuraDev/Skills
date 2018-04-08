@@ -28,16 +28,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Inject;
 import org.inspirenxe.skills.impl.content.type.function.AbstractContentFunctionBuilder;
-import org.inspirenxe.skills.impl.function.level.SkillsLevelFunction;
+import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 
-public final class ContentLevelFunctionBuilderImpl extends AbstractContentFunctionBuilder<SkillsLevelFunction>
+public final class ContentLevelFunctionBuilderImpl extends AbstractContentFunctionBuilder<SkillsLevelFunctionType>
     implements ContentLevelFunctionBuilder {
 
   @Inject
-  private SkillsLevelFunction.Factory factory;
+  private SkillsLevelFunctionType.Factory factory;
 
   @Override
-  public SkillsLevelFunction build() {
+  public SkillsLevelFunctionType build() {
     checkNotNull(this.key());
     checkNotNull(this.formula);
 

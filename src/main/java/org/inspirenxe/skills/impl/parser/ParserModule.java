@@ -32,7 +32,7 @@ import com.google.inject.binder.LinkedBindingBuilder;
 import net.kyori.violet.AbstractModule;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
@@ -64,7 +64,7 @@ public final class ParserModule extends AbstractModule implements ParserBinder {
     this.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
     this.bindParser(new TypeLiteral<LazyStateValue<?>>() {}).to(LazyStateValueParser.class);
     this.bindParser(LazyItemStack.class).to(LazyItemStackParser.class);
-    this.bindParser(LevelFunction.class).to(new TypeLiteral<CatalogTypeParser<LevelFunction>>() {});
+    this.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {});
     this.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {});
     this.bindParser(RegistryKey.class).to(RegistryKeyParser.class);
     this.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});

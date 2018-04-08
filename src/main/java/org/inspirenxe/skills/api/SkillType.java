@@ -24,12 +24,12 @@
  */
 package org.inspirenxe.skills.api;
 
-import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.spongepowered.api.CatalogType;
 
 public interface SkillType extends CatalogType {
 
-  LevelFunction getLevelFunction();
+  LevelFunctionType getLevelFunction();
 
   int getMinLevel();
 

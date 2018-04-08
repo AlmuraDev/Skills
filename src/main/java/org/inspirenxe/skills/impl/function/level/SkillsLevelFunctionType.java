@@ -32,15 +32,15 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
-import org.inspirenxe.skills.impl.function.SkillsCatalogFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
+import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 import org.slf4j.Logger;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Objects;
 
-public final class SkillsLevelFunction implements SkillsCatalogFunction, LevelFunction {
+public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelFunctionType {
 
   private final RegistryKey registryKey;
   private final Expression expression;
@@ -49,7 +49,7 @@ public final class SkillsLevelFunction implements SkillsCatalogFunction, LevelFu
   private double[] xpTable = new double[100];
 
   @Inject
-  public SkillsLevelFunction(@Assisted final RegistryKey registryKey, @Assisted final String formula, final Logger logger) {
+  public SkillsLevelFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula, final Logger logger) {
     this.registryKey = registryKey;
     this.expression = new ExpressionBuilder(formula).variable("L").build();
     this.logger = logger;
@@ -123,7 +123,7 @@ public final class SkillsLevelFunction implements SkillsCatalogFunction, LevelFu
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final SkillsLevelFunction that = (SkillsLevelFunction) o;
+    final SkillsLevelFunctionType that = (SkillsLevelFunctionType) o;
     return Objects.equals(this.registryKey, that.registryKey);
   }
 
@@ -168,6 +168,6 @@ public final class SkillsLevelFunction implements SkillsCatalogFunction, LevelFu
 
   public interface Factory {
 
-    SkillsLevelFunction create(final RegistryKey registryKey, final String formula);
+    SkillsLevelFunctionType create(final RegistryKey registryKey, final String formula);
   }
 }

@@ -28,7 +28,7 @@ import com.almuradev.droplet.content.inject.ChildModule;
 import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunctionType;
 
 public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
 
@@ -39,7 +39,7 @@ public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunctio
     });
 
     this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunction.Factory.class);
+    this.installFactory(SkillsEconomyFunctionType.Factory.class);
 
     this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
   }

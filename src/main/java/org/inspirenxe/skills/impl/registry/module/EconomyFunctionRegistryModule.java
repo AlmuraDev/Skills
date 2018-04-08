@@ -27,7 +27,7 @@ package org.inspirenxe.skills.impl.registry.module;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.economy.EconomyFunction;
+import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
 import java.util.Collection;
@@ -37,26 +37,26 @@ import java.util.Map;
 import java.util.Optional;
 
 @Singleton
-public final class EconomyFunctionRegistryModule implements AdditionalCatalogRegistryModule<EconomyFunction> {
+public final class EconomyFunctionRegistryModule implements AdditionalCatalogRegistryModule<EconomyFunctionType> {
 
   public static final EconomyFunctionRegistryModule instance = new EconomyFunctionRegistryModule();
 
-  private final Map<String, EconomyFunction> map = new HashMap<>();
+  private final Map<String, EconomyFunctionType> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(EconomyFunction catalogType) {
+  public void registerAdditionalCatalog(EconomyFunctionType catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
   }
 
   @Override
-  public Optional<EconomyFunction> getById(String id) {
+  public Optional<EconomyFunctionType> getById(String id) {
     checkNotNull(id);
     return Optional.ofNullable(this.map.get(id));
   }
 
   @Override
-  public Collection<EconomyFunction> getAll() {
+  public Collection<EconomyFunctionType> getAll() {
     return Collections.unmodifiableCollection(this.map.values());
   }
 }

@@ -36,8 +36,8 @@ import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
 import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
-import org.inspirenxe.skills.api.function.economy.EconomyFunction;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.sound.SoundEffect;
 import org.inspirenxe.skills.impl.registry.module.ColorTypeRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.EconomyFunctionRegistryModule;
@@ -60,9 +60,9 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
 
     // API modules
     this.registry().module(ColorType.class, ColorTypeRegistryModule.instance);
-    this.registry().module(EconomyFunction.class, EconomyFunctionRegistryModule.instance);
+    this.registry().module(EconomyFunctionType.class, EconomyFunctionRegistryModule.instance);
     this.registry().module(FireworkEffectType.class, FireworkEffectTypeRegistryModule.instance);
-    this.registry().module(LevelFunction.class, LevelFunctionRegistryModule.instance);
+    this.registry().module(LevelFunctionType.class, LevelFunctionRegistryModule.instance);
     this.registry().module(PotionEffectType.class, PotionEffectTypeRegistryModule.instance);
     this.registry().module(SkillType.class, SkillTypeRegistryModule.instance);
     this.registry().module(SoundEffectType.class, SoundEffectTypeRegistryModule.instance);
@@ -70,11 +70,11 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
     // Registry binders
     this.bindRegistry(BlockType.class).to(new TypeLiteral<CatalogTypeRegistry<BlockType>>() {});
     this.bindRegistry(ColorType.class).to(new TypeLiteral<CatalogTypeRegistry<ColorType>>() {});
-    this.bindRegistry(EconomyFunction.class).to(new TypeLiteral<CatalogTypeRegistry<EconomyFunction>>() {});
+    this.bindRegistry(EconomyFunctionType.class).to(new TypeLiteral<CatalogTypeRegistry<EconomyFunctionType>>() {});
     this.bindRegistry(FireworkEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<FireworkEffectType>>() {});
     this.bindRegistry(ItemType.class).to(new TypeLiteral<CatalogTypeRegistry<ItemType>>() {});
     this.bindRegistry(Key.class).to(new TypeLiteral<CatalogTypeRegistry<Key>>() {});
-    this.bindRegistry(LevelFunction.class).to(new TypeLiteral<CatalogTypeRegistry<LevelFunction>>() {});
+    this.bindRegistry(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeRegistry<LevelFunctionType>>() {});
     this.bindRegistry(PotionEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<PotionEffectType>>() {});
     this.bindRegistry(SkillType.class).to(new TypeLiteral<CatalogTypeRegistry<SkillType>>() {});
     this.bindRegistry(SoundEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<SoundEffectType>>() {});

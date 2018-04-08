@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.function.level.SkillsLevelFunction;
+import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
 import java.util.Collection;
@@ -49,7 +49,7 @@ public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryM
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
     catalogType.getLevelFunction().buildLevelTable(catalogType.getMaxLevel());
-    ((SkillsLevelFunction) catalogType.getLevelFunction()).printTable();
+    ((SkillsLevelFunctionType) catalogType.getLevelFunction()).printTable();
   }
 
   @Override

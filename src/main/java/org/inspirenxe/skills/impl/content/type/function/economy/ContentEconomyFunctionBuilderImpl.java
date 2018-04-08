@@ -28,16 +28,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Inject;
 import org.inspirenxe.skills.impl.content.type.function.AbstractContentFunctionBuilder;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunctionType;
 
-public final class ContentEconomyFunctionBuilderImpl extends AbstractContentFunctionBuilder<SkillsEconomyFunction>
+public final class ContentEconomyFunctionBuilderImpl extends AbstractContentFunctionBuilder<SkillsEconomyFunctionType>
     implements ContentEconomyFunctionBuilder {
 
   @Inject
-  private SkillsEconomyFunction.Factory factory;
+  private SkillsEconomyFunctionType.Factory factory;
 
   @Override
-  public SkillsEconomyFunction build() {
+  public SkillsEconomyFunctionType build() {
     checkNotNull(this.key());
     checkNotNull(this.formula);
 

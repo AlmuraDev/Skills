@@ -29,7 +29,7 @@ import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 
 import java.util.Objects;
 
@@ -37,10 +37,10 @@ public final class SkillTypeImpl implements SkillType, Content {
 
   private final RegistryKey registryKey;
   private final String name;
-  private final RegistryReference<LevelFunction> levelFunction;
+  private final RegistryReference<LevelFunctionType> levelFunction;
   private final int minlevel, maxLevel;
 
-  public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunction> levelFunction, final int minLevel,
+  public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunctionType> levelFunction, final int minLevel,
     final int maxLevel) {
     this.registryKey = registryKey;
     this.name = name;
@@ -60,7 +60,7 @@ public final class SkillTypeImpl implements SkillType, Content {
   }
 
   @Override
-  public LevelFunction getLevelFunction() {
+  public LevelFunctionType getLevelFunction() {
     return this.levelFunction.require();
   }
 

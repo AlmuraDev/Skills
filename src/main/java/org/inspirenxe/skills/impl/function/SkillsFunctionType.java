@@ -22,10 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.function;
+package org.inspirenxe.skills.impl.function;
 
-import org.spongepowered.api.CatalogType;
+import com.almuradev.droplet.content.type.Content;
+import org.inspirenxe.skills.api.function.FunctionType;
 
-public interface CatalogFunction extends CatalogType {
+public interface SkillsFunctionType extends FunctionType, Content {
 
 }

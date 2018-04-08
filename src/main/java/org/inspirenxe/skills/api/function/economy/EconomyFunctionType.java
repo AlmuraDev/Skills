@@ -24,13 +24,22 @@
  */
 package org.inspirenxe.skills.api.function.economy;
 
-import org.inspirenxe.skills.api.function.CatalogFunction;
+import org.inspirenxe.skills.api.function.FunctionType;
 
 import java.math.BigDecimal;
 import java.util.function.BiFunction;
 
-public interface EconomyFunction extends CatalogFunction, BiFunction<Integer, Double, BigDecimal> {
+/**
+ * {@link FunctionType} meant to process an integer level and double modifier and return a big decimal representing total experience at that level.
+ */
+public interface EconomyFunctionType extends FunctionType, BiFunction<Integer, Double, BigDecimal> {
 
+  /**
+   * Gets the money value calculated by the passed in level and modifier.
+   * @param level The level
+   * @param modifier The modifier
+   * @return The money value
+   */
   BigDecimal getMoneyFor(final int level, final double modifier);
 
   @Override

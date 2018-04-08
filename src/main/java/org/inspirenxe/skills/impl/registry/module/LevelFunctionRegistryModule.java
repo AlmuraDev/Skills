@@ -27,7 +27,7 @@ package org.inspirenxe.skills.impl.registry.module;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
 import java.util.Collection;
@@ -37,26 +37,26 @@ import java.util.Map;
 import java.util.Optional;
 
 @Singleton
-public final class LevelFunctionRegistryModule implements AdditionalCatalogRegistryModule<LevelFunction> {
+public final class LevelFunctionRegistryModule implements AdditionalCatalogRegistryModule<LevelFunctionType> {
 
   public static final LevelFunctionRegistryModule instance = new LevelFunctionRegistryModule();
 
-  private final Map<String, LevelFunction> map = new HashMap<>();
+  private final Map<String, LevelFunctionType> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(LevelFunction catalogType) {
+  public void registerAdditionalCatalog(LevelFunctionType catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
   }
 
   @Override
-  public Optional<LevelFunction> getById(String id) {
+  public Optional<LevelFunctionType> getById(String id) {
     checkNotNull(id);
     return Optional.ofNullable(this.map.get(id));
   }
 
   @Override
-  public Collection<LevelFunction> getAll() {
+  public Collection<LevelFunctionType> getAll() {
     return Collections.unmodifiableCollection(this.map.values());
   }
 }

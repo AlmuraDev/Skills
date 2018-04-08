@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.impl.content.type.function;
 
 import com.almuradev.droplet.content.type.ContentBuilder;
-import org.inspirenxe.skills.impl.function.SkillsCatalogFunction;
+import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 
-public interface ContentFunctionBuilder<R extends SkillsCatalogFunction> extends ContentBuilder<R> {
+public interface ContentFunctionBuilder<R extends SkillsFunctionType> extends ContentBuilder<R> {
 
   void formula(final String formula);
 }

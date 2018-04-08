@@ -26,14 +26,14 @@ package org.inspirenxe.skills.impl.content.type.skill;
 
 import com.almuradev.droplet.content.type.ContentBuilder;
 import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
 
 public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
 
   void name(final String name);
 
-  void levelFunction(final RegistryReference<LevelFunction> levelFunction);
+  void levelFunction(final RegistryReference<LevelFunctionType> levelFunction);
 
   void minLevel(final int minLevel);
 

@@ -30,19 +30,19 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
-import org.inspirenxe.skills.api.function.economy.EconomyFunction;
-import org.inspirenxe.skills.impl.function.SkillsCatalogFunction;
+import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
+import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public final class SkillsEconomyFunction implements SkillsCatalogFunction, EconomyFunction {
+public final class SkillsEconomyFunctionType implements SkillsFunctionType, EconomyFunctionType {
 
   private final RegistryKey registryKey;
   private final Expression expression;
 
   @Inject
-  public SkillsEconomyFunction(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
+  public SkillsEconomyFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
     this.registryKey = registryKey;
     this.expression = new ExpressionBuilder(formula).variables("L", "M").build();
   }
@@ -70,7 +70,7 @@ public final class SkillsEconomyFunction implements SkillsCatalogFunction, Econo
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final SkillsEconomyFunction that = (SkillsEconomyFunction) o;
+    final SkillsEconomyFunctionType that = (SkillsEconomyFunctionType) o;
     return Objects.equals(this.registryKey, that.registryKey);
   }
 
@@ -90,6 +90,6 @@ public final class SkillsEconomyFunction implements SkillsCatalogFunction, Econo
 
   public interface Factory {
 
-    SkillsEconomyFunction create(final RegistryKey registryKey, final String formula);
+    SkillsEconomyFunctionType create(final RegistryKey registryKey, final String formula);
   }
 }

@@ -25,8 +25,8 @@
 package org.inspirenxe.skills.impl.content.type.function.level;
 
 import org.inspirenxe.skills.impl.content.type.function.ContentFunctionBuilder;
-import org.inspirenxe.skills.impl.function.level.SkillsLevelFunction;
+import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 
-interface ContentLevelFunctionBuilder extends ContentFunctionBuilder<SkillsLevelFunction> {
+interface ContentLevelFunctionBuilder extends ContentFunctionBuilder<SkillsLevelFunctionType> {
 
 }

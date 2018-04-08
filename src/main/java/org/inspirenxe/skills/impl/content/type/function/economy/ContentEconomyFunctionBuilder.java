@@ -25,8 +25,8 @@
 package org.inspirenxe.skills.impl.content.type.function.economy;
 
 import org.inspirenxe.skills.impl.content.type.function.ContentFunctionBuilder;
-import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunction;
+import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunctionType;
 
-interface ContentEconomyFunctionBuilder extends ContentFunctionBuilder<SkillsEconomyFunction> {
+interface ContentEconomyFunctionBuilder extends ContentFunctionBuilder<SkillsEconomyFunctionType> {
 
 }

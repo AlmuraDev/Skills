@@ -29,7 +29,7 @@ import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.function.economy.EconomyFunction;
+import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -38,15 +38,15 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 @Singleton
 public final class EconomyFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
 
-  private final Registry<EconomyFunction> registry;
+  private final Registry<EconomyFunctionType> registry;
 
   @Inject
-  public EconomyFunctionRootLoader(final Registry<EconomyFunction> registry) {
+  public EconomyFunctionRootLoader(final Registry<EconomyFunctionType> registry) {
     this.registry = registry;
   }
 
   @Listener(order = Order.PRE)
   public void onGameStartingServer(GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(EconomyFunction.class)));
+    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(EconomyFunctionType.class)));
   }
 }

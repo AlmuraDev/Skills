@@ -31,16 +31,16 @@ import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.api.function.level.LevelFunction;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
 
 public final class LevelFunctionProcessor implements Processor<ContentSkillTypeBuilder> {
 
-  private final Registry<LevelFunction> registry;
+  private final Registry<LevelFunctionType> registry;
   private final Parser<RegistryKey> keyParser;
 
   @Inject
-  public LevelFunctionProcessor(final Registry<LevelFunction> registry, final Parser<RegistryKey> keyParser) {
+  public LevelFunctionProcessor(final Registry<LevelFunctionType> registry, final Parser<RegistryKey> keyParser) {
     this.registry = registry;
     this.keyParser = keyParser;
   }
