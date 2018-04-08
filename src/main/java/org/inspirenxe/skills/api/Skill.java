@@ -35,7 +35,11 @@ public interface Skill {
   Skill setExperience(final double experience);
 
   default Skill addExperience(final double experience) {
-    this.setExperience(this.getCurrentExperience() + experience);
+    double expDiff = this.getCurrentExperience() + experience;
+    if (expDiff < 0) {
+      expDiff = 0;
+    }
+    this.setExperience(expDiff);
     return this;
   }
 
