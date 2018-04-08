@@ -65,25 +65,29 @@ public final class ContentFinderImpl implements ContentFinder {
       visitor.visitRoot(path);
       visitor.visitNamespace(path);
       visitor.visitContent(path);
+
       final Path root = rootType.path(path).toAbsolutePath();
       visitor.visitType(rootType, root);
-      childrenTypes.forEach(Exceptions.rethrowConsumer(child -> logger.pushing(typeLogger -> {
-        typeLogger.debug("Discovering {} content...", child.type().id());
-        typeLogger.pushing(Exceptions.rethrowConsumer(childLogger -> {
+
+      try (final IndentingLogger $ = logger.push()) {
+      childrenTypes.forEach(Exceptions.rethrowConsumer(child -> {
+        logger.debug("Discovering {} content...", child.type().id());
+        try (final IndentingLogger $$ = logger.push()) {
           final Path childPath = child.type().path(root).toAbsolutePath();
           visitor.visitChild(child, child.type(), childPath);
           Files.walkFileTree(childPath, Collections.emptySet(), this.configuration.maxDepth(), new PathVisitor() {
             @Override
             public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
               if (ContentFinder.XML_MATCHER.matches(file)) {
-                childLogger.debug("Found {}", childPath.relativize(file));
+                logger.debug("Found {}", childPath.relativize(file));
                 visitor.visitEntry(file, child.builder());
               }
               return FileVisitResult.CONTINUE;
             }
           });
-        }));
-      })));
+        }
+      }));
+      }
     }));
 
     return visitor.foundContent();
