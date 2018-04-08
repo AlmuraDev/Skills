@@ -24,10 +24,10 @@
  */
 package org.inspirenxe.skills.impl.content.type.function;
 
+import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
 
 @Singleton
-public class FunctionRootLoader extends RootContentLoaderImpl<ContentFunction.Child, ContentFunctionBuilder<?>> {
+final class FunctionRootLoader extends RootContentLoaderImpl<ContentFunction.Child, ContentFunctionBuilder<?>> {
 
 }

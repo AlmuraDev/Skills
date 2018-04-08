@@ -24,12 +24,12 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill;
 
+import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
 import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;

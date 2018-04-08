@@ -26,8 +26,8 @@ package org.inspirenxe.skills.impl.content.type.skill.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
 import com.almuradev.droplet.parser.Parser;
-import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
+import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
 import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
 
@@ -41,7 +41,7 @@ public final class NameProcessor implements Processor<ContentSkillTypeBuilder> {
   }
 
   @Override
-  public void process(Node node, ContentSkillTypeBuilder builder) {
-    builder.name(this.stringParser.parse(node.nodes("name").collect(MoreCollectors.onlyElement())));
+  public void process(Node node, ContentSkillTypeBuilder builder) throws XMLException {
+    builder.name(this.stringParser.parse(node.requireAttribute("name")));
   }
 }

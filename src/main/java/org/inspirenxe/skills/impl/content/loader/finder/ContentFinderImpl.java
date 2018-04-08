@@ -31,7 +31,6 @@ import com.almuradev.droplet.content.loader.finder.ContentVisitor;
 import com.almuradev.droplet.content.loader.finder.FoundContent;
 import com.almuradev.droplet.content.type.ContentType;
 import com.almuradev.droplet.util.IndentingLogger;
-import com.almuradev.droplet.util.Logging;
 import com.almuradev.droplet.util.PathVisitor;
 import net.kyori.lunar.exception.Exceptions;
 import org.slf4j.Logger;

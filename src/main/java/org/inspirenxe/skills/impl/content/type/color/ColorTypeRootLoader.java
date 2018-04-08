@@ -24,13 +24,13 @@
  */
 package org.inspirenxe.skills.impl.content.type.color;
 
+import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.impl.color.ColorTypeImpl;
-import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;

@@ -49,11 +49,11 @@ public final class ColorsProcessor implements Processor<ContentFireworkEffectTyp
 
   @Override
   public void process(Node node, ContentFireworkEffectTypeBuilder builder) {
-    node.nodes("colors").collect(MoreCollectors.toOptional()).ifPresent(colors -> {
-      final ImmutableList.Builder<RegistryReference<ColorType>> colorsList = ImmutableList.builder();
+    final ImmutableList.Builder<RegistryReference<ColorType>> colorsList = ImmutableList.builder();
 
-      node.nodes("color").forEach(color -> colorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
-      builder.colors(colorsList.build());
-    });
+    node.nodes("colors").collect(MoreCollectors.onlyElement()).nodes("color").forEach(color ->
+      colorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
+
+    builder.colors(colorsList.build());
   }
 }

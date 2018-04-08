@@ -24,10 +24,10 @@
  */
 package org.inspirenxe.skills.impl.content.type.effect;
 
+import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.impl.content.loader.RootContentLoaderImpl;
 
 @Singleton
-public final class EffectTypeRootLoader extends RootContentLoaderImpl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
+final class EffectTypeRootLoader extends RootContentLoaderImpl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
 
 }
