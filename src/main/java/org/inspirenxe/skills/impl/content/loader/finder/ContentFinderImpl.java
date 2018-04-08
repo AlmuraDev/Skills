@@ -70,23 +70,23 @@ public final class ContentFinderImpl implements ContentFinder {
       visitor.visitType(rootType, root);
 
       try (final IndentingLogger $ = logger.push()) {
-      childrenTypes.forEach(Exceptions.rethrowConsumer(child -> {
-        logger.debug("Discovering {} content...", child.type().id());
-        try (final IndentingLogger $$ = logger.push()) {
-          final Path childPath = child.type().path(root).toAbsolutePath();
-          visitor.visitChild(child, child.type(), childPath);
-          Files.walkFileTree(childPath, Collections.emptySet(), this.configuration.maxDepth(), new PathVisitor() {
-            @Override
-            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
-              if (ContentFinder.XML_MATCHER.matches(file)) {
-                logger.debug("Found {}", childPath.relativize(file));
-                visitor.visitEntry(file, child.builder());
+        childrenTypes.forEach(Exceptions.rethrowConsumer(child -> {
+          logger.debug("Discovering {} content...", child.type().id());
+          try (final IndentingLogger $$ = logger.push()) {
+            final Path childPath = child.type().path(root).toAbsolutePath();
+            visitor.visitChild(child, child.type(), childPath);
+            Files.walkFileTree(childPath, Collections.emptySet(), this.configuration.maxDepth(), new PathVisitor() {
+              @Override
+              public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
+                if (ContentFinder.XML_MATCHER.matches(file)) {
+                  logger.debug("Found {}", childPath.relativize(file));
+                  visitor.visitEntry(file, child.builder());
+                }
+                return FileVisitResult.CONTINUE;
               }
-              return FileVisitResult.CONTINUE;
-            }
-          });
-        }
-      }));
+            });
+          }
+        }));
       }
     }));
 
