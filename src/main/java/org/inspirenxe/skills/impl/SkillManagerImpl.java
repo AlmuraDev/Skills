@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.skill;
+package org.inspirenxe.skills.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.inspirenxe.skills.impl.database.Queries.createFetchExperienceQuery;

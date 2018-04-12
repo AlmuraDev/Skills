@@ -30,10 +30,10 @@ import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.skill.SkillTypeImpl;
+import org.inspirenxe.skills.impl.SkillTypeImpl;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 
 @Singleton
 public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {
@@ -46,7 +46,7 @@ public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkil
   }
 
   @Listener(order = Order.FIRST)
-  public void onGameStartingServer(GameStartingServerEvent event) {
+  public void onGameStartedServer(GameStartedServerEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SkillTypeImpl.class)));
   }
 }

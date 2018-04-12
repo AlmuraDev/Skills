@@ -31,6 +31,7 @@ import com.google.inject.binder.LinkedBindingBuilder;
 import net.kyori.violet.AbstractModule;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
+import org.inspirenxe.skills.api.Result;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
@@ -39,6 +40,7 @@ import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.sound.SoundEffect;
+import org.inspirenxe.skills.impl.ResultBuilder;
 import org.inspirenxe.skills.impl.registry.module.ColorTypeRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.EconomyFunctionRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.FireworkEffectTypeRegistryModule;
@@ -57,6 +59,7 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
   protected void configure() {
     // TODO Move this to common...
     this.registry().builder(SoundEffect.Builder.class, SoundEffectBuilderImpl::new);
+    this.registry().builder(Result.Builder.class, ResultBuilder::new);
 
     // API modules
     this.registry().module(ColorType.class, ColorTypeRegistryModule.instance);

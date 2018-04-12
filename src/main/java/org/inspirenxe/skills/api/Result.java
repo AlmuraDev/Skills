@@ -22,41 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.api;
 
-import com.almuradev.droplet.content.type.AbstractContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.SkillTypeImpl;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.util.ResettableBuilder;
 
-public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<SkillTypeImpl> implements ContentSkillTypeBuilder {
+/**
+ * An object representing a result of an action.
+ */
+public interface Result {
 
-  private String name;
-  private RegistryReference<LevelFunctionType> levelFunction;
-  private int minLevel, maxLevel;
-
-  @Override
-  public void name(String name) {
-    this.name = name;
+  static Builder builder() {
+    return Sponge.getRegistry().createBuilder(Builder.class);
   }
 
-  @Override
-  public void levelFunction(final RegistryReference<LevelFunctionType> levelFunction) {
-    this.levelFunction = levelFunction;
+  Type getType();
+
+  interface Builder extends ResettableBuilder<Result, Builder> {
+
+    Builder type(final Type type);
+
+    Result build();
   }
 
-  @Override
-  public void minLevel(final int minLevel) {
-    this.minLevel = minLevel;
-  }
-
-  @Override
-  public void maxLevel(final int maxLevel) {
-    this.maxLevel = maxLevel;
-  }
-
-  @Override
-  public SkillTypeImpl build() {
-    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel);
+  enum Type {
+    SUCCESS,
+    FAILURE,
+    ERROR,
+    CANCELLED
   }
 }

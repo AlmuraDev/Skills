@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.skill;
+package org.inspirenxe.skills.impl;
 
 import com.almuradev.droplet.content.type.Content;
 import com.almuradev.droplet.registry.RegistryKey;

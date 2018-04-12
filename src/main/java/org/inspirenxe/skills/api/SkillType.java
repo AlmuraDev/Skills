@@ -34,5 +34,4 @@ public interface SkillType extends CatalogType {
   int getMinLevel();
 
   int getMaxLevel();
-
 }

@@ -22,5 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@org.spongepowered.api.util.annotation.NonnullByDefault
-package org.inspirenxe.skills.impl.skill;
+package org.inspirenxe.skills.impl;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.inspirenxe.skills.api.Result;
+
+public final class ResultBuilder implements Result.Builder {
+
+  public Result.Type type;
+
+  @Override
+  public Result.Builder type(Result.Type type) {
+    this.type = type;
+    return this;
+  }
+
+  @Override
+  public Result.Builder from(Result value) {
+    this.type = value.getType();
+    return this;
+  }
+
+  @Override
+  public Result.Builder reset() {
+    this.type = Result.Type.SUCCESS;
+    return this;
+  }
+
+  @Override
+  public Result build() {
+    checkNotNull(this.type);
+    return new ResultImpl(this);
+  }
+}

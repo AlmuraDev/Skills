@@ -22,41 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.impl;
 
-import com.almuradev.droplet.content.type.AbstractContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.SkillTypeImpl;
+import org.inspirenxe.skills.api.Result;
 
-public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<SkillTypeImpl> implements ContentSkillTypeBuilder {
+public final class ResultImpl implements Result {
 
-  private String name;
-  private RegistryReference<LevelFunctionType> levelFunction;
-  private int minLevel, maxLevel;
+  private final Result.Type type;
 
-  @Override
-  public void name(String name) {
-    this.name = name;
+  ResultImpl(ResultBuilder builder) {
+    this.type = builder.type;
   }
 
   @Override
-  public void levelFunction(final RegistryReference<LevelFunctionType> levelFunction) {
-    this.levelFunction = levelFunction;
-  }
-
-  @Override
-  public void minLevel(final int minLevel) {
-    this.minLevel = minLevel;
-  }
-
-  @Override
-  public void maxLevel(final int maxLevel) {
-    this.maxLevel = maxLevel;
-  }
-
-  @Override
-  public SkillTypeImpl build() {
-    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel);
+  public Type getType() {
+    return this.type;
   }
 }

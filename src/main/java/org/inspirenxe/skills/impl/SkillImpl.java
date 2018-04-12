@@ -22,14 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.skill;
+package org.inspirenxe.skills.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import org.inspirenxe.skills.api.Result;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
@@ -74,8 +74,19 @@ public final class SkillImpl implements Skill {
   }
 
   @Override
-  public Skill setExperience(final double experience) {
-    checkState(experience >= 0, "Setting experience must be greater than 0!");
+  public Result setExperience(final double experience) {
+    Exception exception = null;
+
+    if (experience < 0) {
+      exception = new ArithmeticException("Experience must be positive!");
+    } else if (this.skillType.getLevelFunction().getLevelFor(experience) < this.skillType.getMinLevel()) {
+      exception = new ArithmeticException("Experience cannot be lower than the experience at min level!");
+    }
+
+    if (exception != null) {
+      exception.printStackTrace();
+      return Result.builder().type(Result.Type.ERROR).build();
+    }
 
     if (!this.isInitialized) {
       this.isInitialized = true;
@@ -85,10 +96,16 @@ public final class SkillImpl implements Skill {
     final double originalExperience = this.experience;
     final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(this, originalExperience, experience);
     if (this.eventManager.post(event)) {
-      return this;
+      return Result.builder().type(Result.Type.CANCELLED).build();
+    }
+
+    if (this.skillType.getLevelFunction().getLevelFor(experience) < this.skillType.getMinLevel()) {
+      new ArithmeticException("Experience cannot be lower than the experience at min level!").printStackTrace();
+      return Result.builder().type(Result.Type.ERROR).build();
     }
 
     this.experience = event.getExperience();
+
     final int level = this.getCurrentLevel();
 
     if (originalLevel != level) {
@@ -97,7 +114,12 @@ public final class SkillImpl implements Skill {
       this.eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
     }
 
-    return this;
+    return Result.builder().type(Result.Type.SUCCESS).build();
+  }
+
+  @Override
+  public Result addExperience(double experience) {
+    return this.setExperience(this.getCurrentExperience() + experience);
   }
 
   @Override

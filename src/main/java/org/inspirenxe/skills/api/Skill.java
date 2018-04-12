@@ -32,16 +32,9 @@ public interface Skill {
 
   double getCurrentExperience();
 
-  Skill setExperience(final double experience);
+  Result setExperience(final double experience);
 
-  default Skill addExperience(final double experience) {
-    double expDiff = this.getCurrentExperience() + experience;
-    if (expDiff < 0) {
-      expDiff = 0;
-    }
-    this.setExperience(expDiff);
-    return this;
-  }
+  Result addExperience(final double experience);
 
   default int getCurrentLevel() {
     return this.getSkillType().getLevelFunction().getLevelFor(this.getCurrentExperience());
