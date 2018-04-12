@@ -22,23 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch.iflogic;
 
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.SkillTypeImpl;
-import org.inspirenxe.skills.impl.content.type.skill.processor.event.EventScript;
+import org.inspirenxe.skills.impl.content.type.skill.processor.event.branch.ConditionalBranch;
 
-public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
-
-  void name(final String name);
-
-  void levelFunction(final RegistryReference<LevelFunctionType> levelFunction);
-
-  void minLevel(final int minLevel);
-
-  void maxLevel(final int maxLevel);
-
-  EventScript.Builder eventScriptBuilder();
+public interface ElseBranch extends ConditionalBranch {
 }

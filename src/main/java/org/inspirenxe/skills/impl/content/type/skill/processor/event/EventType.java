@@ -22,23 +22,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.impl.content.type.skill.processor.event;
 
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.SkillTypeImpl;
-import org.inspirenxe.skills.impl.content.type.skill.processor.event.EventScript;
+import org.spongepowered.api.event.Event;
 
-public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
+import java.util.Optional;
 
-  void name(final String name);
+public interface EventType {
 
-  void levelFunction(final RegistryReference<LevelFunctionType> levelFunction);
+  static EventType of(final Class<? extends Event> clazz, final String tag) {
+    return new EventTypeImpl(clazz, tag);
+  }
 
-  void minLevel(final int minLevel);
+  static EventType childOf(final EventType parent, final Class<? extends Event> clazz, final String tag) {
+    return new EventTypeImpl(parent, clazz, tag);
+  }
 
-  void maxLevel(final int maxLevel);
+  Optional<EventType> getParent();
 
-  EventScript.Builder eventScriptBuilder();
+  Class<? extends Event> getEventClass();
+
+  String[] getPath();
+
+  boolean isExact(Class<? extends Event> clazz);
+
+  boolean isChild(Class<? extends Event> clazz);
 }

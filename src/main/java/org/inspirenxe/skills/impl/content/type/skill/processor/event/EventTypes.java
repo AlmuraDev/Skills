@@ -22,23 +22,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.impl.content.type.skill.processor.event;
 
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.SkillTypeImpl;
-import org.inspirenxe.skills.impl.content.type.skill.processor.event.EventScript;
+import net.kyori.xml.node.Node;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.action.InteractEvent;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 
-public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
+import java.util.Optional;
 
-  void name(final String name);
+public final class EventTypes {
 
-  void levelFunction(final RegistryReference<LevelFunctionType> levelFunction);
+  public static final EventType EVENT = EventType.of(Event.class, "event");
 
-  void minLevel(final int minLevel);
+  public static final EventType CHANGE_BLOCK = EventType.childOf(EVENT, ChangeBlockEvent.class, "change-block");
+  public static final EventType CHANGE_BLOCK_BREAK = EventType.childOf(CHANGE_BLOCK, ChangeBlockEvent.Break.class, "break");
+  public static final EventType CHANGE_BLOCK_PLACE = EventType.childOf(CHANGE_BLOCK, ChangeBlockEvent.Place.class, "place");
 
-  void maxLevel(final int maxLevel);
+  public static final EventType INTERACT = EventType.childOf(EVENT, InteractEvent.class, "interact");
+  public static final EventType INTERACT_ITEM = EventType.childOf(INTERACT, InteractItemEvent.class, "item");
 
-  EventScript.Builder eventScriptBuilder();
+  // TODO
+  public Optional<EventType> fromNode(Node node) {
+    return Optional.empty();
+  }
 }

@@ -22,23 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill;
+package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch;
 
-import com.almuradev.droplet.content.type.ContentBuilder;
-import com.almuradev.droplet.registry.reference.RegistryReference;
-import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.SkillTypeImpl;
-import org.inspirenxe.skills.impl.content.type.skill.processor.event.EventScript;
+import org.inspirenxe.skills.impl.component.apply.Apply;
 
-public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
+import java.util.Collections;
+import java.util.List;
 
-  void name(final String name);
+public interface ResultBranch extends Branch {
 
-  void levelFunction(final RegistryReference<LevelFunctionType> levelFunction);
+  default List<Branch> getBranches() {
+    return Collections.emptyList();
+  }
 
-  void minLevel(final int minLevel);
-
-  void maxLevel(final int maxLevel);
-
-  EventScript.Builder eventScriptBuilder();
+  List<Apply<?>> getApplicators();
 }
