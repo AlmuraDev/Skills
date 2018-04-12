@@ -22,24 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic;
 
-import org.inspirenxe.skills.impl.content.type.skill.processor.event.branch.Branch;
+import com.almuradev.droplet.component.filter.Filter;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.ConditionalBranch;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.LogicBranchImpl;
 
 import java.util.List;
 
-public interface EventScript {
+public final class IfBranchImpl extends LogicBranchImpl implements IfBranch {
 
-  EventType getType();
-
-  List<Branch> getBranch();
-
-  interface Builder {
-
-    Builder type(final EventType type);
-
-    Builder branch(final Branch<?> branch);
-
-    EventScript build();
+  public IfBranchImpl(Filter statement, List<ConditionalBranch> branches) {
+    super(statement, branches);
   }
 }

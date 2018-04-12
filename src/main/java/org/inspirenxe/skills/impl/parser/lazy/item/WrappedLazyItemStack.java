@@ -43,7 +43,7 @@ public final class WrappedLazyItemStack implements LazyItemStack {
 
   @Override
   public int data() {
-    return this.stack.get(Keys.ITEM_DURABILITY).get();
+    return this.stack.get(Keys.ITEM_DURABILITY).orElse(0);
   }
 
   @Override

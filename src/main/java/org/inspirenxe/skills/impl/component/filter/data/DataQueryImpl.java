@@ -26,10 +26,12 @@ package org.inspirenxe.skills.impl.component.filter.data;
 
 import org.spongepowered.api.data.key.Key;
 
+import javax.annotation.Nullable;
+
 public final class DataQueryImpl implements DataQuery {
 
   private final Key dataKey;
-  private final Object value;
+  @Nullable private final Object value;
 
   public DataQueryImpl(final Key dataKey) {
     this.dataKey = dataKey;
@@ -47,6 +49,7 @@ public final class DataQueryImpl implements DataQuery {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public <V> V value() {
     return (V) this.value;
   }

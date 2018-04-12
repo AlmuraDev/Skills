@@ -24,9 +24,10 @@
  */
 package org.inspirenxe.skills.impl.parser.lazy.block.value;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.trait.BlockTrait;
+
+import javax.annotation.Nullable;
 
 public interface LazyStateValue<V extends Comparable<V>> {
 

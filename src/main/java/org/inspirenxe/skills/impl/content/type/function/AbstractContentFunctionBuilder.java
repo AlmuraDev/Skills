@@ -27,10 +27,12 @@ package org.inspirenxe.skills.impl.content.type.function;
 import com.almuradev.droplet.content.type.AbstractContentBuilder;
 import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractContentFunctionBuilder<R extends SkillsFunctionType> extends AbstractContentBuilder<R> implements
     ContentFunctionBuilder<R> {
 
-  protected String formula;
+  @Nullable protected String formula;
 
   @Override
   public void formula(String formula) {

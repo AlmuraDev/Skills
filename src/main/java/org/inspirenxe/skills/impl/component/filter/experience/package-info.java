@@ -23,4 +23,4 @@
  * THE SOFTWARE.
  */
 @org.spongepowered.api.util.annotation.NonnullByDefault
-package org.inspirenxe.skills.impl.component.filter.level;
+package org.inspirenxe.skills.impl.component.filter.experience;

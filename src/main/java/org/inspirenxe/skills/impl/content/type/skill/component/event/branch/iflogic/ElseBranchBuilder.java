@@ -22,43 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.membrane.facet.internal.Facets;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameStoppingEvent;
-import org.spongepowered.api.plugin.Plugin;
+import static com.google.common.base.Preconditions.checkState;
 
-import javax.annotation.Nullable;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.ConditionalBranchBuilder;
 
-@Plugin(id = SkillsImpl.ID)
-public class SkillsImpl {
+public final class ElseBranchBuilder extends ConditionalBranchBuilder<ElseBranch, Branch, ElseBranch.Builder> implements ElseBranch
+  .Builder {
 
-  static final String ID = "skills";
-
-  private final Injector baseInjector;
-
-  @Nullable private Facets facets;
-
-  @Inject
-  public SkillsImpl(final Injector baseInjector) {
-    this.baseInjector = baseInjector;
-  }
-
-  @Listener
-  public void onGameConstruction(GameConstructionEvent event) {
-    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
-
-    this.facets.enable();
-  }
-
-  @Listener
-  public void onGameStopping(GameStoppingEvent event) {
-    if (this.facets != null) {
-      this.facets.disable();
-    }
+  @Override
+  public ElseBranch build() {
+    checkState(!this.branches.isEmpty(), "An Else makes no sense without any branches");
+    // TODO Branch validation
+    return new ElseBranchImpl(this.branches);
   }
 }

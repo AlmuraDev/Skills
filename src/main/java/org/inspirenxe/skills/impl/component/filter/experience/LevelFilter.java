@@ -30,7 +30,7 @@ import com.almuradev.droplet.component.filter.FilterResponse;
 
 public final class LevelFilter implements AbstractFilter<LevelQuery> {
 
-  private int level;
+  private final int level;
 
   LevelFilter(final int level) {
     this.level = level;

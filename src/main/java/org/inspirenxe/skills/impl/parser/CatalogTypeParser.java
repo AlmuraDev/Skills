@@ -46,6 +46,7 @@ public final class CatalogTypeParser<C extends CatalogType> implements Parser<C>
     this.type = type;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public C throwingParse(final Node node) throws XMLException {
     return this.registry.getType((Class<C>) this.type.getRawType(), node.value())

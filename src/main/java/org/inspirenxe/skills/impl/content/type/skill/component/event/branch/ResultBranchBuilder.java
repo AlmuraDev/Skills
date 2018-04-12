@@ -22,8 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
-public interface ConditionalBranch extends Branch<ConditionalBranch> {
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
+import org.inspirenxe.skills.impl.component.apply.Apply;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public final class ResultBranchBuilder extends BranchBuilder<ResultBranch> implements ResultBranch.Builder {
+
+  private final List<Apply<?>> applicators = new ArrayList<>();
+
+  @Override
+  public ResultBranch.Builder apply(final Apply<?> apply) {
+    checkNotNull(apply);
+
+    this.applicators.add(apply);
+    return this;
+  }
+
+  @Override
+  public ResultBranch build() {
+    checkState(!this.applicators.isEmpty(), "A result branch that does nothing makes no sense!");
+    return new ResultBranchImpl(this.applicators);
+  }
 }

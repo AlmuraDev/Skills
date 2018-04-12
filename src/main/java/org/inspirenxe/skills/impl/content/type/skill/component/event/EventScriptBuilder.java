@@ -22,43 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl;
+package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.membrane.facet.internal.Facets;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameStoppingEvent;
-import org.spongepowered.api.plugin.Plugin;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
-@Plugin(id = SkillsImpl.ID)
-public class SkillsImpl {
+public final class EventScriptBuilder implements EventScript.Builder {
 
-  static final String ID = "skills";
+  @Nullable EventType type;
+  final List<Branch> branches = new ArrayList<>();
 
-  private final Injector baseInjector;
-
-  @Nullable private Facets facets;
-
-  @Inject
-  public SkillsImpl(final Injector baseInjector) {
-    this.baseInjector = baseInjector;
+  @Override
+  public EventScript.Builder type(final EventType type) {
+    this.type = type;
+    return this;
   }
 
-  @Listener
-  public void onGameConstruction(GameConstructionEvent event) {
-    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
-
-    this.facets.enable();
+  @Override
+  public EventScript.Builder branch(Branch branch) {
+    this.branches.add(branch);
+    return this;
   }
 
-  @Listener
-  public void onGameStopping(GameStoppingEvent event) {
-    if (this.facets != null) {
-      this.facets.disable();
-    }
+  @Override
+  public EventScript build() {
+    checkNotNull(this.type);
+    checkState(!this.branches.isEmpty(), "An event type that does nothing makes no sense!");
+    return new EventScriptImpl(this);
   }
 }

@@ -29,6 +29,8 @@ import org.inspirenxe.skills.impl.component.filter.key.RegistryKeyFilterQuery;
 import org.inspirenxe.skills.impl.registry.CatalogKey;
 import org.spongepowered.api.data.key.Key;
 
+import javax.annotation.Nullable;
+
 public interface DataQuery extends RegistryKeyFilterQuery {
 
   default RegistryKey key() {
@@ -37,5 +39,6 @@ public interface DataQuery extends RegistryKeyFilterQuery {
 
   Key dataKey();
 
+  @Nullable
   <V> V value();
 }

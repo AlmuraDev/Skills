@@ -29,6 +29,7 @@ import com.almuradev.droplet.parser.Parser;
 import com.google.common.collect.MoreCollectors;
 import net.kyori.xml.node.Node;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -52,14 +53,18 @@ public final class LazyStateValueParser implements Parser<LazyStateValue<?>> {
     if (value != null) {
       return value;
     }
+
+    // TODO Do I need to throw an exception
     return null;
   }
 
+  @Nullable
   private LazyStateValue<?> parseSimple(final Node node) {
     return node.nodes("value").collect(MoreCollectors.toOptional())
         .map(value -> new SimpleLazyStateValue<>(value.value())).orElse(null);
   }
 
+  @Nullable
   private LazyStateValue<?> parseRange(final Node node) {
     return node.nodes("range").collect(MoreCollectors.toOptional())
         .map(value -> new IntRangeLazyStateValue(this.intRangeParser.parse(value)))

@@ -44,6 +44,7 @@ public final class CatalogTypeRegistry<C extends CatalogType> implements Registr
     this.type = type;
   }
 
+  @SuppressWarnings("unchecked")
   @Nullable
   @Override
   public C get(RegistryKey key) {
@@ -54,6 +55,7 @@ public final class CatalogTypeRegistry<C extends CatalogType> implements Registr
     return this.registry.getType((Class<C>) this.type.getRawType(), key.namespace() + ":" + key.value()).orElse(null);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void put(RegistryKey key, C value) {
     this.registry.register((Class<C>) this.type.getRawType(), value);

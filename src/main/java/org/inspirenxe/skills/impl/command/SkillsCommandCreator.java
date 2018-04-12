@@ -98,13 +98,15 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
 
               totalLevel += currentLevel;
             }
-
-            final PaginationList list = Sponge.getServiceManager().provide(PaginationService.class).get().builder()
+            final PaginationService pagination = Sponge.getServiceManager().provide(PaginationService.class).orElse(null);
+            if (pagination != null) {
+              pagination.builder()
                 .title(Text.of(TextColors.RED, "My Skills"))
                 .contents(skillPrintouts)
                 .footer(Text.of(TextColors.YELLOW, "Total Level: ", TextColors.RESET, totalLevel))
-                .build();
-            list.sendTo(player);
+                .build()
+                .sendTo(player);
+            }
           }
 
           return CommandResult.success();

@@ -34,11 +34,13 @@ import org.inspirenxe.skills.impl.effect.sound.SoundEffectTypeImpl;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 
+import javax.annotation.Nullable;
+
 public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsSoundEffectType>
     implements ContentSoundEffectTypeBuilder {
 
-  private SoundType sound;
-  private SoundCategory category;
+  @Nullable private SoundType sound;
+  @Nullable private SoundCategory category;
   private double minVolume, volume, pitch;
 
   @Override

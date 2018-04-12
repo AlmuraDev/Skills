@@ -33,8 +33,12 @@ import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunctionType;
 public final class ContentEconomyFunctionBuilderImpl extends AbstractContentFunctionBuilder<SkillsEconomyFunctionType>
     implements ContentEconomyFunctionBuilder {
 
+  private final SkillsEconomyFunctionType.Factory factory;
+
   @Inject
-  private SkillsEconomyFunctionType.Factory factory;
+  public ContentEconomyFunctionBuilderImpl(final SkillsEconomyFunctionType.Factory factory) {
+    this.factory = factory;
+  }
 
   @Override
   public SkillsEconomyFunctionType build() {

@@ -22,10 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch.iflogic;
-
-import org.inspirenxe.skills.impl.content.type.skill.processor.event.branch.LogicBranch;
-
-public interface IfBranch extends LogicBranch {
-
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.content.type.skill.component.event;

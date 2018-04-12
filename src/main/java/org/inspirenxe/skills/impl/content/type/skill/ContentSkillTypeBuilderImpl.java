@@ -24,16 +24,22 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.almuradev.droplet.content.type.AbstractContentBuilder;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
+
+import javax.annotation.Nullable;
 
 public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<SkillTypeImpl> implements ContentSkillTypeBuilder {
 
-  private String name;
-  private RegistryReference<LevelFunctionType> levelFunction;
+  @Nullable private String name;
+  @Nullable private RegistryReference<LevelFunctionType> levelFunction;
   private int minLevel, maxLevel;
+  private final EventScript.Builder eventScriptBuilder = EventScript.builder();
 
   @Override
   public void name(String name) {
@@ -56,7 +62,14 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   }
 
   @Override
+  public EventScript.Builder eventScriptBuilder() {
+    return this.eventScriptBuilder;
+  }
+
+  @Override
   public SkillTypeImpl build() {
-    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel);
+    checkNotNull(this.name);
+    checkNotNull(this.levelFunction);
+    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel, this.eventScriptBuilder.build());
   }
 }

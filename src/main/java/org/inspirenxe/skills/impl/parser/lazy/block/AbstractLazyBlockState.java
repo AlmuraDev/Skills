@@ -31,6 +31,8 @@ import org.spongepowered.api.block.BlockType;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractLazyBlockState implements LazyBlockState {
 
   private final RegistryReference<BlockType> block;
@@ -50,6 +52,7 @@ public abstract class AbstractLazyBlockState implements LazyBlockState {
     return this.state.get();
   }
 
+  @Nullable
   abstract <T extends Comparable<T>> BlockState createState();
 
   @Override

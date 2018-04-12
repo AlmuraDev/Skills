@@ -22,58 +22,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event;
+package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
 import org.spongepowered.api.event.Event;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
+public interface EventType {
 
-public final class EventTypeImpl implements EventType {
-
-  private final Class<? extends Event> clazz;
-  private final String[] path;
-
-  @Nullable private EventType parent;
-
-  EventTypeImpl(final Class<? extends Event> clazz, final String path) {
-    this.clazz = clazz;
-    this.path = new String[1];
-    Arrays.fill(this.path, path);
+  static EventType of(final Class<? extends Event> clazz, final String tag) {
+    return new EventTypeImpl(clazz, tag);
   }
 
-  EventTypeImpl(final EventType parent, final Class<? extends Event> clazz, final String path) {
-    this.parent = parent;
-    this.clazz = clazz;
-    this.path = Arrays.copyOf(parent.getPath(), parent.getPath().length + 1);
-    this.path[parent.getPath().length + 1] = path;
+  static EventType childOf(final EventType parent, final Class<? extends Event> clazz, final String tag) {
+    return new EventTypeImpl(parent, clazz, tag);
   }
 
-  @Override
-  public Optional<EventType> getParent() {
-    return Optional.ofNullable(this.parent);
-  }
+  Optional<EventType> getParent();
 
-  @Override
-  public Class<? extends Event> getEventClass() {
-    return this.clazz;
-  }
+  Class<? extends Event> getEventClass();
 
-  @Override
-  public String[] getPath() {
-    return this.path;
-  }
+  String[] getPath();
 
-  @Override
-  public boolean isExact(Class<? extends Event> clazz) {
-    return this.clazz == clazz;
-  }
+  boolean isExact(Class<? extends Event> clazz);
 
-  @Override
-  public boolean isChild(Class<? extends Event> clazz) {
-    // TODO
-    return false;
-  }
+  boolean isDirectChild(Class<? extends Event> clazz);
 }

@@ -22,9 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch.iflogic;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic;
 
-import org.inspirenxe.skills.impl.content.type.skill.processor.event.branch.ConditionalBranch;
+import static com.google.common.base.Preconditions.checkState;
 
-public interface ElseBranch extends ConditionalBranch {
+import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.ConditionalBranchBuilder;
+
+public final class ThenBranchBuilder extends ConditionalBranchBuilder<ThenBranch, Branch, ThenBranch.Builder> implements ThenBranch
+  .Builder {
+
+  @Override
+  public ThenBranch build() {
+    checkState(!this.branches.isEmpty(), "A Then makes no sense without any branches!");
+    // TODO Branch validation
+    return new ThenBranchImpl(this.branches);
+  }
 }

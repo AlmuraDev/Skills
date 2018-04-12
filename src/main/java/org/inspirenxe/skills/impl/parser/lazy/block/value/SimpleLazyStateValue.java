@@ -29,6 +29,8 @@ import org.spongepowered.api.block.trait.BlockTrait;
 
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 final class SimpleLazyStateValue<V extends Comparable<V>> implements LazyStateValue<V> {
 
   private final String string;
@@ -43,6 +45,7 @@ final class SimpleLazyStateValue<V extends Comparable<V>> implements LazyStateVa
   }
 
   @Override
+  @Nullable
   public V get(final BlockTrait<V> property) {
     return property.parseValue(this.string).orElse(null);
   }

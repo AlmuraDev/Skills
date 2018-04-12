@@ -22,18 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic;
 
-import org.inspirenxe.skills.impl.component.apply.Apply;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.ConditionalBranchImpl;
 
-import java.util.Collections;
 import java.util.List;
 
-public interface ResultBranch extends Branch {
+public final class ElseBranchImpl extends ConditionalBranchImpl<Branch> implements ElseBranch {
 
-  default List<Branch> getBranches() {
-    return Collections.emptyList();
+  public ElseBranchImpl(List<Branch> branches) {
+    super(branches);
   }
-
-  List<Apply<?>> getApplicators();
 }

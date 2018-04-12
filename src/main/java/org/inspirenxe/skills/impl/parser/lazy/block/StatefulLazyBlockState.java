@@ -46,6 +46,7 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
     this.properties = Suppliers.memoize(() -> this.resolveProperties(properties));
   }
 
+  @SuppressWarnings("unchecked")
   private <T extends Comparable<T>> Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> resolveProperties(
       final Map<String, LazyStateValue<? extends Comparable<?>>> source) {
     final Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> target = new HashMap<>();
@@ -60,7 +61,9 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
     return target;
   }
 
-  @Override <T extends Comparable<T>> BlockState createState() {
+  @SuppressWarnings("unchecked")
+  @Override
+  <T extends Comparable<T>> BlockState createState() {
     BlockState state = this.block().getDefaultState();
     for (final Map.Entry<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> entry : this.properties.get().entrySet()) {
       if (state == null) {
@@ -78,7 +81,9 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
     return state;
   }
 
-  @Override <V extends Comparable<V>> boolean testInternal(final BlockState state) {
+  @SuppressWarnings("unchecked")
+  @Override
+  <V extends Comparable<V>> boolean testInternal(final BlockState state) {
     for (final Map.Entry<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>> entry : this.properties.get().entrySet()) {
       final BlockTrait<V> property = (BlockTrait<V>) entry.getKey();
       final LazyStateValue<V> value = (LazyStateValue<V>) entry.getValue();
@@ -89,6 +94,7 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
     return true;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
     return Optional.ofNullable((LazyStateValue<V>) this.properties.get().get(property));

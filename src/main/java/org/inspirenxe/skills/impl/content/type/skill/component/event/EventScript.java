@@ -22,29 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event;
+package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
-import net.kyori.xml.node.Node;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.action.InteractEvent;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.item.inventory.InteractItemEvent;
+import java.util.List;
 
-import java.util.Optional;
+public interface EventScript {
 
-public final class EventTypes {
+  static Builder builder() {
+    return new EventScriptBuilder();
+  }
 
-  public static final EventType EVENT = EventType.of(Event.class, "event");
+  EventType getType();
 
-  public static final EventType CHANGE_BLOCK = EventType.childOf(EVENT, ChangeBlockEvent.class, "change-block");
-  public static final EventType CHANGE_BLOCK_BREAK = EventType.childOf(CHANGE_BLOCK, ChangeBlockEvent.Break.class, "break");
-  public static final EventType CHANGE_BLOCK_PLACE = EventType.childOf(CHANGE_BLOCK, ChangeBlockEvent.Place.class, "place");
+  List<Branch> getBranch();
 
-  public static final EventType INTERACT = EventType.childOf(EVENT, InteractEvent.class, "interact");
-  public static final EventType INTERACT_ITEM = EventType.childOf(INTERACT, InteractItemEvent.class, "item");
+  interface Builder {
 
-  // TODO
-  public Optional<EventType> fromNode(Node node) {
-    return Optional.empty();
+    Builder type(final EventType type);
+
+    Builder branch(final Branch branch);
+
+    EventScript build();
   }
 }

@@ -22,18 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch;
+package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
-import java.util.List;
-
-public interface Branch<B extends Branch> {
-
-  List<B> getBranches();
-
-  interface Builder<RESULT extends Branch, SUBTYPE extends Branch, BUILDER extends Builder> {
-
-    BUILDER branch(final SUBTYPE branch);
-
-    RESULT build();
-  }
+public abstract class BranchBuilder<B extends Branch> implements Branch.Builder<B> {
 }

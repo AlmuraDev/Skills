@@ -22,43 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.membrane.facet.internal.Facets;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameStoppingEvent;
-import org.spongepowered.api.plugin.Plugin;
-
-import javax.annotation.Nullable;
-
-@Plugin(id = SkillsImpl.ID)
-public class SkillsImpl {
-
-  static final String ID = "skills";
-
-  private final Injector baseInjector;
-
-  @Nullable private Facets facets;
-
-  @Inject
-  public SkillsImpl(final Injector baseInjector) {
-    this.baseInjector = baseInjector;
-  }
-
-  @Listener
-  public void onGameConstruction(GameConstructionEvent event) {
-    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
-
-    this.facets.enable();
-  }
-
-  @Listener
-  public void onGameStopping(GameStoppingEvent event) {
-    if (this.facets != null) {
-      this.facets.disable();
-    }
-  }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic;

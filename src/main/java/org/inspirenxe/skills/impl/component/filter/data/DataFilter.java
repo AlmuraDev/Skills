@@ -41,6 +41,7 @@ import javax.annotation.Nullable;
 
 public final class DataFilter implements AbstractFilter<DataQuery> {
 
+  @Nullable
   @Inject
   private static Injector injector;
   private final RegistryReference<Key> dataKey;
@@ -58,16 +59,16 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
     return query instanceof DataQuery;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public FilterResponse queryInternal(final DataQuery query) {
     final Key key = this.dataKey.require();
     FilterResponse response = FilterResponse.from(key.getId().equalsIgnoreCase(query.dataKey().getId()));
 
-    if (response == FilterResponse.ALLOW && this.rawValue != null) {
+    if (response == FilterResponse.ALLOW && this.rawValue != null && injector != null) {
       if (!this.computedValue) {
         final StringToValueParser<?> parser = injector.getInstance(com.google.inject.Key.get(new FriendlyTypeLiteral<StringToValueParser<?>>() {
-        }.where(new TypeArgument(key.getElementToken()) {
-        })));
+        }.where(new TypeArgument(key.getElementToken()) {})));
         this.value = parser.parse(key.getElementToken(), rawValue).orElse(null);
         this.computedValue = true;
       }

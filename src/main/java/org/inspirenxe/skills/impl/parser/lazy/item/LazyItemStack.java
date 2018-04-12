@@ -61,7 +61,7 @@ public interface LazyItemStack extends Predicate<ItemStack>, Supplier<ItemStack>
 
   @Override
   default boolean test(final ItemStack item) {
-    return item.getType() == this.item() && item.get(Keys.ITEM_DURABILITY).orElse(null) == this.data();
+    return item.getType() == this.item() && item.get(Keys.ITEM_DURABILITY).orElse(0) == this.data();
   }
 
   default boolean matches(final ItemType that) {

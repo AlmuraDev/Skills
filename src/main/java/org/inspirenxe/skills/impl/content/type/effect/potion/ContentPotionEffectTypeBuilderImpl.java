@@ -32,10 +32,12 @@ import org.inspirenxe.skills.impl.effect.potion.SkillsPotionEffectType;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
+import javax.annotation.Nullable;
+
 public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsPotionEffectType>
     implements ContentPotionEffectTypeBuilder {
 
-  private PotionEffectType potion;
+  @Nullable private PotionEffectType potion;
   private int duration, amplifier;
   private boolean isAmbient, showParticles;
 

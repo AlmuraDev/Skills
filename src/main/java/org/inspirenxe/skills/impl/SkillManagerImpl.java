@@ -335,7 +335,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
     }
   }
 
-  private void saveSkillsAsync(UUID containerUniqueId, UUID holderUniqueId, Map<String, Double> skillTypesByExperience) throws SQLException {
+  private void saveSkillsAsync(UUID containerUniqueId, UUID holderUniqueId, Map<String, Double> skillTypesByExperience) {
 
     final HashSet<Query> batchInsert = new HashSet<>();
     final HashSet<Query> batchUpdate = new HashSet<>();
@@ -493,12 +493,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
       DirtySkillHolderQueueEntry entry;
 
       while ((entry = queued.poll()) != null) {
-
-        try {
-          manager.saveSkillsAsync(containerUniqueId, entry.holderUniqueId, entry.dirtySkills);
-        } catch (SQLException e) {
-          e.printStackTrace();
-        }
+        manager.saveSkillsAsync(containerUniqueId, entry.holderUniqueId, entry.dirtySkills);
       }
     }
 
@@ -525,12 +520,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
     @Override
     public void run() {
-
-      try {
-        this.manager.saveSkillsAsync(this.containerUniqueId, this.queueEntry.holderUniqueId, this.queueEntry.dirtySkills);
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
+      this.manager.saveSkillsAsync(this.containerUniqueId, this.queueEntry.holderUniqueId, this.queueEntry.dirtySkills);
     }
   }
 

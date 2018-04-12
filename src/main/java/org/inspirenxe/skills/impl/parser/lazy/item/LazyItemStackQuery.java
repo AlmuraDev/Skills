@@ -25,7 +25,6 @@
 package org.inspirenxe.skills.impl.parser.lazy.item;
 
 import org.inspirenxe.skills.impl.component.filter.item.ItemQuery;
-import org.spongepowered.api.item.ItemType;
 
 public final class LazyItemStackQuery implements ItemQuery {
 

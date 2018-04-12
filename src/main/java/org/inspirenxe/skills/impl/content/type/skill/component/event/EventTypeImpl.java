@@ -22,43 +22,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl;
+package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.membrane.facet.internal.Facets;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameStoppingEvent;
-import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.event.Event;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-@Plugin(id = SkillsImpl.ID)
-public class SkillsImpl {
+public final class EventTypeImpl implements EventType {
 
-  static final String ID = "skills";
+  private final Class<? extends Event> clazz;
+  private final String[] path;
 
-  private final Injector baseInjector;
+  @Nullable private EventType parent;
 
-  @Nullable private Facets facets;
-
-  @Inject
-  public SkillsImpl(final Injector baseInjector) {
-    this.baseInjector = baseInjector;
+  EventTypeImpl(final Class<? extends Event> clazz, final String path) {
+    this.clazz = clazz;
+    this.path = new String[1];
+    Arrays.fill(this.path, path);
   }
 
-  @Listener
-  public void onGameConstruction(GameConstructionEvent event) {
-    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
-
-    this.facets.enable();
+  EventTypeImpl(final EventType parent, final Class<? extends Event> clazz, final String path) {
+    this.parent = parent;
+    this.clazz = clazz;
+    this.path = Arrays.copyOf(parent.getPath(), parent.getPath().length + 1);
+    this.path[parent.getPath().length + 1] = path;
   }
 
-  @Listener
-  public void onGameStopping(GameStoppingEvent event) {
-    if (this.facets != null) {
-      this.facets.disable();
-    }
+  @Override
+  public Optional<EventType> getParent() {
+    return Optional.ofNullable(this.parent);
+  }
+
+  @Override
+  public Class<? extends Event> getEventClass() {
+    return this.clazz;
+  }
+
+  @Override
+  public String[] getPath() {
+    return this.path;
+  }
+
+  @Override
+  public boolean isExact(Class<? extends Event> clazz) {
+    return this.clazz == clazz;
+  }
+
+  @Override
+  public boolean isDirectChild(Class<? extends Event> clazz) {
+    return clazz.getSuperclass() == this.clazz;
   }
 }

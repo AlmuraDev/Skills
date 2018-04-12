@@ -46,7 +46,7 @@ public interface LazyBlockState extends Predicate<BlockState>, Supplier<BlockSta
 
   BlockType block();
 
-  @SuppressWarnings("RedundantCast")
+  @SuppressWarnings({"unchecked", "RedundantCast"})
   default Collection<BlockTrait<? extends Comparable<?>>> properties() {
     return (Collection<BlockTrait<? extends Comparable<?>>>) this.block().getDefaultState().getTraits();
   }

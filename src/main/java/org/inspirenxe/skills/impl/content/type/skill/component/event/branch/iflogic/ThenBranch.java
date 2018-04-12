@@ -22,29 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic;
 
-import org.spongepowered.api.event.Event;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.ConditionalBranch;
 
-import java.util.Optional;
+public interface ThenBranch extends ConditionalBranch<Branch> {
 
-public interface EventType {
-
-  static EventType of(final Class<? extends Event> clazz, final String tag) {
-    return new EventTypeImpl(clazz, tag);
+  static Builder builder() {
+    return new ThenBranchBuilder();
   }
 
-  static EventType childOf(final EventType parent, final Class<? extends Event> clazz, final String tag) {
-    return new EventTypeImpl(parent, clazz, tag);
+  interface Builder extends ConditionalBranch.Builder<ThenBranch, Branch, ThenBranch.Builder> {
+
   }
-
-  Optional<EventType> getParent();
-
-  Class<? extends Event> getEventClass();
-
-  String[] getPath();
-
-  boolean isExact(Class<? extends Event> clazz);
-
-  boolean isChild(Class<? extends Event> clazz);
 }

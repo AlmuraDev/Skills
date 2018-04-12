@@ -36,21 +36,26 @@ public final class DatabaseConfiguration {
   @Nullable private final Path path;
   private final String server;
   private final int port;
-  private final String connectionString;
   @Nullable private final String initialCatalog;
+  private final String connectionString;
 
-  DatabaseConfiguration(final SQLDialect dialect, final Path path, final String server, final int port, final String connectionString,
-      final String initialCatalog) {
+  DatabaseConfiguration(final SQLDialect dialect, @Nullable final Path path, final String server, final int port, @Nullable final String initialCatalog,
+    final String connectionString) {
     this.dialect = dialect;
     this.path = path;
     this.server = server;
     this.port = port;
-    this.connectionString = connectionString;
     this.initialCatalog = initialCatalog;
+    this.connectionString = connectionString;
   }
 
   public SQLDialect getDialect() {
     return this.dialect;
+  }
+
+  @Nullable
+  public Path getPath() {
+    return this.path;
   }
 
   public String getServer() {
@@ -61,8 +66,9 @@ public final class DatabaseConfiguration {
     return this.port;
   }
 
-  @Nullable public Path getPath() {
-    return this.path;
+  @Nullable
+  public String getInitialCatalog() {
+    return this.initialCatalog;
   }
 
   public String getConnectionString() {

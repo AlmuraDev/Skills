@@ -40,6 +40,7 @@ public final class CatalogStringToValueParser<V extends CatalogType> implements 
     this.registry = registry;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public Optional<V> parse(final TypeToken<?> token, final String value) {
     return (Optional<V>) this.registry.getType((Class<CatalogType>) token.getRawType(), value);

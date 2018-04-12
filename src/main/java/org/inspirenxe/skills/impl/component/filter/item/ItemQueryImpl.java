@@ -36,6 +36,6 @@ public final class ItemQueryImpl implements ItemQuery {
 
   @Override
   public LazyItemStack stack() {
-    return this.stack();
+    return this.stack;
   }
 }

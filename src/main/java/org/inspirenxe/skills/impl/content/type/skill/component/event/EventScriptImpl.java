@@ -22,43 +22,60 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl;
+package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.membrane.facet.internal.Facets;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameStoppingEvent;
-import org.spongepowered.api.plugin.Plugin;
+import static com.google.common.base.Preconditions.checkState;
 
-import javax.annotation.Nullable;
+import com.google.common.base.MoreObjects;
 
-@Plugin(id = SkillsImpl.ID)
-public class SkillsImpl {
+import java.util.List;
+import java.util.Objects;
 
-  static final String ID = "skills";
+public final class EventScriptImpl implements EventScript {
 
-  private final Injector baseInjector;
+  private final EventType type;
+  private final List<Branch> branches;
 
-  @Nullable private Facets facets;
+  EventScriptImpl(final EventScriptBuilder builder) {
+    checkState(builder.type != null);
+    checkState(!builder.branches.isEmpty());
 
-  @Inject
-  public SkillsImpl(final Injector baseInjector) {
-    this.baseInjector = baseInjector;
+    this.type = builder.type;
+    this.branches = builder.branches;
   }
 
-  @Listener
-  public void onGameConstruction(GameConstructionEvent event) {
-    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
-
-    this.facets.enable();
+  @Override
+  public EventType getType() {
+    return this.type;
   }
 
-  @Listener
-  public void onGameStopping(GameStoppingEvent event) {
-    if (this.facets != null) {
-      this.facets.disable();
+  @Override
+  public List<Branch> getBranch() {
+    return this.branches;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(type);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final EventScriptImpl that = (EventScriptImpl) o;
+    return Objects.equals(type, that.type);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .addValue(this.type)
+      .addValue(this.branches)
+      .toString();
   }
 }

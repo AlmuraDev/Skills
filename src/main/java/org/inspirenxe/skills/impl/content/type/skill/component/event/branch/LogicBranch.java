@@ -22,43 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.membrane.facet.internal.Facets;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameStoppingEvent;
-import org.spongepowered.api.plugin.Plugin;
+import com.almuradev.droplet.component.filter.Filter;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
 
-import javax.annotation.Nullable;
+public interface LogicBranch extends CompositeBranch<ConditionalBranch> {
 
-@Plugin(id = SkillsImpl.ID)
-public class SkillsImpl {
+  Filter getStatement();
 
-  static final String ID = "skills";
+  interface Builder<BRANCH extends Branch, BUILDER extends Builder> extends CompositeBranch.Builder<BRANCH, ConditionalBranch, BUILDER> {
 
-  private final Injector baseInjector;
-
-  @Nullable private Facets facets;
-
-  @Inject
-  public SkillsImpl(final Injector baseInjector) {
-    this.baseInjector = baseInjector;
-  }
-
-  @Listener
-  public void onGameConstruction(GameConstructionEvent event) {
-    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
-
-    this.facets.enable();
-  }
-
-  @Listener
-  public void onGameStopping(GameStoppingEvent event) {
-    if (this.facets != null) {
-      this.facets.disable();
-    }
+    BUILDER statement(final Filter statement);
   }
 }

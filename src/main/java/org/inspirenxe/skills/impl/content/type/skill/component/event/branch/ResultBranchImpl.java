@@ -22,14 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.processor.event.branch;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
-import com.almuradev.droplet.component.filter.Filter;
+import com.google.common.base.MoreObjects;
+import org.inspirenxe.skills.impl.component.apply.Apply;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchImpl;
 
-public interface LogicBranch extends Branch<ConditionalBranch> {
+import java.util.Collections;
+import java.util.List;
 
-  Filter getStatement();
+public final class ResultBranchImpl extends BranchImpl implements ResultBranch {
 
-  interface Builder extends Branch.Builder<LogicBranch, ConditionalBranch, Builder> {
+  private final List<Apply<?>> applicators;
+
+  ResultBranchImpl(final List<Apply<?>> applicators) {
+    this.applicators = applicators;
+  }
+
+  @Override
+  public List<Apply<?>> getApplicators() {
+    return Collections.unmodifiableList(this.applicators);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .addValue(this.applicators)
+      .toString();
   }
 }
