@@ -8,9 +8,17 @@
   <include src="filter/item-level.xml"/>
   <skill name="Mining" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99">
     <include src="global/vanilla-world-share.xml"/>
-    <include src="event/change-block-break.xml"/>
-    <!--<include src="event/interact-item.xml"/>-->
-    <!--<include src="event/change-experience-root.xml"/>-->
-    <!--<include src="event/change-experience-level.xml"/>-->
+    <event>
+      <include src="event/change-block-break.xml"/>
+      <experience>
+        <change>
+          <post>
+            <include src="event/experience-change-post.xml"/>
+            <include src="event/experience-change-post-level.xml"/>
+          </post>
+        </change>
+      </experience>
+      <include src="event/interact-item.xml"/>
+    </event>
   </skill>
 </droplet>

@@ -24,15 +24,17 @@
  */
 package org.inspirenxe.skills.impl.component.apply;
 
-public interface Apply<E> {
+import org.spongepowered.api.event.Event;
 
-  boolean accepts(E target);
+public interface EventApplicator<E> {
 
-  default void apply(final E target) {
-    if(this.accepts(target)) {
-      this.applyInternal(target);
+  boolean accepts(Event trigger, E target);
+
+  default void apply(final Event trigger, final E target) {
+    if(this.accepts(trigger, target)) {
+      this.applyInternal(trigger, target);
     }
   }
 
-  void applyInternal(final E target);
+  void applyInternal(final Event trigger, final E target);
 }

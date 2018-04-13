@@ -25,7 +25,6 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,6 @@ public final class EventScriptBuilder implements EventScript.Builder {
   @Override
   public EventScript build() {
     checkNotNull(this.type);
-    checkState(!this.branches.isEmpty(), "An event type that does nothing makes no sense!");
     return new EventScriptImpl(this);
   }
 }

@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
-import org.inspirenxe.skills.impl.component.apply.Apply;
+import org.inspirenxe.skills.impl.component.apply.EventApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
 
 import java.util.List;
@@ -35,10 +35,10 @@ public interface ResultBranch extends Branch {
     return new ResultBranchBuilder();
   }
 
-  List<Apply<?>> getApplicators();
+  List<EventApplicator<?>> getApplicators();
 
   interface Builder extends Branch.Builder<ResultBranch> {
 
-    Builder apply(final Apply<?> apply);
+    Builder apply(final EventApplicator<?> eventApplicator);
   }
 }

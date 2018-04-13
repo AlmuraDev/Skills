@@ -27,7 +27,7 @@ package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.inspirenxe.skills.impl.component.apply.Apply;
+import org.inspirenxe.skills.impl.component.apply.EventApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchBuilder;
 
 import java.util.ArrayList;
@@ -35,13 +35,13 @@ import java.util.List;
 
 public final class ResultBranchBuilder extends BranchBuilder<ResultBranch> implements ResultBranch.Builder {
 
-  private final List<Apply<?>> applicators = new ArrayList<>();
+  private final List<EventApplicator<?>> applicators = new ArrayList<>();
 
   @Override
-  public ResultBranch.Builder apply(final Apply<?> apply) {
-    checkNotNull(apply);
+  public ResultBranch.Builder apply(final EventApplicator<?> eventApplicator) {
+    checkNotNull(eventApplicator);
 
-    this.applicators.add(apply);
+    this.applicators.add(eventApplicator);
     return this;
   }
 

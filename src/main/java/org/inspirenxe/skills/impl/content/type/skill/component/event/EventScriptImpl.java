@@ -38,8 +38,7 @@ public final class EventScriptImpl implements EventScript {
   private final List<Branch> branches;
 
   EventScriptImpl(final EventScriptBuilder builder) {
-    checkState(builder.type != null);
-    checkState(!builder.branches.isEmpty());
+    checkState(builder.type != null, "EventType cannot be null!");
 
     this.type = builder.type;
     this.branches = builder.branches;

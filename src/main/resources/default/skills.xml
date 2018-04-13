@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <database dialect="sqlite">
-    <server>localhost</server>
-    <port>3306</port>
-    <path>C:\Projects\minecraft\1.12\InspireNXE\SpongeVanilla\run\config\skills\skills.db</path>
-  </database>
-</configuration>

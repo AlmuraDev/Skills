@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet xmlns:skills="skills" spec="1.0.0">
-  <event>
-    <interact>
-      <item>
-        <filter-apply>
+  <interact>
+    <item>
+      <apply>
+        <if>
+          <all>
+            <filter id="player-direct-cause"/>
+            <filter id="gamemode-survival"/>
+          </all>
+        </if>
+        <then>
           <apply>
             <if>
-              <all>
-                <filter id="player-direct-cause"/>
-                <filter id="gamemode-survival"/>
-              </all>
+              <not>
+                <any>
+                  <filter id="stone-pickaxe-level"/>
+                  <filter id="iron-pickaxe-level"/>
+                  <filter id="gold-pickaxe-level"/>
+                  <filter id="diamond-pickaxe-level"/>
+                </any>
+              </not>
             </if>
             <then>
               <apply>
-                <if>
-                  <not>
-                    <any>
-                      <filter id="stone-pickaxe-level"/>
-                      <filter id="iron-pickaxe-level"/>
-                      <filter id="gold-pickaxe-level"/>
-                      <filter id="diamond-pickaxe-level"/>
-                    </any>
-                  </not>
-                </if>
-                <then>
-                  <message key="action_bar" text="You lack the experience to use this item!"/>
-                  <skills:data key="sponge:durability" op="add" value="-5"/>
-                </then>
+                <message key="action_bar" text="You lack the experience to use this item!"/>
+                <skills:data key="sponge:durability" op="add" value="-5"/>
               </apply>
             </then>
           </apply>
-        </filter-apply>
-      </item>
-    </interact>
-  </event>
+        </then>
+      </apply>
+    </item>
+  </interact>
 </droplet>

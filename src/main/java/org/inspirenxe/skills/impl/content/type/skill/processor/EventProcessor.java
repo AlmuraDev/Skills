@@ -34,7 +34,7 @@ import net.kyori.xml.XMLException;
 import net.kyori.xml.filter.NodeFilters;
 import net.kyori.xml.flattener.PathNodeFlattener;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.impl.component.apply.transaction.CancelTransactionApply;
+import org.inspirenxe.skills.impl.component.apply.TransactionValidityApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
@@ -85,7 +85,10 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
               }
             });
 
-          builder.eventScript(eventType, eventScriptBuilder.build());
+          final EventScript eventScript = eventScriptBuilder.build();
+          if (!eventScript.getBranches().isEmpty()) {
+            builder.eventScript(eventType, eventScript);
+          }
         });
     }
   }
@@ -117,7 +120,7 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
           // Safe to assume this is a result branch
           ResultBranch.Builder resultBranchBuilder = ResultBranch.builder();
           // TODO Apply Parsing Test Code
-          resultBranchBuilder.apply(new CancelTransactionApply(false));
+          resultBranchBuilder.apply(new TransactionValidityApplicator(false));
           thenBranchBuilder.branch(resultBranchBuilder.build());
         }
       });
@@ -146,7 +149,7 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
               // Safe to assume this is a result branch
               ResultBranch.Builder resultBranchBuilder = ResultBranch.builder();
               // TODO Apply Parsing Test Code
-              resultBranchBuilder.apply(new CancelTransactionApply(false));
+              resultBranchBuilder.apply(new TransactionValidityApplicator(false));
               elseBranchBuilder.branch(resultBranchBuilder.build());
             }
           });

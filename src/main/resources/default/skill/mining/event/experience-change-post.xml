@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet xmlns:skills="skills" spec="1.0.0">
+  <root>
+    <apply>
+      <if filter="player-indirect-cause"/>
+      <then>
+        <apply>
+          <message key="action_bar" text="+ {exp-diff}xp (`b{name}`r)"/>
+        </apply>
+      </then>
+    </apply>
+  </root>
+</droplet>

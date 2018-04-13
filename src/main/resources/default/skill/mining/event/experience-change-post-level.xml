@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<droplet xmlns:skills="skills" spec="1.0.0">
+  <level>
+    <apply>
+      <if filter="player-indirect-cause"/>
+      <then>
+        <apply>
+          <message key="action_bar" text="+ {exp-diff}xp (`b{name}`r)"/>
+          <message key="chat" text="Congratulations! You've just advanced a `b{name}`r level and are now `2{new-level}`r."/>
+        </apply>
+      </then>
+    </apply>
+    <apply>
+      <if>
+        <all>
+          <filter id="player-indirect-cause"/>
+          <filter id="not-sneaking-level-99"/>
+        </all>
+      </if>
+      <then>
+        <apply>
+          <effect key="skills:firework/mining-level-max" x="0" y="2.5" z="0"/>
+        </apply>
+      </then>
+      <else>
+        <apply>
+          <if>
+            <all>
+              <filter id="player-indirect-cause"/>
+              <filter id="not-sneaking"/>
+            </all>
+          </if>
+          <then>
+            <apply>
+              <effect key="skills:firework/mining-level-up" x="0" y="2.5" z="0"/>
+            </apply>
+          </then>
+        </apply>
+      </else>
+    </apply>
+  </level>
+</droplet>
