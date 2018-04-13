@@ -34,7 +34,7 @@ public interface EventScript {
 
   EventType getType();
 
-  List<Branch> getBranch();
+  List<Branch> getBranches();
 
   interface Builder {
 

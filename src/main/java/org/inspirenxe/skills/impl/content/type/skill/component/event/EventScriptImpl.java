@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.content.type.skill.component.event;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Objects;
@@ -50,8 +51,8 @@ public final class EventScriptImpl implements EventScript {
   }
 
   @Override
-  public List<Branch> getBranch() {
-    return this.branches;
+  public List<Branch> getBranches() {
+    return ImmutableList.copyOf(this.branches);
   }
 
   @Override
