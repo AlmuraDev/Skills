@@ -41,7 +41,7 @@ public final class NameProcessor implements Processor<ContentSkillTypeBuilder> {
   }
 
   @Override
-  public void process(Node node, ContentSkillTypeBuilder builder) throws XMLException {
+  public void process(final Node node, final ContentSkillTypeBuilder builder) throws XMLException {
     builder.name(this.stringParser.parse(node.requireAttribute("name")));
   }
 }

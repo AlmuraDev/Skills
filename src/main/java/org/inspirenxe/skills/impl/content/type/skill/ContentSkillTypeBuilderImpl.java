@@ -31,6 +31,10 @@ import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -39,10 +43,10 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   @Nullable private String name;
   @Nullable private RegistryReference<LevelFunctionType> levelFunction;
   private int minLevel, maxLevel;
-  private final EventScript.Builder eventScriptBuilder = EventScript.builder();
+  private final Map<EventType, EventScript> eventScripts = new HashMap<>();
 
   @Override
-  public void name(String name) {
+  public void name(final String name) {
     this.name = name;
   }
 
@@ -62,14 +66,16 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   }
 
   @Override
-  public EventScript.Builder eventScriptBuilder() {
-    return this.eventScriptBuilder;
+  public void eventScript(final EventType type, final EventScript script) {
+    checkNotNull(type);
+    checkNotNull(script);
+    this.eventScripts.put(type, script);
   }
 
   @Override
   public SkillTypeImpl build() {
     checkNotNull(this.name);
     checkNotNull(this.levelFunction);
-    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel, this.eventScriptBuilder.build());
+    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel, this.eventScripts);
   }
 }

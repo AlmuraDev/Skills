@@ -24,25 +24,25 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.event.Event;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface EventType {
+public interface EventType extends CatalogType {
 
-  static EventType of(final Class<? extends Event> clazz, final String tag) {
-    return new EventTypeImpl(clazz, tag);
+  static EventType of(final String id, final Class<? extends Event> clazz) {
+    return new EventTypeImpl(id, clazz);
   }
 
-  static EventType childOf(final EventType parent, final Class<? extends Event> clazz, final String tag) {
-    return new EventTypeImpl(parent, clazz, tag);
-  }
+  EventType child(final String id, final Class<? extends Event> clazz);
 
   Optional<EventType> getParent();
 
   Class<? extends Event> getEventClass();
 
-  String[] getPath();
+  List<String> getPath();
 
   boolean isExact(Class<? extends Event> clazz);
 

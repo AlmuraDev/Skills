@@ -29,6 +29,7 @@ import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 
 public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
 
@@ -40,5 +41,5 @@ public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
 
   void maxLevel(final int maxLevel);
 
-  EventScript.Builder eventScriptBuilder();
+  void eventScript(final EventType type, EventScript script);
 }

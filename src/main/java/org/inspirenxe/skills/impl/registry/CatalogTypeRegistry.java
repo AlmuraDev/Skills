@@ -28,8 +28,12 @@ import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.GameRegistry;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nullable;
 
@@ -42,6 +46,12 @@ public final class CatalogTypeRegistry<C extends CatalogType> implements Registr
   public CatalogTypeRegistry(final GameRegistry registry, final TypeLiteral<C> type) {
     this.registry = registry;
     this.type = type;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public @NonNull Collection<C> all() {
+    return Collections.unmodifiableCollection(this.registry.getAllOf((Class<C>) this.type.getRawType()));
   }
 
   @SuppressWarnings("unchecked")

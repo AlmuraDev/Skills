@@ -31,7 +31,9 @@ import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 
+import java.util.Map;
 import java.util.Objects;
 
 public final class SkillTypeImpl implements SkillType, Content {
@@ -40,16 +42,16 @@ public final class SkillTypeImpl implements SkillType, Content {
   private final String name;
   private final RegistryReference<LevelFunctionType> levelFunction;
   private final int minlevel, maxLevel;
-  private final EventScript eventScript;
+  private final Map<EventType, EventScript> eventScripts;
 
   public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunctionType> levelFunction, final int minLevel,
-    final int maxLevel, final EventScript eventScript) {
+    final int maxLevel, final Map<EventType, EventScript> eventScripts) {
     this.registryKey = registryKey;
     this.name = name;
     this.levelFunction = levelFunction;
     this.minlevel = minLevel;
     this.maxLevel = maxLevel;
-    this.eventScript = eventScript;
+    this.eventScripts = eventScripts;
   }
 
   @Override
@@ -101,6 +103,7 @@ public final class SkillTypeImpl implements SkillType, Content {
         .add("levelFunction", this.levelFunction.require())
         .add("minLevel", this.minlevel)
         .add("maxLevel", this.maxLevel)
+        .add("eventScripts", this.eventScripts)
         .toString();
   }
 }

@@ -41,8 +41,10 @@ import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.sound.SoundEffect;
 import org.inspirenxe.skills.impl.ResultBuilder;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.inspirenxe.skills.impl.registry.module.ColorTypeRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.EconomyFunctionRegistryModule;
+import org.inspirenxe.skills.impl.registry.module.EventTypeRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.FireworkEffectTypeRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.LevelFunctionRegistryModule;
 import org.inspirenxe.skills.impl.registry.module.PotionEffectTypeRegistryModule;
@@ -64,6 +66,7 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
     // API modules
     this.registry().module(ColorType.class, ColorTypeRegistryModule.instance);
     this.registry().module(EconomyFunctionType.class, EconomyFunctionRegistryModule.instance);
+    this.registry().module(EventType.class, EventTypeRegistryModule.instance);
     this.registry().module(FireworkEffectType.class, FireworkEffectTypeRegistryModule.instance);
     this.registry().module(LevelFunctionType.class, LevelFunctionRegistryModule.instance);
     this.registry().module(PotionEffectType.class, PotionEffectTypeRegistryModule.instance);
@@ -74,6 +77,7 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
     this.bindRegistry(BlockType.class).to(new TypeLiteral<CatalogTypeRegistry<BlockType>>() {});
     this.bindRegistry(ColorType.class).to(new TypeLiteral<CatalogTypeRegistry<ColorType>>() {});
     this.bindRegistry(EconomyFunctionType.class).to(new TypeLiteral<CatalogTypeRegistry<EconomyFunctionType>>() {});
+    this.bindRegistry(EventType.class).to(new TypeLiteral<CatalogTypeRegistry<EventType>>() {});
     this.bindRegistry(FireworkEffectType.class).to(new TypeLiteral<CatalogTypeRegistry<FireworkEffectType>>() {});
     this.bindRegistry(ItemType.class).to(new TypeLiteral<CatalogTypeRegistry<ItemType>>() {});
     this.bindRegistry(Key.class).to(new TypeLiteral<CatalogTypeRegistry<Key>>() {});
