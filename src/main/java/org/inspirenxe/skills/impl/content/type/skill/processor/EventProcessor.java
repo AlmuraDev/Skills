@@ -30,7 +30,6 @@ import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
-import net.kyori.xml.XMLException;
 import net.kyori.xml.filter.NodeFilters;
 import net.kyori.xml.flattener.PathNodeFlattener;
 import net.kyori.xml.node.Node;
@@ -58,16 +57,15 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
   }
 
   @Override
-  public void process(final Node node, final ContentSkillTypeBuilder builder) throws XMLException {
+  public void process(final Node node, final ContentSkillTypeBuilder builder) {
 
     for (final EventType eventType : this.eventTypeRegistry.all()) {
       final PathNodeFlattener flattener = new PathNodeFlattener(NodeFilters.onlyElements(), eventType.getPath());
+
       flattener
         .flatten(node)
-        .collect(MoreCollectors.toOptional())
-        .ifPresent(eventTypeNode -> {
-          final EventScript.Builder eventScriptBuilder = EventScript.builder();
-          eventScriptBuilder.type(eventType);
+        .forEach(eventTypeNode -> {
+          final EventScript.Builder eventScriptBuilder = builder.eventScript(eventType);
 
           eventTypeNode
             .nodes("apply")
@@ -84,11 +82,6 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
                 eventScriptBuilder.branch(branchBuilder.build());
               }
             });
-
-          final EventScript eventScript = eventScriptBuilder.build();
-          if (!eventScript.getBranches().isEmpty()) {
-            builder.eventScript(eventType, eventScript);
-          }
         });
     }
   }

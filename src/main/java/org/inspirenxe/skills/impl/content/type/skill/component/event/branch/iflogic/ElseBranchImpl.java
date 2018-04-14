@@ -29,9 +29,9 @@ import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.Cond
 
 import java.util.List;
 
-public final class ElseBranchImpl extends ConditionalBranchImpl<Branch> implements ElseBranch {
+final class ElseBranchImpl extends ConditionalBranchImpl<Branch> implements ElseBranch {
 
-  public ElseBranchImpl(List<Branch> branches) {
+  ElseBranchImpl(List<Branch> branches) {
     super(branches);
   }
 }

@@ -126,7 +126,7 @@ public final class EventTypeImpl implements EventType {
       .add("id", this.id)
       .add("eventClass", this.clazz)
       .add("path", this.path)
-      .add("parent", this.parent)
+      .add("parent", this.parent == null ? null : parent.getId())
       .toString();
   }
 }

@@ -25,5 +25,4 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
 public class BranchImpl implements Branch {
-
 }

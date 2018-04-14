@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.parser.lazy.block;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
+import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.impl.parser.lazy.block.value.LazyStateValue;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -34,7 +35,7 @@ import java.util.Optional;
 
 public final class StatelessLazyBlockState extends AbstractLazyBlockState {
 
-  public StatelessLazyBlockState(final RegistryReference<BlockType> block) {
+  StatelessLazyBlockState(final RegistryReference<BlockType> block) {
     super(block);
   }
 
@@ -51,5 +52,12 @@ public final class StatelessLazyBlockState extends AbstractLazyBlockState {
   @Override
   public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
     return Optional.empty();
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .addValue(this.block)
+      .toString();
   }
 }

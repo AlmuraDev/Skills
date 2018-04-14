@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.component.filter.experience;
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.component.filter.FilterResponse;
+import com.google.common.base.MoreObjects;
 
 public final class LevelFilter implements AbstractFilter<LevelQuery> {
 
@@ -45,5 +46,12 @@ public final class LevelFilter implements AbstractFilter<LevelQuery> {
   public FilterResponse queryInternal(LevelQuery query) {
     // TODO Operators
     return FilterResponse.from(this.level == query.level());
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .addValue(this.level)
+      .toString();
   }
 }

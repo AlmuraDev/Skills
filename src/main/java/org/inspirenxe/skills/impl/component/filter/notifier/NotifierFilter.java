@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.component.filter.notifier;
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.component.filter.FilterResponse;
+import com.google.common.base.MoreObjects;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -50,5 +51,12 @@ public final class NotifierFilter implements AbstractFilter<NotifierQuery> {
   @Override
   public FilterResponse queryInternal(NotifierQuery query) {
     return FilterResponse.from(Objects.equals(this.notifier, query.notifier()));
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .add("notifier", this.notifier.orElse(null))
+      .toString();
   }
 }

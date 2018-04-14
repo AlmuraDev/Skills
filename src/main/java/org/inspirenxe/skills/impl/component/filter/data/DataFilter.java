@@ -28,6 +28,7 @@ import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.component.filter.FilterResponse;
 import com.almuradev.droplet.registry.reference.RegistryReference;
+import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.violet.FriendlyTypeLiteral;
@@ -76,5 +77,13 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
     }
 
     return response;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .add("key", this.dataKey)
+      .add("value", this.rawValue)
+      .toString();
   }
 }

@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 
 public abstract class AbstractLazyBlockState implements LazyBlockState {
 
-  private final RegistryReference<BlockType> block;
+  protected final RegistryReference<BlockType> block;
   private final Supplier<BlockState> state = Suppliers.memoize(this::createState);
 
   AbstractLazyBlockState(final RegistryReference<BlockType> block) {

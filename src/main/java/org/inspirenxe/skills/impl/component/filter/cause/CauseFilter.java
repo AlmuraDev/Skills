@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.component.filter.cause;
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.component.filter.FilterResponse;
+import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
 
@@ -48,5 +49,13 @@ public final class CauseFilter implements AbstractFilter<CauseQuery> {
   @Override
   public FilterResponse queryInternal(CauseQuery query) {
     return FilterResponse.from(this.causeOperatorType == query.operator() && this.causeType == query.type());
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .add("op", this.causeOperatorType)
+      .add("type", this.causeType)
+      .toString();
   }
 }

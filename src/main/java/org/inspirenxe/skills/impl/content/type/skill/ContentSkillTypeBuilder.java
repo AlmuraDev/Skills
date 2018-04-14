@@ -41,5 +41,5 @@ public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
 
   void maxLevel(final int maxLevel);
 
-  void eventScript(final EventType type, EventScript script);
+  EventScript.Builder eventScript(final EventType type);
 }

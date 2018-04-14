@@ -24,6 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface EventScript {
@@ -41,6 +42,8 @@ public interface EventScript {
     Builder type(final EventType type);
 
     Builder branch(final Branch branch);
+
+    Collection<Branch> branches();
 
     EventScript build();
   }

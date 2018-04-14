@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.component.filter.item;
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.component.filter.FilterResponse;
+import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.impl.parser.lazy.item.LazyItemStack;
 
 public final class ItemFilter implements AbstractFilter<ItemQuery> {
@@ -45,5 +46,12 @@ public final class ItemFilter implements AbstractFilter<ItemQuery> {
   @Override
   public FilterResponse queryInternal(final ItemQuery query) {
     return FilterResponse.from(this.stack.matches(query.stack()));
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .addValue(this.stack)
+      .toString();
   }
 }

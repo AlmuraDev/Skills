@@ -25,8 +25,11 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -49,8 +52,14 @@ public final class EventScriptBuilder implements EventScript.Builder {
   }
 
   @Override
+  public Collection<Branch> branches() {
+    return Collections.unmodifiableCollection(this.branches);
+  }
+
+  @Override
   public EventScript build() {
-    checkNotNull(this.type);
+    checkNotNull(this.type, "EventType cannot be null!");
+    checkState(!this.branches.isEmpty(), "An EventScript with no branches makes no sense!");
     return new EventScriptImpl(this);
   }
 }

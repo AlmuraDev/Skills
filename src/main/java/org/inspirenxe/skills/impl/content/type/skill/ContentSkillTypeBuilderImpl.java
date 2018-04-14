@@ -35,6 +35,7 @@ import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -43,7 +44,7 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   @Nullable private String name;
   @Nullable private RegistryReference<LevelFunctionType> levelFunction;
   private int minLevel, maxLevel;
-  private final Map<EventType, EventScript> eventScripts = new HashMap<>();
+  private final Map<EventType, EventScript.Builder> eventScripts = new HashMap<>();
 
   @Override
   public void name(final String name) {
@@ -66,16 +67,22 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   }
 
   @Override
-  public void eventScript(final EventType type, final EventScript script) {
+  public EventScript.Builder eventScript(final EventType type) {
     checkNotNull(type);
-    checkNotNull(script);
-    this.eventScripts.put(type, script);
+    final EventScript.Builder builder = EventScript.builder();
+    builder.type(type);
+    this.eventScripts.put(type, builder);
+    return builder;
   }
 
   @Override
   public SkillTypeImpl build() {
     checkNotNull(this.name);
     checkNotNull(this.levelFunction);
-    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel, this.eventScripts);
+    final Map<EventType, EventScript> eventScripts = this.eventScripts.entrySet()
+      .stream()
+      .filter(entry -> !entry.getValue().branches().isEmpty())
+      .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
+    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel, eventScripts);
   }
 }

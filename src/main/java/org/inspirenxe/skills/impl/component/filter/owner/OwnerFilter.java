@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.component.filter.owner;
 import com.almuradev.droplet.component.filter.AbstractFilter;
 import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.component.filter.FilterResponse;
+import com.google.common.base.MoreObjects;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -50,5 +51,12 @@ public final class OwnerFilter implements AbstractFilter<OwnerQuery> {
   @Override
   public FilterResponse queryInternal(OwnerQuery query) {
     return FilterResponse.from(Objects.equals(this.owner, query.owner()));
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+      .add("owner", this.owner.orElse(null))
+      .toString();
   }
 }

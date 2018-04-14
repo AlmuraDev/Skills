@@ -30,9 +30,9 @@ import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.Logi
 
 import java.util.List;
 
-public final class IfBranchImpl extends LogicBranchImpl implements IfBranch {
+final class IfBranchImpl extends LogicBranchImpl implements IfBranch {
 
-  public IfBranchImpl(Filter statement, List<ConditionalBranch> branches) {
+  IfBranchImpl(Filter statement, List<ConditionalBranch> branches) {
     super(statement, branches);
   }
 }
