@@ -29,26 +29,31 @@ import com.almuradev.toolbox.inject.event.Witness;
 import com.almuradev.toolbox.inject.event.WitnessScope;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
+import org.spongepowered.api.plugin.PluginContainer;
+import java.nio.file.Path;
 
 @Singleton
 @WitnessScope.Sponge
 public final class ContentInstaller implements Witness {
 
+  private final PluginContainer container;
+  private final Path configDir;
   private final ContentManager contentManager;
 
   @Inject
-  public ContentInstaller(final ContentManager contentManager) {
+  public ContentInstaller(final PluginContainer container, @ConfigDir(sharedRoot = false) final Path configDir, final ContentManager
+    contentManager) {
+    this.container = container;
+    this.configDir = configDir;
     this.contentManager = contentManager;
   }
 
   @Listener(order = Order.AFTER_PRE)
   public void onGameConstruction(GameConstructionEvent event) {
-
-    // TODO Copy Default Assets
-
     this.contentManager.discover();
     this.contentManager.parse();
   }

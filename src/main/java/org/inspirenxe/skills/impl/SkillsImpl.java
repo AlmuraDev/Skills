@@ -28,28 +28,42 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.membrane.facet.internal.Facets;
 import org.inspirenxe.skills.impl.content.ContentModule;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
 import javax.annotation.Nullable;
 
 @Plugin(id = SkillsImpl.ID)
-public class SkillsImpl {
+public final class SkillsImpl {
 
   static final String ID = "skills";
 
-  private final Injector baseInjector;
+  private final Path configDir;
 
   @Nullable private Facets facets;
 
   @Inject
-  public SkillsImpl(final Injector baseInjector) {
-    this.baseInjector = baseInjector;
+  public SkillsImpl(final Injector baseInjector, final @ConfigDir(sharedRoot = false) Path configDir) throws IOException, URISyntaxException {
+    this.configDir = configDir;
+    this.writeDefaultFiles();
 
-    this.facets = this.baseInjector.createChildInjector(new ContentModule(), new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
+    this.facets = baseInjector.createChildInjector(new ContentModule(), new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
   }
 
   @Listener(order = Order.PRE)
@@ -63,6 +77,76 @@ public class SkillsImpl {
   public void onGameStopping(GameStoppingEvent event) {
     if (this.facets != null) {
       this.facets.disable();
+    }
+  }
+
+  private void writeDefaultFiles() throws IOException, URISyntaxException {
+    final URI uri = SkillsImpl.class.getResource("/assets/" + SkillsImpl.ID).toURI();
+
+    final Path path;
+
+    if (uri.getScheme().equals("jar")) {
+      final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+      path = fileSystem.getPath("/assets/" + SkillsImpl.ID);
+    } else {
+      path = Paths.get(uri);
+    }
+
+    Files.walkFileTree(path, new DefaultFileVisitor());
+  }
+
+  private final class DefaultFileVisitor extends SimpleFileVisitor<Path> {
+
+    @Override
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+      final int index = this.startIndex(dir);
+      final Path actual;
+
+      if (index == dir.getNameCount()) {
+        actual = SkillsImpl.this.configDir;
+      } else {
+        actual = SkillsImpl.this.configDir.resolve(dir.subpath(index, dir.getNameCount()));
+      }
+
+      if (Files.notExists(actual)) {
+        return FileVisitResult.CONTINUE;
+      }
+
+      return FileVisitResult.SKIP_SUBTREE;
+    }
+
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+      final int index = this.startIndex(file);
+      final Path actual;
+
+      if (index == file.getNameCount()) {
+        actual = SkillsImpl.this.configDir;
+      } else {
+        actual = SkillsImpl.this.configDir.resolve(file.subpath(index, file.getNameCount()));
+      }
+
+      if (Files.notExists(actual)) {
+        Files.createDirectories(actual.getParent());
+        Files.copy(file, actual);
+      }
+
+      return super.visitFile(file, attrs);
+    }
+
+    private int startIndex(Path path) {
+      int nameCount = path.getNameCount();
+
+      while (nameCount > 0) {
+        if (path.getFileName().toString().equalsIgnoreCase(SkillsImpl.ID)) {
+          return nameCount;
+        }
+
+        nameCount--;
+        path = path.subpath(0, nameCount);
+      }
+
+      return -1;
     }
   }
 }
