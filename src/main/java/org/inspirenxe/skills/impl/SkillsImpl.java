@@ -27,7 +27,9 @@ package org.inspirenxe.skills.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.membrane.facet.internal.Facets;
+import org.inspirenxe.skills.impl.content.ContentModule;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -46,13 +48,15 @@ public class SkillsImpl {
   @Inject
   public SkillsImpl(final Injector baseInjector) {
     this.baseInjector = baseInjector;
+
+    this.facets = this.baseInjector.createChildInjector(new ContentModule(), new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
   }
 
-  @Listener
+  @Listener(order = Order.PRE)
   public void onGameConstruction(GameConstructionEvent event) {
-    this.facets = this.baseInjector.createChildInjector(new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
-
-    this.facets.enable();
+    if (this.facets != null) {
+      this.facets.enable();
+    }
   }
 
   @Listener

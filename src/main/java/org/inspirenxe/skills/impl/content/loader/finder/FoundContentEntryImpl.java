@@ -31,7 +31,7 @@ import com.almuradev.droplet.content.type.ContentType;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.google.common.base.Suppliers;
 import net.kyori.lunar.exception.Exceptions;
-import org.inspirenxe.skills.impl.registry.CatalogKey;
+import org.inspirenxe.skills.impl.content.registry.CatalogKey;
 import org.jdom2.Element;
 
 import java.nio.file.Path;

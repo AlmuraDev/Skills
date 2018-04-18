@@ -58,9 +58,9 @@ public final class ContentFinderImpl implements ContentFinder {
   }
 
   @Override
-  public <C extends ContentType.Child, R extends ContentType.Root<C>> FoundContent<R, C> find(final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
+  public <C extends ContentType.Child, R extends ContentType.Root<C>> void find(final FoundContent<R, C> foundContent, final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
     final IndentingLogger logger = new IndentingLogger(this.logger);
-    final ContentVisitor<R, C> visitor = new ContentVisitorImpl<>();
+    final ContentVisitor<R, C> visitor = new ContentVisitorImpl<>(foundContent);
     this.configuration.searchPaths().forEach(Exceptions.rethrowConsumer(path -> {
       visitor.visitRoot(path);
       visitor.visitNamespace(path);
@@ -89,7 +89,5 @@ public final class ContentFinderImpl implements ContentFinder {
         }));
       }
     }));
-
-    return visitor.foundContent();
   }
 }

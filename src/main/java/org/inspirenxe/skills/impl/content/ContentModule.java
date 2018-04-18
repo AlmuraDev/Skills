@@ -24,26 +24,36 @@
  */
 package org.inspirenxe.skills.impl.content;
 
+import com.almuradev.droplet.DropletModule;
 import com.almuradev.droplet.content.configuration.ContentConfiguration;
 import com.almuradev.droplet.content.loader.finder.ContentFinder;
-import com.almuradev.droplet.inject.DropletBinder;
+import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import net.kyori.violet.AbstractModule;
+import org.inspirenxe.skills.impl.content.component.ComponentModule;
 import org.inspirenxe.skills.impl.content.loader.finder.ContentFinderImpl;
+import org.inspirenxe.skills.impl.content.parser.ParserModule;
 import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
+import org.inspirenxe.skills.impl.content.registry.RegistryModule;
 import org.spongepowered.api.config.ConfigDir;
 
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-public final class ContentModule extends AbstractModule implements DropletBinder {
+public final class ContentModule extends AbstractModule implements ToolboxBinder {
 
   @Override
   protected void configure() {
-    this.bind(ContentFinder.class).to(ContentFinderImpl.class);
     this.install(new ContentTypeModule());
+    this.install(new ComponentModule());
+    this.install(new DropletModule());
+    this.install(new ParserModule());
+    this.install(new RegistryModule());
+
+    this.bind(ContentFinder.class).to(ContentFinderImpl.class);
+    this.facet().add(ContentInstaller.class);
   }
 
   @Provides

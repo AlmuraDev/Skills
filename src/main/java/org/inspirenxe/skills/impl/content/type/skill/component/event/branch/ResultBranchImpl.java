@@ -25,7 +25,7 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
 import com.google.common.base.MoreObjects;
-import org.inspirenxe.skills.impl.component.apply.EventApplicator;
+import org.inspirenxe.skills.impl.content.component.apply.EventApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchImpl;
 
 import java.util.Collections;

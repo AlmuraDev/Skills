@@ -33,7 +33,7 @@ import com.google.inject.Inject;
 import net.kyori.xml.filter.NodeFilters;
 import net.kyori.xml.flattener.PathNodeFlattener;
 import net.kyori.xml.node.Node;
-import org.inspirenxe.skills.impl.component.apply.TransactionValidityApplicator;
+import org.inspirenxe.skills.impl.content.component.apply.TransactionValidityApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
@@ -88,7 +88,7 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
 
   private void traverseIf(final Node root, final IfBranch.Builder rootBuilder) {
     final Node ifNode = root.nodes("if").collect(MoreCollectors.onlyElement());
-    if (ifNode.elements().count() == 0) {
+    if (ifNode.elements().stream().count() == 0) {
       rootBuilder.statement(this.filterParser.parse(ifNode));
     } else {
       rootBuilder.statement(this.filterParser.parse(ifNode.nodes().collect(MoreCollectors.onlyElement())));

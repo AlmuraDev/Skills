@@ -27,7 +27,7 @@ package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.inspirenxe.skills.impl.component.apply.EventApplicator;
+import org.inspirenxe.skills.impl.content.component.apply.EventApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchBuilder;
 
 import java.util.ArrayList;

@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.loader.finder;
 
 import com.almuradev.droplet.content.loader.finder.AbstractContentVisitor;
+import com.almuradev.droplet.content.loader.finder.FoundContent;
 import com.almuradev.droplet.content.loader.finder.FoundContentEntry;
 import com.almuradev.droplet.content.type.ContentBuilder;
 import com.almuradev.droplet.content.type.ContentType;
@@ -34,6 +35,11 @@ import java.nio.file.Path;
 import javax.inject.Provider;
 
 public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractContentVisitor<R, C> {
+
+  ContentVisitorImpl(final FoundContent<R, C> foundContent) {
+    super(foundContent);
+  }
+
   @Override
   protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
     return new FoundContentEntryImpl<>(

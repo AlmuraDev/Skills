@@ -24,7 +24,6 @@
  */
 package org.inspirenxe.skills.impl;
 
-import com.almuradev.droplet.DropletModule;
 import com.almuradev.droplet.parser.Parser;
 import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.google.inject.Provides;
@@ -32,13 +31,9 @@ import net.kyori.violet.AbstractModule;
 import net.kyori.xml.node.Node;
 import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
-import org.inspirenxe.skills.impl.component.ComponentModule;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;
-import org.inspirenxe.skills.impl.content.ContentModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
-import org.inspirenxe.skills.impl.parser.ParserModule;
-import org.inspirenxe.skills.impl.registry.RegistryModule;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.spongepowered.api.config.ConfigDir;
@@ -59,13 +54,6 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
   protected void configure() {
 
     this.bind(SkillManager.class).to(SkillManagerImpl.class);
-
-    // Register content loader
-    this.install(new DropletModule());
-    this.install(new ContentModule());
-    this.install(new RegistryModule());
-    this.install(new ParserModule());
-    this.install(new ComponentModule());
 
     // Register factories (for assisted injections)
     this.installFactory(SkillHolderImpl.Factory.class);
