@@ -102,7 +102,7 @@ public final class SkillHolderImpl implements SkillHolder {
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("containerUniqueId", this.containerUniqueId)
-        .add("holderUniqueId", this.holderUniqueId)
+        .add("holder", this.holderUniqueId)
         .add("skills", this.skills)
         .toString();
   }

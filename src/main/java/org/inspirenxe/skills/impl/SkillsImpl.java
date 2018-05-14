@@ -28,6 +28,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.membrane.facet.internal.Facets;
 import org.inspirenxe.skills.impl.content.ContentModule;
+import org.slf4j.Logger;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -52,35 +53,39 @@ import javax.annotation.Nullable;
 @Plugin(id = SkillsImpl.ID)
 public final class SkillsImpl {
 
-  static final String ID = "skills";
+  public static final String ID = "skills";
 
+  private final Logger logger;
   private final Path configDir;
-
   @Nullable private Facets facets;
 
   @Inject
-  public SkillsImpl(final Injector baseInjector, final @ConfigDir(sharedRoot = false) Path configDir) throws IOException, URISyntaxException {
+  public SkillsImpl(final Injector baseInjector, final Logger logger, final @ConfigDir(sharedRoot = false) Path configDir)
+    throws IOException, URISyntaxException {
+    this.logger = logger;
     this.configDir = configDir;
-    this.writeDefaultFiles();
+
+    this.writeDefaultAssets();
 
     this.facets = baseInjector.createChildInjector(new ContentModule(), new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
   }
 
   @Listener(order = Order.PRE)
-  public void onGameConstruction(GameConstructionEvent event) {
+  public void onGameConstruction(final GameConstructionEvent event) {
     if (this.facets != null) {
       this.facets.enable();
     }
   }
 
   @Listener
-  public void onGameStopping(GameStoppingEvent event) {
+  public void onGameStopping(final GameStoppingEvent event) {
     if (this.facets != null) {
       this.facets.disable();
     }
   }
 
-  private void writeDefaultFiles() throws IOException, URISyntaxException {
+  private void writeDefaultAssets() throws IOException, URISyntaxException {
+    this.logger.info("Writing missing assets to '" + this.configDir + "'");
     final URI uri = SkillsImpl.class.getResource("/assets/" + SkillsImpl.ID).toURI();
 
     final Path path;
@@ -98,7 +103,7 @@ public final class SkillsImpl {
   private final class DefaultFileVisitor extends SimpleFileVisitor<Path> {
 
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
       final int index = this.startIndex(dir);
       final Path actual;
 
@@ -116,7 +121,7 @@ public final class SkillsImpl {
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
       final int index = this.startIndex(file);
       final Path actual;
 

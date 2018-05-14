@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <database dialect="h2">
-    <server>"localhost"</server>
-    <port>3306</port>
-    <path>"{default-path}"</path>
+    <path>./config/skills/skill</path>    
+    <server>locahost</server>
+    <port>8082</port>
+    <user>''</user>
+    <password>''</password>
+    <initial-catalog>skills</initial-catalog>
   </database>
 </configuration>

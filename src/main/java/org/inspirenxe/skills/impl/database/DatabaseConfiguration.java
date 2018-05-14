@@ -33,19 +33,22 @@ import javax.annotation.Nullable;
 public final class DatabaseConfiguration {
 
   private final SQLDialect dialect;
+  private final String initialCatalog;
   @Nullable private final Path path;
-  private final String server;
-  private final int port;
-  @Nullable private final String initialCatalog;
+  @Nullable private final String server;
+  @Nullable private final Integer port;
+
+  private final String connectionStringNoSchema;
   private final String connectionString;
 
-  DatabaseConfiguration(final SQLDialect dialect, @Nullable final Path path, final String server, final int port, @Nullable final String initialCatalog,
-    final String connectionString) {
+  DatabaseConfiguration(final SQLDialect dialect, final String initialCatalog, @Nullable final Path path, @Nullable final String server, @Nullable
+  final Integer port, final String connectionStringNoSchema, final String connectionString) {
     this.dialect = dialect;
+    this.initialCatalog = initialCatalog;
     this.path = path;
     this.server = server;
     this.port = port;
-    this.initialCatalog = initialCatalog;
+    this.connectionStringNoSchema = connectionStringNoSchema;
     this.connectionString = connectionString;
   }
 
@@ -53,22 +56,27 @@ public final class DatabaseConfiguration {
     return this.dialect;
   }
 
+  public String getInitialCatalog() {
+    return this.initialCatalog;
+  }
+
   @Nullable
   public Path getPath() {
     return this.path;
   }
 
+  @Nullable
   public String getServer() {
     return this.server;
   }
 
-  public int getPort() {
+  @Nullable
+  public Integer getPort() {
     return this.port;
   }
 
-  @Nullable
-  public String getInitialCatalog() {
-    return this.initialCatalog;
+  public String getConnectionStringNoSchema() {
+    return this.connectionStringNoSchema;
   }
 
   public String getConnectionString() {

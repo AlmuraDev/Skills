@@ -25,50 +25,79 @@
 package org.inspirenxe.skills.impl.database;
 
 import com.almuradev.droplet.parser.Parser;
+import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
 import org.jooq.SQLDialect;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public final class DatabaseConfigurationParser implements Parser<DatabaseConfiguration> {
 
+  private final Parser<SQLDialect> dialectParser;
+  private final Parser<String> stringParser;
+  private final Parser<Integer> intParser;
+
   @Inject
-  private Parser<SQLDialect> dialectParser;
-  @Inject
-  private Parser<String> stringParser;
-  @Inject
-  private Parser<Integer> intParser;
+  public DatabaseConfigurationParser(final Parser<SQLDialect> dialectParser, final Parser<String> stringParser, final Parser<Integer> intParser) {
+    this.dialectParser = dialectParser;
+    this.stringParser = stringParser;
+    this.intParser = intParser;
+  }
 
   @Override
   public DatabaseConfiguration throwingParse(Node node) throws XMLException {
-    SQLDialect dialect = this.dialectParser.parse(node.requireAttribute("dialect"));
-    final String[] server = new String[]{"localhost"};
-    final int[] port = new int[]{3306};
+    final SQLDialect dialect = this.dialectParser.parse(node.requireAttribute("dialect"));
+    final String initialCatalog;
+    final String server;
+    final Integer port;
+
     Path path;
     String connectionString;
-    String initialCatalog;
+    String connectionStringNoSchema = null;
 
-    if (dialect == SQLDialect.H2 || dialect == SQLDialect.MYSQL || dialect == SQLDialect.SQLITE) {
-      node.attribute("server").ifPresent(attribute -> server[0] = this.stringParser.parse(attribute));
-      node.attribute("port").ifPresent(attribute -> port[0] = this.intParser.parse(attribute));
+    if (dialect == SQLDialect.H2 || dialect == SQLDialect.POSTGRES_9_5) {
+      initialCatalog = this.stringParser.parse(node.requireAttribute("initial-catalog"));
 
-      if (dialect == SQLDialect.H2 || dialect == SQLDialect.SQLITE) {
-        path = Paths.get(this.stringParser.parse(node.nodes("path").findFirst().orElse(null)));
+      if (dialect == SQLDialect.H2) {
+        path = Paths.get(this.stringParser.parse(node.nodes("path").collect(MoreCollectors.onlyElement())));
+        server = null;
+        port = null;
 
-        connectionString = String.format("jdbc:%s:%s", dialect.getName().toLowerCase(), path);
-        initialCatalog = null;
+        Path fsPath = path;
+
+        if (!Files.notExists(fsPath)) {
+          fsPath = Paths.get(fsPath.toString() + ".mv.db");
+        }
+
+        if (Files.notExists(fsPath)) {
+          try {
+            Files.createFile(fsPath);
+          } catch (IOException e) {
+            throw new RuntimeException("Failed to create H2 database file! Path: " + fsPath);
+          }
+        }
+        connectionStringNoSchema = String.format("jdbc:%s:%s;%s;%s", dialect.getName().toLowerCase(), path.toAbsolutePath(),
+          "DATABASE_TO_UPPER=FALSE", "AUTO_SERVER=TRUE");
+
+        connectionString = String.format("jdbc:%s:%s;%s;%s;%s", dialect.getName().toLowerCase(), path.toAbsolutePath(), "SCHEMA=" +
+          initialCatalog, "DATABASE_TO_UPPER=FALSE", "AUTO_SERVER=TRUE");
       } else {
+        server = this.stringParser.parse(node.requireAttribute("server"));
+        port = this.intParser.parse(node.requireAttribute("port"));
+
         path = null;
-        initialCatalog = this.stringParser.parse(node.requireAttribute("initial_catalog"));
-        connectionString = String.format("jdbc:%s://%s:%d/%s", dialect.getName().toLowerCase(), server[0], port[0], initialCatalog);
+        connectionStringNoSchema = String.format("jdbc:%s://%s:%d", dialect.getName().toLowerCase(), server, port);
+        connectionString = String.format("jdbc:%s://%s:%d/%s", dialect.getName().toLowerCase(), server, port, initialCatalog);
       }
     } else {
-      throw new UnsupportedOperationException("Only H2, SQLite, and MySQL are currently supported!");
+      throw new UnsupportedOperationException("Only H2 or Postgres_9_5 are currently supported!");
     }
 
-    return new DatabaseConfiguration(dialect, path, server[0], port[0], connectionString, initialCatalog);
+    return new DatabaseConfiguration(dialect, initialCatalog, path, server, port, connectionStringNoSchema, connectionString);
   }
 }

@@ -28,17 +28,35 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.almuradev.toolbox.inject.event.Witness;
 import com.almuradev.toolbox.inject.event.WitnessScope;
+import com.google.common.base.Charsets;
 import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.generated.Tables;
+import org.inspirenxe.skills.generated.tables.SkillExperience;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.jooq.DSLContext;
+import org.jooq.SQL;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.sql.SqlService;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -84,6 +102,42 @@ public final class DatabaseManager implements Witness {
       e.printStackTrace();
     }
     return DSL.using(this.getDataSource(), this.configuration.getDialect());
+  }
+
+  public DatabaseConfiguration getConfiguration() {
+    return this.configuration;
+  }
+
+  @Listener(order = Order.AFTER_PRE)
+  public void onGamePreInitialization(GamePreInitializationEvent event) {
+    try (final DSLContext context = DSL.using(this.service.getDataSource(this.configuration.getConnectionStringNoSchema()), this.configuration
+      .getDialect())) {
+      context.createSchemaIfNotExists(this.configuration.getInitialCatalog()).execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    try (final DSLContext context = this.createContext()) {
+      final URI uri = SkillsImpl.class.getResource("/database.sql").toURI();
+
+      Path path;
+
+      if (uri.getScheme().equals("jar")) {
+        final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+        path = fileSystem.getPath("/database.sql");
+      } else {
+        path = Paths.get(uri);
+      }
+
+      if (path != null) {
+        final byte[] encoded;
+        encoded = Files.readAllBytes(path);
+        final String sql = new String(encoded, Charsets.UTF_8);
+        context.execute(sql);
+      }
+    } catch (URISyntaxException | IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Listener(order = Order.LAST)

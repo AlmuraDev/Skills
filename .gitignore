@@ -76,5 +76,4 @@ nb-configuration.xml
 /.apt_generated/
 *.launch
 classes/
-
-/client.gradle
+src/main/generated/

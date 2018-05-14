@@ -25,14 +25,10 @@
 package org.inspirenxe.skills.impl.database;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.inspirenxe.skills.impl.database.generated.tables.TblSkillExperience.TBL_SKILL_EXPERIENCE;
-import static org.inspirenxe.skills.impl.database.generated.tables.TblSkillType.TBL_SKILL_TYPE;
+import static org.inspirenxe.skills.generated.Tables.SKILL_EXPERIENCE;
 
-import org.inspirenxe.skills.impl.database.generated.tables.TblSkillType;
-import org.inspirenxe.skills.impl.database.generated.tables.records.TblSkillExperienceRecord;
-import org.inspirenxe.skills.impl.database.generated.tables.records.TblSkillTypeRecord;
+import org.inspirenxe.skills.generated.tables.records.SkillExperienceRecord;
 import org.jooq.InsertValuesStep4;
-import org.jooq.Query;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.UpdateConditionStep;
@@ -43,66 +39,59 @@ import java.util.UUID;
 
 public final class Queries {
 
-  public static DatabaseQuery<SelectConditionStep<TblSkillTypeRecord>> createFetchSkillTypeQuery(String catalogId) {
-    checkNotNull(catalogId);
-
-    return context -> context.selectFrom(TBL_SKILL_TYPE).where(TBL_SKILL_TYPE.NAME.eq(catalogId));
-  }
-
-  public static DatabaseQuery<Query> createInsertSkillTypeQuery(String skillType) {
-    return context -> context.insertInto(TblSkillType.TBL_SKILL_TYPE, TblSkillType.TBL_SKILL_TYPE.NAME).values(skillType);
-  }
-
-  public static DatabaseQuery<SelectConditionStep<TblSkillExperienceRecord>> createFetchExperienceQuery(UUID containerUniqueId, UUID holderUniqueId,
-      String skillType) {
-    checkNotNull(containerUniqueId);
-    checkNotNull(holderUniqueId);
+  public static DatabaseQuery<SelectConditionStep<SkillExperienceRecord>> createFetchExperienceQuery(final UUID container, final UUID holder,
+    final String skillType) {
+    checkNotNull(container);
+    checkNotNull(holder);
     checkNotNull(skillType);
 
-    return context -> context.selectFrom(TBL_SKILL_EXPERIENCE)
-        .where(TBL_SKILL_EXPERIENCE.CONTAINER_UNIQUE_ID.eq(containerUniqueId)
-            .and(TBL_SKILL_EXPERIENCE.HOLDER_UNIQUE_ID.eq(holderUniqueId)
-                .and(TBL_SKILL_EXPERIENCE.FK_SKILL_TYPE.eq(skillType))));
+    final byte[] containerData = DatabaseUtils.toBytes(container);
+    final byte[] holderData = DatabaseUtils.toBytes(holder);
+
+    return context -> context
+      .selectFrom(SKILL_EXPERIENCE)
+      .where(SKILL_EXPERIENCE.CONTAINER.eq(containerData).and(SKILL_EXPERIENCE.HOLDER.eq(holderData).and(SKILL_EXPERIENCE.SKILL_TYPE.eq(skillType))));
   }
 
-  public static DatabaseQuery<InsertValuesStep4<TblSkillExperienceRecord, UUID, UUID, String, BigDecimal>> createInsertSkillExperienceQuery(UUID
-      containerUniqueId, UUID holderUniqueId, String skillType, double experience) {
-    checkNotNull(containerUniqueId);
-    checkNotNull(holderUniqueId);
+  public static DatabaseQuery<InsertValuesStep4<SkillExperienceRecord, byte[], byte[], String, BigDecimal>> createInsertSkillExperienceQuery(final UUID
+    container, final UUID holder, final String skillType, final double experience) {
+    checkNotNull(container);
+    checkNotNull(holder);
     checkNotNull(skillType);
 
     final BigDecimal dbXp = BigDecimal.valueOf(experience);
-
-    return context -> context.insertInto(TBL_SKILL_EXPERIENCE, TBL_SKILL_EXPERIENCE.CONTAINER_UNIQUE_ID,
-        TBL_SKILL_EXPERIENCE.HOLDER_UNIQUE_ID, TBL_SKILL_EXPERIENCE.FK_SKILL_TYPE, TBL_SKILL_EXPERIENCE.EXPERIENCE)
-        .values(containerUniqueId, holderUniqueId, skillType, dbXp);
+    final byte[] containerData = DatabaseUtils.toBytes(container);
+    final byte[] holderData = DatabaseUtils.toBytes(holder);
+    return context -> context
+      .insertInto(SKILL_EXPERIENCE, SKILL_EXPERIENCE.CONTAINER, SKILL_EXPERIENCE.HOLDER, SKILL_EXPERIENCE.SKILL_TYPE, SKILL_EXPERIENCE.EXPERIENCE)
+      .values(containerData, holderData, skillType, dbXp);
   }
 
-  public static DatabaseQuery<UpdateConditionStep<TblSkillExperienceRecord>> createUpdateSkillExperienceQuery(UUID containerUniqueId, UUID
-      holderUniqueId, String skillType, double experience, Timestamp lastGainedExperience) {
-    checkNotNull(containerUniqueId);
-    checkNotNull(holderUniqueId);
+  public static DatabaseQuery<UpdateConditionStep<SkillExperienceRecord>> createUpdateSkillExperienceQuery(final UUID container, final UUID holder,
+    final String skillType, final double experience, final Timestamp modified) {
+    checkNotNull(container);
+    checkNotNull(holder);
     checkNotNull(skillType);
-    checkNotNull(lastGainedExperience);
+    checkNotNull(modified);
 
     final BigDecimal dbXp = BigDecimal.valueOf(experience);
+    final byte[] containerData = DatabaseUtils.toBytes(container);
+    final byte[] holderData = DatabaseUtils.toBytes(holder);
 
-    return context -> context.update(TBL_SKILL_EXPERIENCE)
-        .set(TBL_SKILL_EXPERIENCE.EXPERIENCE, dbXp)
-        .set(TBL_SKILL_EXPERIENCE.LAST_GAINED_EXPERIENCE, lastGainedExperience)
-        .where(TBL_SKILL_EXPERIENCE.CONTAINER_UNIQUE_ID.eq(containerUniqueId)
-            .and(TBL_SKILL_EXPERIENCE.HOLDER_UNIQUE_ID.eq(holderUniqueId)
-                .and(TBL_SKILL_EXPERIENCE.FK_SKILL_TYPE.eq(skillType))));
+    return context -> context.update(SKILL_EXPERIENCE).set(SKILL_EXPERIENCE.EXPERIENCE, dbXp).set(SKILL_EXPERIENCE.MODIFIED, modified).where
+      (SKILL_EXPERIENCE.CONTAINER.eq(containerData).and(SKILL_EXPERIENCE.HOLDER.eq(holderData).and(SKILL_EXPERIENCE.SKILL_TYPE.eq(skillType))));
   }
 
-  public static DatabaseQuery<SelectConditionStep<Record1<Integer>>> createHasExperienceInSkillQuery(UUID containerUniqueId, UUID holderUniqueId,
-      String skillType) {
-    checkNotNull(containerUniqueId);
-    checkNotNull(holderUniqueId);
+  public static DatabaseQuery<SelectConditionStep<Record1<Integer>>> createHasExperienceInSkillQuery(final UUID container, final UUID holder, final
+  String skillType) {
+    checkNotNull(container);
+    checkNotNull(holder);
     checkNotNull(skillType);
 
-    return context -> context.selectOne().from(TBL_SKILL_EXPERIENCE).where(TBL_SKILL_EXPERIENCE.CONTAINER_UNIQUE_ID.eq
-        (containerUniqueId).and(TBL_SKILL_EXPERIENCE.HOLDER_UNIQUE_ID.eq(holderUniqueId).and(TBL_SKILL_EXPERIENCE.FK_SKILL_TYPE.eq
-        (skillType))));
+    final byte[] containerData = DatabaseUtils.toBytes(container);
+    final byte[] holderData = DatabaseUtils.toBytes(holder);
+
+    return context -> context.selectOne().from(SKILL_EXPERIENCE).where(SKILL_EXPERIENCE.CONTAINER.eq(containerData).and(SKILL_EXPERIENCE.HOLDER.eq
+      (holderData).and(SKILL_EXPERIENCE.SKILL_TYPE.eq(skillType))));
   }
 }

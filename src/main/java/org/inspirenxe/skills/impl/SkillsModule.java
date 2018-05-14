@@ -62,6 +62,7 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
     // Register command tree
     this.command().rootProvider(SkillsCommandCreator.class, SkillsImpl.ID);
 
+    this.facet().add(DatabaseManager.class);
     this.facet().add(SkillManagerImpl.class);
   }
 
