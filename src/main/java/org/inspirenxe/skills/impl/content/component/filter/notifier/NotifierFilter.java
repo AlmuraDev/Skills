@@ -24,10 +24,10 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.notifier;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
 import com.google.common.base.MoreObjects;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -35,7 +35,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public final class NotifierFilter implements AbstractFilter<NotifierQuery> {
+public final class NotifierFilter implements TypedFilter<NotifierQuery> {
 
   private final Optional<UUID> notifier;
 
@@ -44,12 +44,12 @@ public final class NotifierFilter implements AbstractFilter<NotifierQuery> {
   }
 
   @Override
-  public boolean canQuery(FilterQuery query) {
+  public boolean queryable(FilterQuery query) {
     return query instanceof NotifierQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(NotifierQuery query) {
+  public FilterResponse typedQuery(NotifierQuery query) {
     return FilterResponse.from(Objects.equals(this.notifier, query.notifier()));
   }
 

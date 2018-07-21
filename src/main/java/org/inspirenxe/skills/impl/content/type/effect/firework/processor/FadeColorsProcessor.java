@@ -25,7 +25,6 @@
 package org.inspirenxe.skills.impl.content.type.effect.firework.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
-import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
@@ -33,6 +32,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilder;
 

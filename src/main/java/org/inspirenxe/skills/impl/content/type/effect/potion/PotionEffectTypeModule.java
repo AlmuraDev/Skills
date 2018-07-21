@@ -25,7 +25,6 @@
 package org.inspirenxe.skills.impl.content.type.effect.potion;
 
 import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
 import org.inspirenxe.skills.impl.content.type.effect.potion.processor.AmplifierProcessor;
@@ -34,7 +33,7 @@ import org.inspirenxe.skills.impl.content.type.effect.potion.processor.IsAmbient
 import org.inspirenxe.skills.impl.content.type.effect.potion.processor.PotionProcessor;
 import org.inspirenxe.skills.impl.content.type.effect.potion.processor.ShowParticlesProcessor;
 
-public final class PotionEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> implements ParserBinder {
+public final class PotionEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> {
 
   @Override
   protected void configure0() {

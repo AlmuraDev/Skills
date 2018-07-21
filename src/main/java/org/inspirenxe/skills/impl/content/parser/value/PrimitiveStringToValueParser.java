@@ -24,10 +24,10 @@
  */
 package org.inspirenxe.skills.impl.content.parser.value;
 
-import com.almuradev.droplet.parser.Parser;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.jdom2.Element;
 
 import java.util.Optional;

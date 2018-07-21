@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.impl.content.type.color.processor;
 
 import com.almuradev.droplet.content.processor.Processor;
-import com.almuradev.droplet.parser.Parser;
 import com.google.inject.Inject;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.impl.content.type.color.ContentColorTypeBuilder;
 
 public final class RProcessor implements Processor<ContentColorTypeBuilder> {

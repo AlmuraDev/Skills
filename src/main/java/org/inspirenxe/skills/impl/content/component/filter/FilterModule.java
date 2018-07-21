@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter;
 
-import com.almuradev.droplet.component.filter.FilterBinder;
+import net.kyori.fragment.filter.FilterBinder;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockFilterParser;
 import org.inspirenxe.skills.impl.content.component.filter.cause.CauseFilterParser;
@@ -39,21 +39,22 @@ import org.inspirenxe.skills.impl.content.component.filter.notifier.NotifierFilt
 import org.inspirenxe.skills.impl.content.component.filter.owner.OwnerFilterParser;
 import org.inspirenxe.skills.impl.content.component.filter.potion.PotionFilterParser;
 
-public final class FilterModule extends AbstractModule implements FilterBinder {
+public final class FilterModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    this.bindFilter("block").to(BlockFilterParser.class);
-    this.bindFilter("cause").to(CauseFilterParser.class);
-    this.bindFilter("data").to(DataFilterParser.class);
-    this.bindFilter("experience").to(ExperienceFilterParser.class);
-    this.bindFilter("item").to(ItemFilterParser.class);
-    this.bindFilter("key").to(RegistryKeyFilterParser.class);
-    this.bindFilter("level").to(LevelFilterParser.class);
-    this.bindFilter("owner").to(OwnerFilterParser.class);
-    this.bindFilter("namespace").to(NamespaceFilterParser.class);
-    this.bindFilter("notifier").to(NotifierFilterParser.class);
-    this.bindFilter("potion").to(PotionFilterParser.class);
+    final FilterBinder filters = new FilterBinder(this.binder());
+    filters.bindFilter("block").to(BlockFilterParser.class);
+    filters.bindFilter("cause").to(CauseFilterParser.class);
+    filters.bindFilter("data").to(DataFilterParser.class);
+    filters.bindFilter("experience").to(ExperienceFilterParser.class);
+    filters.bindFilter("item").to(ItemFilterParser.class);
+    filters.bindFilter("key").to(RegistryKeyFilterParser.class);
+    filters.bindFilter("level").to(LevelFilterParser.class);
+    filters.bindFilter("owner").to(OwnerFilterParser.class);
+    filters.bindFilter("namespace").to(NamespaceFilterParser.class);
+    filters.bindFilter("notifier").to(NotifierFilterParser.class);
+    filters.bindFilter("potion").to(PotionFilterParser.class);
 
     this.requestStaticInjection(DataFilter.class);
   }

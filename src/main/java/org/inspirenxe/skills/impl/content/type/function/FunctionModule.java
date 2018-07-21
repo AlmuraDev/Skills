@@ -28,14 +28,13 @@ import com.almuradev.droplet.content.inject.ChildModule;
 import com.almuradev.droplet.content.inject.ForChild;
 import com.almuradev.droplet.content.inject.RootModule;
 import com.almuradev.droplet.content.processor.Processor;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.function.economy.EconomyFunctionModule;
 import org.inspirenxe.skills.impl.content.type.function.level.LevelFunctionModule;
 import org.inspirenxe.skills.impl.content.type.function.processor.FormulaProcessor;
 
-public final class FunctionModule extends RootModule.Impl<ContentFunction.Child, ContentFunctionBuilder<?>> implements ParserBinder {
+public final class FunctionModule extends RootModule.Impl<ContentFunction.Child, ContentFunctionBuilder<?>> {
 
   @Override
   protected void configure0() {

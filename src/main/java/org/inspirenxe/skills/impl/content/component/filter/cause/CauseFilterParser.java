@@ -24,17 +24,16 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.cause;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
-import com.almuradev.droplet.parser.Parser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
 
 @Singleton
-public final class CauseFilterParser implements FilterTypeParser<CauseFilter> {
+public final class CauseFilterParser implements Parser<CauseFilter> {
 
   private final Parser<CauseOperatorType> causeOperatorParser;
   private final Parser<CauseType> causeTypeParser;

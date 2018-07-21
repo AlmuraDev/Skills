@@ -25,7 +25,6 @@
 package org.inspirenxe.skills.impl.content.type.effect.sound;
 
 import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
 import org.inspirenxe.skills.impl.content.type.effect.sound.processor.CategoryProcessor;
@@ -34,7 +33,7 @@ import org.inspirenxe.skills.impl.content.type.effect.sound.processor.PitchProce
 import org.inspirenxe.skills.impl.content.type.effect.sound.processor.SoundProcessor;
 import org.inspirenxe.skills.impl.content.type.effect.sound.processor.VolumeProcessor;
 
-public final class SoundEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> implements ParserBinder {
+public final class SoundEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> {
 
   @Override
   protected void configure0() {

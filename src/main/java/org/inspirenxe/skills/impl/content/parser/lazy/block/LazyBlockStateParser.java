@@ -24,12 +24,12 @@
  */
 package org.inspirenxe.skills.impl.content.parser.lazy.block;
 
-import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.parser.ParserException;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
 import org.spongepowered.api.block.BlockType;
 
@@ -58,7 +58,7 @@ public final class LazyBlockStateParser implements Parser<LazyBlockState> {
 
   @Override
   public LazyBlockState throwingParse(final Node node) throws ParserException {
-    final RegistryReference<BlockType> block = this.block(node, node.attribute("block"));
+    final RegistryReference<BlockType> block = this.block(node, node.attribute("block").optional());
 
     final Map<String, LazyStateValue<?>> properties = node.nodes()
         .filter(that -> !that.name().equals("block"))

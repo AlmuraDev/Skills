@@ -24,14 +24,14 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.cause;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
 import com.google.common.base.MoreObjects;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
 
-public final class CauseFilter implements AbstractFilter<CauseQuery> {
+public final class CauseFilter implements TypedFilter<CauseQuery> {
 
   private final CauseOperatorType causeOperatorType;
   private final CauseType causeType;
@@ -42,12 +42,12 @@ public final class CauseFilter implements AbstractFilter<CauseQuery> {
   }
 
   @Override
-  public boolean canQuery(FilterQuery query) {
+  public boolean queryable(FilterQuery query) {
     return query instanceof CauseQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(CauseQuery query) {
+  public FilterResponse typedQuery(CauseQuery query) {
     return FilterResponse.from(this.causeOperatorType == query.operator() && this.causeType == query.type());
   }
 

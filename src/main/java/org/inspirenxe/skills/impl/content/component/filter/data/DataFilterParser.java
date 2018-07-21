@@ -24,17 +24,16 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
-import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.spongepowered.api.data.key.Key;
 
-public final class DataFilterParser implements FilterTypeParser<DataFilter> {
+public final class DataFilterParser implements Parser<DataFilter> {
 
   private final Registry<Key> registry;
   private final Parser<RegistryKey> keyParser;
@@ -51,7 +50,7 @@ public final class DataFilterParser implements FilterTypeParser<DataFilter> {
   @Override
   public DataFilter throwingParse(final Node node) throws XMLException {
     final RegistryReference<Key> key = this.registry.ref(this.keyParser.parse(node.requireAttribute("key")));
-    final Node valueNode = node.attribute("value").orElse(null);
+    final Node valueNode = node.attribute("value").optional(null);
     if (valueNode == null) {
       return new DataFilter(key, null);
     }

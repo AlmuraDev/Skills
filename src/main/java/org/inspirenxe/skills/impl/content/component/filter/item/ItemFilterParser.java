@@ -24,16 +24,15 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.item;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
-import com.almuradev.droplet.parser.Parser;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.impl.content.parser.lazy.item.LazyItemStack;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public final class ItemFilterParser implements FilterTypeParser<ItemFilter> {
+public final class ItemFilterParser implements Parser<ItemFilter> {
 
   private final Parser<LazyItemStack> parser;
 

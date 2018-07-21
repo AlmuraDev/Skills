@@ -29,14 +29,13 @@ import com.almuradev.droplet.content.inject.ForChild;
 import com.almuradev.droplet.content.inject.ForRoot;
 import com.almuradev.droplet.content.inject.RootModule;
 import com.almuradev.droplet.content.processor.Processor;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.effect.firework.FireworkEffectTypeModule;
 import org.inspirenxe.skills.impl.content.type.effect.potion.PotionEffectTypeModule;
 import org.inspirenxe.skills.impl.content.type.effect.sound.SoundEffectTypeModule;
 
-public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> implements ParserBinder {
+public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
 
   @Override
   protected void configure0() {

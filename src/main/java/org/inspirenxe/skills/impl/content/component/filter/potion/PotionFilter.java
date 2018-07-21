@@ -24,12 +24,12 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.potion;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
-public final class PotionFilter implements AbstractFilter<PotionQuery> {
+public final class PotionFilter implements TypedFilter<PotionQuery> {
 
   private final PotionEffectType potion;
 
@@ -38,12 +38,12 @@ public final class PotionFilter implements AbstractFilter<PotionQuery> {
   }
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
+  public boolean queryable(final FilterQuery query) {
     return query instanceof PotionQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(PotionQuery query) {
+  public FilterResponse typedQuery(PotionQuery query) {
     return FilterResponse.from(this.potion == query.potion());
   }
 }

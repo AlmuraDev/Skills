@@ -24,8 +24,8 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
-import com.almuradev.droplet.component.filter.Filter;
 import com.google.common.base.MoreObjects;
+import net.kyori.fragment.filter.Filter;
 
 import java.util.List;
 

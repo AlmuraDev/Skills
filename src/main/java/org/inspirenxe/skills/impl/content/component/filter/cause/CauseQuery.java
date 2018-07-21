@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.cause;
 
-import com.almuradev.droplet.component.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterQuery;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
 

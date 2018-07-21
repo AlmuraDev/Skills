@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
-import com.almuradev.droplet.component.filter.Filter;
+import net.kyori.fragment.filter.Filter;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
 
 public interface LogicBranch extends CompositeBranch<ConditionalBranch> {

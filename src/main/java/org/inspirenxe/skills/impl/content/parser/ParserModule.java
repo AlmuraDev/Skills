@@ -24,14 +24,14 @@
  */
 package org.inspirenxe.skills.impl.content.parser;
 
-import com.almuradev.droplet.parser.EnumParser;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.TypeLiteral;
 import com.google.inject.binder.LinkedBindingBuilder;
 import net.kyori.violet.AbstractModule;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
+import net.kyori.xml.node.parser.EnumParser;
+import net.kyori.xml.node.parser.ParserBinder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
@@ -53,23 +53,24 @@ import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.item.FireworkShape;
 
-public final class ParserModule extends AbstractModule implements ParserBinder {
+public final class ParserModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    this.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
-    this.bindParser(CauseType.class).to(new TypeLiteral<EnumParser<CauseType>>() {});
-    this.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
-    this.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {});
-    this.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
-    this.bindParser(new TypeLiteral<LazyStateValue<?>>() {}).to(LazyStateValueParser.class);
-    this.bindParser(LazyItemStack.class).to(LazyItemStackParser.class);
-    this.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {});
-    this.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {});
-    this.bindParser(RegistryKey.class).to(RegistryKeyParser.class);
-    this.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
-    this.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {});
-    this.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
+    final ParserBinder parsers = new ParserBinder(this.binder());
+    parsers.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
+    parsers.bindParser(CauseType.class).to(new TypeLiteral<EnumParser<CauseType>>() {});
+    parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
+    parsers.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {});
+    parsers.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
+    parsers.bindParser(new TypeLiteral<LazyStateValue<?>>() {}).to(LazyStateValueParser.class);
+    parsers.bindParser(LazyItemStack.class).to(LazyItemStackParser.class);
+    parsers.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {});
+    parsers.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {});
+    parsers.bindParser(RegistryKey.class).to(RegistryKeyParser.class);
+    parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
+    parsers.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {});
+    parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
 
     // Commence Hacks
     // TODO Add hackery parsers as I need them

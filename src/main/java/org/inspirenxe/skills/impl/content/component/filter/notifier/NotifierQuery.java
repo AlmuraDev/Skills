@@ -24,12 +24,13 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.notifier;
 
-import com.almuradev.droplet.component.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterQuery;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface NotifierQuery extends FilterQuery {
+public interface NotifierQuery extends FilterQuery
+{
 
   Optional<UUID> notifier();
 }

@@ -24,13 +24,13 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
@@ -40,7 +40,7 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-public final class DataFilter implements AbstractFilter<DataQuery> {
+public final class DataFilter implements TypedFilter<DataQuery> {
 
   @Nullable
   @Inject
@@ -56,13 +56,13 @@ public final class DataFilter implements AbstractFilter<DataQuery> {
   }
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
+  public boolean queryable(final FilterQuery query) {
     return query instanceof DataQuery;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public FilterResponse queryInternal(final DataQuery query) {
+  public FilterResponse typedQuery(final DataQuery query) {
     final Key key = this.dataKey.require();
     FilterResponse response = FilterResponse.from(key.getId().equalsIgnoreCase(query.dataKey().getId()));
 

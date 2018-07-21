@@ -24,16 +24,15 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.potion;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
-import com.almuradev.droplet.parser.Parser;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public final class PotionFilterParser implements FilterTypeParser<PotionFilter> {
+public final class PotionFilterParser implements Parser<PotionFilter> {
 
   private final Parser<PotionEffectType> parser;
 

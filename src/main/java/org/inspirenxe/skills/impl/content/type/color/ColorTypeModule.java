@@ -29,7 +29,6 @@ import com.almuradev.droplet.content.inject.ForRoot;
 import com.almuradev.droplet.content.inject.RootModule;
 import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
 import com.almuradev.droplet.content.processor.Processor;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.color.processor.BProcessor;
@@ -39,7 +38,7 @@ import org.inspirenxe.skills.impl.content.type.color.processor.RProcessor;
 
 import java.util.Collections;
 
-public final class ColorTypeModule extends RootModule.Impl<ContentColorType.Child, ContentColorTypeBuilder> implements ParserBinder {
+public final class ColorTypeModule extends RootModule.Impl<ContentColorType.Child, ContentColorTypeBuilder> {
 
   @Override
   protected void configure0() {

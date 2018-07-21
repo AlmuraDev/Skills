@@ -24,11 +24,11 @@
  */
 package org.inspirenxe.skills.impl.content.parser;
 
-import com.almuradev.droplet.parser.Parser;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.GameRegistry;
 

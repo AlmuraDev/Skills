@@ -25,12 +25,12 @@
 package org.inspirenxe.skills.impl.content.parser.lazy.item;
 
 import com.almuradev.droplet.parser.Nodes;
-import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.collect.MoreCollectors;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.spongepowered.api.item.ItemType;
 
 import javax.inject.Inject;

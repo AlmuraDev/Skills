@@ -24,15 +24,14 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
-import com.almuradev.droplet.parser.Parser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 
 @Singleton
-public final class ExperienceFilterParser implements FilterTypeParser<ExperienceFilter> {
+public final class ExperienceFilterParser implements Parser<ExperienceFilter> {
 
   private final Parser<Double> doubleParser;
 

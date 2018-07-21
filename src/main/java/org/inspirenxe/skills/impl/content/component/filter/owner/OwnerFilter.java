@@ -24,10 +24,10 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.owner;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
 import com.google.common.base.MoreObjects;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -35,7 +35,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public final class OwnerFilter implements AbstractFilter<OwnerQuery> {
+public final class OwnerFilter implements TypedFilter<OwnerQuery> {
 
   private final Optional<UUID> owner;
 
@@ -44,12 +44,12 @@ public final class OwnerFilter implements AbstractFilter<OwnerQuery> {
   }
 
   @Override
-  public boolean canQuery(FilterQuery query) {
+  public boolean queryable(FilterQuery query) {
     return query instanceof OwnerQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(OwnerQuery query) {
+  public FilterResponse typedQuery(OwnerQuery query) {
     return FilterResponse.from(Objects.equals(this.owner, query.owner()));
   }
 

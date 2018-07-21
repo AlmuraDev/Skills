@@ -24,11 +24,11 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.key;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 
-public final class NamespaceFilter implements AbstractFilter<RegistryKeyFilterQuery> {
+public final class NamespaceFilter implements TypedFilter<RegistryKeyFilterQuery> {
 
   private final String namespace;
 
@@ -37,12 +37,12 @@ public final class NamespaceFilter implements AbstractFilter<RegistryKeyFilterQu
   }
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
+  public boolean queryable(final FilterQuery query) {
     return query instanceof RegistryKeyFilterQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(final RegistryKeyFilterQuery query) {
+  public FilterResponse typedQuery(final RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.namespace.equalsIgnoreCase(query.key().namespace()));
   }
 }

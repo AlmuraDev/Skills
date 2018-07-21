@@ -24,11 +24,11 @@
  */
 package org.inspirenxe.skills.impl;
 
-import com.almuradev.droplet.parser.Parser;
 import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.google.inject.Provides;
 import net.kyori.violet.AbstractModule;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;

@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.impl.content.parser.lazy.block.value;
 
 import com.almuradev.droplet.component.range.IntRange;
-import com.almuradev.droplet.parser.Parser;
 import com.google.common.collect.MoreCollectors;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;

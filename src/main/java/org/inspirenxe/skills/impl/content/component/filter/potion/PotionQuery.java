@@ -24,8 +24,8 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.potion;
 
-import com.almuradev.droplet.component.filter.FilterQuery;
 import com.almuradev.droplet.registry.RegistryKey;
+import net.kyori.fragment.filter.FilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.key.RegistryKeyFilterQuery;
 import org.inspirenxe.skills.impl.content.registry.CatalogKey;
 import org.spongepowered.api.effect.potion.PotionEffectType;

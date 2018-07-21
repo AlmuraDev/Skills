@@ -24,11 +24,11 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 
-public final class ExperienceFilter implements AbstractFilter<ExperienceQuery> {
+public final class ExperienceFilter implements TypedFilter<ExperienceQuery> {
 
   private final double experience;
 
@@ -37,12 +37,12 @@ public final class ExperienceFilter implements AbstractFilter<ExperienceQuery> {
   }
 
   @Override
-  public boolean canQuery(FilterQuery query) {
+  public boolean queryable(FilterQuery query) {
     return query instanceof ExperienceQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(ExperienceQuery query) {
+  public FilterResponse typedQuery(ExperienceQuery query) {
     // TODO Operators
     return FilterResponse.from(this.experience == query.experience());
   }

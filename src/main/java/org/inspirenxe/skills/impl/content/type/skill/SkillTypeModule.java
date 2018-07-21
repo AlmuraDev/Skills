@@ -29,7 +29,6 @@ import com.almuradev.droplet.content.inject.ForRoot;
 import com.almuradev.droplet.content.inject.RootModule;
 import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
 import com.almuradev.droplet.content.processor.Processor;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.skill.processor.EventProcessor;
@@ -40,7 +39,7 @@ import org.inspirenxe.skills.impl.content.type.skill.processor.NameProcessor;
 
 import java.util.Collections;
 
-public final class SkillTypeModule extends RootModule.Impl<ContentSkillType.Child, ContentSkillTypeBuilder> implements ParserBinder {
+public final class SkillTypeModule extends RootModule.Impl<ContentSkillType.Child, ContentSkillTypeBuilder> {
 
   @Override
   protected void configure0() {

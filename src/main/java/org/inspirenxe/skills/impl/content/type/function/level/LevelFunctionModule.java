@@ -25,12 +25,11 @@
 package org.inspirenxe.skills.impl.content.type.function.level;
 
 import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
 import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 
-public final class LevelFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class LevelFunctionModule extends ChildModule.Impl<ContentFunction.Child> {
 
   @Override
   protected void configure0() {

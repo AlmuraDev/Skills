@@ -24,11 +24,11 @@
  */
 package org.inspirenxe.skills.impl.database;
 
-import com.almuradev.droplet.parser.Parser;
 import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 import org.jooq.SQLDialect;
 
 import java.io.IOException;

@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.item;
 
-import com.almuradev.droplet.component.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterQuery;
 import org.inspirenxe.skills.impl.content.parser.lazy.item.LazyItemStack;
 import org.spongepowered.api.item.ItemType;
 

@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
-import com.almuradev.droplet.component.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterQuery;
 
 public interface ExperienceQuery extends FilterQuery {
 

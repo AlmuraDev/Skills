@@ -25,7 +25,6 @@
 package org.inspirenxe.skills.impl.content.type.effect.firework;
 
 import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
 import org.inspirenxe.skills.impl.content.type.effect.firework.processor.ColorsProcessor;
@@ -34,7 +33,7 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.processor.Flicker
 import org.inspirenxe.skills.impl.content.type.effect.firework.processor.ShapeProcessor;
 import org.inspirenxe.skills.impl.content.type.effect.firework.processor.TrailsProcessor;
 
-public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> implements ParserBinder {
+public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> {
 
   @Override
   protected void configure0() {

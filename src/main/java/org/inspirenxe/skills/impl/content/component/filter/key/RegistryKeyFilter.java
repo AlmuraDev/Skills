@@ -24,12 +24,12 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.key;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
 import com.almuradev.droplet.registry.RegistryKey;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 
-public final class RegistryKeyFilter implements AbstractFilter<RegistryKeyFilterQuery> {
+public final class RegistryKeyFilter implements TypedFilter<RegistryKeyFilterQuery> {
 
   private final RegistryKey key;
 
@@ -38,12 +38,12 @@ public final class RegistryKeyFilter implements AbstractFilter<RegistryKeyFilter
   }
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
+  public boolean queryable(final FilterQuery query) {
     return query instanceof RegistryKeyFilterQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(RegistryKeyFilterQuery query) {
+  public FilterResponse typedQuery(RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.key.equals(query.key()));
   }
 }

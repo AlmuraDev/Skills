@@ -24,13 +24,13 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.key;
 
-import com.almuradev.droplet.component.filter.FilterTypeParser;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
 
 import javax.inject.Singleton;
 
 @Singleton
-public final class NamespaceFilterParser implements FilterTypeParser<NamespaceFilter> {
+public final class NamespaceFilterParser implements Parser<NamespaceFilter> {
 
   @Override
   public NamespaceFilter throwingParse(final Node node) {

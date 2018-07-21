@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.owner;
 
-import com.almuradev.droplet.component.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterQuery;
 
 import java.util.Optional;
 import java.util.UUID;

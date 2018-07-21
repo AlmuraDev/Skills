@@ -24,12 +24,12 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
 import com.google.common.base.MoreObjects;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 
-public final class LevelFilter implements AbstractFilter<LevelQuery> {
+public final class LevelFilter implements TypedFilter<LevelQuery> {
 
   private final int level;
 
@@ -38,12 +38,12 @@ public final class LevelFilter implements AbstractFilter<LevelQuery> {
   }
 
   @Override
-  public boolean canQuery(FilterQuery query) {
+  public boolean queryable(FilterQuery query) {
     return query instanceof LevelQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(LevelQuery query) {
+  public FilterResponse typedQuery(LevelQuery query) {
     // TODO Operators
     return FilterResponse.from(this.level == query.level());
   }

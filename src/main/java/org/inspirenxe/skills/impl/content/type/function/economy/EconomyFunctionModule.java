@@ -25,12 +25,11 @@
 package org.inspirenxe.skills.impl.content.type.function.economy;
 
 import com.almuradev.droplet.content.inject.ChildModule;
-import com.almuradev.droplet.parser.ParserBinder;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
 import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunctionType;
 
-public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> implements ParserBinder {
+public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> {
 
   @Override
   protected void configure0() {

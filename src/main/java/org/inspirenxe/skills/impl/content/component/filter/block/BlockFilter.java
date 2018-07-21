@@ -24,13 +24,13 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.block;
 
-import com.almuradev.droplet.component.filter.AbstractFilter;
-import com.almuradev.droplet.component.filter.FilterQuery;
-import com.almuradev.droplet.component.filter.FilterResponse;
 import com.google.common.base.MoreObjects;
+import net.kyori.fragment.filter.FilterQuery;
+import net.kyori.fragment.filter.FilterResponse;
+import net.kyori.fragment.filter.TypedFilter;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
 
-public final class BlockFilter implements AbstractFilter<BlockQuery> {
+public final class BlockFilter implements TypedFilter<BlockQuery> {
 
   private final LazyBlockState state;
 
@@ -39,12 +39,12 @@ public final class BlockFilter implements AbstractFilter<BlockQuery> {
   }
 
   @Override
-  public boolean canQuery(final FilterQuery query) {
+  public boolean queryable(final FilterQuery query) {
     return query instanceof BlockQuery;
   }
 
   @Override
-  public FilterResponse queryInternal(final BlockQuery query) {
+  public FilterResponse typedQuery(final BlockQuery query) {
     return FilterResponse.from(this.state.matches(query.state()));
   }
 

@@ -24,15 +24,15 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.processor;
 
-import com.almuradev.droplet.component.filter.Filter;
 import com.almuradev.droplet.content.processor.Processor;
-import com.almuradev.droplet.parser.Parser;
 import com.almuradev.droplet.registry.Registry;
 import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
+import net.kyori.fragment.filter.Filter;
 import net.kyori.xml.node.Node;
 import net.kyori.xml.node.filter.NodeFilters;
 import net.kyori.xml.node.flattener.PathNodeFlattener;
+import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.impl.content.component.apply.TransactionValidityApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.ContentSkillTypeBuilder;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;

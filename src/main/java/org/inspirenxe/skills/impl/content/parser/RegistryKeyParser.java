@@ -24,9 +24,9 @@
  */
 package org.inspirenxe.skills.impl.content.parser;
 
-import com.almuradev.droplet.parser.primitive.PrimitiveParser;
 import com.almuradev.droplet.registry.RegistryKey;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.PrimitiveParser;
 import org.inspirenxe.skills.impl.content.registry.CatalogKey;
 import org.inspirenxe.skills.impl.content.registry.IdioticCatalogKey;
 
@@ -36,7 +36,7 @@ import javax.inject.Singleton;
 public final class RegistryKeyParser implements PrimitiveParser<RegistryKey> {
 
   @Override
-  public RegistryKey parse(final Node node, final String string) {
+  public RegistryKey throwingParse(final Node node, final String string) {
     if (string.indexOf(':') != -1) {
       return new CatalogKey(string);
     } else {
