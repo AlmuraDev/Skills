@@ -58,7 +58,7 @@ public final class DatabaseConfigurationParser implements Parser<DatabaseConfigu
 
     Path path;
     String connectionString;
-    String connectionStringNoSchema = null;
+    String connectionStringNoSchema;
 
     if (dialect == SQLDialect.H2 || dialect == SQLDialect.POSTGRES_9_5) {
       initialCatalog = this.stringParser.parse(node.requireAttribute("initial-catalog"));

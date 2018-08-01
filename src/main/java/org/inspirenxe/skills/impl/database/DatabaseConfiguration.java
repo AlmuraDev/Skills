@@ -75,7 +75,7 @@ public final class DatabaseConfiguration {
     return this.port;
   }
 
-  public String getConnectionStringNoSchema() {
+  public String getConnectionStringWithoutSchema() {
     return this.connectionStringNoSchema;
   }
 
