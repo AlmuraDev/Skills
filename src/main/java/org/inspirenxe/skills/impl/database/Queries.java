@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.impl.database;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.inspirenxe.skills.generated.Tables.SKILL_EXPERIENCE;
+import static org.inspirenxe.skills.generated.Tables.SKILLS_EXPERIENCE;
 
-import org.inspirenxe.skills.generated.tables.records.SkillExperienceRecord;
+import org.inspirenxe.skills.generated.tables.records.SkillsExperienceRecord;
 import org.jooq.InsertValuesStep4;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
@@ -39,7 +39,7 @@ import java.util.UUID;
 
 public final class Queries {
 
-  public static DatabaseQuery<SelectConditionStep<SkillExperienceRecord>> createFetchExperienceQuery(final UUID container, final UUID holder,
+  public static DatabaseQuery<SelectConditionStep<SkillsExperienceRecord>> createFetchExperienceQuery(final UUID container, final UUID holder,
     final String skillType) {
     checkNotNull(container);
     checkNotNull(holder);
@@ -49,11 +49,13 @@ public final class Queries {
     final byte[] holderData = DatabaseUtils.toBytes(holder);
 
     return context -> context
-      .selectFrom(SKILL_EXPERIENCE)
-      .where(SKILL_EXPERIENCE.CONTAINER.eq(containerData).and(SKILL_EXPERIENCE.HOLDER.eq(holderData).and(SKILL_EXPERIENCE.SKILL_TYPE.eq(skillType))));
+      .selectFrom(SKILLS_EXPERIENCE)
+      .where(SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq(holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType)
+      )));
   }
 
-  public static DatabaseQuery<InsertValuesStep4<SkillExperienceRecord, byte[], byte[], String, BigDecimal>> createInsertSkillExperienceQuery(final UUID
+  public static DatabaseQuery<InsertValuesStep4<SkillsExperienceRecord, byte[], byte[], String, BigDecimal>> createInsertSkillExperienceQuery(final
+  UUID
     container, final UUID holder, final String skillType, final double experience) {
     checkNotNull(container);
     checkNotNull(holder);
@@ -63,11 +65,12 @@ public final class Queries {
     final byte[] containerData = DatabaseUtils.toBytes(container);
     final byte[] holderData = DatabaseUtils.toBytes(holder);
     return context -> context
-      .insertInto(SKILL_EXPERIENCE, SKILL_EXPERIENCE.CONTAINER, SKILL_EXPERIENCE.HOLDER, SKILL_EXPERIENCE.SKILL_TYPE, SKILL_EXPERIENCE.EXPERIENCE)
+      .insertInto(SKILLS_EXPERIENCE, SKILLS_EXPERIENCE.CONTAINER, SKILLS_EXPERIENCE.HOLDER, SKILLS_EXPERIENCE.SKILL, SKILLS_EXPERIENCE
+          .EXPERIENCE)
       .values(containerData, holderData, skillType, dbXp);
   }
 
-  public static DatabaseQuery<UpdateConditionStep<SkillExperienceRecord>> createUpdateSkillExperienceQuery(final UUID container, final UUID holder,
+  public static DatabaseQuery<UpdateConditionStep<SkillsExperienceRecord>> createUpdateSkillExperienceQuery(final UUID container, final UUID holder,
     final String skillType, final double experience, final Timestamp modified) {
     checkNotNull(container);
     checkNotNull(holder);
@@ -78,8 +81,8 @@ public final class Queries {
     final byte[] containerData = DatabaseUtils.toBytes(container);
     final byte[] holderData = DatabaseUtils.toBytes(holder);
 
-    return context -> context.update(SKILL_EXPERIENCE).set(SKILL_EXPERIENCE.EXPERIENCE, dbXp).set(SKILL_EXPERIENCE.MODIFIED, modified).where
-      (SKILL_EXPERIENCE.CONTAINER.eq(containerData).and(SKILL_EXPERIENCE.HOLDER.eq(holderData).and(SKILL_EXPERIENCE.SKILL_TYPE.eq(skillType))));
+    return context -> context.update(SKILLS_EXPERIENCE).set(SKILLS_EXPERIENCE.EXPERIENCE, dbXp).set(SKILLS_EXPERIENCE.MODIFIED, modified).where
+      (SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq(holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType))));
   }
 
   public static DatabaseQuery<SelectConditionStep<Record1<Integer>>> createHasExperienceInSkillQuery(final UUID container, final UUID holder, final
@@ -91,7 +94,7 @@ public final class Queries {
     final byte[] containerData = DatabaseUtils.toBytes(container);
     final byte[] holderData = DatabaseUtils.toBytes(holder);
 
-    return context -> context.selectOne().from(SKILL_EXPERIENCE).where(SKILL_EXPERIENCE.CONTAINER.eq(containerData).and(SKILL_EXPERIENCE.HOLDER.eq
-      (holderData).and(SKILL_EXPERIENCE.SKILL_TYPE.eq(skillType))));
+    return context -> context.selectOne().from(SKILLS_EXPERIENCE).where(SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq
+      (holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType))));
   }
 }

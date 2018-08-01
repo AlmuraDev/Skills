@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id 'org.spongepowered.plugin' version '0.8.1'
     id 'net.minecrell.licenser' version '0.3'
-    id 'nu.studer.jooq' version '2.0.11'
+    id 'nu.studer.jooq' version '3.0.0'
 }
 
 group = project.group
@@ -71,13 +71,16 @@ jooq {
     ddl(sourceSets.main) {
         generator {
             database {
-                name = 'org.jooq.util.ddl.DDLDatabase'
+                name = 'org.jooq.meta.extensions.ddl.DDLDatabase'
                 properties {
                     property {
                         key = 'scripts'
-                        value = 'src/main/resources/database.sql'
+                        value = 'src/main/resources/db/database.sql'
                     }
                 }
+
+                inputSchema = 'PUBLIC'
+                outputSchemaToDefault = true
             }
             generate {
                 relations = true

@@ -81,7 +81,7 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
     final Node databaseNode = node.elements("database")
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("database configuration not found"));
-    return new DatabaseManager(container, serviceManager.provideUnchecked(SqlService.class), parser.parse(databaseNode));
+    return new DatabaseManager(container, serviceManager, parser.parse(databaseNode));
   }
 
   @Provides

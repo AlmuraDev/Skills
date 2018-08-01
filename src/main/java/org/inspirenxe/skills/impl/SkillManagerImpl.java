@@ -63,6 +63,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.scheduler.Task;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
@@ -271,7 +272,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
   private void loadSkillsAsync(final UUID container, final UUID holder, final Collection<String> skillTypeIds) {
 
     // Commence loading of skills
-    try (DSLContext context = this.databaseManager.createContext()) {
+    try (DSLContext context = this.databaseManager.createContext(true)) {
       for (String skillTypeId : skillTypeIds) {
         createFetchExperienceQuery(container, holder, skillTypeId)
             .build(context)
@@ -291,7 +292,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
                 dbExperience = 0;
                 isNewSkill = true;
               } else {
-                dbExperience = rows.getValue(0, Tables.SKILL_EXPERIENCE.EXPERIENCE).doubleValue();
+                dbExperience = rows.getValue(0, Tables.SKILLS_EXPERIENCE.EXPERIENCE).doubleValue();
                 isNewSkill = false;
               }
 
@@ -331,6 +332,8 @@ public final class SkillManagerImpl implements SkillManager, Witness {
                   .submit(this.container);
             });
       }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 
@@ -341,7 +344,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
     final HashSet<ExperienceEvent.Save.Pre> preEvents = new HashSet<>();
 
-    try (DSLContext context = this.databaseManager.createContext()) {
+    try (DSLContext context = this.databaseManager.createContext(true)) {
       for (Map.Entry<String, Double> skillEntry : skillTypesByExperience.entrySet()) {
         final String skillTypeId = skillEntry.getKey();
         final SkillType skillType = Sponge.getRegistry().getType(SkillType.class, skillTypeId).orElse(null);
@@ -407,6 +410,8 @@ public final class SkillManagerImpl implements SkillManager, Witness {
             })
             .submit(this.container);
       }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 
