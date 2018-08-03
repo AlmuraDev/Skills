@@ -88,7 +88,7 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
 
   private void traverseIf(final Node root, final IfBranch.Builder rootBuilder) {
     final Node ifNode = root.nodes("if").collect(MoreCollectors.onlyElement());
-    if (ifNode.elements().stream().count() == 0) {
+    if (ifNode.nodes().stream().count() == 0) {
       rootBuilder.statement(this.filterParser.parse(ifNode));
     } else {
       rootBuilder.statement(this.filterParser.parse(ifNode.nodes().collect(MoreCollectors.onlyElement())));
