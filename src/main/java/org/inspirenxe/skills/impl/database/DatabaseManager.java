@@ -26,16 +26,28 @@ package org.inspirenxe.skills.impl.database;
 
 import com.almuradev.toolbox.inject.event.Witness;
 import com.almuradev.toolbox.inject.event.WitnessScope;
+import com.google.common.base.Charsets;
 import com.google.inject.Singleton;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.jooq.DSLContext;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.service.sql.SqlService;
 
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -99,5 +111,36 @@ public final class DatabaseManager implements Witness {
 
     public DatabaseConfiguration getConfiguration() {
         return this.configuration;
+    }
+
+    @Listener(order = Order.FIRST)
+    public void onGameStartingServer(final GameStartingServerEvent event) {
+        try (final DSLContext context = this.createContext(false)) {
+            context.createSchemaIfNotExists(this.getConfiguration().getInitialCatalog()).execute();
+        } catch (final Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+        try (final DSLContext context = this.createContext(true)) {
+            final URI uri = SkillsImpl.class.getResource("/db/database.sql").toURI();
+
+            Path path;
+
+            if (uri.getScheme().equals("jar")) {
+                final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                path = fileSystem.getPath("/db/database.sql");
+            } else {
+                path = Paths.get(uri);
+            }
+
+            if (path != null) {
+                final byte[] encoded;
+                encoded = Files.readAllBytes(path);
+                final String sql = new String(encoded, Charsets.UTF_8);
+                context.execute(sql);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
