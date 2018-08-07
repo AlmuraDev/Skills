@@ -24,9 +24,27 @@
  */
 package org.inspirenxe.skills.impl.cause;
 
+import org.spongepowered.api.event.cause.Cause;
+
 public enum CauseOperatorType {
-  ALL,
-  FIRST,
-  ANY,
-  ROOT
+  ALL {
+    @Override
+    public boolean matches(Cause cause, Class<?> type) {
+      return cause.all().stream().allMatch(type::isInstance);
+    }
+  },
+  ANY {
+    @Override
+    public boolean matches(Cause cause, Class<?> type) {
+      return cause.containsType(type);
+    }
+  },
+  ROOT {
+    @Override
+    public boolean matches(Cause cause, Class<?> type) {
+      return type.isInstance(cause.root());
+    }
+  };
+
+  public abstract boolean matches(Cause cause, Class<?> type);
 }

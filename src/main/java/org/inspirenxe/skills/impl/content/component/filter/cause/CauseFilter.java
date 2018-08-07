@@ -48,7 +48,7 @@ public final class CauseFilter implements TypedFilter<CauseQuery> {
 
   @Override
   public FilterResponse typedQuery(CauseQuery query) {
-    return FilterResponse.from(this.causeOperatorType == query.operator() && this.causeType == query.type());
+    return FilterResponse.from(this.causeOperatorType.matches(query.getCause(), this.causeType.getTypeClass()));
   }
 
   @Override

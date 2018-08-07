@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import net.kyori.fragment.filter.FilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockQuery;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockQueryProducer;
+import org.inspirenxe.skills.impl.content.component.filter.cause.CauseQuery;
+import org.inspirenxe.skills.impl.content.component.filter.cause.CauseQueryProducer;
 import org.spongepowered.api.event.Event;
 
 import java.util.Collection;
@@ -22,6 +24,7 @@ public class EventFilterProducerRegistry {
 
     private EventFilterProducerRegistry() {
         this.registerProducer(BlockQuery.class, new BlockQueryProducer());
+        this.registerProducer(CauseQuery.class, new CauseQueryProducer());
     }
 
     @SuppressWarnings("unchecked")
