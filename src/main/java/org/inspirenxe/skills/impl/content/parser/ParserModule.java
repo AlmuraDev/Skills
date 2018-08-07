@@ -95,6 +95,7 @@ public final class ParserModule extends AbstractModule {
     // TODO Add hackery parsers as I need them
     this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {});
     this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {});
+    this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {});
     this.bindRawParser(GameMode.class).to(new TypeLiteral<CatalogStringToValueParser<GameMode>>() {});
   }
 

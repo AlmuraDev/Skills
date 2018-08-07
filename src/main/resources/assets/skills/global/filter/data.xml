@@ -5,7 +5,7 @@
       <skills:data key="sponge:game_mode" value="minecraft:survival"/>
     </all>
     <all id="not-sneaking">
-      <skills:data key="sponge:is_sneaking" value="false"/>
+      <skills:data key="sponge:sneaking" value="false"/> <!-- This should really be 'sponge:sneaking', but SpongeCommon has a bug -->
     </all>
     <all id="not-sneaking-level-99">
       <filter id="not-sneaking"/>

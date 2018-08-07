@@ -24,7 +24,7 @@
             <then>
               <apply>
                 <message key="action_bar" text="You lack the experience to use this item!"/>
-                <skills:data key="sponge:durability" op="add" value="-5"/>
+                <skills:data key="sponge:item_durability" op="add" value="-5"/>
               </apply>
             </then>
           </apply>
