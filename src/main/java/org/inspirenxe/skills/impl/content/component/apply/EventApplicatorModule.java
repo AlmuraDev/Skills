@@ -12,6 +12,9 @@ import org.inspirenxe.skills.impl.content.component.apply.experience.ExperienceA
 import org.inspirenxe.skills.impl.content.component.apply.math.BigDecimalParser;
 import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
 import org.inspirenxe.skills.impl.content.component.apply.math.MathOperationParser;
+import org.inspirenxe.skills.impl.content.component.apply.message.Message;
+import org.inspirenxe.skills.impl.content.component.apply.message.MessageApplicatorParser;
+import org.inspirenxe.skills.impl.content.component.apply.message.MessageParser;
 
 import java.math.BigDecimal;
 
@@ -23,12 +26,14 @@ public class EventApplicatorModule extends AbstractModule {
         final ParserBinder parsers = new ParserBinder(this.binder());
         parsers.bindParser(BigDecimal.class).to(BigDecimalParser.class);
         parsers.bindParser(MathOperation.class).to(MathOperationParser.class);
+        parsers.bindParser(Message.class).to(MessageParser.class);
 
         final MapBinder<String, Parser<? extends EventApplicator>> applicators = MapBinder.newMapBinder(this.binder(), new TypeLiteral<String>() {}, new TypeLiteral<Parser<? extends EventApplicator>>() {});
 
         applicators.addBinding("cancel").to(EventCancelParser.class);
         applicators.addBinding("experience").to(ExperienceApplicatorParser.class);
         applicators.addBinding("economy-modifier").to(EconomyApplicatorParser.class);
+        applicators.addBinding("message").to(MessageApplicatorParser.class);
 
 
         parsers.bindParser(EventApplicator.class).to(EventApplicatorParser.class);

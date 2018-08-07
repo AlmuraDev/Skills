@@ -29,7 +29,7 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="1"/>
-                    <skills:economy-modifier value="0.05"/>
+                    <skills:economy-modifier op="add" value="0.05"/>
                   </apply>
                 </then>
               </apply>
@@ -38,7 +38,7 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="1"/>
-                    <skills:economy-modifier value="0.05"/>
+                    <skills:economy-modifier op="add" value="0.05"/>
                   </apply>
                 </then>
               </apply>
@@ -47,7 +47,7 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="10"/>
-                    <skills:economy-modifier value="0.15"/>
+                    <skills:economy-modifier op="add" value="0.15"/>
                   </apply>
                 </then>
               </apply>
@@ -56,7 +56,7 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="20"/>
-                    <skills:economy-modifier value="0.25"/>
+                    <skills:economy-modifier op="add" value="0.25"/>
                   </apply>
                 </then>
               </apply>
@@ -65,7 +65,7 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="40"/>
-                    <skills:economy-modifier value="0.35"/>
+                    <skills:economy-modifier op="add" value="0.35"/>
                   </apply>
                 </then>
               </apply>
@@ -74,7 +74,7 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="80"/>
-                    <skills:economy-modifier value="0.45"/>
+                    <skills:economy-modifier op="add" value="0.45"/>
                   </apply>
                 </then>
               </apply>
@@ -83,7 +83,7 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="60"/>
-                    <skills:economy-modifier value="0.55"/>
+                    <skills:economy-modifier op="add" value="0.55"/>
                   </apply>
                 </then>
               </apply>
@@ -92,14 +92,14 @@
                 <then>
                   <apply>
                     <skills:experience op="add" value="160"/>
-                    <skills:economy-modifier value="0.55"/>
+                    <skills:economy-modifier op="add" value="0.55"/>
                   </apply>
                 </then>
               </apply>
             </then>
             <else>
               <apply>
-                <skills:cancel-transaction value="true"/>
+                <skills:cancel-event value="true"/>
                 <message key="action_bar" text="You lack the experience to break this block!"/>
               </apply>
             </else>
