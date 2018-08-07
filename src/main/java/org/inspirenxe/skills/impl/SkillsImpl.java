@@ -54,6 +54,7 @@ import javax.annotation.Nullable;
 public final class SkillsImpl {
 
   public static final String ID = "skills";
+  public static SkillsImpl INSTANCE;
 
   private final Logger logger;
   private final Path configDir;
@@ -62,6 +63,8 @@ public final class SkillsImpl {
   @Inject
   public SkillsImpl(final Injector baseInjector, final Logger logger, final @ConfigDir(sharedRoot = false) Path configDir)
     throws IOException, URISyntaxException {
+
+    INSTANCE = this;
     this.logger = logger;
     this.configDir = configDir;
 

@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.component;
 
 import net.kyori.violet.AbstractModule;
+import org.inspirenxe.skills.impl.content.component.apply.EventApplicatorModule;
 import org.inspirenxe.skills.impl.content.component.filter.FilterModule;
 
 public final class ComponentModule extends AbstractModule {
@@ -32,5 +33,6 @@ public final class ComponentModule extends AbstractModule {
   @Override
   protected void configure() {
     this.install(new FilterModule());
+    this.install(new EventApplicatorModule());
   }
 }

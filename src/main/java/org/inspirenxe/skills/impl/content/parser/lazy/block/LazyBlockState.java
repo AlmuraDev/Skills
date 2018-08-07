@@ -24,25 +24,28 @@
  */
 package org.inspirenxe.skills.impl.content.parser.lazy.block;
 
+import org.inspirenxe.skills.impl.content.component.filter.block.BlockQuery;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;
+import org.spongepowered.api.data.Transaction;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface LazyBlockState extends Predicate<BlockState>, Supplier<BlockState> {
+public interface LazyBlockState extends Predicate<BlockQuery>, Supplier<BlockState> {
 
-  static LazyBlockState from(final BlockType block) {
+  /*static LazyBlockState from(final BlockType block) {
     return new WrappedStatelessLazyBlockState(block);
   }
 
   static LazyBlockState from(final BlockState state) {
     return new WrappedStatefulLazyBlockState(state);
-  }
+  }*/
 
   BlockType block();
 
@@ -53,7 +56,7 @@ public interface LazyBlockState extends Predicate<BlockState>, Supplier<BlockSta
 
   <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property);
 
-  default boolean matches(final LazyBlockState that) {
-    return this.test(that.get());
+  default boolean matches(final BlockQuery that) {
+    return this.test(that);
   }
 }

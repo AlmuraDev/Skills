@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import org.spongepowered.api.event.Event;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +53,16 @@ public final class EventScriptImpl implements EventScript {
   @Override
   public List<Branch> getBranches() {
     return ImmutableList.copyOf(this.branches);
+  }
+
+  @Override
+  public void processEvent(Event event) {
+    if (!this.type.matches(event.getClass())) {
+      return;
+    }
+    for (Branch branch: this.branches) {
+      branch.processEvent(event);
+    }
   }
 
   @Override

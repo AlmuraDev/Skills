@@ -36,6 +36,7 @@ import org.spongepowered.api.block.BlockType;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -47,13 +48,15 @@ public final class LazyBlockStateParser implements Parser<LazyBlockState> {
   private final Registry<BlockType> registry;
   private final Parser<RegistryKey> keyParser;
   private final Parser<LazyStateValue<?>> propertyParser;
+  private final Parser<String> stringParser;
 
   @Inject
   private LazyBlockStateParser(final Registry<BlockType> registry, final Parser<RegistryKey> keyParser, final Parser<LazyStateValue<?>>
-      propertyParser) {
+      propertyParser, final Parser<String> stringParser) {
     this.registry = registry;
     this.keyParser = keyParser;
     this.propertyParser = propertyParser;
+    this.stringParser = stringParser;
   }
 
   @Override
@@ -71,10 +74,17 @@ public final class LazyBlockStateParser implements Parser<LazyBlockState> {
             Map.Entry::getKey,
             Map.Entry::getValue
         ));
+
+    BlockTransactionSource source = node.attribute("source").optional()
+            .flatMap((attr) -> BlockTransactionSource.parse(this.stringParser.parse(attr)))
+            .orElse(BlockTransactionSource.INHERIT);
+
+
+
     if (properties.isEmpty()) {
-      return new StatelessLazyBlockState(block);
+      return new StatelessLazyBlockState(block, source);
     }
-    return new StatefulLazyBlockState(block, properties);
+    return new StatefulLazyBlockState(block, properties, source);
   }
 
   private RegistryReference<BlockType> block(final Node node, final Optional<Node> attribute) throws ParserException {

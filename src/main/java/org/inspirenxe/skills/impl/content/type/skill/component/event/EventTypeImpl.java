@@ -104,6 +104,11 @@ public final class EventTypeImpl implements EventType {
   }
 
   @Override
+  public boolean matches(Class<? extends Event> eventClass) {
+    return this.clazz.isAssignableFrom(eventClass);
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;

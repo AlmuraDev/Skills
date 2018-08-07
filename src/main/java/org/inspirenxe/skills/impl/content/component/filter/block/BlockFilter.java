@@ -45,7 +45,7 @@ public final class BlockFilter implements TypedFilter<BlockQuery> {
 
   @Override
   public FilterResponse typedQuery(final BlockQuery query) {
-    return FilterResponse.from(this.state.matches(query.state()));
+    return FilterResponse.from(this.state.matches(query));
   }
 
   @Override

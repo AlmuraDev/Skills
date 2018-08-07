@@ -25,9 +25,13 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import net.kyori.fragment.filter.Filter;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic.ElseBranch;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic.ThenBranch;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class LogicBranchImpl extends CompositeBranchImpl<ConditionalBranch> implements LogicBranch {
 
@@ -41,6 +45,12 @@ public abstract class LogicBranchImpl extends CompositeBranchImpl<ConditionalBra
   @Override
   public Filter getStatement() {
     return this.statement;
+  }
+
+  protected List<ConditionalBranch> getBranchesForResult(boolean success) {
+    return this.getBranches().stream()
+            .filter(b -> (success && b instanceof ThenBranch) || (!success && b instanceof ElseBranch))
+            .collect(ImmutableList.toImmutableList());
   }
 
   @Override

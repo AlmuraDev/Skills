@@ -24,15 +24,43 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.block;
 
+import com.google.common.base.Preconditions;
 import net.kyori.fragment.filter.FilterQuery;
+import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.data.Transaction;
 
-public interface BlockQuery extends FilterQuery {
+public final class BlockQuery implements FilterQuery {
 
-  default BlockType block() {
-    return this.state().block();
+  private final Transaction<BlockSnapshot> blockTransaction;
+  private final BlockTransactionSource inheritedSource;
+
+  public BlockQuery(final Transaction<BlockSnapshot> blockTransaction, BlockTransactionSource inheritedSource) {
+    Preconditions.checkArgument(inheritedSource != BlockTransactionSource.INHERIT, "Cannot use BlockTransactionSource.INHERIT in a BlockQuery!");
+    this.blockTransaction = blockTransaction;
+    this.inheritedSource = inheritedSource;
   }
 
-  LazyBlockState state();
+  public Transaction<BlockSnapshot> getBlockTransaction() {
+    return this.blockTransaction;
+  }
+
+  /**
+   * Gets the {@link BlockTransactionSource} inherited from the event.
+   * @return
+   */
+  public BlockTransactionSource getInheritedSource() {
+    return inheritedSource;
+  }
+
+  @Override
+  public String toString() {
+    return "BlockQuery{" +
+            "blockTransaction=" + blockTransaction +
+            ", inheritedSource=" + inheritedSource +
+            '}';
+  }
 }

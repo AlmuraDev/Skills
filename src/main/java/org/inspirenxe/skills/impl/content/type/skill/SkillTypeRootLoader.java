@@ -27,13 +27,23 @@ package org.inspirenxe.skills.impl.content.type.skill;
 import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
+import org.inspirenxe.skills.impl.SkillsImpl;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+
+import java.util.Map;
 
 @Singleton
 public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {
@@ -46,7 +56,23 @@ public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkil
   }
 
   @Listener(order = Order.FIRST)
-  public void onGameStartedServer(GameStartedServerEvent event) {
+  public void onGameStartedServer(GameInitializationEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SkillTypeImpl.class)));
+    this.registerListeners();
   }
+
+  private void registerListeners() {
+    Multimap<Class<? extends Event>, SkillType> listeners = HashMultimap.create();
+    for (SkillType skillType: this.registry.all()) {
+      for (Map.Entry<EventType, EventScript> entry: skillType.getEventScripts().entrySet()) {
+        listeners.put(entry.getKey().getEventClass(), skillType);
+      }
+    }
+
+    // TODO - register listeners only for specific event types
+    DelegatingSkillEventListener listener = new DelegatingSkillEventListener(Event.class, listeners.values());
+    Sponge.getEventManager().registerListener(SkillsImpl.INSTANCE, Event.class, listener);
+  }
+
+
 }

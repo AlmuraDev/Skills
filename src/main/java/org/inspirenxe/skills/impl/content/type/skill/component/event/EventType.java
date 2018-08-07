@@ -47,4 +47,6 @@ public interface EventType extends CatalogType {
   boolean isExact(Class<? extends Event> clazz);
 
   boolean isDirectChild(Class<? extends Event> clazz);
+
+  boolean matches(Class<? extends Event> clazz);
 }

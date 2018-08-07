@@ -24,5 +24,15 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
-public class BranchImpl implements Branch {
+import org.spongepowered.api.event.Event;
+
+public abstract class BranchImpl implements Branch {
+
+    @Override
+    public void processEvent(Event event) {
+        this.processInternal(new EventData(event));
+    }
+
+    public abstract void processInternal(EventData event);
+
 }

@@ -24,6 +24,8 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
+import org.spongepowered.api.event.Event;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -36,6 +38,8 @@ public interface EventScript {
   EventType getType();
 
   List<Branch> getBranches();
+
+  void processEvent(Event event);
 
   interface Builder {
 

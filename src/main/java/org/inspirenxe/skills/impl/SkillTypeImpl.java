@@ -32,6 +32,7 @@ import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
+import org.spongepowered.api.event.Event;
 
 import java.util.Map;
 import java.util.Objects;
@@ -77,6 +78,18 @@ public final class SkillTypeImpl implements SkillType, Content {
   @Override
   public int getMaxLevel() {
     return this.maxLevel;
+  }
+
+  @Override
+  public Map<EventType, EventScript> getEventScripts() {
+    return this.eventScripts;
+  }
+
+  @Override
+  public void processEvent(Event event) {
+    for (Map.Entry<EventType, EventScript> entry: this.eventScripts.entrySet()) {
+      entry.getValue().processEvent(event);
+    }
   }
 
   @Override

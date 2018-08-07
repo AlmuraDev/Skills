@@ -26,8 +26,11 @@ package org.inspirenxe.skills.impl.content.parser.lazy.block;
 
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.Suppliers;
+import org.inspirenxe.skills.impl.content.component.filter.block.BlockQuery;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.data.Transaction;
 
 import java.util.function.Supplier;
 
@@ -37,9 +40,11 @@ public abstract class AbstractLazyBlockState implements LazyBlockState {
 
   protected final RegistryReference<BlockType> block;
   private final Supplier<BlockState> state = Suppliers.memoize(this::createState);
+  private final BlockTransactionSource blockTransactionSource;
 
-  AbstractLazyBlockState(final RegistryReference<BlockType> block) {
+  AbstractLazyBlockState(final RegistryReference<BlockType> block, final BlockTransactionSource blockTransactionSource) {
     this.block = block;
+    this.blockTransactionSource = blockTransactionSource;
   }
 
   @Override
@@ -56,7 +61,25 @@ public abstract class AbstractLazyBlockState implements LazyBlockState {
   abstract <T extends Comparable<T>> BlockState createState();
 
   @Override
-  public final boolean test(final BlockState state) {
+  public final boolean test(final BlockQuery blockQuery) {
+    Transaction<BlockSnapshot> transaction = blockQuery.getBlockTransaction();
+
+    BlockState originalState = transaction.getOriginal().getState();
+    BlockState finalState = transaction.getFinal().getState();
+    BlockTransactionSource source = this.blockTransactionSource != BlockTransactionSource.INHERIT ? this.blockTransactionSource : blockQuery.getInheritedSource();
+
+    switch (source) {
+      case ORIGINAL:
+        return this.checkMatch(originalState);
+      case FINAL:
+        return this.checkMatch(finalState);
+      case EITHER:
+        return this.checkMatch(originalState) || this.checkMatch(finalState);
+    }
+    throw new IllegalStateException("Impossible state reached for BlockQuery: " + blockQuery);
+  }
+
+  private boolean checkMatch(BlockState state) {
     return this.block().equals(state.getType()) && this.testInternal(state);
   }
 

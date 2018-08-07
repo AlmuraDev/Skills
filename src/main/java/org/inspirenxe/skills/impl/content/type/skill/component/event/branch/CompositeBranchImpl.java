@@ -27,6 +27,8 @@ package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.Branch;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchImpl;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
+import org.spongepowered.api.event.Event;
 
 import java.util.List;
 
@@ -41,6 +43,13 @@ public abstract class CompositeBranchImpl<LEAF extends Branch> extends BranchImp
   @Override
   public List<LEAF> getBranches() {
     return this.branches;
+  }
+
+  @Override
+  public void processInternal(EventData event) {
+    for (Branch branch: this.branches) {
+      ((BranchImpl) branch).processInternal(event);
+    }
   }
 
   @Override
