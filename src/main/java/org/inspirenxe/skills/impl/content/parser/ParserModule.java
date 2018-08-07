@@ -35,6 +35,10 @@ import net.kyori.xml.node.parser.ParserBinder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
+import org.inspirenxe.skills.impl.content.component.apply.MathOperationType;
+import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
+import org.inspirenxe.skills.impl.content.component.apply.math.MathOperationParser;
+import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
@@ -71,6 +75,8 @@ public final class ParserModule extends AbstractModule {
     parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
     parsers.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {});
     parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
+    parsers.bindParser(MathOperationType.class).to(new TypeLiteral<EnumParser<MathOperationType>>() {});
+    parsers.bindParser(BlockTransactionSource.class).to(new TypeLiteral<EnumParser<BlockTransactionSource>>() {});
 
     // Commence Hacks
     // TODO Add hackery parsers as I need them
