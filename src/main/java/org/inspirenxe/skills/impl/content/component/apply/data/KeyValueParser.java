@@ -20,7 +20,7 @@ public class KeyValueParser implements Parser<KeyValue> {
     @NonNull
     @Override
     public KeyValue throwingParse(@NonNull Node node) throws XMLException {
-        Key<?> key = this.registry.ref(this.keyParser.throwingParse(node.requireAttribute("key"))).get();
+        Key<?> key = this.registry.ref(this.keyParser.throwingParse(node.requireAttribute("key"))).require();
         String value = node.attribute("value").optional().map(stringParser::parse).orElse(null);
         return new KeyValue(key, value);
     }

@@ -1,5 +1,6 @@
 package org.inspirenxe.skills.impl.content.component.apply.data;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.violet.FriendlyTypeLiteral;
@@ -19,14 +20,20 @@ public class KeyValue {
     public KeyValue(Key<?> key, String rawValue) {
         this.key = key;
         if (rawValue != null) {
-            final StringToValueParser<?> parser = injector.getInstance(com.google.inject.Key.get(new FriendlyTypeLiteral<StringToValueParser<?>>() {
-
-            }.where(new TypeArgument(key.getElementToken()) {
-            })));
+            final StringToValueParser<?> parser = this.getParserInstance(key.getElementToken());
             this.value = parser.parse(key.getElementToken(), rawValue).orElse(null);
         } else {
             this.value = null;
         }
+    }
+
+
+    // This MUST be in its own method for the runtime generics magic to work properly
+    private <T> StringToValueParser<T> getParserInstance(TypeToken<T> token) {
+        return injector.getInstance(com.google.inject.Key.get(new FriendlyTypeLiteral<StringToValueParser<T>>() {
+
+        }.where(new TypeArgument<T>(token) {
+        })));
     }
 
     public Key<?> getKey() {
