@@ -70,7 +70,7 @@ public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkil
     }
 
     // TODO - register listeners only for specific event types
-    DelegatingSkillEventListener listener = new DelegatingSkillEventListener(Event.class, listeners.values());
+    DelegatingSkillEventListener listener = new DelegatingSkillEventListener(Event.class, this.registry.all());
     Sponge.getEventManager().registerListener(SkillsImpl.INSTANCE, Event.class, listener);
   }
 
