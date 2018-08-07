@@ -16,7 +16,7 @@ public class MessageParser implements Parser<Message> {
     @NonNull
     @Override
     public Message throwingParse(@NonNull Node node) throws XMLException {
-        Text text = TextSerializers.LEGACY_FORMATTING_CODE.deserialize(node.requireAttribute("text").value());
+        Text text = TextSerializers.LEGACY_FORMATTING_CODE.deserialize(node.requireAttribute("text").value().toUpperCase());
         String key = node.requireAttribute("key").value();
         ChatType type = Sponge.getRegistry().getType(ChatType.class, key)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown ChatType " + key));

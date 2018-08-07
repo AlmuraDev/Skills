@@ -30,7 +30,7 @@ public class EventApplicatorModule extends AbstractModule {
 
         final MapBinder<String, Parser<? extends EventApplicator>> applicators = MapBinder.newMapBinder(this.binder(), new TypeLiteral<String>() {}, new TypeLiteral<Parser<? extends EventApplicator>>() {});
 
-        applicators.addBinding("cancel").to(EventCancelParser.class);
+        applicators.addBinding("cancel-event").to(EventCancelParser.class);
         applicators.addBinding("experience").to(ExperienceApplicatorParser.class);
         applicators.addBinding("economy-modifier").to(EconomyApplicatorParser.class);
         applicators.addBinding("message").to(MessageApplicatorParser.class);
