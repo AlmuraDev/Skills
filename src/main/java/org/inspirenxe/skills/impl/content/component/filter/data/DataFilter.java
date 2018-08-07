@@ -33,6 +33,7 @@ import net.kyori.fragment.filter.FilterResponse;
 import net.kyori.fragment.filter.TypedFilter;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.spongepowered.api.data.key.Key;
 
@@ -46,14 +47,12 @@ public final class DataFilter implements TypedFilter<DataQuery> {
   @Nullable
   @Inject
   private static Injector injector;
-  private final RegistryReference<Key> dataKey;
-  @Nullable private final String rawValue;
+  private final KeyValue keyValue;
   @Nullable private Object value;
   private boolean computedValue;
 
-  DataFilter(final RegistryReference<Key> dataKey, @Nullable final String rawValue) {
-    this.dataKey = dataKey;
-    this.rawValue = rawValue;
+  DataFilter(final KeyValue keyValue) {
+    this.keyValue = keyValue;
   }
 
   @Override
@@ -64,21 +63,12 @@ public final class DataFilter implements TypedFilter<DataQuery> {
   @SuppressWarnings("unchecked")
   @Override
   public FilterResponse typedQuery(final DataQuery query) {
-    final Key key = this.dataKey.require();
+    final Key key = this.keyValue.getKey();
     FilterResponse response = FilterResponse.from(query.getDataHolder().supports(key));
-
-    if (response == FilterResponse.ALLOW && this.rawValue != null && injector != null) {
-      if (!this.computedValue) {
-        final StringToValueParser<?> parser = injector.getInstance(com.google.inject.Key.get(new FriendlyTypeLiteral<StringToValueParser<?>>() {
-        }.where(new TypeArgument(key.getElementToken()) {})));
-        this.value = parser.parse(key.getElementToken(), rawValue).orElse(null);
-        this.computedValue = true;
-      }
       Optional<?> holderValue = query.getDataHolder().get(key);
       response = holderValue.
               map(val -> FilterResponse.from(Objects.equals(this.value, val)))
               .orElse(FilterResponse.DENY);
-    }
 
     return response;
   }
@@ -86,8 +76,7 @@ public final class DataFilter implements TypedFilter<DataQuery> {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-      .add("key", this.dataKey)
-      .add("value", this.rawValue)
+      .add("keyValue", this.keyValue)
       .toString();
   }
 }

@@ -36,8 +36,13 @@ import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
 import org.inspirenxe.skills.impl.content.component.apply.MathOperationType;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValueParser;
+import org.inspirenxe.skills.impl.content.component.apply.math.BigDecimalParser;
 import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
 import org.inspirenxe.skills.impl.content.component.apply.math.MathOperationParser;
+import org.inspirenxe.skills.impl.content.component.apply.message.Message;
+import org.inspirenxe.skills.impl.content.component.apply.message.MessageParser;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
@@ -56,6 +61,8 @@ import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.item.FireworkShape;
+
+import java.math.BigDecimal;
 
 public final class ParserModule extends AbstractModule {
 
@@ -77,6 +84,10 @@ public final class ParserModule extends AbstractModule {
     parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
     parsers.bindParser(MathOperationType.class).to(new TypeLiteral<EnumParser<MathOperationType>>() {});
     parsers.bindParser(BlockTransactionSource.class).to(new TypeLiteral<EnumParser<BlockTransactionSource>>() {});
+    parsers.bindParser(BigDecimal.class).to(BigDecimalParser.class);
+    parsers.bindParser(MathOperation.class).to(MathOperationParser.class);
+    parsers.bindParser(Message.class).to(MessageParser.class);
+    parsers.bindParser(KeyValue.class).to(KeyValueParser.class);
 
     // Commence Hacks
     // TODO Add hackery parsers as I need them

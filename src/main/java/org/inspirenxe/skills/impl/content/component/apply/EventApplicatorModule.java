@@ -24,9 +24,7 @@ public class EventApplicatorModule extends AbstractModule {
     protected void configure() {
 
         final ParserBinder parsers = new ParserBinder(this.binder());
-        parsers.bindParser(BigDecimal.class).to(BigDecimalParser.class);
-        parsers.bindParser(MathOperation.class).to(MathOperationParser.class);
-        parsers.bindParser(Message.class).to(MessageParser.class);
+
 
         final MapBinder<String, Parser<? extends EventApplicator>> applicators = MapBinder.newMapBinder(this.binder(), new TypeLiteral<String>() {}, new TypeLiteral<Parser<? extends EventApplicator>>() {});
 

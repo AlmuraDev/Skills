@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.component.filter;
 
 import net.kyori.fragment.filter.FilterBinder;
 import net.kyori.violet.AbstractModule;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockFilterParser;
 import org.inspirenxe.skills.impl.content.component.filter.cause.CauseFilterParser;
 import org.inspirenxe.skills.impl.content.component.filter.data.DataFilter;
@@ -57,5 +58,6 @@ public final class FilterModule extends AbstractModule {
     filters.bindFilter("potion").to(PotionFilterParser.class);
 
     this.requestStaticInjection(DataFilter.class);
+    this.requestInjection(KeyValue.class);
   }
 }
