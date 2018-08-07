@@ -114,6 +114,8 @@ public final class SkillImpl implements Skill {
       this.eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
     }
 
+    this.setDirtyState(true);
+
     return Result.builder().type(Result.Type.SUCCESS).build();
   }
 

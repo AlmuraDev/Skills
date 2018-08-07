@@ -24,14 +24,4 @@ public enum BlockTransactionSource {
      * of the transaction to look at
      */
     INHERIT;
-
-    public static Optional<BlockTransactionSource> parse(String name) {
-        try {
-            return Optional.of(BlockTransactionSource.valueOf(name));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
-
 }

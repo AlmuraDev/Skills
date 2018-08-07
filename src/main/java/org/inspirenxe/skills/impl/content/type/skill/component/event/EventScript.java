@@ -39,7 +39,7 @@ public interface EventScript {
 
   List<Branch> getBranches();
 
-  void processEvent(Event event);
+  void processEvent(EventData eventData);
 
   interface Builder {
 

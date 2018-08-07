@@ -1,10 +1,12 @@
 package org.inspirenxe.skills.impl.content.component.apply.cancel;
 
+import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.content.component.apply.TypedEventApplicator;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
 import org.spongepowered.api.event.Cancellable;
-import org.spongepowered.api.event.Event;
 
-public class EventCancelApplicator extends TypedEventApplicator<Event> {
+public class EventCancelApplicator extends TypedEventApplicator<Cancellable> {
 
     private final boolean cancelled;
 
@@ -14,7 +16,7 @@ public class EventCancelApplicator extends TypedEventApplicator<Event> {
     }
 
     @Override
-    public void applyInternal(Event trigger) {
-        ((Cancellable) trigger).setCancelled(this.cancelled);
+    public void applyTyped(EventData eventData, Cancellable event) {
+        event.setCancelled(this.cancelled);
     }
 }

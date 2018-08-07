@@ -34,14 +34,14 @@ import java.util.List;
 
 public final class ResultBranchImpl extends BranchImpl implements ResultBranch {
 
-  private final List<EventApplicator<?>> applicators;
+  private final List<EventApplicator> applicators;
 
-  ResultBranchImpl(final List<EventApplicator<?>> applicators) {
+  ResultBranchImpl(final List<EventApplicator> applicators) {
     this.applicators = applicators;
   }
 
   @Override
-  public List<EventApplicator<?>> getApplicators() {
+  public List<EventApplicator> getApplicators() {
     return Collections.unmodifiableList(this.applicators);
   }
 
@@ -54,8 +54,8 @@ public final class ResultBranchImpl extends BranchImpl implements ResultBranch {
 
   @Override
   public void processInternal(EventData event) {
-    for (EventApplicator<?> applicator: this.getApplicators()) {
-      applicator.apply(event.getEvent());
+    for (EventApplicator applicator: this.getApplicators()) {
+      applicator.apply(event);
     }
   }
 }

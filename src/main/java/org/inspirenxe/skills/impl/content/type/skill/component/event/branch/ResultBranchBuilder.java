@@ -35,10 +35,10 @@ import java.util.List;
 
 public final class ResultBranchBuilder extends BranchBuilder<ResultBranch> implements ResultBranch.Builder {
 
-  private final List<EventApplicator<?>> applicators = new ArrayList<>();
+  private final List<EventApplicator> applicators = new ArrayList<>();
 
   @Override
-  public ResultBranch.Builder apply(final EventApplicator<?> eventApplicator) {
+  public ResultBranch.Builder apply(final EventApplicator eventApplicator) {
     checkNotNull(eventApplicator);
 
     this.applicators.add(eventApplicator);

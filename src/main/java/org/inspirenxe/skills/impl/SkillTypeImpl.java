@@ -30,6 +30,7 @@ import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.spongepowered.api.event.Event;
@@ -87,8 +88,9 @@ public final class SkillTypeImpl implements SkillType, Content {
 
   @Override
   public void processEvent(Event event) {
+    EventData eventData = new EventData(event, this);
     for (Map.Entry<EventType, EventScript> entry: this.eventScripts.entrySet()) {
-      entry.getValue().processEvent(event);
+      entry.getValue().processEvent(eventData);
     }
   }
 

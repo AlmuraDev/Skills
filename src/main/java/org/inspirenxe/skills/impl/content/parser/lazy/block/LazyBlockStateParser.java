@@ -30,6 +30,7 @@ import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import net.kyori.xml.node.Node;
 import net.kyori.xml.node.parser.Parser;
+import org.inspirenxe.skills.impl.EnumUtils;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
 import org.spongepowered.api.block.BlockType;
 
@@ -76,7 +77,7 @@ public final class LazyBlockStateParser implements Parser<LazyBlockState> {
         ));
 
     BlockTransactionSource source = node.attribute("source").optional()
-            .flatMap((attr) -> BlockTransactionSource.parse(this.stringParser.parse(attr)))
+            .flatMap((attr) -> EnumUtils.parse(BlockTransactionSource.class, this.stringParser.parse(attr)))
             .orElse(BlockTransactionSource.INHERIT);
 
 

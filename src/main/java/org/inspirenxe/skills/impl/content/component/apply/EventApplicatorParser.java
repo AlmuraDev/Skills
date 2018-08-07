@@ -16,19 +16,19 @@ import javax.inject.Provider;
 @Singleton
 public final class EventApplicatorParser extends AbstractInjectedFeatureDefinitionParser<EventApplicator> implements Parser<EventApplicator> {
 
-    private final Map<String, Parser<? extends EventApplicator<?>>> parsers;
+    private final Map<String, Parser<? extends EventApplicator>> parsers;
     private Provider<FeatureDefinitionContext> featureContext;
 
     @Inject
-    public EventApplicatorParser(final Map<String, Parser<? extends EventApplicator<?>>> parsers,
+    public EventApplicatorParser(final Map<String, Parser<? extends EventApplicator>> parsers,
             Provider<FeatureDefinitionContext> featureContext) {
         this.parsers = parsers;
         this.featureContext = featureContext;
     }
 
     @Override
-    protected EventApplicator<?> realThrowingParse(@NonNull Node node) throws XMLException {
-        final Parser<? extends EventApplicator<?>> parser = this.parsers.get(node.name());
+    protected EventApplicator realThrowingParse(@NonNull Node node) throws XMLException {
+        final Parser<? extends EventApplicator> parser = this.parsers.get(node.name());
         if (parser != null) {
             return this.featureContext.get().define(EventApplicator.class, node, parser.parse(node));
         }

@@ -25,17 +25,12 @@
 package org.inspirenxe.skills.impl.content.component.apply;
 
 import net.kyori.feature.FeatureDefinition;
+import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
 import org.spongepowered.api.event.Event;
 
-public interface EventApplicator<E extends Event> extends FeatureDefinition {
+public interface EventApplicator extends FeatureDefinition {
 
-  boolean accepts(Event trigger);
-
-  default void apply(final Event trigger) {
-    if(this.accepts(trigger)) {
-      this.applyInternal(trigger);
-    }
-  }
-
-  void applyInternal(final Event trigger);
+  void apply(final EventData eventData);
 }

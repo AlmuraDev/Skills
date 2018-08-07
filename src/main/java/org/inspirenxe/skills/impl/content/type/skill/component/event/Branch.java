@@ -24,11 +24,12 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
+import org.inspirenxe.skills.api.SkillType;
 import org.spongepowered.api.event.Event;
 
 public interface Branch {
 
-    void processEvent(Event event);
+    void processEvent(EventData eventData);
 
   interface Builder<BRANCH extends Branch> {
 

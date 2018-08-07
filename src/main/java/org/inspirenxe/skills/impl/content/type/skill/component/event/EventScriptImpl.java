@@ -56,12 +56,12 @@ public final class EventScriptImpl implements EventScript {
   }
 
   @Override
-  public void processEvent(Event event) {
-    if (!this.type.matches(event.getClass())) {
+  public void processEvent(EventData eventData) {
+    if (!this.type.matches(eventData.getEvent().getClass())) {
       return;
     }
     for (Branch branch: this.branches) {
-      branch.processEvent(event);
+      branch.processEvent(eventData);
     }
   }
 
