@@ -64,7 +64,7 @@ public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkil
   private void registerListeners() {
     Multimap<Class<? extends Event>, SkillType> listeners = HashMultimap.create();
     for (SkillType skillType: this.registry.all()) {
-      for (Map.Entry<EventType, EventScript> entry: skillType.getEventScripts().entrySet()) {
+      for (Map.Entry<EventType<?>, EventScript> entry: skillType.getEventScripts().entrySet()) {
         listeners.put(entry.getKey().getEventClass(), skillType);
       }
     }

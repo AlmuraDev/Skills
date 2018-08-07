@@ -29,9 +29,12 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.EventFlattener;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.NoOpEventFlattener;
 import org.spongepowered.api.event.Event;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -39,26 +42,29 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-public final class EventTypeImpl implements EventType {
+public final class EventTypeImpl<T extends Event> implements EventType<T> {
 
   private final String id;
-  private final Class<? extends Event> clazz;
+  private final Class<T> clazz;
   private final List<String> path;
+  private final EventFlattener<? super T> flattener;
 
-  @Nullable private EventType parent;
+  @Nullable private EventType<? super T> parent;
 
-  EventTypeImpl(final String id, final Class<? extends Event> clazz) {
+  EventTypeImpl(final String id, final Class<T> clazz, EventFlattener<? super T> flattener) {
     this.id = id;
     this.clazz = clazz;
     this.path = Lists.newArrayList(id);
+    this.flattener = flattener;
   }
 
-  private EventTypeImpl(final String id, final EventType parent, final Class<? extends Event> clazz) {
+  private EventTypeImpl(final String id, final EventType<? super T> parent, final Class<T> clazz, EventFlattener<? super T> flattener) {
     this.path = new ArrayList<>(parent.getPath());
     this.path.add(id);
     this.id = String.join("/", this.path);
     this.parent = parent;
     this.clazz = clazz;
+    this.flattener = flattener;
   }
 
   @Override
@@ -72,10 +78,15 @@ public final class EventTypeImpl implements EventType {
   }
 
   @Override
-  public EventType child(final String id, final Class<? extends Event> clazz) {
+  public <S extends T> EventType<S> child(final String id, final Class<S> clazz) {
+    return this.child(id, clazz, this.flattener);
+  }
+
+  @Override
+  public <S extends T> EventType<S> child(final String id, final Class<S> clazz, final EventFlattener<? super S> flattener) {
     checkNotNull(id);
     checkState(this.clazz.isAssignableFrom(clazz), "Cannot create a child EventType who is not a direct child!");
-    return new EventTypeImpl(id, this, clazz);
+    return new EventTypeImpl<S>(id, this, clazz, flattener);
   }
 
   @Override
@@ -84,11 +95,16 @@ public final class EventTypeImpl implements EventType {
   }
 
   @Override
-  public Class<? extends Event> getEventClass() {
+  public Class<T> getEventClass() {
     return this.clazz;
   }
 
-  @Override
+    @Override
+    public Collection<T> flattenEvent(Event event) {
+        return null;
+    }
+
+    @Override
   public List<String> getPath() {
     return Collections.unmodifiableList(this.path);
   }
@@ -108,7 +124,12 @@ public final class EventTypeImpl implements EventType {
     return this.clazz.isAssignableFrom(eventClass);
   }
 
-  @Override
+    @Override
+    public EventFlattener<? super T> getFlattener() {
+        return this.flattener;
+    }
+
+    @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;

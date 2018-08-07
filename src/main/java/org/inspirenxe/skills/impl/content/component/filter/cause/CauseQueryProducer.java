@@ -5,8 +5,14 @@ import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProduc
 import org.spongepowered.api.event.Event;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class CauseQueryProducer implements EventFilterQueryProducer<Event, CauseQuery> {
+
+    @Override
+    public Class<CauseQuery> getFilterQueryType() {
+        return CauseQuery.class;
+    }
 
     @Override
     public Class<Event> getEventType() {
@@ -14,7 +20,7 @@ public class CauseQueryProducer implements EventFilterQueryProducer<Event, Cause
     }
 
     @Override
-    public Collection<CauseQuery> produce(Event source) {
-        return ImmutableList.of(new CauseQuery(source.getCause()));
+    public Optional<CauseQuery> produce(Event source) {
+        return Optional.of(new CauseQuery(source.getCause()));
     }
 }

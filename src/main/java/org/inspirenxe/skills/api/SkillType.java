@@ -40,7 +40,7 @@ public interface SkillType extends CatalogType {
 
   int getMaxLevel();
 
-  Map<EventType, EventScript> getEventScripts();
+  Map<EventType<?>, EventScript> getEventScripts();
 
   void processEvent(Event event);
 }

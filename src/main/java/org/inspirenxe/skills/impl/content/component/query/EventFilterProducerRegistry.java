@@ -1,7 +1,10 @@
 package org.inspirenxe.skills.impl.content.component.query;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import net.kyori.fragment.filter.FilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.CompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockQuery;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockQueryProducer;
 import org.inspirenxe.skills.impl.content.component.filter.cause.CauseQuery;
@@ -28,15 +31,17 @@ public class EventFilterProducerRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public Collection<FilterQuery> getQueries(Event event) {
-        ImmutableList.Builder<FilterQuery> listBuilder = ImmutableList.builder();
+    public CompoundFilterQuery getQueries(Event event) {
+        ImmutableMap.Builder<Class<? extends FilterQuery>, FilterQuery> mapBuilder = ImmutableMap.builder();
+
         for (EventFilterQueryProducer<? extends Event, ? extends FilterQuery> producer: this.producers.values()) {
             if (!producer.getEventType().isAssignableFrom(event.getClass())) {
                 continue;
             }
-            listBuilder.addAll(((EventFilterQueryProducer) producer).produce(event));
+            ((EventFilterQueryProducer<Event, FilterQuery>) producer)
+                    .produce(event)
+                    .ifPresent(f -> mapBuilder.put(producer.getFilterQueryType(), f));
         }
-        return listBuilder.build();
-        //return ((EventFilterQueryProducer) producer).produce(producer.getEventType().cast(event));
+        return new CompoundFilterQuery(mapBuilder.build());
     }
 }

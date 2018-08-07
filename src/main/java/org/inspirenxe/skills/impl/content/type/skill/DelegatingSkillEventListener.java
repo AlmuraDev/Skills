@@ -3,6 +3,7 @@ package org.inspirenxe.skills.impl.content.type.skill;
 import com.google.common.collect.ImmutableList;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -23,7 +24,8 @@ public class DelegatingSkillEventListener implements EventListener<Event> {
     public void handle(Event event) throws Exception {
         // TODO - register listeners for specific events to
         // prevent Sponge from unecessarily firing lots of events (via ShouldFire)
-        if (event instanceof ExperienceEvent.Load) {
+
+        if (!Sponge.isServerAvailable() || !Sponge.getServer().isMainThread()) {
             return;
         }
         if (event instanceof ChangeBlockEvent.Break) {

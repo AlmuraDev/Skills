@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.ChangeBlockEventFlattener;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.action.InteractEvent;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -54,29 +55,29 @@ public final class EventTypeRegistryModule implements AdditionalCatalogRegistryM
 
   @Override
   public void registerDefaults() {
-    final EventType eventType = EventType.of("event", Event.class);
+    final EventType<Event> eventType = EventType.of("event", Event.class);
     this.registerAdditionalCatalog(eventType);
 
-    final EventType changeBlockType = eventType.child("change-block", ChangeBlockEvent.class);
+    final EventType<ChangeBlockEvent> changeBlockType = eventType.child("change-block", ChangeBlockEvent.class, new ChangeBlockEventFlattener());
     this.registerAdditionalCatalog(changeBlockType);
     this.registerAdditionalCatalog(changeBlockType.child("break", ChangeBlockEvent.Break.class));
     this.registerAdditionalCatalog(changeBlockType.child("place", ChangeBlockEvent.Place.class));
 
-    final EventType interactType = eventType.child("interact", InteractEvent.class);
+    final EventType<InteractEvent> interactType = eventType.child("interact", InteractEvent.class);
     this.registerAdditionalCatalog(interactType);
     this.registerAdditionalCatalog(interactType.child("item", InteractItemEvent.class));
 
-    final EventType experienceType = eventType.child("experience", ExperienceEvent.class);
+    final EventType<ExperienceEvent> experienceType = eventType.child("experience", ExperienceEvent.class);
     this.registerAdditionalCatalog(experienceType);
 
-    final EventType experienceChangeType = experienceType.child("change", ExperienceEvent.Change.class);
+    final EventType<ExperienceEvent.Change> experienceChangeType = experienceType.child("change", ExperienceEvent.Change.class);
     this.registerAdditionalCatalog(experienceChangeType);
 
-    final EventType experienceChangePostType = experienceChangeType.child("post", ExperienceEvent.Change.Post.class);
+    final EventType<ExperienceEvent.Change.Post> experienceChangePostType = experienceChangeType.child("post", ExperienceEvent.Change.Post.class);
     this.registerAdditionalCatalog(experienceChangePostType);
     this.registerAdditionalCatalog(experienceChangePostType.child("root", ExperienceEvent.Change.Post.class));
 
-    final EventType experienceChangePostLevelType = experienceChangePostType.child("level", ExperienceEvent.Change.Post.Level.class);
+    final EventType<ExperienceEvent.Change.Post.Level> experienceChangePostLevelType = experienceChangePostType.child("level", ExperienceEvent.Change.Post.Level.class);
     this.registerAdditionalCatalog(experienceChangePostLevelType);
   }
 

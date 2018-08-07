@@ -6,8 +6,14 @@ import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSour
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class BlockQueryProducer implements EventFilterQueryProducer<ChangeBlockEvent, BlockQuery> {
+
+    @Override
+    public Class<BlockQuery> getFilterQueryType() {
+        return BlockQuery.class;
+    }
 
     @Override
     public Class<ChangeBlockEvent> getEventType() {
@@ -15,7 +21,11 @@ public class BlockQueryProducer implements EventFilterQueryProducer<ChangeBlockE
     }
 
     @Override
-    public Collection<BlockQuery> produce(ChangeBlockEvent event) {
+    public Optional<BlockQuery> produce(ChangeBlockEvent event) {
+        if (event.getTransactions().size() != 1) {
+            throw new IllegalStateException("Failed to flatten event " + event);
+        }
+
         BlockTransactionSource source = BlockTransactionSource.ORIGINAL;
 
         if (event instanceof ChangeBlockEvent.Place) {
@@ -24,7 +34,6 @@ public class BlockQueryProducer implements EventFilterQueryProducer<ChangeBlockE
             source = BlockTransactionSource.ORIGINAL;
         }
         BlockTransactionSource finalSource = source;
-
-        return event.getTransactions().stream().map(t -> new BlockQuery(t, finalSource)).collect(ImmutableList.toImmutableList());
+        return Optional.of(new BlockQuery(event.getTransactions().get(0), finalSource));
     }
 }

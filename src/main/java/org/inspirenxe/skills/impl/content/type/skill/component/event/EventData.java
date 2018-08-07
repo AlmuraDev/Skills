@@ -2,6 +2,7 @@ package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
 import net.kyori.fragment.filter.FilterQuery;
 import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.impl.content.component.filter.CompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.query.EventFilterProducerRegistry;
 import org.spongepowered.api.event.Event;
 
@@ -10,13 +11,13 @@ import java.util.Collection;
 public class EventData {
 
     private final Event event;
-    private final Collection<FilterQuery> queries;
+    private final CompoundFilterQuery query;
     private final SkillType skillType;
 
     public EventData(Event event, SkillType skillType) {
         this.event = event;
         this.skillType = skillType;
-        this.queries = EventFilterProducerRegistry.INSTANCE.getQueries(event);
+        this.query = EventFilterProducerRegistry.INSTANCE.getQueries(event);
     }
 
     public Event getEvent() {
@@ -27,8 +28,8 @@ public class EventData {
         return this.skillType;
     }
 
-    public Collection<FilterQuery> getQueries() {
-        return this.queries;
+    public CompoundFilterQuery getQuery() {
+        return this.query;
     }
 
 }

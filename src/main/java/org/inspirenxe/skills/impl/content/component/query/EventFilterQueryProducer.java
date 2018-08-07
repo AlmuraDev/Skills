@@ -8,8 +8,10 @@ import java.util.Optional;
 
 public interface EventFilterQueryProducer<E extends Event, F extends FilterQuery> {
 
+    Class<F> getFilterQueryType();
+
     Class<E> getEventType();
 
-    Collection<F> produce(E source);
+    Optional<F> produce(E source);
 
 }
