@@ -12,14 +12,15 @@ public class EventApplicatorModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        final MapBinder<String, Parser<? extends EventApplicator<?>>> applicators = MapBinder.newMapBinder(this.binder(), new TypeLiteral<String>() {}, new TypeLiteral<Parser<? extends EventApplicator<?>>>() {});
+        applicators.addBinding("cancel").to(EventCancelParser.class);
+
+
         final ParserBinder parsers = new ParserBinder(this.binder());
         parsers.bindParser(EventApplicator.class).to(EventApplicatorParser.class);
 
         final FeatureDefinitionParserBinder features = new FeatureDefinitionParserBinder(this.binder());
         features.bindFeatureParser(EventApplicator.class).to(EventApplicatorParser.class);
-
-        final MapBinder<String, Parser<? extends EventApplicator>> applicators = MapBinder.newMapBinder(this.binder(), new TypeLiteral<String>() {}, new TypeLiteral<Parser<? extends EventApplicator>>() {});
-        applicators.addBinding("cancel").to(EventCancelParser.class);
 
     }
 }
