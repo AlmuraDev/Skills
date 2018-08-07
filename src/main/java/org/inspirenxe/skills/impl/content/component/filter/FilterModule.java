@@ -56,8 +56,5 @@ public final class FilterModule extends AbstractModule {
     filters.bindFilter("namespace").to(NamespaceFilterParser.class);
     filters.bindFilter("notifier").to(NotifierFilterParser.class);
     filters.bindFilter("potion").to(PotionFilterParser.class);
-
-    this.requestStaticInjection(DataFilter.class);
-    this.requestInjection(KeyValue.class);
   }
 }

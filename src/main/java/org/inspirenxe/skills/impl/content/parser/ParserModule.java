@@ -68,6 +68,8 @@ public final class ParserModule extends AbstractModule {
 
   @Override
   protected void configure() {
+    this.requestStaticInjection(KeyValue.class);
+
     final ParserBinder parsers = new ParserBinder(this.binder());
     parsers.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
     parsers.bindParser(CauseType.class).to(new TypeLiteral<EnumParser<CauseType>>() {});

@@ -44,12 +44,7 @@ import javax.annotation.Nullable;
 
 public final class DataFilter implements TypedFilter<DataQuery> {
 
-  @Nullable
-  @Inject
-  private static Injector injector;
   private final KeyValue keyValue;
-  @Nullable private Object value;
-  private boolean computedValue;
 
   DataFilter(final KeyValue keyValue) {
     this.keyValue = keyValue;
@@ -67,7 +62,7 @@ public final class DataFilter implements TypedFilter<DataQuery> {
     FilterResponse response = FilterResponse.from(query.getDataHolder().supports(key));
       Optional<?> holderValue = query.getDataHolder().get(key);
       response = holderValue.
-              map(val -> FilterResponse.from(Objects.equals(this.value, val)))
+              map(val -> FilterResponse.from(Objects.equals(this.keyValue.getValue(), val)))
               .orElse(FilterResponse.DENY);
 
     return response;
