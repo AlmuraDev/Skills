@@ -18,9 +18,9 @@
         </all>
       </if>
       <then>
-<!--        <apply>
-          <effect key="skills:firework/mining-level-max" x="0" y="2.5" z="0"/>
-        </apply>-->
+        <apply>
+          <!--<effect key="skills:firework/mining-level-max" x="0" y="2.5" z="0"/>-->
+        </apply>
       </then>
       <else>
         <apply>
@@ -31,9 +31,9 @@
             </all>
           </if>
           <then>
-<!--            <apply>
-              <effect key="skills:firework/mining-level-up" x="0" y="2.5" z="0"/>
-            </apply>-->
+            <apply>
+              <!--<effect key="skills:firework/mining-level-up" x="0" y="2.5" z="0"/>-->
+            </apply>
           </then>
         </apply>
       </else>
