@@ -126,7 +126,7 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
 
                   innerApplyNode.nodes().stream().forEach(node -> {
                       if (node.name().equals("if")) {
-                          if (innerIfNode[0] != null) {
+                          if (innerIfNode[0] == null) {
                               innerIfNode[0] = node;
                           } else {
                               throw new IllegalArgumentException(String.format("Found more than one 'if' node: '%s' and '%s'", node, innerIfNode[0]));
