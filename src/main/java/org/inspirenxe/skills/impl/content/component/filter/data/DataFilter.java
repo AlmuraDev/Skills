@@ -37,6 +37,7 @@ import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.spongepowered.api.data.key.Key;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -64,7 +65,7 @@ public final class DataFilter implements TypedFilter<DataQuery> {
   @Override
   public FilterResponse typedQuery(final DataQuery query) {
     final Key key = this.dataKey.require();
-    FilterResponse response = FilterResponse.from(key.getId().equalsIgnoreCase(query.dataKey().getId()));
+    FilterResponse response = FilterResponse.from(query.getDataHolder().supports(key));
 
     if (response == FilterResponse.ALLOW && this.rawValue != null && injector != null) {
       if (!this.computedValue) {
@@ -73,7 +74,10 @@ public final class DataFilter implements TypedFilter<DataQuery> {
         this.value = parser.parse(key.getElementToken(), rawValue).orElse(null);
         this.computedValue = true;
       }
-      response = FilterResponse.from(Objects.equals(this.value, query.value()));
+      Optional<?> holderValue = query.getDataHolder().get(key);
+      response = holderValue.
+              map(val -> FilterResponse.from(Objects.equals(this.value, val)))
+              .orElse(FilterResponse.DENY);
     }
 
     return response;
