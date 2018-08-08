@@ -1,6 +1,7 @@
 package org.inspirenxe.skills.impl.content.component.filter.block;
 
 import com.google.common.collect.ImmutableList;
+import org.inspirenxe.skills.impl.content.component.filter.FilterUtils;
 import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProducer;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -22,9 +23,7 @@ public class BlockQueryProducer implements EventFilterQueryProducer<ChangeBlockE
 
     @Override
     public Optional<BlockQuery> produce(ChangeBlockEvent event) {
-        if (event.getTransactions().size() != 1) {
-            throw new IllegalStateException("Failed to flatten event " + event);
-        }
+        FilterUtils.checkChangeBlockEvent(event);
 
         BlockTransactionSource source = BlockTransactionSource.ORIGINAL;
 

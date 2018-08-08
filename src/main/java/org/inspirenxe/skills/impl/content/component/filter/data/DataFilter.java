@@ -56,9 +56,8 @@ public final class DataFilter extends TypedMultiFilter<DataQuery> {
   @Override
   public FilterResponse individualQuery(final DataQuery query) {
     final Key key = this.keyValue.getKey();
-    FilterResponse response = FilterResponse.from(query.getDataHolder().supports(key));
       Optional<?> holderValue = query.getDataHolder().get(key);
-      response = holderValue.
+      FilterResponse response = holderValue.
               map(val -> FilterResponse.from(Objects.equals(this.keyValue.getValue(), val)))
               .orElse(FilterResponse.DENY);
 
