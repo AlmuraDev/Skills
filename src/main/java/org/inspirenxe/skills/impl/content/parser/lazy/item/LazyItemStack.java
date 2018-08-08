@@ -39,7 +39,7 @@ public interface LazyItemStack extends Predicate<ItemStack>, Supplier<ItemStack>
 
   // 1.13
   @Deprecated
-  int DEFAULT_DATA = 0;
+  int DEFAULT_DATA = -1;
 
   int DEFAULT_QUANTITY = 1;
 
@@ -69,6 +69,6 @@ public interface LazyItemStack extends Predicate<ItemStack>, Supplier<ItemStack>
   }
 
   default boolean matches(final LazyItemStack that) {
-    return this.item() == that.item() && this.data() == that.data();
+    return this.item() == that.item() && (this.data() == -1 || this.data() == that.data());
   }
 }

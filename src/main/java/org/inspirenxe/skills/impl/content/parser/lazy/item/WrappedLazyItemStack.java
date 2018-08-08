@@ -32,7 +32,7 @@ public final class WrappedLazyItemStack implements LazyItemStack {
 
   private final ItemStack stack;
 
-  WrappedLazyItemStack(final ItemStack stack) {
+  public WrappedLazyItemStack(final ItemStack stack) {
     this.stack = stack;
   }
 
