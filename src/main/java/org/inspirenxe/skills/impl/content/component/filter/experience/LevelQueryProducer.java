@@ -23,6 +23,7 @@ public class LevelQueryProducer implements EventFilterQueryProducer<Event, Level
 
     @Override
     public Optional<LevelQuery> produce(Event source) {
-        return source.getCause().first(Player.class).map(LevelQueryImpl::new);
+        return source.getCause().first(Player.class)
+                .map(p -> new LevelQueryImpl(SkillManagerImpl.INSTANCE.getHolder(p.getWorld().getUniqueId(), p.getUniqueId()).get()));
     }
 }

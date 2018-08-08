@@ -24,21 +24,21 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
+import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillManagerImpl;
 import org.spongepowered.api.entity.living.player.Player;
 
 public final class LevelQueryImpl implements LevelQuery {
 
-  private final Player player;
+  private final SkillHolder skillHolder;
 
-  LevelQueryImpl(final Player player) {
-    this.player = player;
+  LevelQueryImpl(final SkillHolder skillHolder) {
+    this.skillHolder = skillHolder;
   }
 
   @Override
   public int level(SkillType skillType) {
-    return SkillManagerImpl.INSTANCE.getHolder(this.player.getWorld().getUniqueId(), this.player.getUniqueId())
-            .get().getSkill(skillType).get().getCurrentLevel();
+    return skillHolder.getSkill(skillType).get().getCurrentLevel();
   }
 }
