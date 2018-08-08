@@ -34,6 +34,7 @@
                 <then>
                   <apply>
                     <message key="action_bar" text="You lack the experience to use this item!"/>
+                    <skills:cancel-event value="true"/>
                     <skills:data key="sponge:item_durability" op="add" value="-5"/>
                   </apply>
                 </then>
