@@ -25,8 +25,6 @@
 package org.inspirenxe.skills.impl.content.component.filter.cause;
 
 import net.kyori.fragment.filter.FilterQuery;
-import org.inspirenxe.skills.impl.cause.CauseOperatorType;
-import org.inspirenxe.skills.impl.cause.CauseType;
 import org.spongepowered.api.event.cause.Cause;
 
 public final class CauseQuery implements FilterQuery {

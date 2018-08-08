@@ -1,9 +1,6 @@
 package org.inspirenxe.skills.impl.content.component.apply;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
-import org.spongepowered.api.event.Event;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 
 public abstract class TypedEventApplicator<T> extends EventApplicatorImpl {
 
@@ -14,13 +11,13 @@ public abstract class TypedEventApplicator<T> extends EventApplicatorImpl {
     }
 
     @Override
-    public void apply(EventData eventData) {
+    public void apply(EventCompoundFilterQuery eventData) {
         if (!this.eventClass.isInstance(eventData.getEvent())) {
             throw new IllegalStateException(String.format("Expected event of type '%s'. but got '%s'", this.eventClass, eventData));
         }
         this.applyTyped(eventData, this.eventClass.cast(eventData.getEvent()));
     }
 
-    protected abstract void applyTyped(final EventData eventData, T event);
+    protected abstract void applyTyped(final EventCompoundFilterQuery eventData, T event);
 
 }

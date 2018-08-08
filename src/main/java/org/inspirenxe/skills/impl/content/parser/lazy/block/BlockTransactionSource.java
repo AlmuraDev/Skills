@@ -2,8 +2,6 @@ package org.inspirenxe.skills.impl.content.parser.lazy.block;
 
 import org.spongepowered.api.data.Transaction;
 
-import java.util.Optional;
-
 public enum BlockTransactionSource {
 
     /**

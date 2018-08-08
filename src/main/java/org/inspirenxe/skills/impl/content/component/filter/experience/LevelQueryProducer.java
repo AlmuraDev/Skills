@@ -1,7 +1,5 @@
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
-import org.inspirenxe.skills.api.SkillManager;
-import org.inspirenxe.skills.impl.SkillHolderImpl;
 import org.inspirenxe.skills.impl.SkillManagerImpl;
 import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProducer;
 import org.spongepowered.api.entity.living.player.Player;

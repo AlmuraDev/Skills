@@ -30,7 +30,6 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.EventFlattener;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.NoOpEventFlattener;
 import org.spongepowered.api.event.Event;
 
 import java.util.ArrayList;

@@ -45,8 +45,6 @@ import org.inspirenxe.skills.impl.content.component.apply.math.MathOperationPars
 import org.inspirenxe.skills.impl.content.component.apply.message.Message;
 import org.inspirenxe.skills.impl.content.component.apply.message.MessageParser;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
-import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
-import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockStateParser;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
@@ -56,6 +54,8 @@ import org.inspirenxe.skills.impl.content.parser.lazy.item.LazyItemStackParser;
 import org.inspirenxe.skills.impl.content.parser.value.CatalogStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
+import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
+import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
 import org.jooq.SQLDialect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.effect.sound.SoundCategory;

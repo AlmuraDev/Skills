@@ -41,7 +41,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.AsynchronousExecutor;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.service.ServiceManager;
-import org.spongepowered.api.service.sql.SqlService;
 
 import java.io.IOException;
 import java.nio.file.Path;

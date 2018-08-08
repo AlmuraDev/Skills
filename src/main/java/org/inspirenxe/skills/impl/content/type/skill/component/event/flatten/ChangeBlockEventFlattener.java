@@ -3,7 +3,6 @@ package org.inspirenxe.skills.impl.content.type.skill.component.event.flatten;
 import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 

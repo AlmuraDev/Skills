@@ -1,12 +1,10 @@
 package org.inspirenxe.skills.impl.content.component.filter.block;
 
-import com.google.common.collect.ImmutableList;
 import org.inspirenxe.skills.impl.content.component.filter.FilterUtils;
 import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProducer;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
-import java.util.Collection;
 import java.util.Optional;
 
 public class BlockQueryProducer implements EventFilterQueryProducer<ChangeBlockEvent, BlockQuery> {

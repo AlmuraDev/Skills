@@ -26,10 +26,6 @@ package org.inspirenxe.skills.impl.content.component.filter.data;
 
 import net.kyori.fragment.filter.FilterQuery;
 import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.key.Key;
-
-import javax.annotation.Nullable;
-import javax.xml.crypto.Data;
 
 public final class DataQuery implements FilterQuery {
 

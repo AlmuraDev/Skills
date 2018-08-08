@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
-import org.spongepowered.api.event.Event;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +39,7 @@ public interface EventScript {
 
   List<Branch> getBranches();
 
-  void processEvent(EventData eventData);
+  void processEvent(EventCompoundFilterQuery eventData);
 
   interface Builder {
 

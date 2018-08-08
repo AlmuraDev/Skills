@@ -5,7 +5,7 @@ import net.kyori.fragment.filter.FilterResponse;
 import net.kyori.fragment.filter.TypedFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public abstract class TypedMultiFilter<Q extends FilterQuery> implements TypedFilter<CompoundFilterQuery> {
+public abstract class TypedMultiFilter<Q extends FilterQuery> implements TypedFilter<EventCompoundFilterQuery> {
 
     private final Class<Q> filterQueryType;
 
@@ -19,13 +19,13 @@ public abstract class TypedMultiFilter<Q extends FilterQuery> implements TypedFi
 
     @Override
     public final boolean queryable(@NonNull FilterQuery query) {
-        return query instanceof CompoundFilterQuery
-                && ((CompoundFilterQuery) query).getQuery(this.filterQueryType)
+        return query instanceof EventCompoundFilterQuery
+                && ((EventCompoundFilterQuery) query).getQuery(this.filterQueryType)
                     .map(this::individualQueryabled).orElse(false);
     }
 
     @Override
-    public final FilterResponse typedQuery(final @NonNull CompoundFilterQuery query) {
+    public final FilterResponse typedQuery(final @NonNull EventCompoundFilterQuery query) {
         return query.getQuery(this.getFilterQueryType()).map(this::individualQuery).orElse(FilterResponse.ABSTAIN);
     }
 

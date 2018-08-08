@@ -25,12 +25,9 @@
 package org.inspirenxe.skills.impl.content.component.apply;
 
 import net.kyori.feature.FeatureDefinition;
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
-import org.spongepowered.api.event.Event;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 
 public interface EventApplicator extends FeatureDefinition {
 
-  void apply(final EventData eventData);
+  void apply(final EventCompoundFilterQuery eventData);
 }

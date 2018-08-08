@@ -1,10 +1,9 @@
 package org.inspirenxe.skills.impl.content.component.apply.experience;
 
 import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.content.component.apply.MathOperationType;
 import org.inspirenxe.skills.impl.content.component.apply.cause.CauseFirstEventApplicator;
 import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Event;
 
@@ -20,7 +19,7 @@ public class ExperienceApplicator extends CauseFirstEventApplicator<Event, Playe
     }
 
     @Override
-    protected void applyWithCause(EventData eventData, Event event, Player causeObject) {
+    protected void applyWithCause(EventCompoundFilterQuery eventData, Event event, Player causeObject) {
         Skill skill = this.getSkill(eventData.getSkillType(), causeObject);
         double newExperience = this.operation.apply(new BigDecimal(skill.getCurrentExperience())).doubleValue();
         skill.setExperience(newExperience);

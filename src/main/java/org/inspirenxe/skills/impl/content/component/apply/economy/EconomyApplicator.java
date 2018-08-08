@@ -1,11 +1,9 @@
 package org.inspirenxe.skills.impl.content.component.apply.economy;
 
-import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.content.component.apply.cause.CauseFirstEventApplicator;
 import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.service.economy.Currency;
@@ -23,7 +21,7 @@ public class EconomyApplicator extends CauseFirstEventApplicator<Event, Identifi
     }
 
     @Override
-    protected void applyWithCause(EventData eventData, Event event, Identifiable causeObject) {
+    protected void applyWithCause(EventCompoundFilterQuery eventData, Event event, Identifiable causeObject) {
         Sponge.getServiceManager().provide(EconomyService.class).ifPresent(econ -> {
             Account account = econ.getOrCreateAccount(causeObject.getUniqueId()).get();
             Currency currency = econ.getDefaultCurrency();

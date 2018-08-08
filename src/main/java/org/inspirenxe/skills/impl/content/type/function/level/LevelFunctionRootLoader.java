@@ -34,7 +34,6 @@ import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
 @Singleton
 public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {

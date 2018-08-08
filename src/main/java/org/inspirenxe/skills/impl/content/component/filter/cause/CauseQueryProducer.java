@@ -1,10 +1,8 @@
 package org.inspirenxe.skills.impl.content.component.filter.cause;
 
-import com.google.common.collect.ImmutableList;
 import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProducer;
 import org.spongepowered.api.event.Event;
 
-import java.util.Collection;
 import java.util.Optional;
 
 public class CauseQueryProducer implements EventFilterQueryProducer<Event, CauseQuery> {

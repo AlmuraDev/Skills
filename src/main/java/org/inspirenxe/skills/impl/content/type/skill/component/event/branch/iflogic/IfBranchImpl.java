@@ -25,9 +25,8 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic;
 
 import net.kyori.fragment.filter.Filter;
-import net.kyori.fragment.filter.FilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchImpl;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.ConditionalBranch;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.LogicBranchImpl;
 
@@ -40,8 +39,8 @@ final class IfBranchImpl extends LogicBranchImpl implements IfBranch {
   }
 
   @Override
-  public void processInternal(EventData event) {
-      boolean success = this.getStatement().allowed(event.getQuery());
+  public void processInternal(EventCompoundFilterQuery event) {
+      boolean success = this.getStatement().allowed(event);
       for (ConditionalBranch branch: this.getBranchesForResult(success)) {
         ((BranchImpl) branch).processInternal(event);
       }

@@ -24,9 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.key;
 
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 public final class NamespaceFilter extends TypedMultiFilter<RegistryKeyFilterQuery> {

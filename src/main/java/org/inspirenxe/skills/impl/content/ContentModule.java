@@ -34,8 +34,8 @@ import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.content.component.ComponentModule;
 import org.inspirenxe.skills.impl.content.loader.finder.ContentFinderImpl;
 import org.inspirenxe.skills.impl.content.parser.ParserModule;
-import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
 import org.inspirenxe.skills.impl.content.registry.RegistryModule;
+import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
 import org.spongepowered.api.config.ConfigDir;
 
 import java.nio.file.Path;

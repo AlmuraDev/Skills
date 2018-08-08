@@ -41,7 +41,6 @@ import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.sound.SoundEffect;
 import org.inspirenxe.skills.impl.ResultBuilder;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.inspirenxe.skills.impl.content.registry.module.ColorTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.EconomyFunctionRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.EventTypeRegistryModule;
@@ -50,6 +49,7 @@ import org.inspirenxe.skills.impl.content.registry.module.LevelFunctionRegistryM
 import org.inspirenxe.skills.impl.content.registry.module.PotionEffectTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.SoundEffectTypeRegistryModule;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.inspirenxe.skills.impl.sound.SoundEffectBuilderImpl;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Key;

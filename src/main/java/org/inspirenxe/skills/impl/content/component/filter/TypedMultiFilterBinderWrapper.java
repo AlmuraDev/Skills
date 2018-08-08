@@ -1,10 +1,6 @@
 package org.inspirenxe.skills.impl.content.component.filter;
 
-import com.google.inject.Binder;
-import com.google.inject.TypeLiteral;
 import com.google.inject.binder.LinkedBindingBuilder;
-import com.google.inject.multibindings.MapBinder;
-import net.kyori.fragment.filter.Filter;
 import net.kyori.fragment.filter.FilterBinder;
 import net.kyori.xml.node.parser.Parser;
 

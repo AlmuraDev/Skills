@@ -1,12 +1,9 @@
 package org.inspirenxe.skills.impl.content.component.query;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.kyori.fragment.filter.FilterQuery;
-import org.inspirenxe.skills.impl.content.component.filter.CompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockQuery;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockQueryProducer;
 import org.inspirenxe.skills.impl.content.component.filter.cause.CauseQuery;
@@ -18,10 +15,6 @@ import org.inspirenxe.skills.impl.content.component.filter.experience.LevelQuery
 import org.inspirenxe.skills.impl.content.component.filter.owner.BlockSnapshotOwnerQueryProducer;
 import org.inspirenxe.skills.impl.content.component.filter.owner.OwnerQuery;
 import org.spongepowered.api.event.Event;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EventFilterProducerRegistry {
 
@@ -42,7 +35,7 @@ public class EventFilterProducerRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public CompoundFilterQuery getQueries(Event event) {
+    public ImmutableMap<Class<? extends FilterQuery>, FilterQuery> getQueries(Event event) {
         ImmutableMap.Builder<Class<? extends FilterQuery>, FilterQuery> mapBuilder = ImmutableMap.builder();
 
         for (EventFilterQueryProducer<? extends Event, ? extends FilterQuery> producer: this.producers.values()) {
@@ -53,6 +46,6 @@ public class EventFilterProducerRegistry {
                     .produce(event)
                     .ifPresent(f -> mapBuilder.put(producer.getFilterQueryType(), f));
         }
-        return new CompoundFilterQuery(mapBuilder.build());
+        return mapBuilder.build();
     }
 }

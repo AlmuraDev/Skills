@@ -1,6 +1,5 @@
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import org.inspirenxe.skills.impl.content.component.filter.cause.CauseQuery;
 import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProducer;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.event.Event;

@@ -24,13 +24,15 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+
 public abstract class BranchImpl implements Branch {
 
     @Override
-    public void processEvent(EventData eventData) {
+    public void processEvent(EventCompoundFilterQuery eventData) {
         this.processInternal(eventData);
     }
 
-    public abstract void processInternal(EventData event);
+    public abstract void processInternal(EventCompoundFilterQuery event);
 
 }

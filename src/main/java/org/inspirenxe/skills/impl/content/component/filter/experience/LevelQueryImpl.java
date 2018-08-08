@@ -26,8 +26,6 @@ package org.inspirenxe.skills.impl.content.component.filter.experience;
 
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.SkillManagerImpl;
-import org.spongepowered.api.entity.living.player.Player;
 
 public final class LevelQueryImpl implements LevelQuery {
 

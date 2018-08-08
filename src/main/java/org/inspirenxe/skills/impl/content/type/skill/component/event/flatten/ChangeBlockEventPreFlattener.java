@@ -1,7 +1,6 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event.flatten;
 
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.world.Location;

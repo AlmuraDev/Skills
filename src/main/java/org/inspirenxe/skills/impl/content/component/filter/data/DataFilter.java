@@ -24,24 +24,14 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
-import net.kyori.violet.FriendlyTypeLiteral;
-import net.kyori.violet.TypeArgument;
 import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
-import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.spongepowered.api.data.key.Key;
 
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.annotation.Nullable;
 
 public final class DataFilter extends TypedMultiFilter<DataQuery> {
 

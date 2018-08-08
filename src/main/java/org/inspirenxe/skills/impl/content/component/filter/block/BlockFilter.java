@@ -25,9 +25,7 @@
 package org.inspirenxe.skills.impl.content.component.filter.block;
 
 import com.google.common.base.MoreObjects;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
 

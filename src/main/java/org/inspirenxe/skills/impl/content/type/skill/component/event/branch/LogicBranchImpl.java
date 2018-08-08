@@ -31,7 +31,6 @@ import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflo
 import org.inspirenxe.skills.impl.content.type.skill.component.event.branch.iflogic.ThenBranch;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class LogicBranchImpl extends CompositeBranchImpl<ConditionalBranch> implements LogicBranch {
 

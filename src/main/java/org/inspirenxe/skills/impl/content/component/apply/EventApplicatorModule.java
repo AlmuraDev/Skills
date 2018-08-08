@@ -10,14 +10,7 @@ import org.inspirenxe.skills.impl.content.component.apply.cancel.EventCancelPars
 import org.inspirenxe.skills.impl.content.component.apply.data.DataApplicatorParser;
 import org.inspirenxe.skills.impl.content.component.apply.economy.EconomyApplicatorParser;
 import org.inspirenxe.skills.impl.content.component.apply.experience.ExperienceApplicatorParser;
-import org.inspirenxe.skills.impl.content.component.apply.math.BigDecimalParser;
-import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
-import org.inspirenxe.skills.impl.content.component.apply.math.MathOperationParser;
-import org.inspirenxe.skills.impl.content.component.apply.message.Message;
 import org.inspirenxe.skills.impl.content.component.apply.message.MessageApplicatorParser;
-import org.inspirenxe.skills.impl.content.component.apply.message.MessageParser;
-
-import java.math.BigDecimal;
 
 public class EventApplicatorModule extends AbstractModule {
 

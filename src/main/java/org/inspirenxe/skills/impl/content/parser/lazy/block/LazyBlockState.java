@@ -26,11 +26,9 @@ package org.inspirenxe.skills.impl.content.parser.lazy.block;
 
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockQuery;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
-import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;
-import org.spongepowered.api.data.Transaction;
 
 import java.util.Collection;
 import java.util.Optional;

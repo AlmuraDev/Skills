@@ -2,7 +2,6 @@ package org.inspirenxe.skills.impl.content.component.filter.owner;
 
 import org.inspirenxe.skills.impl.content.component.filter.FilterUtils;
 import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProducer;
-import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
 import java.util.Optional;

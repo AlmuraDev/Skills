@@ -27,10 +27,7 @@ package org.inspirenxe.skills.impl.content.component.filter.block;
 import com.google.common.base.Preconditions;
 import net.kyori.fragment.filter.FilterQuery;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
-import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.Transaction;
 
 public final class BlockQuery implements FilterQuery {

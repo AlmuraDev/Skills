@@ -24,15 +24,11 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.droplet.registry.RegistryKey;
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
 import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
-import org.spongepowered.api.data.key.Key;
 
 public final class DataFilterParser implements Parser<DataFilter> {
 

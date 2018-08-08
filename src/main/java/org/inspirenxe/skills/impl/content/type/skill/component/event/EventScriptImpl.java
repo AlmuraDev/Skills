@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.event.Event;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +56,7 @@ public final class EventScriptImpl implements EventScript {
   }
 
   @Override
-  public void processEvent(EventData eventData) {
+  public void processEvent(EventCompoundFilterQuery eventData) {
     if (!this.type.matches(eventData.getEvent().getClass())) {
       return;
     }

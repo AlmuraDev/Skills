@@ -30,7 +30,7 @@ import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.EventFlattener;
@@ -95,7 +95,7 @@ public final class SkillTypeImpl implements SkillType, Content {
                 continue;
             }
             for (Event subEvent: ((EventFlattener<Event>) entry.getKey().getFlattener()).flatten(event)) {
-                entry.getValue().processEvent(new EventData(subEvent, this));
+                entry.getValue().processEvent(new EventCompoundFilterQuery(subEvent, this));
             }
         }
     }
