@@ -43,7 +43,7 @@ public final class LevelFilter extends TypedMultiFilter<LevelQuery> {
   public FilterResponse individualQuery(LevelQuery query) {
     // TODO Operators
     // TODO - we need to pass in the SkillType to filters
-    return FilterResponse.ABSTAIN;
+    return FilterResponse.DENY;
     //return FilterResponse.from(this.level == query.level());
   }
 
