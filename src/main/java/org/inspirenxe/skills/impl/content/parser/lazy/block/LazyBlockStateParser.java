@@ -30,14 +30,12 @@ import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import net.kyori.xml.node.Node;
 import net.kyori.xml.node.parser.Parser;
-import org.inspirenxe.skills.impl.EnumUtils;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
 import org.spongepowered.api.block.BlockType;
 
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
