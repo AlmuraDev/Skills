@@ -87,9 +87,8 @@ public final class EventTypeImpl<T extends Event> implements EventType<T> {
     checkState(this.clazz.isAssignableFrom(clazz), "Cannot create a child EventType who is not a direct child!");
     return new EventTypeImpl<S>(id, this, clazz, flattener);
   }
-
   @Override
-  public Optional<EventType> getParent() {
+  public Optional<EventType<? super T>> getParent() {
     return Optional.ofNullable(this.parent);
   }
 

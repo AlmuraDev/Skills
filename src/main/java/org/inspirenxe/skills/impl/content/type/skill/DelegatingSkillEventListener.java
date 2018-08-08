@@ -11,19 +11,14 @@ import java.util.Collection;
 
 public class DelegatingSkillEventListener implements EventListener<Event> {
 
-    private Class<? extends Event> eventType;
     private Collection<SkillType> skillTypes;
 
-    public DelegatingSkillEventListener(Class<? extends Event> eventType, Collection<SkillType> skillTypes) {
-        this.eventType = eventType;
+    public DelegatingSkillEventListener(Collection<SkillType> skillTypes) {
         this.skillTypes = ImmutableList.copyOf(skillTypes);
     }
 
     @Override
     public void handle(Event event) throws Exception {
-        // TODO - register listeners for specific events to
-        // prevent Sponge from unecessarily firing lots of events (via ShouldFire)
-
         if (!Sponge.isServerAvailable() || !Sponge.getServer().isMainThread()) {
             return;
         }

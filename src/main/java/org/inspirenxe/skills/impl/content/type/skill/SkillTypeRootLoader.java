@@ -42,7 +42,9 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {
@@ -62,16 +64,37 @@ public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkil
 
   private void registerListeners() {
     Multimap<Class<? extends Event>, SkillType> listeners = HashMultimap.create();
+    Set<EventType<?>> withListeners = new HashSet<>();
     for (SkillType skillType: this.registry.all()) {
       for (Map.Entry<EventType<?>, EventScript> entry: skillType.getEventScripts().entrySet()) {
         listeners.put(entry.getKey().getEventClass(), skillType);
+        if (entry.getValue().getBranches().size() != 0) {
+          withListeners.add(entry.getKey());
+        }
       }
     }
 
-    // TODO - register listeners only for specific event types
-    DelegatingSkillEventListener listener = new DelegatingSkillEventListener(Event.class, this.registry.all());
-    Sponge.getEventManager().registerListener(SkillsImpl.INSTANCE, Event.class, listener);
+    for (SkillType skillType: this.registry.all()) {
+      for (Map.Entry<EventType<?>, EventScript> entry: skillType.getEventScripts().entrySet()) {
+        listeners.put(this.getOldestParent(withListeners, entry.getKey()), skillType);
+      }
+    }
+
+    for (Class<? extends Event> eventType: listeners.keySet()) {
+      DelegatingSkillEventListener listener = new DelegatingSkillEventListener(listeners.get(eventType));
+      Sponge.getEventManager().registerListener(SkillsImpl.INSTANCE, eventType, listener);
+    }
   }
 
-
+  private Class<? extends Event> getOldestParent(Set<EventType<?>> withListeners, EventType<?> eventType) {
+    EventType<?> highestWithListeners = eventType;
+      while (eventType.getParent().isPresent()) {
+        EventType<?> parent = eventType.getParent().get();
+        if (withListeners.contains(parent)) {
+          highestWithListeners = parent;
+        }
+        eventType = parent;
+      }
+      return highestWithListeners.getEventClass();
+    }
 }

@@ -47,7 +47,8 @@ public interface EventType<T extends Event> extends CatalogType {
 
     <S extends T> EventType<S> child(final String id, final Class<S> clazz, final EventFlattener<? super S> flattener);
 
-  Optional<EventType> getParent();
+
+  Optional<EventType<? super T>> getParent();
 
   Class<T> getEventClass();
 
