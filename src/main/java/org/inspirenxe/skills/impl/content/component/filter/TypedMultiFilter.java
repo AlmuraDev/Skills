@@ -18,12 +18,20 @@ public abstract class TypedMultiFilter<Q extends FilterQuery> implements TypedFi
     }
 
     @Override
-    public boolean queryable(@NonNull FilterQuery query) {
-        return query instanceof CompoundFilterQuery;
+    public final boolean queryable(@NonNull FilterQuery query) {
+        return query instanceof CompoundFilterQuery
+                && ((CompoundFilterQuery) query).getQuery(this.filterQueryType)
+                    .map(this::individualQueryabled).orElse(false);
     }
 
     @Override
-    public FilterResponse typedQuery(final @NonNull CompoundFilterQuery query) {
-        return null;
+    public final FilterResponse typedQuery(final @NonNull CompoundFilterQuery query) {
+        return query.getQuery(this.getFilterQueryType()).map(this::individualQuery).orElse(FilterResponse.ABSTAIN);
+    }
+
+    protected abstract FilterResponse individualQuery(Q query);
+
+    private boolean individualQueryabled(Q query) {
+        return true;
     }
 }

@@ -44,7 +44,7 @@ public final class FilterModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    final FilterBinder filters = new FilterBinder(this.binder());
+    final TypedMultiFilterBinder filters = new TypedMultiFilterBinder(this.binder());
     filters.bindFilter("block").to(BlockFilterParser.class);
     filters.bindFilter("cause").to(CauseFilterParser.class);
     filters.bindFilter("data").to(DataFilterParser.class);

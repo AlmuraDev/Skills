@@ -15,6 +15,9 @@ public class ChangeBlockEventFlattener implements EventFlattener<ChangeBlockEven
 
     @Override
     public Collection<ChangeBlockEvent> flatten(ChangeBlockEvent event) {
+        if (event.getTransactions().size() == 1) {
+            return ImmutableList.of(event);
+        }
         ImmutableList.Builder<ChangeBlockEvent> flattened = ImmutableList.builder();
         Function<List<Transaction<BlockSnapshot>>, ChangeBlockEvent> creationFun = this.getEventConstructor(event);
 

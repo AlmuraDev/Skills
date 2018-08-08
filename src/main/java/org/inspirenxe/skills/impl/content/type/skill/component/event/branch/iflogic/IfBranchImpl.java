@@ -41,12 +41,9 @@ final class IfBranchImpl extends LogicBranchImpl implements IfBranch {
 
   @Override
   public void processInternal(EventData event) {
-    // TODO - get filterquery by type - need to expand the Filter interface
-    for (FilterQuery query: event.getQuery().getAll()) {
       boolean success = this.getStatement().allowed(event.getQuery());
       for (ConditionalBranch branch: this.getBranchesForResult(success)) {
         ((BranchImpl) branch).processInternal(event);
       }
-    }
   }
 }

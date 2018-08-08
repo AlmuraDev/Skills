@@ -27,22 +27,19 @@ package org.inspirenxe.skills.impl.content.component.filter.key;
 import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
 import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
-public final class NamespaceFilter implements TypedFilter<RegistryKeyFilterQuery> {
+public final class NamespaceFilter extends TypedMultiFilter<RegistryKeyFilterQuery> {
 
   private final String namespace;
 
   NamespaceFilter(final String namespace) {
+    super(RegistryKeyFilterQuery.class);
     this.namespace = namespace;
   }
 
   @Override
-  public boolean queryable(final FilterQuery query) {
-    return query instanceof RegistryKeyFilterQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(final RegistryKeyFilterQuery query) {
+  public FilterResponse individualQuery(final RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.namespace.equalsIgnoreCase(query.key().namespace()));
   }
 }

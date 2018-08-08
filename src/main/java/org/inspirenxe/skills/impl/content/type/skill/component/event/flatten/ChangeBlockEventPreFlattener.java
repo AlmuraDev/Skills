@@ -13,6 +13,9 @@ public class ChangeBlockEventPreFlattener implements EventFlattener<ChangeBlockE
 
     @Override
     public Collection<ChangeBlockEvent.Pre> flatten(ChangeBlockEvent.Pre event) {
+        if (event.getLocations().size() == 1) {
+            return ImmutableList.of(event);
+        }
         ImmutableList.Builder<ChangeBlockEvent.Pre> builder = ImmutableList.builder();
         for (Location<World> location: event.getLocations()) {
             builder.add(SpongeEventFactory.createChangeBlockEventPre(event.getCause(), ImmutableList.of(location)));

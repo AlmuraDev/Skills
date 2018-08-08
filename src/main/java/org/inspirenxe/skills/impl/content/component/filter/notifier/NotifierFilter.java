@@ -28,6 +28,7 @@ import com.google.common.base.MoreObjects;
 import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
 import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -35,21 +36,17 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public final class NotifierFilter implements TypedFilter<NotifierQuery> {
+public final class NotifierFilter extends TypedMultiFilter<NotifierQuery> {
 
   private final Optional<UUID> notifier;
 
   NotifierFilter(@Nullable final UUID notifier) {
+    super(NotifierQuery.class);
     this.notifier = Optional.ofNullable(notifier);
   }
 
   @Override
-  public boolean queryable(FilterQuery query) {
-    return query instanceof NotifierQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(NotifierQuery query) {
+  public FilterResponse individualQuery(NotifierQuery query) {
     return FilterResponse.from(Objects.equals(this.notifier, query.notifier()));
   }
 

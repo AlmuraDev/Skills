@@ -34,6 +34,7 @@ import net.kyori.fragment.filter.TypedFilter;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
 import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.spongepowered.api.data.key.Key;
 
@@ -42,22 +43,18 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-public final class DataFilter implements TypedFilter<DataQuery> {
+public final class DataFilter extends TypedMultiFilter<DataQuery> {
 
   private final KeyValue keyValue;
 
   DataFilter(final KeyValue keyValue) {
+    super(DataQuery.class);
     this.keyValue = keyValue;
-  }
-
-  @Override
-  public boolean queryable(final FilterQuery query) {
-    return query instanceof DataQuery;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public FilterResponse typedQuery(final DataQuery query) {
+  public FilterResponse individualQuery(final DataQuery query) {
     final Key key = this.keyValue.getKey();
     FilterResponse response = FilterResponse.from(query.getDataHolder().supports(key));
       Optional<?> holderValue = query.getDataHolder().get(key);

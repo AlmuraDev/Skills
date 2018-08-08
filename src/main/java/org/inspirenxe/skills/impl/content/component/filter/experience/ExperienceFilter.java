@@ -27,22 +27,20 @@ package org.inspirenxe.skills.impl.content.component.filter.experience;
 import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
 import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
-public final class ExperienceFilter implements TypedFilter<ExperienceQuery> {
+public final class ExperienceFilter extends TypedMultiFilter<ExperienceQuery> {
 
   private final double experience;
 
   ExperienceFilter(final double experience) {
+    super(ExperienceQuery.class);
     this.experience = experience;
   }
 
-  @Override
-  public boolean queryable(FilterQuery query) {
-    return query instanceof ExperienceQuery;
-  }
 
   @Override
-  public FilterResponse typedQuery(ExperienceQuery query) {
+  public FilterResponse individualQuery(ExperienceQuery query) {
     // TODO Operators
     return FilterResponse.from(this.experience == query.experience());
   }

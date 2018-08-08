@@ -30,24 +30,21 @@ import net.kyori.fragment.filter.FilterResponse;
 import net.kyori.fragment.filter.TypedFilter;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
-public final class CauseFilter implements TypedFilter<CauseQuery> {
+public final class CauseFilter extends TypedMultiFilter<CauseQuery> {
 
   private final CauseOperatorType causeOperatorType;
   private final CauseType causeType;
 
   CauseFilter(final CauseOperatorType causeOperatorType, CauseType causeType) {
+    super(CauseQuery.class);
     this.causeOperatorType = causeOperatorType;
     this.causeType = causeType;
   }
 
   @Override
-  public boolean queryable(FilterQuery query) {
-    return query instanceof CauseQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(CauseQuery query) {
+  public FilterResponse individualQuery(CauseQuery query) {
     return FilterResponse.from(this.causeOperatorType.matches(query.getCause(), this.causeType.getTypeClass()));
   }
 

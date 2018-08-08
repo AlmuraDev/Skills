@@ -28,23 +28,20 @@ import com.google.common.base.MoreObjects;
 import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
 import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
 
-public final class BlockFilter implements TypedFilter<BlockQuery> {
+public final class BlockFilter extends TypedMultiFilter<BlockQuery> {
 
   private final LazyBlockState state;
 
   BlockFilter(final LazyBlockState state) {
+    super(BlockQuery.class);
     this.state = state;
   }
 
   @Override
-  public boolean queryable(final FilterQuery query) {
-    return query instanceof BlockQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(final BlockQuery query) {
+  protected FilterResponse individualQuery(BlockQuery query) {
     return FilterResponse.from(this.state.matches(query));
   }
 
