@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.component.filter.experience;
 
 import com.google.common.base.MoreObjects;
 import net.kyori.fragment.filter.FilterResponse;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 public final class LevelFilter extends TypedMultiFilter<LevelQuery> {
@@ -38,11 +39,8 @@ public final class LevelFilter extends TypedMultiFilter<LevelQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(LevelQuery query) {
-    // TODO Operators
-    // TODO - we need to pass in the SkillType to filters
-    return FilterResponse.DENY;
-    //return FilterResponse.from(this.level == query.level());
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, LevelQuery query) {
+    return FilterResponse.from(query.level(parent.getSkillType()) == this.level);
   }
 
   @Override

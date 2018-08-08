@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
 import net.kyori.fragment.filter.FilterResponse;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 public final class ExperienceFilter extends TypedMultiFilter<ExperienceQuery> {
@@ -38,7 +39,7 @@ public final class ExperienceFilter extends TypedMultiFilter<ExperienceQuery> {
 
 
   @Override
-  public FilterResponse individualQuery(ExperienceQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, ExperienceQuery query) {
     // TODO Operators
     return FilterResponse.from(this.experience == query.experience());
   }

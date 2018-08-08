@@ -28,6 +28,7 @@ import com.google.common.base.MoreObjects;
 import net.kyori.fragment.filter.FilterResponse;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 public final class CauseFilter extends TypedMultiFilter<CauseQuery> {
@@ -42,7 +43,7 @@ public final class CauseFilter extends TypedMultiFilter<CauseQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(CauseQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, CauseQuery query) {
     return FilterResponse.from(this.causeOperatorType.matches(query.getCause(), this.causeType.getTypeClass()));
   }
 

@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.component.filter.key;
 
 import com.almuradev.droplet.registry.RegistryKey;
 import net.kyori.fragment.filter.FilterResponse;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 public final class RegistryKeyFilter extends TypedMultiFilter<RegistryKeyFilterQuery> {
@@ -38,7 +39,7 @@ public final class RegistryKeyFilter extends TypedMultiFilter<RegistryKeyFilterQ
   }
 
   @Override
-  public FilterResponse individualQuery(RegistryKeyFilterQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.key.equals(query.key()));
   }
 }

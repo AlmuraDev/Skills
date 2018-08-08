@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.component.filter.notifier;
 
 import com.google.common.base.MoreObjects;
 import net.kyori.fragment.filter.FilterResponse;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 import java.util.Objects;
@@ -44,7 +45,7 @@ public final class NotifierFilter extends TypedMultiFilter<NotifierQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(NotifierQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, NotifierQuery query) {
     return FilterResponse.from(Objects.equals(this.notifier, query.notifier()));
   }
 

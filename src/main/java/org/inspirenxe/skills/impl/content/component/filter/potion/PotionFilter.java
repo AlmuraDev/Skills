@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.component.filter.potion;
 
 import net.kyori.fragment.filter.FilterResponse;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
@@ -38,7 +39,7 @@ public final class PotionFilter extends TypedMultiFilter<PotionQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(PotionQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, PotionQuery query) {
     return FilterResponse.from(this.potion.equals(query.potion()));
   }
 }

@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.component.filter.owner;
 
 import com.google.common.base.MoreObjects;
 import net.kyori.fragment.filter.FilterResponse;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 import java.util.Objects;
@@ -44,7 +45,7 @@ public final class OwnerFilter extends TypedMultiFilter<OwnerQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(OwnerQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, OwnerQuery query) {
     return FilterResponse.from(Objects.equals(this.owner, query.owner()));
   }
 

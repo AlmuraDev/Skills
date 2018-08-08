@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.content.component.filter.data;
 import com.google.common.base.MoreObjects;
 import net.kyori.fragment.filter.FilterResponse;
 import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.spongepowered.api.data.key.Key;
 
@@ -44,7 +45,7 @@ public final class DataFilter extends TypedMultiFilter<DataQuery> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public FilterResponse individualQuery(final DataQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, final DataQuery query) {
     final Key key = this.keyValue.getKey();
       Optional<?> holderValue = query.getDataHolder().get(key);
       FilterResponse response = holderValue.

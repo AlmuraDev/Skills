@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.component.filter.key;
 
 import net.kyori.fragment.filter.FilterResponse;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 public final class NamespaceFilter extends TypedMultiFilter<RegistryKeyFilterQuery> {
@@ -37,7 +38,7 @@ public final class NamespaceFilter extends TypedMultiFilter<RegistryKeyFilterQue
   }
 
   @Override
-  public FilterResponse individualQuery(final RegistryKeyFilterQuery query) {
+  public FilterResponse individualQuery(EventCompoundFilterQuery parent, final RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.namespace.equalsIgnoreCase(query.key().namespace()));
   }
 }

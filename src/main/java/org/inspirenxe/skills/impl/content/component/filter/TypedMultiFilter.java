@@ -26,10 +26,10 @@ public abstract class TypedMultiFilter<Q extends FilterQuery> implements TypedFi
 
     @Override
     public final FilterResponse typedQuery(final @NonNull EventCompoundFilterQuery query) {
-        return query.getQuery(this.getFilterQueryType()).map(this::individualQuery).orElse(FilterResponse.ABSTAIN);
+        return query.getQuery(this.getFilterQueryType()).map(q -> this.individualQuery(query, q)).orElse(FilterResponse.ABSTAIN);
     }
 
-    protected abstract FilterResponse individualQuery(Q query);
+    protected abstract FilterResponse individualQuery(EventCompoundFilterQuery parent, Q query);
 
     private boolean individualQueryabled(Q query) {
         return true;
