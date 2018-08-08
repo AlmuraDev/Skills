@@ -8,7 +8,7 @@ import org.spongepowered.api.entity.living.player.Player;
 
 public abstract class EventApplicatorImpl implements EventApplicator {
 
-    @Inject protected SkillManager skillManager;
+    @Inject private static SkillManager skillManager;
 
     protected Skill getSkill(SkillType skillType, Player player) {
         return this.skillManager.getHolder(player.getWorld().getUniqueId(), player.getUniqueId()).get().getSkill(skillType).get();

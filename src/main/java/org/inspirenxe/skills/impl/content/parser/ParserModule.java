@@ -35,6 +35,7 @@ import net.kyori.xml.node.parser.ParserBinder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
+import org.inspirenxe.skills.impl.content.component.apply.EventApplicatorImpl;
 import org.inspirenxe.skills.impl.content.component.apply.MathOperationType;
 import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
 import org.inspirenxe.skills.impl.content.component.apply.data.KeyValueParser;
@@ -69,6 +70,7 @@ public final class ParserModule extends AbstractModule {
   @Override
   protected void configure() {
     this.requestStaticInjection(KeyValue.class);
+    this.requestStaticInjection(EventApplicatorImpl.class);
 
     final ParserBinder parsers = new ParserBinder(this.binder());
     parsers.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
