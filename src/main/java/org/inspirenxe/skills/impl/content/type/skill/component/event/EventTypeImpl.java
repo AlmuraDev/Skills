@@ -50,14 +50,14 @@ public final class EventTypeImpl<T extends Event> implements EventType<T> {
 
   @Nullable private EventType<? super T> parent;
 
-  EventTypeImpl(final String id, final Class<T> clazz, EventFlattener<? super T> flattener) {
+  EventTypeImpl(final String id, final Class<T> clazz, final EventFlattener<? super T> flattener) {
     this.id = id;
     this.clazz = clazz;
     this.path = Lists.newArrayList(id);
     this.flattener = flattener;
   }
 
-  private EventTypeImpl(final String id, final EventType<? super T> parent, final Class<T> clazz, EventFlattener<? super T> flattener) {
+  private EventTypeImpl(final String id, final EventType<? super T> parent, final Class<T> clazz, final EventFlattener<? super T> flattener) {
     this.path = new ArrayList<>(parent.getPath());
     this.path.add(id);
     this.id = String.join("/", this.path);
@@ -85,7 +85,7 @@ public final class EventTypeImpl<T extends Event> implements EventType<T> {
   public <S extends T> EventType<S> child(final String id, final Class<S> clazz, final EventFlattener<? super S> flattener) {
     checkNotNull(id);
     checkState(this.clazz.isAssignableFrom(clazz), "Cannot create a child EventType who is not a direct child!");
-    return new EventTypeImpl<S>(id, this, clazz, flattener);
+    return new EventTypeImpl<>(id, this, clazz, flattener);
   }
   @Override
   public Optional<EventType<? super T>> getParent() {
@@ -97,8 +97,9 @@ public final class EventTypeImpl<T extends Event> implements EventType<T> {
     return this.clazz;
   }
 
+  @Nullable
     @Override
-    public Collection<T> flattenEvent(Event event) {
+    public Collection<T> flattenEvent(final Event event) {
         return null;
     }
 
@@ -118,7 +119,7 @@ public final class EventTypeImpl<T extends Event> implements EventType<T> {
   }
 
   @Override
-  public boolean matches(Class<? extends Event> eventClass) {
+  public boolean matches(final Class<? extends Event> eventClass) {
     return this.clazz.isAssignableFrom(eventClass);
   }
 
@@ -128,20 +129,20 @@ public final class EventTypeImpl<T extends Event> implements EventType<T> {
     }
 
     @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || this.getClass() != o.getClass()) {
       return false;
     }
-    final EventTypeImpl eventType = (EventTypeImpl) o;
-    return Objects.equals(id, eventType.id);
+    final EventTypeImpl other = (EventTypeImpl) o;
+    return Objects.equals(this.id, other.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return Objects.hash(this.id);
   }
 
   @Override
@@ -150,7 +151,7 @@ public final class EventTypeImpl<T extends Event> implements EventType<T> {
       .add("id", this.id)
       .add("eventClass", this.clazz)
       .add("path", this.path)
-      .add("parent", this.parent == null ? null : parent.getId())
+      .add("parent", this.parent == null ? null : this.parent.getId())
       .toString();
   }
 }

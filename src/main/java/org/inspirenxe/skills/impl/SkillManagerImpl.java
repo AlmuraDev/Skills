@@ -124,7 +124,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
     SkillHolder found = null;
 
     if (holders != null) {
-      for (SkillHolder skillHolder : holders) {
+      for (final SkillHolder skillHolder : holders) {
         if (skillHolder.getHolderUniqueId().equals(holder)) {
           found = skillHolder;
           break;
@@ -185,7 +185,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
         final Map<String, Double> dirtySkills = new HashMap<>();
 
-        for (Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
+        for (final Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
           final SkillType skillType = skillEntry.getKey();
           final Skill skill = skillEntry.getValue();
 
@@ -232,7 +232,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
         final Map<String, Double> dirtySkills = new HashMap<>();
 
-        for (Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
+        for (final Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
           final SkillType skillType = skillEntry.getKey();
           final Skill skill = skillEntry.getValue();
 
@@ -275,8 +275,8 @@ public final class SkillManagerImpl implements SkillManager, Witness {
   private void loadSkillsAsync(final UUID container, final UUID holder, final Collection<String> skillTypeIds) {
 
     // Commence loading of skills
-    try (DSLContext context = this.databaseManager.createContext(true)) {
-      for (String skillTypeId : skillTypeIds) {
+    try (final DSLContext context = this.databaseManager.createContext(true)) {
+      for (final String skillTypeId : skillTypeIds) {
         createFetchExperienceQuery(container, holder, skillTypeId)
             .build(context)
             .keepStatement(false)
@@ -335,7 +335,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
                   .submit(this.container);
             });
       }
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       e.printStackTrace();
     }
   }
@@ -347,8 +347,8 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
     final HashSet<ExperienceEvent.Save.Pre> preEvents = new HashSet<>();
 
-    try (DSLContext context = this.databaseManager.createContext(true)) {
-      for (Map.Entry<String, Double> skillEntry : skillTypesByExperience.entrySet()) {
+    try (final DSLContext context = this.databaseManager.createContext(true)) {
+      for (final Map.Entry<String, Double> skillEntry : skillTypesByExperience.entrySet()) {
         final String skillTypeId = skillEntry.getKey();
         final SkillType skillType = Sponge.getRegistry().getType(SkillType.class, skillTypeId).orElse(null);
 
@@ -413,7 +413,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
             })
             .submit(this.container);
       }
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       e.printStackTrace();
     }
   }
@@ -455,7 +455,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
     this.containerRunnables.remove(container);
   }
 
-  void queueToSave(SkillHolder holder) {
+  void queueToSave(final SkillHolder holder) {
 
     final UUID containerUniqueId = holder.getContainerUniqueId();
     final UUID holderUniqueId = holder.getHolderUniqueId();
@@ -466,7 +466,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
       final Map<String, Double> dirtySkills = new HashMap<>();
 
-      for (Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
+      for (final Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
         final SkillType skillType = skillEntry.getKey();
         final Skill skill = skillEntry.getValue();
 
@@ -488,7 +488,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
     private final Queue<DirtySkillHolderQueueEntry> queued = new ConcurrentLinkedQueue<>();
 
-    SaveContainerToDatabase(SkillManagerImpl manager, UUID container) {
+    SaveContainerToDatabase(final SkillManagerImpl manager, final UUID container) {
       this.manager = manager;
       this.container = container;
     }
@@ -498,8 +498,8 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
       DirtySkillHolderQueueEntry entry;
 
-      while ((entry = queued.poll()) != null) {
-        manager.saveSkillsAsync(container, entry.holder, entry.dirtySkills);
+      while ((entry = this.queued.poll()) != null) {
+        this.manager.saveSkillsAsync(this.container, entry.holder, entry.dirtySkills);
       }
     }
 
@@ -541,7 +541,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) {
         return true;
       }

@@ -44,13 +44,13 @@ public final class SoundEffectTypeRegistryModule implements AdditionalCatalogReg
   private final Map<String, SoundEffectType> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(SoundEffectType catalogType) {
+  public void registerAdditionalCatalog(final SoundEffectType catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
   }
 
   @Override
-  public Optional<SoundEffectType> getById(String id) {
+  public Optional<SoundEffectType> getById(final String id) {
     return Optional.ofNullable(this.map.get(id));
   }
 

@@ -40,7 +40,7 @@ public final class BlockFilter extends TypedMultiFilter<BlockQuery> {
   }
 
   @Override
-  protected FilterResponse individualQuery(EventCompoundFilterQuery parent, BlockQuery query) {
+  protected FilterResponse individualQuery(final EventCompoundFilterQuery parent, final BlockQuery query) {
     return FilterResponse.from(this.state.matches(query));
   }
 

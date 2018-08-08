@@ -40,7 +40,7 @@ public final class ItemFilter extends TypedMultiFilter<ItemQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, final ItemQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final ItemQuery query) {
     return FilterResponse.from(this.stack.matches(query.stack()));
   }
 

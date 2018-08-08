@@ -31,7 +31,7 @@ import java.util.List;
 
 final class ThenBranchImpl extends ConditionalBranchImpl<Branch> implements ThenBranch {
 
-  ThenBranchImpl(List<Branch> branches) {
+  ThenBranchImpl(final List<Branch> branches) {
     super(branches);
   }
 }

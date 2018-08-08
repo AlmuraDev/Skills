@@ -36,14 +36,14 @@ public final class CauseFilter extends TypedMultiFilter<CauseQuery> {
   private final CauseOperatorType causeOperatorType;
   private final CauseType causeType;
 
-  CauseFilter(final CauseOperatorType causeOperatorType, CauseType causeType) {
+  CauseFilter(final CauseOperatorType causeOperatorType, final CauseType causeType) {
     super(CauseQuery.class);
     this.causeOperatorType = causeOperatorType;
     this.causeType = causeType;
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, CauseQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final CauseQuery query) {
     return FilterResponse.from(this.causeOperatorType.matches(query.getCause(), this.causeType.getTypeClass()));
   }
 

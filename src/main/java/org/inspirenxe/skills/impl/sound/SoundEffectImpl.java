@@ -77,7 +77,7 @@ public final class SoundEffectImpl implements SoundEffect {
         .add("type", this.type)
         .add("category", this.category)
         .add("minVolume", this.minVolume)
-        .add("volume", volume)
+        .add("volume", this.volume)
         .add("pitch", this.pitch)
         .toString();
   }

@@ -45,7 +45,7 @@ public final class NotifierFilter extends TypedMultiFilter<NotifierQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, NotifierQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final NotifierQuery query) {
     return FilterResponse.from(Objects.equals(this.notifier, query.notifier()));
   }
 

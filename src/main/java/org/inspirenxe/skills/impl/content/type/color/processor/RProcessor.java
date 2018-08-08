@@ -40,7 +40,7 @@ public final class RProcessor implements Processor<ContentColorTypeBuilder> {
   }
 
   @Override
-  public void process(Node node, ContentColorTypeBuilder builder) {
+  public void process(final Node node, final ContentColorTypeBuilder builder) {
     node.attribute("r").ifPresent(r -> builder.r(this.intParser.parse(r)));
   }
 }

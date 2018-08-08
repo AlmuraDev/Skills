@@ -46,7 +46,7 @@ public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<Conten
   }
 
   @Listener(order = Order.PRE)
-  public void onInit(GameInitializationEvent event) {
+  public void onInit(final GameInitializationEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunctionType.class)));
   }
 }

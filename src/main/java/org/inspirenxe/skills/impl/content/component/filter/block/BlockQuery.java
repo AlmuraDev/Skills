@@ -24,6 +24,7 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.block;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import net.kyori.fragment.filter.FilterQuery;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
@@ -35,7 +36,7 @@ public final class BlockQuery implements FilterQuery {
   private final Transaction<BlockSnapshot> blockTransaction;
   private final BlockTransactionSource inheritedSource;
 
-  public BlockQuery(final Transaction<BlockSnapshot> blockTransaction, BlockTransactionSource inheritedSource) {
+  BlockQuery(final Transaction<BlockSnapshot> blockTransaction, final BlockTransactionSource inheritedSource) {
     Preconditions.checkArgument(inheritedSource != BlockTransactionSource.INHERIT, "Cannot use BlockTransactionSource.INHERIT in a BlockQuery!");
     this.blockTransaction = blockTransaction;
     this.inheritedSource = inheritedSource;
@@ -47,17 +48,17 @@ public final class BlockQuery implements FilterQuery {
 
   /**
    * Gets the {@link BlockTransactionSource} inherited from the event.
-   * @return
+   * @return The source
    */
   public BlockTransactionSource getInheritedSource() {
-    return inheritedSource;
+    return this.inheritedSource;
   }
 
   @Override
   public String toString() {
-    return "BlockQuery{" +
-            "blockTransaction=" + blockTransaction +
-            ", inheritedSource=" + inheritedSource +
-            '}';
+    return MoreObjects.toStringHelper(this)
+      .add("blockTransaction", this.blockTransaction)
+      .add("inheritedSource", this.inheritedSource)
+      .toString();
   }
 }

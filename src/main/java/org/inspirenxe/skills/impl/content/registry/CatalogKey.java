@@ -57,6 +57,6 @@ public class CatalogKey implements RegistryKey {
 
   @Override
   public String toString() {
-    return namespace + ":" + value;
+    return this.namespace + ":" + this.value;
   }
 }

@@ -39,7 +39,7 @@ public final class LevelFilter extends TypedMultiFilter<LevelQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, LevelQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final LevelQuery query) {
     return FilterResponse.from(query.level(parent.getSkillType()) == this.level);
   }
 

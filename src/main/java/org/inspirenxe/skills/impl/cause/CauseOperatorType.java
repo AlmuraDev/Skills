@@ -29,19 +29,19 @@ import org.spongepowered.api.event.cause.Cause;
 public enum CauseOperatorType {
   ALL {
     @Override
-    public boolean matches(Cause cause, Class<?> type) {
+    public boolean matches(final Cause cause, final Class<?> type) {
       return cause.all().stream().allMatch(type::isInstance);
     }
   },
   ANY {
     @Override
-    public boolean matches(Cause cause, Class<?> type) {
+    public boolean matches(final Cause cause, final Class<?> type) {
       return cause.containsType(type);
     }
   },
   ROOT {
     @Override
-    public boolean matches(Cause cause, Class<?> type) {
+    public boolean matches(final Cause cause, final Class<?> type) {
       return type.isInstance(cause.root());
     }
   };

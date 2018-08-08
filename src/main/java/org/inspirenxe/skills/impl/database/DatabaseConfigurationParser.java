@@ -50,15 +50,15 @@ public final class DatabaseConfigurationParser implements Parser<DatabaseConfigu
   }
 
   @Override
-  public DatabaseConfiguration throwingParse(Node node) throws XMLException {
+  public DatabaseConfiguration throwingParse(final Node node) throws XMLException {
     final SQLDialect dialect = this.dialectParser.parse(node.requireAttribute("dialect"));
     final String initialCatalog;
     final String server;
     final Integer port;
 
-    Path path;
-    String connectionString;
-    String connectionStringNoSchema;
+    final Path path;
+    final String connectionString;
+    final String connectionStringNoSchema;
 
     if (dialect == SQLDialect.H2 || dialect == SQLDialect.POSTGRES_9_5) {
       initialCatalog = this.stringParser.parse(node.requireAttribute("initial-catalog"));
@@ -77,7 +77,7 @@ public final class DatabaseConfigurationParser implements Parser<DatabaseConfigu
         if (Files.notExists(fsPath)) {
           try {
             Files.createFile(fsPath);
-          } catch (IOException e) {
+          } catch (final IOException e) {
             throw new RuntimeException("Failed to create H2 database file! Path: " + fsPath);
           }
         }

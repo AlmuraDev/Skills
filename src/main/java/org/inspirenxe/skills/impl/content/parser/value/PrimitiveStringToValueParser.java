@@ -43,6 +43,6 @@ public final class PrimitiveStringToValueParser<V> implements StringToValueParse
 
   @Override
   public Optional<V> parse(final TypeToken<?> token, final String value) {
-    return Optional.ofNullable(this.parser.parse(Node.of(new Element("hack").setText(value))));
+    return Optional.of(this.parser.parse(Node.of(new Element("hack").setText(value))));
   }
 }

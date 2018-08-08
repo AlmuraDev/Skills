@@ -120,7 +120,7 @@ public final class SkillImpl implements Skill {
   }
 
   @Override
-  public Result addExperience(double experience) {
+  public Result addExperience(final double experience) {
     return this.setExperience(this.getCurrentExperience() + experience);
   }
 

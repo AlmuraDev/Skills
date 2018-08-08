@@ -58,20 +58,20 @@ public final class SkillsEconomyFunctionType implements SkillsFunctionType, Econ
   }
 
   @Override
-  public BigDecimal getMoneyFor(int level, double modifier) {
+  public BigDecimal getMoneyFor(final int level, final double modifier) {
     return BigDecimal.valueOf(this.expression.setVariable("L", level).setVariable("M", modifier).evaluate());
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || this.getClass() != o.getClass()) {
       return false;
     }
-    final SkillsEconomyFunctionType that = (SkillsEconomyFunctionType) o;
-    return Objects.equals(this.registryKey, that.registryKey);
+    final SkillsEconomyFunctionType other = (SkillsEconomyFunctionType) o;
+    return Objects.equals(this.registryKey, other.registryKey);
   }
 
   @Override

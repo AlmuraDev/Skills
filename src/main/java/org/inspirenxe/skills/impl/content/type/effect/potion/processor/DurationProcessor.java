@@ -41,7 +41,7 @@ public final class DurationProcessor implements Processor<ContentPotionEffectTyp
   }
 
   @Override
-  public void process(Node node, ContentPotionEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
     node.nodes("duration").collect(MoreCollectors.toOptional()).ifPresent(duration -> builder.duration(this.intParser.parse(duration)));
   }
 }

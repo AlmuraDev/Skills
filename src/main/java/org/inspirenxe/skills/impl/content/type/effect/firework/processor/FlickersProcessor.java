@@ -41,7 +41,7 @@ public final class FlickersProcessor implements Processor<ContentFireworkEffectT
   }
 
   @Override
-  public void process(Node node, ContentFireworkEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
     node.nodes("flickers").collect(MoreCollectors.toOptional()).ifPresent(flickers -> builder.flickers(this.booleanParser.parse(flickers)));
   }
 }

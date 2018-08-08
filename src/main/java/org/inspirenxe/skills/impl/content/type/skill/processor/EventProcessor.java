@@ -122,14 +122,14 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
                 });
     }
 
-    private void parseApplicators(Node root, ConditionalBranch.Builder branchBuilder) {
+    private void parseApplicators(final Node root, final ConditionalBranch.Builder branchBuilder) {
         root
                 .nodes("apply")
                 .collect(Collectors.toList())
                 .forEach(innerApplyNode -> {
 
                     final Node[] innerIfNode = {null};
-                    List<Node> applicators = new ArrayList<>();
+                    final List<Node> applicators = new ArrayList<>();
 
                     innerApplyNode.nodes().stream().forEach(node -> {
                         if (node.name().equals("if")) {
@@ -150,9 +150,9 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
                         branchBuilder.branch(ifBranchBuilder.build());
                     } else {
                         // Safe to assume this is a result branch
-                        ResultBranch.Builder resultBranchBuilder = ResultBranch.builder();
+                        final ResultBranch.Builder resultBranchBuilder = ResultBranch.builder();
                         // TODO Apply Parsing Test Code
-                        for (Node applicatorNode: applicators) {
+                        for (final Node applicatorNode: applicators) {
                             resultBranchBuilder.apply(this.eventApplicatorParser.parse(applicatorNode));
                         }
                         //resultBranchBuilder.apply(new TransactionValidityApplicator(false));

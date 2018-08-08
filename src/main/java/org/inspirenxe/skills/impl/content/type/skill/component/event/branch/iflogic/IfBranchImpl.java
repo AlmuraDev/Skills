@@ -34,14 +34,14 @@ import java.util.List;
 
 final class IfBranchImpl extends LogicBranchImpl implements IfBranch {
 
-  IfBranchImpl(Filter statement, List<ConditionalBranch> branches) {
+  IfBranchImpl(final Filter statement, final List<ConditionalBranch> branches) {
     super(statement, branches);
   }
 
   @Override
-  public void processInternal(EventCompoundFilterQuery event) {
-      boolean success = this.getStatement().allowed(event);
-      for (ConditionalBranch branch: this.getBranchesForResult(success)) {
+  public void processInternal(final EventCompoundFilterQuery event) {
+      final boolean success = this.getStatement().allowed(event);
+      for (final ConditionalBranch branch: this.getBranchesForResult(success)) {
         ((BranchImpl) branch).processInternal(event);
       }
   }

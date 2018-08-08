@@ -46,7 +46,7 @@ public final class EconomyFunctionRootLoader extends ChildContentLoaderImpl<Cont
   }
 
   @Listener(order = Order.PRE)
-  public void onGameStartingServer(GameStartingServerEvent event) {
+  public void onGameStartingServer(final GameStartingServerEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(EconomyFunctionType.class)));
   }
 }

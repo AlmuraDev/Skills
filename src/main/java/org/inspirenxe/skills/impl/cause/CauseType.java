@@ -33,7 +33,7 @@ public enum CauseType {
 
   private final Class clazz;
 
-  CauseType(Class clazz) {
+  CauseType(final Class clazz) {
     this.clazz = clazz;
   }
 

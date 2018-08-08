@@ -41,37 +41,37 @@ public final class SoundEffectBuilderImpl implements SoundEffect.Builder {
   private double minVolume, volume, pitch;
 
   @Override
-  public SoundEffect.Builder soundType(SoundType soundType) {
+  public SoundEffect.Builder soundType(final SoundType soundType) {
     this.soundType = soundType;
     return this;
   }
 
   @Override
-  public SoundEffect.Builder soundCategory(SoundCategory soundCategory) {
+  public SoundEffect.Builder soundCategory(final SoundCategory soundCategory) {
     this.soundCategory = soundCategory;
     return this;
   }
 
   @Override
-  public SoundEffect.Builder minVolume(double minVolume) {
+  public SoundEffect.Builder minVolume(final double minVolume) {
     this.minVolume = minVolume;
     return this;
   }
 
   @Override
-  public SoundEffect.Builder volume(double volume) {
+  public SoundEffect.Builder volume(final double volume) {
     this.volume = volume;
     return this;
   }
 
   @Override
-  public SoundEffect.Builder pitch(double pitch) {
+  public SoundEffect.Builder pitch(final double pitch) {
     this.pitch = pitch;
     return this;
   }
 
   @Override
-  public SoundEffect.Builder from(SoundEffect value) {
+  public SoundEffect.Builder from(final SoundEffect value) {
     this.soundType = value.getType();
     this.soundCategory = value.getCategory();
     this.minVolume = value.getMinVolume();

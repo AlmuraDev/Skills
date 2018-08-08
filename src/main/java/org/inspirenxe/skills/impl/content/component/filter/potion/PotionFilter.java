@@ -39,7 +39,7 @@ public final class PotionFilter extends TypedMultiFilter<PotionQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, PotionQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final PotionQuery query) {
     return FilterResponse.from(this.potion.equals(query.potion()));
   }
 }

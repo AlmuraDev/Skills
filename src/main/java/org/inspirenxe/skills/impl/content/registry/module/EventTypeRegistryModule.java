@@ -82,13 +82,13 @@ public final class EventTypeRegistryModule implements AdditionalCatalogRegistryM
   }
 
   @Override
-  public void registerAdditionalCatalog(EventType extraCatalog) {
+  public void registerAdditionalCatalog(final EventType extraCatalog) {
     checkNotNull(extraCatalog);
     this.map.put(extraCatalog.getId(), extraCatalog);
   }
 
   @Override
-  public Optional<EventType> getById(String id) {
+  public Optional<EventType> getById(final String id) {
     return Optional.ofNullable(this.map.get(id));
   }
 

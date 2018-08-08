@@ -67,7 +67,7 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
   }
 
   @Override
-  public double getXPFor(int level) {
+  public double getXPFor(final int level) {
     checkState(level > 0, "Level must be positive and higher than zero!");
 
     if (this.xpTable.length < level) {
@@ -80,11 +80,11 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
   }
 
   @Override
-  public int getLevelFor(double xp) {
+  public int getLevelFor(final double xp) {
     checkState(xp > UNKNOWN_EXP, "XP must be positive!");
 
     for (int i = this.xpTable.length; i > 0; i--) {
-      double cache = this.xpTable[i - 1];
+      final double cache = this.xpTable[i - 1];
 
       if (cache == UNKNOWN_EXP) {
         continue;
@@ -99,7 +99,7 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
   }
 
   @Override
-  public void buildLevelTable(int suggestedMax) {
+  public void buildLevelTable(final int suggestedMax) {
     this.logger.warn("Printing level table for: {}", this.getId());
     if (suggestedMax > this.xpTable.length) {
       final int length = this.xpTable.length;
@@ -116,15 +116,15 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || this.getClass() != o.getClass()) {
       return false;
     }
-    final SkillsLevelFunctionType that = (SkillsLevelFunctionType) o;
-    return Objects.equals(this.registryKey, that.registryKey);
+    final SkillsLevelFunctionType other = (SkillsLevelFunctionType) o;
+    return Objects.equals(this.registryKey, other.registryKey);
   }
 
   @Override

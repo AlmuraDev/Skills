@@ -33,13 +33,13 @@ public final class ResultBuilder implements Result.Builder {
   public Result.Type type;
 
   @Override
-  public Result.Builder type(Result.Type type) {
+  public Result.Builder type(final Result.Type type) {
     this.type = type;
     return this;
   }
 
   @Override
-  public Result.Builder from(Result value) {
+  public Result.Builder from(final Result value) {
     this.type = value.getType();
     return this;
   }

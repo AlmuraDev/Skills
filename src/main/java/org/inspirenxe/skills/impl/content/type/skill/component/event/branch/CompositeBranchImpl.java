@@ -45,8 +45,8 @@ public abstract class CompositeBranchImpl<LEAF extends Branch> extends BranchImp
   }
 
   @Override
-  public void processInternal(EventCompoundFilterQuery event) {
-    for (Branch branch: this.branches) {
+  public void processInternal(final EventCompoundFilterQuery event) {
+    for (final Branch branch: this.branches) {
       ((BranchImpl) branch).processInternal(event);
     }
   }

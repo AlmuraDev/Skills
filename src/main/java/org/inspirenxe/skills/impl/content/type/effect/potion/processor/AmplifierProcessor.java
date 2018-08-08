@@ -41,7 +41,7 @@ public final class AmplifierProcessor implements Processor<ContentPotionEffectTy
   }
 
   @Override
-  public void process(Node node, ContentPotionEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
     node.nodes("amplifier").collect(MoreCollectors.toOptional()).ifPresent(amplifier -> builder.amplifier(this.intParser.parse(amplifier)));
   }
 }

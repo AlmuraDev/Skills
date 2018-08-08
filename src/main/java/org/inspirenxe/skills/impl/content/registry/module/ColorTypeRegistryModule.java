@@ -70,13 +70,13 @@ public final class ColorTypeRegistryModule implements AdditionalCatalogRegistryM
   }
 
   @Override
-  public void registerAdditionalCatalog(ColorType extraCatalog) {
+  public void registerAdditionalCatalog(final ColorType extraCatalog) {
     checkNotNull(extraCatalog);
     this.map.put(extraCatalog.getId(), extraCatalog);
   }
 
   @Override
-  public Optional<ColorType> getById(String id) {
+  public Optional<ColorType> getById(final String id) {
     checkNotNull(id);
     return Optional.ofNullable(this.map.get(id));
   }

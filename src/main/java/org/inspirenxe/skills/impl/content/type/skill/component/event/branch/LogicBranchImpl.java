@@ -46,7 +46,7 @@ public abstract class LogicBranchImpl extends CompositeBranchImpl<ConditionalBra
     return this.statement;
   }
 
-  protected List<ConditionalBranch> getBranchesForResult(boolean success) {
+  protected List<ConditionalBranch> getBranchesForResult(final boolean success) {
     return this.getBranches().stream()
             .filter(b -> (success && b instanceof ThenBranch) || (!success && b instanceof ElseBranch))
             .collect(ImmutableList.toImmutableList());

@@ -35,7 +35,7 @@ public abstract class AbstractContentFunctionBuilder<R extends SkillsFunctionTyp
   @Nullable protected String formula;
 
   @Override
-  public void formula(String formula) {
+  public void formula(final String formula) {
     this.formula = formula;
   }
 }

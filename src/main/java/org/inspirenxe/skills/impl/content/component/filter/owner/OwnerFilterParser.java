@@ -41,7 +41,7 @@ public final class OwnerFilterParser implements Parser<OwnerFilter> {
   }
 
   @Override
-  public OwnerFilter throwingParse(Node node) throws XMLException {
+  public OwnerFilter throwingParse(final Node node) throws XMLException {
     final String value = this.stringParser.parse(node.requireAttribute("value"));
     if (value.equalsIgnoreCase("none")) {
       return new OwnerFilter(null);

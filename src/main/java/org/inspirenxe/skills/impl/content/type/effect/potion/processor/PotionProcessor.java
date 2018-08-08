@@ -42,7 +42,7 @@ public final class PotionProcessor implements Processor<ContentPotionEffectTypeB
   }
 
   @Override
-  public void process(Node node, ContentPotionEffectTypeBuilder builder) throws XMLException {
+  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) throws XMLException {
     builder.potion(this.potionParser.parse(node.requireAttribute("potion")));
   }
 }

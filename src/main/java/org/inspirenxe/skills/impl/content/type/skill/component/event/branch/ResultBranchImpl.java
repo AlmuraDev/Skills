@@ -53,8 +53,8 @@ public final class ResultBranchImpl extends BranchImpl implements ResultBranch {
   }
 
   @Override
-  public void processInternal(EventCompoundFilterQuery event) {
-    for (EventApplicator applicator: this.getApplicators()) {
+  public void processInternal(final EventCompoundFilterQuery event) {
+    for (final EventApplicator applicator: this.getApplicators()) {
       applicator.apply(event);
     }
   }

@@ -89,12 +89,12 @@ public final class SkillTypeImpl implements SkillType, Content {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void processEvent(Event event) {
-        for (Map.Entry<EventType<?>, EventScript> entry: this.eventScripts.entrySet()) {
+    public void processEvent(final Event event) {
+        for (final Map.Entry<EventType<?>, EventScript> entry: this.eventScripts.entrySet()) {
             if (!entry.getKey().matches(event.getClass())) {
                 continue;
             }
-            for (Event subEvent: ((EventFlattener<Event>) entry.getKey().getFlattener()).flatten(event)) {
+            for (final Event subEvent: ((EventFlattener<Event>) entry.getKey().getFlattener()).flatten(event)) {
                 entry.getValue().processEvent(new EventCompoundFilterQuery(subEvent, this));
             }
         }

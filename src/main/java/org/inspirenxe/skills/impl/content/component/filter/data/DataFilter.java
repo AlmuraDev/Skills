@@ -45,14 +45,13 @@ public final class DataFilter extends TypedMultiFilter<DataQuery> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, final DataQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final DataQuery query) {
     final Key key = this.keyValue.getKey();
-      Optional<?> holderValue = query.getDataHolder().get(key);
-      FilterResponse response = holderValue.
-              map(val -> FilterResponse.from(Objects.equals(this.keyValue.getValue(), val)))
-              .orElse(FilterResponse.DENY);
+    final Optional<?> holderValue = query.getDataHolder().get(key);
 
-    return response;
+    return holderValue.
+            map(val -> FilterResponse.from(Objects.equals(this.keyValue.getValue(), val)))
+            .orElse(FilterResponse.DENY);
   }
 
   @Override

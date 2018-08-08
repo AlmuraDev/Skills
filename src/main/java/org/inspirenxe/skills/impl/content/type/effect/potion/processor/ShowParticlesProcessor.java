@@ -41,7 +41,7 @@ public final class ShowParticlesProcessor implements Processor<ContentPotionEffe
   }
 
   @Override
-  public void process(Node node, ContentPotionEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
     node.nodes("show-particles").collect(MoreCollectors.toOptional()).ifPresent(showParticles -> builder.showParticles(this.booleanParser.parse
         (showParticles)));
   }

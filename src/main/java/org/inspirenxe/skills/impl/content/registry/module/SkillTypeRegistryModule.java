@@ -45,7 +45,7 @@ public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryM
   private final Map<String, SkillType> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(SkillType catalogType) {
+  public void registerAdditionalCatalog(final SkillType catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
     catalogType.getLevelFunction().buildLevelTable(catalogType.getMaxLevel());
@@ -53,7 +53,7 @@ public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryM
   }
 
   @Override
-  public Optional<SkillType> getById(String id) {
+  public Optional<SkillType> getById(final String id) {
     return Optional.ofNullable(this.map.get(id));
   }
 

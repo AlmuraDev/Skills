@@ -41,7 +41,7 @@ public final class SkillQueryImpl implements SkillQuery {
   }
 
   @Override
-  public int level(SkillType skillType) {
+  public int level(final SkillType skillType) {
     // TODO - we need to store stuff
     return 0;
   }

@@ -48,6 +48,7 @@ import javax.inject.Provider;
 public final class SkillsCommandCreator implements Provider<CommandSpec> {
 
   private static final DecimalFormat prettyExp = new DecimalFormat("###,###.##");
+
   @Inject
   private PluginContainer container;
   @Inject

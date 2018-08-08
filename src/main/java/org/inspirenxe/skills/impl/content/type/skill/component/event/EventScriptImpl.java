@@ -56,30 +56,30 @@ public final class EventScriptImpl implements EventScript {
   }
 
   @Override
-  public void processEvent(EventCompoundFilterQuery eventData) {
+  public void processEvent(final EventCompoundFilterQuery eventData) {
     if (!this.type.matches(eventData.getEvent().getClass())) {
       return;
     }
-    for (Branch branch: this.branches) {
+    for (final Branch branch: this.branches) {
       branch.processEvent(eventData);
     }
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type);
+    return Objects.hash(this.type);
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || this.getClass() != o.getClass()) {
       return false;
     }
-    final EventScriptImpl that = (EventScriptImpl) o;
-    return Objects.equals(type, that.type);
+    final EventScriptImpl other = (EventScriptImpl) o;
+    return Objects.equals(this.type, other.type);
   }
 
   @Override

@@ -29,7 +29,7 @@ import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQu
 public abstract class BranchImpl implements Branch {
 
     @Override
-    public void processEvent(EventCompoundFilterQuery eventData) {
+    public void processEvent(final EventCompoundFilterQuery eventData) {
         this.processInternal(eventData);
     }
 

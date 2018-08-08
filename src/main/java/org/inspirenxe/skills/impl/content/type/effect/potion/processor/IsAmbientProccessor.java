@@ -41,7 +41,7 @@ public final class IsAmbientProccessor implements Processor<ContentPotionEffectT
   }
 
   @Override
-  public void process(Node node, ContentPotionEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
     node.nodes("is-ambient").collect(MoreCollectors.toOptional()).ifPresent(isAmbient -> builder.isAmbient(this.booleanParser.parse(isAmbient)));
   }
 }

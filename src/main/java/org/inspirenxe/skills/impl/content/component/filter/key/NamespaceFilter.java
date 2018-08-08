@@ -38,7 +38,7 @@ public final class NamespaceFilter extends TypedMultiFilter<RegistryKeyFilterQue
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, final RegistryKeyFilterQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.namespace.equalsIgnoreCase(query.key().namespace()));
   }
 }

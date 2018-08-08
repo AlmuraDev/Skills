@@ -41,7 +41,7 @@ public final class MinVolumeProcessor implements Processor<ContentSoundEffectTyp
   }
 
   @Override
-  public void process(Node node, ContentSoundEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) {
     node.nodes("min-volume").collect(MoreCollectors.toOptional()).ifPresent(minVolume -> builder.minVolume(this.doubleParser.parse(minVolume)));
   }
 }

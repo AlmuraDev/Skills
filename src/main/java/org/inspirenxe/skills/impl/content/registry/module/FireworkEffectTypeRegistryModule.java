@@ -44,13 +44,13 @@ public final class FireworkEffectTypeRegistryModule implements AdditionalCatalog
   private final Map<String, FireworkEffectType> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(FireworkEffectType catalogType) {
+  public void registerAdditionalCatalog(final FireworkEffectType catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
   }
 
   @Override
-  public Optional<FireworkEffectType> getById(String id) {
+  public Optional<FireworkEffectType> getById(final String id) {
     return Optional.ofNullable(this.map.get(id));
   }
 

@@ -46,7 +46,7 @@ public final class EventScriptBuilder implements EventScript.Builder {
   }
 
   @Override
-  public EventScript.Builder branch(Branch branch) {
+  public EventScript.Builder branch(final Branch branch) {
     this.branches.add(branch);
     return this;
   }

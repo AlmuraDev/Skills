@@ -47,6 +47,6 @@ public final class LevelFunctionProcessor implements Processor<ContentSkillTypeB
 
   @Override
   public void process(final Node node, final ContentSkillTypeBuilder builder) throws XMLException {
-    builder.levelFunction(this.registry.ref(keyParser.parse(node.requireAttribute("level-function"))));
+    builder.levelFunction(this.registry.ref(this.keyParser.parse(node.requireAttribute("level-function"))));
   }
 }

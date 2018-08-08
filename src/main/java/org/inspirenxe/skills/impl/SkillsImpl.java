@@ -59,7 +59,7 @@ public final class SkillsImpl {
 
   private final Logger logger;
   private final Path configDir;
-  @Nullable private Facets facets;
+  @Nullable private final Facets facets;
 
   @Inject
   public SkillsImpl(final Injector baseInjector, final Logger logger, final @ConfigDir(sharedRoot = false) Path configDir)

@@ -36,7 +36,7 @@ public final class LevelQueryImpl implements LevelQuery {
   }
 
   @Override
-  public int level(SkillType skillType) {
-    return skillHolder.getSkill(skillType).get().getCurrentLevel();
+  public int level(final SkillType skillType) {
+    return this.skillHolder.getSkill(skillType).get().getCurrentLevel();
   }
 }

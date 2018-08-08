@@ -1,3 +1,27 @@
+/*
+ * This file is part of Skills, licensed under the MIT License (MIT).
+ *
+ * Copyright (c) InspireNXE
+ * Copyright (c) contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.inspirenxe.skills.impl.content.component.apply.data;
 
 import org.inspirenxe.skills.impl.content.component.apply.MathOperationType;
@@ -11,24 +35,25 @@ import java.math.BigDecimal;
 
 import javax.annotation.Nullable;
 
-public class DataApplicator extends CauseFirstEventApplicator<Event, DataHolder> {
+public final class DataApplicator extends CauseFirstEventApplicator<Event, DataHolder> {
 
-    private KeyValue keyValue;
-    @Nullable private MathOperationType operation;
+    private final KeyValue keyValue;
+    @Nullable private final MathOperationType operationType;
 
-    protected DataApplicator(KeyValue keyValue, @Nullable MathOperationType operationType) {
+    DataApplicator(final KeyValue keyValue, @Nullable final MathOperationType operationType) {
         super(DataHolder.class, Event.class);
         this.keyValue = keyValue;
-        this.operation = operation;
+        this.operationType = operationType;
     }
 
     @Override
-    protected void applyWithCause(EventCompoundFilterQuery eventData, Event event, DataHolder causeObject) {
+    protected void applyWithCause(final EventCompoundFilterQuery eventData, final Event event, final DataHolder causeObject) {
         Object newValueObj = this.keyValue.getValue();
-        if (this.operation != null) {
-            BigDecimal oldValue = new BigDecimal(((Number) causeObject.getValue((Key) this.keyValue.getKey()).get()).toString());
-            BigDecimal newValue = new BigDecimal(((Number) newValueObj).toString());
-            newValueObj = this.operation.apply(oldValue, newValue);
+        // TODO newValueObj can be null, what do we do in that case?
+        if (this.operationType != null) {
+            final BigDecimal oldValue = new BigDecimal(causeObject.getValue((Key) this.keyValue.getKey()).get().toString());
+            final BigDecimal newValue = new BigDecimal(newValueObj.toString());
+            newValueObj = this.operationType.apply(oldValue, newValue);
         }
         causeObject.offer((Key) this.keyValue.getKey(), newValueObj);
     }

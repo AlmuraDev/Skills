@@ -47,16 +47,14 @@ public final class LazyBlockStateParser implements Parser<LazyBlockState> {
   private final Registry<BlockType> registry;
   private final Parser<RegistryKey> keyParser;
   private final Parser<LazyStateValue<?>> propertyParser;
-  private final Parser<String> stringParser;
   private final Parser<BlockTransactionSource> blockTransactionSourceParser;
 
   @Inject
   private LazyBlockStateParser(final Registry<BlockType> registry, final Parser<RegistryKey> keyParser, final Parser<LazyStateValue<?>>
-      propertyParser, final Parser<String> stringParser, final Parser<BlockTransactionSource> blockTransactionSourceParser) {
+      propertyParser, final Parser<BlockTransactionSource> blockTransactionSourceParser) {
     this.registry = registry;
     this.keyParser = keyParser;
     this.propertyParser = propertyParser;
-    this.stringParser = stringParser;
     this.blockTransactionSourceParser = blockTransactionSourceParser;
   }
 
@@ -77,8 +75,8 @@ public final class LazyBlockStateParser implements Parser<LazyBlockState> {
         ));
 
 
-    BlockTransactionSource source = node.attribute("source").optional()
-            .map(blockTransactionSourceParser::parse)
+    final BlockTransactionSource source = node.attribute("source").optional()
+            .map(this.blockTransactionSourceParser::parse)
             .orElse(BlockTransactionSource.INHERIT);
 
 

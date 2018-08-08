@@ -57,7 +57,7 @@ public final class CatalogTypeRegistry<C extends CatalogType> implements Registr
   @SuppressWarnings("unchecked")
   @Nullable
   @Override
-  public C get(RegistryKey key) {
+  public C get(final RegistryKey key) {
     if (key instanceof IdioticCatalogKey) {
       return this.registry.getType((Class<C>) this.type.getRawType(), key.value()).orElse(null);
     }
@@ -67,7 +67,7 @@ public final class CatalogTypeRegistry<C extends CatalogType> implements Registr
 
   @SuppressWarnings("unchecked")
   @Override
-  public void put(RegistryKey key, C value) {
+  public void put(final RegistryKey key, final C value) {
     this.registry.register((Class<C>) this.type.getRawType(), value);
   }
 }

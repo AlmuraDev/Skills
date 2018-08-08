@@ -44,13 +44,13 @@ public final class EconomyFunctionRegistryModule implements AdditionalCatalogReg
   private final Map<String, EconomyFunctionType> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(EconomyFunctionType catalogType) {
+  public void registerAdditionalCatalog(final EconomyFunctionType catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
   }
 
   @Override
-  public Optional<EconomyFunctionType> getById(String id) {
+  public Optional<EconomyFunctionType> getById(final String id) {
     checkNotNull(id);
     return Optional.ofNullable(this.map.get(id));
   }

@@ -44,13 +44,13 @@ public final class LevelFunctionRegistryModule implements AdditionalCatalogRegis
   private final Map<String, LevelFunctionType> map = new HashMap<>();
 
   @Override
-  public void registerAdditionalCatalog(LevelFunctionType catalogType) {
+  public void registerAdditionalCatalog(final LevelFunctionType catalogType) {
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
   }
 
   @Override
-  public Optional<LevelFunctionType> getById(String id) {
+  public Optional<LevelFunctionType> getById(final String id) {
     checkNotNull(id);
     return Optional.ofNullable(this.map.get(id));
   }

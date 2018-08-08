@@ -39,7 +39,7 @@ public final class ExperienceFilter extends TypedMultiFilter<ExperienceQuery> {
 
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, ExperienceQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final ExperienceQuery query) {
     // TODO Operators
     return FilterResponse.from(this.experience == query.experience());
   }

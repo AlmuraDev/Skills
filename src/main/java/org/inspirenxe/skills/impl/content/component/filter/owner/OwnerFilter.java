@@ -45,7 +45,7 @@ public final class OwnerFilter extends TypedMultiFilter<OwnerQuery> {
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, OwnerQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final OwnerQuery query) {
     return FilterResponse.from(Objects.equals(this.owner, query.owner()));
   }
 

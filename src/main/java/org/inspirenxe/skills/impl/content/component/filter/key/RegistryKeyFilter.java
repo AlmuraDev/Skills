@@ -39,7 +39,7 @@ public final class RegistryKeyFilter extends TypedMultiFilter<RegistryKeyFilterQ
   }
 
   @Override
-  public FilterResponse individualQuery(EventCompoundFilterQuery parent, RegistryKeyFilterQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.key.equals(query.key()));
   }
 }

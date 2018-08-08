@@ -33,13 +33,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 public interface EventType<T extends Event> extends CatalogType {
 
     static <T extends Event> EventType<T> of(final String id, final Class<T> clazz) {
         return new EventTypeImpl<>(id, clazz, new NoOpEventFlattener<>());
     }
 
-  static <T extends Event> EventType<T> of(final String id, final Class<T> clazz, EventFlattener<T> flattener) {
+  static <T extends Event> EventType<T> of(final String id, final Class<T> clazz, final EventFlattener<T> flattener) {
     return new EventTypeImpl<>(id, clazz, flattener);
   }
 
@@ -52,6 +54,7 @@ public interface EventType<T extends Event> extends CatalogType {
 
   Class<T> getEventClass();
 
+  @Nullable
   Collection<T> flattenEvent(T event);
 
   List<String> getPath();

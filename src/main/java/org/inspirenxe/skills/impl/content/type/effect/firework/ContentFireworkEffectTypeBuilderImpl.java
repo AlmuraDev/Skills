@@ -49,27 +49,27 @@ public final class ContentFireworkEffectTypeBuilderImpl extends AbstractContentE
   private boolean trails;
 
   @Override
-  public void shape(FireworkShape shape) {
+  public void shape(final FireworkShape shape) {
     this.shape = shape;
   }
 
   @Override
-  public void colors(List<RegistryReference<ColorType>> colors) {
+  public void colors(final List<RegistryReference<ColorType>> colors) {
     this.colors = colors;
   }
 
   @Override
-  public void fadeColors(List<RegistryReference<ColorType>> fadeColors) {
+  public void fadeColors(final List<RegistryReference<ColorType>> fadeColors) {
     this.fadeColors = fadeColors;
   }
 
   @Override
-  public void flickers(boolean flickers) {
+  public void flickers(final boolean flickers) {
     this.flickers = flickers;
   }
 
   @Override
-  public void trails(boolean trails) {
+  public void trails(final boolean trails) {
     this.trails = trails;
   }
 

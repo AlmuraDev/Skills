@@ -62,11 +62,11 @@ public abstract class AbstractLazyBlockState implements LazyBlockState {
 
   @Override
   public final boolean test(final BlockQuery blockQuery) {
-    Transaction<BlockSnapshot> transaction = blockQuery.getBlockTransaction();
+    final Transaction<BlockSnapshot> transaction = blockQuery.getBlockTransaction();
 
-    BlockState originalState = transaction.getOriginal().getState();
-    BlockState finalState = transaction.getFinal().getState();
-    BlockTransactionSource source = this.blockTransactionSource != BlockTransactionSource.INHERIT ? this.blockTransactionSource : blockQuery.getInheritedSource();
+    final BlockState originalState = transaction.getOriginal().getState();
+    final BlockState finalState = transaction.getFinal().getState();
+    final BlockTransactionSource source = this.blockTransactionSource != BlockTransactionSource.INHERIT ? this.blockTransactionSource : blockQuery.getInheritedSource();
 
     switch (source) {
       case ORIGINAL:
@@ -79,7 +79,7 @@ public abstract class AbstractLazyBlockState implements LazyBlockState {
     throw new IllegalStateException("Impossible state reached for BlockQuery: " + blockQuery);
   }
 
-  private boolean checkMatch(BlockState state) {
+  private boolean checkMatch(final BlockState state) {
     return this.block().equals(state.getType()) && this.testInternal(state);
   }
 

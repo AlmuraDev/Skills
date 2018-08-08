@@ -38,7 +38,7 @@ package org.inspirenxe.skills.impl.content.registry;
 @Deprecated
 public final class IdioticCatalogKey extends CatalogKey {
 
-  public IdioticCatalogKey(String combined) {
+  public IdioticCatalogKey(final String combined) {
     super("unknown:" + combined);
   }
 }
