@@ -5,6 +5,7 @@ import org.inspirenxe.skills.impl.content.component.apply.cause.CauseFirstEventA
 import org.inspirenxe.skills.impl.content.component.apply.math.BigDecimalParser;
 import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventData;
+import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Event;
@@ -13,19 +14,19 @@ import java.math.BigDecimal;
 
 import javax.annotation.Nullable;
 
-public class DataApplicator extends CauseFirstEventApplicator<Event, Player> {
+public class DataApplicator extends CauseFirstEventApplicator<Event, DataHolder> {
 
     private KeyValue keyValue;
     @Nullable private MathOperationType operation;
 
     protected DataApplicator(KeyValue keyValue, @Nullable MathOperationType operationType) {
-        super(Player.class, Event.class);
+        super(DataHolder.class, Event.class);
         this.keyValue = keyValue;
         this.operation = operation;
     }
 
     @Override
-    protected void applyWithCause(EventData eventData, Event event, Player causeObject) {
+    protected void applyWithCause(EventData eventData, Event event, DataHolder causeObject) {
         Object newValueObj = this.keyValue.getValue();
         if (this.operation != null) {
             BigDecimal oldValue = new BigDecimal(((Number) causeObject.getValue((Key) this.keyValue.getKey()).get()).toString());
