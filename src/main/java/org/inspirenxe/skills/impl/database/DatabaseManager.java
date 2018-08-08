@@ -81,7 +81,7 @@ public final class DatabaseManager implements Witness {
                 } else {
                     connection = this.connectionSource.getConnection();
                 }
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
                 existingDataSource = false;
             } finally {
                 if (connection != null) {
@@ -124,7 +124,7 @@ public final class DatabaseManager implements Witness {
         try (final DSLContext context = this.createContext(true)) {
             final URI uri = SkillsImpl.class.getResource("/db/database.sql").toURI();
 
-            Path path;
+            final Path path;
 
             if (uri.getScheme().equals("jar")) {
                 final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
@@ -139,7 +139,7 @@ public final class DatabaseManager implements Witness {
                 final String sql = new String(encoded, Charsets.UTF_8);
                 context.execute(sql);
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new RuntimeException(ex);
         }
     }

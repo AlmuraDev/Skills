@@ -22,27 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.component.apply;
+package org.inspirenxe.skills.impl.content.type.skill.component.event.flatten;
 
-import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 
-public final class TransactionValidityApplicator implements EventApplicator<Transaction> {
+import java.util.Collection;
 
-  private final boolean isValid;
+public interface EventFlattener<T extends Event> {
 
-  public TransactionValidityApplicator(final boolean isValid) {
-    this.isValid = isValid;
-  }
+    Collection<T> flatten(T event);
 
-  @Override
-  public boolean accepts(Event trigger, Transaction target) {
-    return trigger instanceof Cancellable && !((Cancellable) trigger).isCancelled();
-  }
-
-  @Override
-  public void applyInternal(Event trigger, Transaction target) {
-    target.setValid(this.isValid);
-  }
 }

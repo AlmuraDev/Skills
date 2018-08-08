@@ -25,26 +25,22 @@
 package org.inspirenxe.skills.impl.content.component.filter.item;
 
 import com.google.common.base.MoreObjects;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.inspirenxe.skills.impl.content.parser.lazy.item.LazyItemStack;
 
-public final class ItemFilter implements TypedFilter<ItemQuery> {
+public final class ItemFilter extends TypedMultiFilter<ItemQuery> {
 
   private final LazyItemStack stack;
 
   ItemFilter(final LazyItemStack stack) {
+    super(ItemQuery.class);
     this.stack = stack;
   }
 
   @Override
-  public boolean queryable(final FilterQuery query) {
-    return query instanceof ItemQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(final ItemQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final ItemQuery query) {
     return FilterResponse.from(this.stack.matches(query.stack()));
   }
 

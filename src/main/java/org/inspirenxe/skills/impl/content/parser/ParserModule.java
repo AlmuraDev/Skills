@@ -35,8 +35,16 @@ import net.kyori.xml.node.parser.ParserBinder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
-import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
-import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
+import org.inspirenxe.skills.impl.content.component.apply.EventApplicatorImpl;
+import org.inspirenxe.skills.impl.content.component.apply.MathOperationType;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValueParser;
+import org.inspirenxe.skills.impl.content.component.apply.math.BigDecimalParser;
+import org.inspirenxe.skills.impl.content.component.apply.math.MathOperation;
+import org.inspirenxe.skills.impl.content.component.apply.math.MathOperationParser;
+import org.inspirenxe.skills.impl.content.component.apply.message.Message;
+import org.inspirenxe.skills.impl.content.component.apply.message.MessageParser;
+import org.inspirenxe.skills.impl.content.parser.lazy.block.BlockTransactionSource;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockStateParser;
 import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
@@ -46,6 +54,8 @@ import org.inspirenxe.skills.impl.content.parser.lazy.item.LazyItemStackParser;
 import org.inspirenxe.skills.impl.content.parser.value.CatalogStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
+import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
+import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
 import org.jooq.SQLDialect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.effect.sound.SoundCategory;
@@ -53,10 +63,15 @@ import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.item.FireworkShape;
 
+import java.math.BigDecimal;
+
 public final class ParserModule extends AbstractModule {
 
   @Override
   protected void configure() {
+    this.requestStaticInjection(KeyValue.class);
+    this.requestStaticInjection(EventApplicatorImpl.class);
+
     final ParserBinder parsers = new ParserBinder(this.binder());
     parsers.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
     parsers.bindParser(CauseType.class).to(new TypeLiteral<EnumParser<CauseType>>() {});
@@ -71,11 +86,18 @@ public final class ParserModule extends AbstractModule {
     parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
     parsers.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {});
     parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
+    parsers.bindParser(MathOperationType.class).to(new TypeLiteral<EnumParser<MathOperationType>>() {});
+    parsers.bindParser(BlockTransactionSource.class).to(new TypeLiteral<EnumParser<BlockTransactionSource>>() {});
+    parsers.bindParser(BigDecimal.class).to(BigDecimalParser.class);
+    parsers.bindParser(MathOperation.class).to(MathOperationParser.class);
+    parsers.bindParser(Message.class).to(MessageParser.class);
+    parsers.bindParser(KeyValue.class).to(KeyValueParser.class);
 
     // Commence Hacks
     // TODO Add hackery parsers as I need them
     this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {});
     this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {});
+    this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {});
     this.bindRawParser(GameMode.class).to(new TypeLiteral<CatalogStringToValueParser<GameMode>>() {});
   }
 

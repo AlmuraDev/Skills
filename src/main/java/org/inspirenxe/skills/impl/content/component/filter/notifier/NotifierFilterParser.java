@@ -41,7 +41,7 @@ public final class NotifierFilterParser implements Parser<NotifierFilter> {
   }
 
   @Override
-  public NotifierFilter throwingParse(Node node) throws XMLException {
+  public NotifierFilter throwingParse(final Node node) throws XMLException {
     final String value = this.stringParser.parse(node.requireAttribute("value"));
     if (value.equalsIgnoreCase("none")) {
       return new NotifierFilter(null);

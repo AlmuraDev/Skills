@@ -25,27 +25,22 @@
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
 import com.google.common.base.MoreObjects;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
-public final class LevelFilter implements TypedFilter<LevelQuery> {
+public final class LevelFilter extends TypedMultiFilter<LevelQuery> {
 
   private final int level;
 
   LevelFilter(final int level) {
+    super(LevelQuery.class);
     this.level = level;
   }
 
   @Override
-  public boolean queryable(FilterQuery query) {
-    return query instanceof LevelQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(LevelQuery query) {
-    // TODO Operators
-    return FilterResponse.from(this.level == query.level());
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final LevelQuery query) {
+    return FilterResponse.from(query.level(parent.getSkillType()) == this.level);
   }
 
   @Override

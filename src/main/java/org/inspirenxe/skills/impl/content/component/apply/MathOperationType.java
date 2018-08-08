@@ -22,30 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.component.filter.block;
+package org.inspirenxe.skills.impl.content.component.apply;
 
-import org.inspirenxe.skills.impl.content.parser.lazy.block.LazyBlockState;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-public final class BlockQueryImpl implements BlockQuery {
+public enum MathOperationType {
+    ADD {
+        @Override
+        public BigDecimal apply(final BigDecimal firstValue, final BigDecimal secondValue) {
+            return firstValue.add(secondValue);
+        }
+    },
+    SUBTRACT {
+        @Override
+        public BigDecimal apply(final BigDecimal firstValue, final BigDecimal secondValue) {
+            return firstValue.subtract(secondValue);
+        }
+    },
+    MULTIPLY {
+        @Override
+        public BigDecimal apply(final BigDecimal firstValue, final BigDecimal secondValue) {
+            return firstValue.multiply(secondValue);
+        }
+    },
+    DIVIDE {
+        @Override
+        public BigDecimal apply(final BigDecimal firstValue, final BigDecimal secondValue) {
+            return firstValue.divide(secondValue, RoundingMode.UNNECESSARY);
+        }
+    };
 
-  private final LazyBlockState state;
-
-  public BlockQueryImpl(final BlockType block) {
-    this(LazyBlockState.from(block));
-  }
-
-  public BlockQueryImpl(final BlockState state) {
-    this(LazyBlockState.from(state));
-  }
-
-  public BlockQueryImpl(final LazyBlockState state) {
-    this.state = state;
-  }
-
-  @Override
-  public LazyBlockState state() {
-    return this.state;
-  }
+    public abstract BigDecimal apply(BigDecimal firstValue, BigDecimal secondValue);
 }

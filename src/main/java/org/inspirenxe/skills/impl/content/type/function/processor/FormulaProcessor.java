@@ -41,7 +41,7 @@ public final class FormulaProcessor implements Processor<ContentFunctionBuilder<
   }
 
   @Override
-  public void process(Node node, ContentFunctionBuilder<?> builder) throws XMLException {
-    builder.formula(stringParser.parse(node.requireAttribute("formula")));
+  public void process(final Node node, final ContentFunctionBuilder<?> builder) throws XMLException {
+    builder.formula(this.stringParser.parse(node.requireAttribute("formula")));
   }
 }

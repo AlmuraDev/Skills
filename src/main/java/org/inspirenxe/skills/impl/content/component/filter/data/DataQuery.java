@@ -24,21 +24,19 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import com.almuradev.droplet.registry.RegistryKey;
-import org.inspirenxe.skills.impl.content.component.filter.key.RegistryKeyFilterQuery;
-import org.inspirenxe.skills.impl.content.registry.CatalogKey;
-import org.spongepowered.api.data.key.Key;
+import net.kyori.fragment.filter.FilterQuery;
+import org.spongepowered.api.data.DataHolder;
 
-import javax.annotation.Nullable;
+public final class DataQuery implements FilterQuery {
 
-public interface DataQuery extends RegistryKeyFilterQuery {
+  private final DataHolder dataHolder;
 
-  default RegistryKey key() {
-    return new CatalogKey(this.dataKey().getId());
+  public DataQuery(final DataHolder dataHolder) {
+    this.dataHolder = dataHolder;
   }
 
-  Key dataKey();
+  public DataHolder getDataHolder() {
+    return this.dataHolder;
+  }
 
-  @Nullable
-  <V> V value();
 }

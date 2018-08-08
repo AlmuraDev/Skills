@@ -41,8 +41,8 @@ final class StatefulLazyBlockState extends AbstractLazyBlockState {
 
   private final Supplier<Map<BlockTrait<? extends Comparable<?>>, LazyStateValue<? extends Comparable<?>>>> properties;
 
-  StatefulLazyBlockState(final RegistryReference<BlockType> block, final Map<String, LazyStateValue<? extends Comparable<?>>> properties) {
-    super(block);
+  StatefulLazyBlockState(final RegistryReference<BlockType> block, final Map<String, LazyStateValue<? extends Comparable<?>>> properties, final BlockTransactionSource source) {
+    super(block, source);
     this.properties = Suppliers.memoize(() -> this.resolveProperties(properties));
   }
 

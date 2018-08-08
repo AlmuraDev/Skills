@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 
 import java.util.List;
 import java.util.Objects;
@@ -55,20 +56,30 @@ public final class EventScriptImpl implements EventScript {
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(type);
+  public void processEvent(final EventCompoundFilterQuery eventData) {
+    if (!this.type.matches(eventData.getEvent().getClass())) {
+      return;
+    }
+    for (final Branch branch: this.branches) {
+      branch.processEvent(eventData);
+    }
   }
 
   @Override
-  public boolean equals(Object o) {
+  public int hashCode() {
+    return Objects.hash(this.type);
+  }
+
+  @Override
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (o == null || this.getClass() != o.getClass()) {
       return false;
     }
-    final EventScriptImpl that = (EventScriptImpl) o;
-    return Objects.equals(type, that.type);
+    final EventScriptImpl other = (EventScriptImpl) o;
+    return Objects.equals(this.type, other.type);
   }
 
   @Override

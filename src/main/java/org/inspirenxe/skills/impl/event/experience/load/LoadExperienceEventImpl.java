@@ -35,7 +35,7 @@ abstract class LoadExperienceEventImpl extends ExperienceEventImpl implements Ex
   private final boolean hasGainedExperienceBefore;
 
   LoadExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType, final double originalExperience,
-      final double experience, boolean hasGainedExperienceBefore) {
+      final double experience, final boolean hasGainedExperienceBefore) {
     super(containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
     this.hasGainedExperienceBefore = hasGainedExperienceBefore;
   }

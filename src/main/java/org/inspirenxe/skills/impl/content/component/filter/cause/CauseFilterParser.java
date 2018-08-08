@@ -45,7 +45,7 @@ public final class CauseFilterParser implements Parser<CauseFilter> {
   }
 
   @Override
-  public CauseFilter throwingParse(Node node) throws XMLException {
+  public CauseFilter throwingParse(final Node node) throws XMLException {
     final CauseOperatorType causeOperatorType = this.causeOperatorParser.parse(node.requireAttribute("op"));
     final CauseType causeType = this.causeTypeParser.parse(node.requireAttribute("type"));
     return new CauseFilter(causeOperatorType, causeType);

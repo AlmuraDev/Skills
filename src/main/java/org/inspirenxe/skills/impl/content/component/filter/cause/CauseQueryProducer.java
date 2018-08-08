@@ -22,35 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.component.filter.data;
+package org.inspirenxe.skills.impl.content.component.filter.cause;
 
-import org.spongepowered.api.data.key.Key;
+import org.inspirenxe.skills.impl.content.component.query.EventFilterQueryProducer;
+import org.spongepowered.api.event.Event;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
-public final class DataQueryImpl implements DataQuery {
+public class CauseQueryProducer implements EventFilterQueryProducer<Event, CauseQuery> {
 
-  private final Key dataKey;
-  @Nullable private final Object value;
+    @Override
+    public Class<CauseQuery> getFilterQueryType() {
+        return CauseQuery.class;
+    }
 
-  public DataQueryImpl(final Key dataKey) {
-    this.dataKey = dataKey;
-    this.value = null;
-  }
+    @Override
+    public Class<Event> getEventType() {
+        return Event.class;
+    }
 
-  public DataQueryImpl(final Key dataKey, final Object value) {
-    this.dataKey = dataKey;
-    this.value = value;
-  }
-
-  @Override
-  public Key dataKey() {
-    return this.dataKey;
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public <V> V value() {
-    return (V) this.value;
-  }
+    @Override
+    public Optional<CauseQuery> produce(final Event source) {
+        return Optional.of(new CauseQuery(source.getCause()));
+    }
 }

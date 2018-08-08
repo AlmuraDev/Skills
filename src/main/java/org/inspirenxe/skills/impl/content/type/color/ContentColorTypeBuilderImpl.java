@@ -38,22 +38,22 @@ public final class ContentColorTypeBuilderImpl extends AbstractContentBuilder<Co
   private int r = NOT_SET;
 
   @Override
-  public void b(int b) {
+  public void b(final int b) {
     this.b = b;
   }
 
   @Override
-  public void g(int g) {
+  public void g(final int g) {
     this.g = g;
   }
 
   @Override
-  public void hex(int hex) {
+  public void hex(final int hex) {
     this.hex = hex;
   }
 
   @Override
-  public void r(int r) {
+  public void r(final int r) {
     this.r = r;
   }
 

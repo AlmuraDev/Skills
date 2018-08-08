@@ -43,7 +43,7 @@ public interface EconomyFunctionType extends FunctionType, BiFunction<Integer, D
   BigDecimal getMoneyFor(final int level, final double modifier);
 
   @Override
-  default BigDecimal apply(Integer level, Double modifier) {
+  default BigDecimal apply(final Integer level, final Double modifier) {
     return this.getMoneyFor(level, modifier);
   }
 }

@@ -41,7 +41,7 @@ public final class TrailsProcessor implements Processor<ContentFireworkEffectTyp
   }
 
   @Override
-  public void process(Node node, ContentFireworkEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
     node.nodes("trails").collect(MoreCollectors.toOptional()).ifPresent(trails -> builder.trails(this.booleanParser.parse(trails)));
   }
 }

@@ -45,7 +45,7 @@ public final class SkillHolderImpl implements SkillHolder {
   private final Map<SkillType, Skill> skills = new HashMap<>();
 
   @Inject
-  private SkillHolderImpl(final SkillImpl.Factory factory, @Assisted("container") UUID containerUniqueId, @Assisted("holder") UUID holderUniqueId) {
+  private SkillHolderImpl(final SkillImpl.Factory factory, @Assisted("container") final UUID containerUniqueId, @Assisted("holder") final UUID holderUniqueId) {
     this.factory = factory;
     this.containerUniqueId = containerUniqueId;
     this.holderUniqueId = holderUniqueId;
@@ -62,7 +62,7 @@ public final class SkillHolderImpl implements SkillHolder {
   }
 
   @Override
-  public Optional<Skill> getSkill(SkillType type) {
+  public Optional<Skill> getSkill(final SkillType type) {
     return Optional.ofNullable(this.skills.get(type));
   }
 
@@ -72,7 +72,7 @@ public final class SkillHolderImpl implements SkillHolder {
   }
 
   @Override
-  public Skill addSkill(SkillType type) {
+  public Skill addSkill(final SkillType type) {
     final Skill skill = this.factory.create(type, this);
 
     this.skills.put(type, skill);
@@ -81,7 +81,7 @@ public final class SkillHolderImpl implements SkillHolder {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }

@@ -28,7 +28,6 @@ import net.kyori.fragment.filter.FilterBinder;
 import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.content.component.filter.block.BlockFilterParser;
 import org.inspirenxe.skills.impl.content.component.filter.cause.CauseFilterParser;
-import org.inspirenxe.skills.impl.content.component.filter.data.DataFilter;
 import org.inspirenxe.skills.impl.content.component.filter.data.DataFilterParser;
 import org.inspirenxe.skills.impl.content.component.filter.experience.ExperienceFilterParser;
 import org.inspirenxe.skills.impl.content.component.filter.experience.LevelFilterParser;
@@ -43,7 +42,7 @@ public final class FilterModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    final FilterBinder filters = new FilterBinder(this.binder());
+    final TypedMultiFilterBinderWrapper filters = new TypedMultiFilterBinderWrapper(new FilterBinder(this.binder()));
     filters.bindFilter("block").to(BlockFilterParser.class);
     filters.bindFilter("cause").to(CauseFilterParser.class);
     filters.bindFilter("data").to(DataFilterParser.class);
@@ -55,7 +54,5 @@ public final class FilterModule extends AbstractModule {
     filters.bindFilter("namespace").to(NamespaceFilterParser.class);
     filters.bindFilter("notifier").to(NotifierFilterParser.class);
     filters.bindFilter("potion").to(PotionFilterParser.class);
-
-    this.requestStaticInjection(DataFilter.class);
   }
 }

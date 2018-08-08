@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.component.filter.skill;
 
 import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.api.SkillType;
 
 public final class SkillQueryImpl implements SkillQuery {
 
@@ -37,5 +38,11 @@ public final class SkillQueryImpl implements SkillQuery {
   @Override
   public Skill skill() {
     return this.skill;
+  }
+
+  @Override
+  public int level(final SkillType skillType) {
+    // TODO - we need to store stuff
+    return 0;
   }
 }

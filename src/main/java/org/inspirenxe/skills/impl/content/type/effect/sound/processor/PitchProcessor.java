@@ -41,7 +41,7 @@ public final class PitchProcessor implements Processor<ContentSoundEffectTypeBui
   }
 
   @Override
-  public void process(Node node, ContentSoundEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) {
     node.nodes("pitch").collect(MoreCollectors.toOptional()).ifPresent(pitch -> builder.pitch(this.doubleParser.parse(pitch)));
   }
 }

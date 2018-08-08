@@ -24,6 +24,8 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -36,6 +38,8 @@ public interface EventScript {
   EventType getType();
 
   List<Branch> getBranches();
+
+  void processEvent(EventCompoundFilterQuery eventData);
 
   interface Builder {
 

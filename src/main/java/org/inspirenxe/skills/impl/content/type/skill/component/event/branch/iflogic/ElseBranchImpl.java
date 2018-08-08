@@ -31,7 +31,7 @@ import java.util.List;
 
 final class ElseBranchImpl extends ConditionalBranchImpl<Branch> implements ElseBranch {
 
-  ElseBranchImpl(List<Branch> branches) {
+  ElseBranchImpl(final List<Branch> branches) {
     super(branches);
   }
 }

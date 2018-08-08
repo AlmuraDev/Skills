@@ -42,7 +42,7 @@ public final class CategoryProcessor implements Processor<ContentSoundEffectType
   }
 
   @Override
-  public void process(Node node, ContentSoundEffectTypeBuilder builder) throws XMLException {
+  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) throws XMLException {
     builder.category(this.categoryParser.parse(node.requireAttribute("category")));
   }
 }

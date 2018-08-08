@@ -25,7 +25,12 @@
 package org.inspirenxe.skills.api;
 
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.event.Event;
+
+import java.util.Map;
 
 public interface SkillType extends CatalogType {
 
@@ -34,4 +39,8 @@ public interface SkillType extends CatalogType {
   int getMinLevel();
 
   int getMaxLevel();
+
+  Map<EventType<?>, EventScript> getEventScripts();
+
+  void processEvent(Event event);
 }

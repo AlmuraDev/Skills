@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.impl.content.component.filter.owner;
 
 import com.google.common.base.MoreObjects;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -35,21 +35,17 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public final class OwnerFilter implements TypedFilter<OwnerQuery> {
+public final class OwnerFilter extends TypedMultiFilter<OwnerQuery> {
 
   private final Optional<UUID> owner;
 
   OwnerFilter(@Nullable final UUID owner) {
+    super(OwnerQuery.class);
     this.owner = Optional.ofNullable(owner);
   }
 
   @Override
-  public boolean queryable(FilterQuery query) {
-    return query instanceof OwnerQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(OwnerQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final OwnerQuery query) {
     return FilterResponse.from(Objects.equals(this.owner, query.owner()));
   }
 

@@ -41,7 +41,7 @@ public final class VolumeProcessor implements Processor<ContentSoundEffectTypeBu
   }
 
   @Override
-  public void process(Node node, ContentSoundEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) {
     node.nodes("volume").collect(MoreCollectors.toOptional()).ifPresent(volume -> builder.volume(this.doubleParser.parse(volume)));
   }
 }

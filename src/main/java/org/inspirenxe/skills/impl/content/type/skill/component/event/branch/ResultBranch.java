@@ -35,10 +35,10 @@ public interface ResultBranch extends Branch {
     return new ResultBranchBuilder();
   }
 
-  List<EventApplicator<?>> getApplicators();
+  List<EventApplicator> getApplicators();
 
   interface Builder extends Branch.Builder<ResultBranch> {
 
-    Builder apply(final EventApplicator<?> eventApplicator);
+    Builder apply(final EventApplicator eventApplicator);
   }
 }

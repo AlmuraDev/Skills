@@ -46,7 +46,7 @@ public final class SoundEffectTypeRootLoader extends ChildContentLoaderImpl<Cont
   }
 
   @Listener(order = Order.AFTER_PRE)
-  public void onGameStartingServer(GameStartingServerEvent event) {
+  public void onGameStartingServer(final GameStartingServerEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SoundEffectType.class)));
   }
 }

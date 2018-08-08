@@ -38,7 +38,7 @@ public abstract class CompositeBranchBuilder<BRANCH extends Branch, LEAF extends
   protected final List<LEAF> branches = new ArrayList<>();
 
   @Override
-  public BUILDER branch(LEAF branch) {
+  public BUILDER branch(final LEAF branch) {
     checkNotNull(branch);
 
     this.branches.add(branch);

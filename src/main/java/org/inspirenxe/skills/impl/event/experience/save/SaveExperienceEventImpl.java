@@ -32,7 +32,7 @@ import java.util.UUID;
 
 abstract class SaveExperienceEventImpl extends ExperienceEventImpl implements ExperienceEvent.Save {
 
-  SaveExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, SkillType skillType, double originalExperience, double
+  SaveExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType, final double originalExperience, final double
       experience) {
     super(containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
   }

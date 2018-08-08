@@ -22,28 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.component.filter.cause;
+package org.inspirenxe.skills.impl.content.component.apply.math;
 
-import org.inspirenxe.skills.impl.cause.CauseOperatorType;
-import org.inspirenxe.skills.impl.cause.CauseType;
+import com.google.inject.Singleton;
+import net.kyori.xml.XMLException;
+import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public final class CauseQueryImpl implements CauseQuery {
+import java.math.BigDecimal;
 
-  private final CauseOperatorType causeOperatorType;
-  private final CauseType causeType;
+@Singleton
+public class BigDecimalParser implements Parser<BigDecimal> {
 
-  public CauseQueryImpl(final CauseOperatorType causeOperatorType, final CauseType causeType) {
-    this.causeOperatorType = causeOperatorType;
-    this.causeType = causeType;
-  }
-
-  @Override
-  public CauseOperatorType operator() {
-    return this.causeOperatorType;
-  }
-
-  @Override
-  public CauseType type() {
-    return this.causeType;
-  }
+    @NonNull
+    @Override
+    public BigDecimal throwingParse(@NonNull final Node node) throws XMLException {
+        return new BigDecimal(node.value());
+    }
 }

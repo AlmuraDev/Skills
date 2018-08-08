@@ -48,7 +48,7 @@ public final class FadeColorsProcessor implements Processor<ContentFireworkEffec
   }
 
   @Override
-  public void process(Node node, ContentFireworkEffectTypeBuilder builder) {
+  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
     node.nodes("fade-colors").collect(MoreCollectors.toOptional()).ifPresent(fadeColors -> {
       final ImmutableList.Builder<RegistryReference<ColorType>> fadeColorsList = ImmutableList.builder();
 

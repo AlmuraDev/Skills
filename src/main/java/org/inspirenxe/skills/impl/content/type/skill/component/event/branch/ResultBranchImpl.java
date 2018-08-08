@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.impl.content.component.apply.EventApplicator;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchImpl;
 
 import java.util.Collections;
@@ -33,14 +34,14 @@ import java.util.List;
 
 public final class ResultBranchImpl extends BranchImpl implements ResultBranch {
 
-  private final List<EventApplicator<?>> applicators;
+  private final List<EventApplicator> applicators;
 
-  ResultBranchImpl(final List<EventApplicator<?>> applicators) {
+  ResultBranchImpl(final List<EventApplicator> applicators) {
     this.applicators = applicators;
   }
 
   @Override
-  public List<EventApplicator<?>> getApplicators() {
+  public List<EventApplicator> getApplicators() {
     return Collections.unmodifiableList(this.applicators);
   }
 
@@ -49,5 +50,12 @@ public final class ResultBranchImpl extends BranchImpl implements ResultBranch {
     return MoreObjects.toStringHelper(this)
       .addValue(this.applicators)
       .toString();
+  }
+
+  @Override
+  public void processInternal(final EventCompoundFilterQuery event) {
+    for (final EventApplicator applicator: this.getApplicators()) {
+      applicator.apply(event);
+    }
   }
 }

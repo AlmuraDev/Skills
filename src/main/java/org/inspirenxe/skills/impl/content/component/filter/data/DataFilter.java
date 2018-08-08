@@ -24,66 +24,40 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
-import net.kyori.violet.FriendlyTypeLiteral;
-import net.kyori.violet.TypeArgument;
-import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.spongepowered.api.data.key.Key;
 
 import java.util.Objects;
+import java.util.Optional;
 
-import javax.annotation.Nullable;
+public final class DataFilter extends TypedMultiFilter<DataQuery> {
 
-public final class DataFilter implements TypedFilter<DataQuery> {
+  private final KeyValue keyValue;
 
-  @Nullable
-  @Inject
-  private static Injector injector;
-  private final RegistryReference<Key> dataKey;
-  @Nullable private final String rawValue;
-  @Nullable private Object value;
-  private boolean computedValue;
-
-  DataFilter(final RegistryReference<Key> dataKey, @Nullable final String rawValue) {
-    this.dataKey = dataKey;
-    this.rawValue = rawValue;
-  }
-
-  @Override
-  public boolean queryable(final FilterQuery query) {
-    return query instanceof DataQuery;
+  DataFilter(final KeyValue keyValue) {
+    super(DataQuery.class);
+    this.keyValue = keyValue;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public FilterResponse typedQuery(final DataQuery query) {
-    final Key key = this.dataKey.require();
-    FilterResponse response = FilterResponse.from(key.getId().equalsIgnoreCase(query.dataKey().getId()));
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final DataQuery query) {
+    final Key key = this.keyValue.getKey();
+    final Optional<?> holderValue = query.getDataHolder().get(key);
 
-    if (response == FilterResponse.ALLOW && this.rawValue != null && injector != null) {
-      if (!this.computedValue) {
-        final StringToValueParser<?> parser = injector.getInstance(com.google.inject.Key.get(new FriendlyTypeLiteral<StringToValueParser<?>>() {
-        }.where(new TypeArgument(key.getElementToken()) {})));
-        this.value = parser.parse(key.getElementToken(), rawValue).orElse(null);
-        this.computedValue = true;
-      }
-      response = FilterResponse.from(Objects.equals(this.value, query.value()));
-    }
-
-    return response;
+    return holderValue.
+            map(val -> FilterResponse.from(Objects.equals(this.keyValue.getValue(), val)))
+            .orElse(FilterResponse.DENY);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-      .add("key", this.dataKey)
-      .add("value", this.rawValue)
+      .add("keyValue", this.keyValue)
       .toString();
   }
 }

@@ -24,37 +24,23 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.data;
 
-import com.almuradev.droplet.registry.Registry;
-import com.almuradev.droplet.registry.RegistryKey;
-import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.inject.Inject;
 import net.kyori.xml.XMLException;
 import net.kyori.xml.node.Node;
 import net.kyori.xml.node.parser.Parser;
-import org.spongepowered.api.data.key.Key;
+import org.inspirenxe.skills.impl.content.component.apply.data.KeyValue;
 
 public final class DataFilterParser implements Parser<DataFilter> {
 
-  private final Registry<Key> registry;
-  private final Parser<RegistryKey> keyParser;
-  private final Parser<String> stringParser;
+  private final Parser<KeyValue> keyValueParser;
 
   @Inject
-  public DataFilterParser(final Registry<Key> registry, final Parser<RegistryKey> keyParser, final Parser<String>
-    stringParser) {
-    this.registry = registry;
-    this.keyParser = keyParser;
-    this.stringParser = stringParser;
+  public DataFilterParser(final Parser<KeyValue> keyValueParser) {
+    this.keyValueParser = keyValueParser;
   }
 
   @Override
   public DataFilter throwingParse(final Node node) throws XMLException {
-    final RegistryReference<Key> key = this.registry.ref(this.keyParser.parse(node.requireAttribute("key")));
-    final Node valueNode = node.attribute("value").optional(null);
-    if (valueNode == null) {
-      return new DataFilter(key, null);
-    }
-
-    return new DataFilter(key, this.stringParser.parse(valueNode));
+    return new DataFilter(this.keyValueParser.throwingParse(node));
   }
 }

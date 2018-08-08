@@ -25,8 +25,9 @@
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
 import net.kyori.fragment.filter.FilterQuery;
+import org.inspirenxe.skills.api.SkillType;
 
 public interface LevelQuery extends FilterQuery {
 
-  int level();
+  int level(SkillType skillType);
 }

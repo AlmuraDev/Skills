@@ -27,13 +27,24 @@ package org.inspirenxe.skills.impl.content.type.skill;
 import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
+import org.inspirenxe.skills.impl.SkillsImpl;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {
@@ -46,7 +57,44 @@ public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkil
   }
 
   @Listener(order = Order.FIRST)
-  public void onGameStartedServer(GameStartedServerEvent event) {
+  public void onGameStartedServer(final GameInitializationEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SkillTypeImpl.class)));
+    this.registerListeners();
   }
+
+  private void registerListeners() {
+    final Multimap<Class<? extends Event>, SkillType> listeners = HashMultimap.create();
+    final Set<EventType<?>> withListeners = new HashSet<>();
+    for (final SkillType skillType: this.registry.all()) {
+      for (final Map.Entry<EventType<?>, EventScript> entry: skillType.getEventScripts().entrySet()) {
+        listeners.put(entry.getKey().getEventClass(), skillType);
+        if (entry.getValue().getBranches().size() != 0) {
+          withListeners.add(entry.getKey());
+        }
+      }
+    }
+
+    for (final SkillType skillType: this.registry.all()) {
+      for (final Map.Entry<EventType<?>, EventScript> entry: skillType.getEventScripts().entrySet()) {
+        listeners.put(this.getOldestParent(withListeners, entry.getKey()), skillType);
+      }
+    }
+
+    for (final Class<? extends Event> eventType: listeners.keySet()) {
+      final DelegatingSkillEventListener listener = new DelegatingSkillEventListener(listeners.get(eventType));
+      Sponge.getEventManager().registerListener(SkillsImpl.INSTANCE, eventType, listener);
+    }
+  }
+
+  private Class<? extends Event> getOldestParent(final Set<EventType<?>> withListeners, EventType<?> eventType) {
+    EventType<?> highestWithListeners = eventType;
+      while (eventType.getParent().isPresent()) {
+        final EventType<?> parent = eventType.getParent().get();
+        if (withListeners.contains(parent)) {
+          highestWithListeners = parent;
+        }
+        eventType = parent;
+      }
+      return highestWithListeners.getEventClass();
+    }
 }

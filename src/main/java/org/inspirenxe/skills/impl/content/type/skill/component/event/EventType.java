@@ -24,27 +24,46 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.component.event;
 
+import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.EventFlattener;
+import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.NoOpEventFlattener;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.event.Event;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public interface EventType extends CatalogType {
+import javax.annotation.Nullable;
 
-  static EventType of(final String id, final Class<? extends Event> clazz) {
-    return new EventTypeImpl(id, clazz);
+public interface EventType<T extends Event> extends CatalogType {
+
+    static <T extends Event> EventType<T> of(final String id, final Class<T> clazz) {
+        return new EventTypeImpl<>(id, clazz, new NoOpEventFlattener<>());
+    }
+
+  static <T extends Event> EventType<T> of(final String id, final Class<T> clazz, final EventFlattener<T> flattener) {
+    return new EventTypeImpl<>(id, clazz, flattener);
   }
 
-  EventType child(final String id, final Class<? extends Event> clazz);
+  <S extends T> EventType<S> child(final String id, final Class<S> clazz);
 
-  Optional<EventType> getParent();
+    <S extends T> EventType<S> child(final String id, final Class<S> clazz, final EventFlattener<? super S> flattener);
 
-  Class<? extends Event> getEventClass();
+
+  Optional<EventType<? super T>> getParent();
+
+  Class<T> getEventClass();
+
+  @Nullable
+  Collection<T> flattenEvent(T event);
 
   List<String> getPath();
 
   boolean isExact(Class<? extends Event> clazz);
 
   boolean isDirectChild(Class<? extends Event> clazz);
+
+  boolean matches(Class<? extends Event> clazz);
+
+  EventFlattener<? super T> getFlattener();
 }

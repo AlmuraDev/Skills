@@ -30,7 +30,7 @@ public final class ResultImpl implements Result {
 
   private final Result.Type type;
 
-  ResultImpl(ResultBuilder builder) {
+  ResultImpl(final ResultBuilder builder) {
     this.type = builder.type;
   }
 

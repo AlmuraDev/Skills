@@ -24,26 +24,22 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.potion;
 
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
-public final class PotionFilter implements TypedFilter<PotionQuery> {
+public final class PotionFilter extends TypedMultiFilter<PotionQuery> {
 
   private final PotionEffectType potion;
 
   PotionFilter(final PotionEffectType potion) {
+    super(PotionQuery.class);
     this.potion = potion;
   }
 
   @Override
-  public boolean queryable(final FilterQuery query) {
-    return query instanceof PotionQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(PotionQuery query) {
-    return FilterResponse.from(this.potion == query.potion());
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final PotionQuery query) {
+    return FilterResponse.from(this.potion.equals(query.potion()));
   }
 }

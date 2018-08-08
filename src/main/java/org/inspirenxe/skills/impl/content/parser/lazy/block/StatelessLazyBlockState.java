@@ -35,8 +35,8 @@ import java.util.Optional;
 
 public final class StatelessLazyBlockState extends AbstractLazyBlockState {
 
-  StatelessLazyBlockState(final RegistryReference<BlockType> block) {
-    super(block);
+  StatelessLazyBlockState(final RegistryReference<BlockType> block, final BlockTransactionSource source) {
+    super(block, source);
   }
 
   @Override

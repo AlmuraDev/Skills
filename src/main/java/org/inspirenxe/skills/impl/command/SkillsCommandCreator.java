@@ -34,7 +34,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -49,6 +48,7 @@ import javax.inject.Provider;
 public final class SkillsCommandCreator implements Provider<CommandSpec> {
 
   private static final DecimalFormat prettyExp = new DecimalFormat("###,###.##");
+
   @Inject
   private PluginContainer container;
   @Inject

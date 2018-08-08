@@ -25,30 +25,26 @@
 package org.inspirenxe.skills.impl.content.component.filter.cause;
 
 import com.google.common.base.MoreObjects;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
 import org.inspirenxe.skills.impl.cause.CauseOperatorType;
 import org.inspirenxe.skills.impl.cause.CauseType;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
-public final class CauseFilter implements TypedFilter<CauseQuery> {
+public final class CauseFilter extends TypedMultiFilter<CauseQuery> {
 
   private final CauseOperatorType causeOperatorType;
   private final CauseType causeType;
 
-  CauseFilter(final CauseOperatorType causeOperatorType, CauseType causeType) {
+  CauseFilter(final CauseOperatorType causeOperatorType, final CauseType causeType) {
+    super(CauseQuery.class);
     this.causeOperatorType = causeOperatorType;
     this.causeType = causeType;
   }
 
   @Override
-  public boolean queryable(FilterQuery query) {
-    return query instanceof CauseQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(CauseQuery query) {
-    return FilterResponse.from(this.causeOperatorType == query.operator() && this.causeType == query.type());
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final CauseQuery query) {
+    return FilterResponse.from(this.causeOperatorType.matches(query.getCause(), this.causeType.getTypeClass()));
   }
 
   @Override

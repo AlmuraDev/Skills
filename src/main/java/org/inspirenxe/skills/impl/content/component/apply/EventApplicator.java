@@ -24,17 +24,10 @@
  */
 package org.inspirenxe.skills.impl.content.component.apply;
 
-import org.spongepowered.api.event.Event;
+import net.kyori.feature.FeatureDefinition;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 
-public interface EventApplicator<E> {
+public interface EventApplicator extends FeatureDefinition {
 
-  boolean accepts(Event trigger, E target);
-
-  default void apply(final Event trigger, final E target) {
-    if(this.accepts(trigger, target)) {
-      this.applyInternal(trigger, target);
-    }
-  }
-
-  void applyInternal(final Event trigger, final E target);
+  void apply(final EventCompoundFilterQuery eventData);
 }

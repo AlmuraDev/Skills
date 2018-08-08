@@ -44,27 +44,27 @@ public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffe
   private double minVolume, volume, pitch;
 
   @Override
-  public void sound(SoundType sound) {
+  public void sound(final SoundType sound) {
     this.sound = sound;
   }
 
   @Override
-  public void category(SoundCategory category) {
+  public void category(final SoundCategory category) {
     this.category = category;
   }
 
   @Override
-  public void minVolume(double minVolume) {
+  public void minVolume(final double minVolume) {
     this.minVolume = minVolume;
   }
 
   @Override
-  public void volume(double volume) {
+  public void volume(final double volume) {
     this.volume = volume;
   }
 
   @Override
-  public void pitch(double pitch) {
+  public void pitch(final double pitch) {
     this.pitch = pitch;
   }
 

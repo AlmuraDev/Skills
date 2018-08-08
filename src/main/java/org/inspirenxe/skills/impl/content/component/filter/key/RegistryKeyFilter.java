@@ -25,25 +25,21 @@
 package org.inspirenxe.skills.impl.content.component.filter.key;
 
 import com.almuradev.droplet.registry.RegistryKey;
-import net.kyori.fragment.filter.FilterQuery;
 import net.kyori.fragment.filter.FilterResponse;
-import net.kyori.fragment.filter.TypedFilter;
+import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
+import org.inspirenxe.skills.impl.content.component.filter.TypedMultiFilter;
 
-public final class RegistryKeyFilter implements TypedFilter<RegistryKeyFilterQuery> {
+public final class RegistryKeyFilter extends TypedMultiFilter<RegistryKeyFilterQuery> {
 
   private final RegistryKey key;
 
   RegistryKeyFilter(final RegistryKey key) {
+    super(RegistryKeyFilterQuery.class);
     this.key = key;
   }
 
   @Override
-  public boolean queryable(final FilterQuery query) {
-    return query instanceof RegistryKeyFilterQuery;
-  }
-
-  @Override
-  public FilterResponse typedQuery(RegistryKeyFilterQuery query) {
+  public FilterResponse individualQuery(final EventCompoundFilterQuery parent, final RegistryKeyFilterQuery query) {
     return FilterResponse.from(this.key.equals(query.key()));
   }
 }

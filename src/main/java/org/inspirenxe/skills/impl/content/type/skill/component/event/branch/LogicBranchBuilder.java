@@ -34,7 +34,7 @@ public abstract class LogicBranchBuilder<BRANCH extends LogicBranch, BUILDER ext
   @Nullable protected Filter statement;
 
   @Override
-  public BUILDER statement(Filter statement) {
+  public BUILDER statement(final Filter statement) {
     this.statement = statement;
     return (BUILDER) this;
   }

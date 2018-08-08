@@ -40,7 +40,7 @@ public final class GProcessor implements Processor<ContentColorTypeBuilder> {
   }
 
   @Override
-  public void process(Node node, ContentColorTypeBuilder builder) {
+  public void process(final Node node, final ContentColorTypeBuilder builder) {
     node.attribute("g").ifPresent(g -> builder.g(this.intParser.parse(g)));
   }
 }

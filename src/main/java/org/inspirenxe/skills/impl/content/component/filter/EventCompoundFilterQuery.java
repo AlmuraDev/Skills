@@ -22,40 +22,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.parser.lazy.block;
+package org.inspirenxe.skills.impl.content.component.filter;
 
-import org.inspirenxe.skills.impl.content.parser.lazy.block.value.LazyStateValue;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.trait.BlockTrait;
+import com.google.common.collect.ImmutableMap;
+import net.kyori.fragment.filter.FilterQuery;
+import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.impl.content.component.query.EventFilterProducerRegistry;
+import org.spongepowered.api.event.Event;
 
+import java.util.Collection;
 import java.util.Optional;
 
-public final class WrappedStatelessLazyBlockState implements LazyBlockState {
+public class EventCompoundFilterQuery implements FilterQuery {
 
-  private final BlockType block;
+    private final Event event;
+    private final ImmutableMap<Class<? extends FilterQuery>, FilterQuery> filterQueries;
+    private final SkillType skillType;
 
-  WrappedStatelessLazyBlockState(final BlockType block) {
-    this.block = block;
-  }
+    public EventCompoundFilterQuery(final Event event, final SkillType skillType) {
+        this.event = event;
+        this.filterQueries = EventFilterProducerRegistry.INSTANCE.getQueries(event);
+        this.skillType = skillType;
+    }
 
-  @Override
-  public BlockType block() {
-    return this.block;
-  }
+    public <T extends FilterQuery> Optional<T> getQuery(final Class<T> filterClass) {
+        return Optional.ofNullable(filterClass.cast(this.filterQueries.get(filterClass)));
+    }
 
-  @Override
-  public <V extends Comparable<V>> Optional<LazyStateValue<V>> value(final BlockTrait<V> property) {
-    return Optional.empty();
-  }
+    public Event getEvent() {
+        return this.event;
+    }
 
-  @Override
-  public boolean test(final BlockState state) {
-    return this.block.equals(state.getType());
-  }
+    public SkillType getSkillType() {
+        return this.skillType;
+    }
 
-  @Override
-  public BlockState get() {
-    return this.block().getDefaultState();
-  }
+    public Collection<FilterQuery> getAll() {
+        return this.filterQueries.values();
+    }
+
 }

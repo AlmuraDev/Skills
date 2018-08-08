@@ -41,7 +41,7 @@ public final class ExperienceFilterParser implements Parser<ExperienceFilter> {
   }
 
   @Override
-  public ExperienceFilter throwingParse(Node node) throws XMLException {
+  public ExperienceFilter throwingParse(final Node node) throws XMLException {
     return new ExperienceFilter(this.doubleParser.parse(node.requireAttribute("value")));
   }
 }

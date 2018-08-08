@@ -114,11 +114,13 @@ public final class SkillImpl implements Skill {
       this.eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
     }
 
+    this.setDirtyState(true);
+
     return Result.builder().type(Result.Type.SUCCESS).build();
   }
 
   @Override
-  public Result addExperience(double experience) {
+  public Result addExperience(final double experience) {
     return this.setExperience(this.getCurrentExperience() + experience);
   }
 

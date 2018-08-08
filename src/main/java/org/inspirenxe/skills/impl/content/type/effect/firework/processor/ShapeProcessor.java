@@ -42,7 +42,7 @@ public final class ShapeProcessor implements Processor<ContentFireworkEffectType
   }
 
   @Override
-  public void process(Node node, ContentFireworkEffectTypeBuilder builder) throws XMLException {
+  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) throws XMLException {
     builder.shape(this.shapeParser.parse(node.requireAttribute("shape")));
   }
 }

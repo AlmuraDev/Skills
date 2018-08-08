@@ -24,16 +24,19 @@
  */
 package org.inspirenxe.skills.impl.content.component.filter.experience;
 
+import org.inspirenxe.skills.api.SkillHolder;
+import org.inspirenxe.skills.api.SkillType;
+
 public final class LevelQueryImpl implements LevelQuery {
 
-  private final int level;
+  private final SkillHolder skillHolder;
 
-  LevelQueryImpl(final int level) {
-    this.level = level;
+  LevelQueryImpl(final SkillHolder skillHolder) {
+    this.skillHolder = skillHolder;
   }
 
   @Override
-  public int level() {
-    return this.level;
+  public int level(final SkillType skillType) {
+    return this.skillHolder.getSkill(skillType).get().getCurrentLevel();
   }
 }

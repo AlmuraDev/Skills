@@ -40,7 +40,7 @@ public final class HexProcessor implements Processor<ContentColorTypeBuilder> {
   }
 
   @Override
-  public void process(Node node, ContentColorTypeBuilder builder) {
+  public void process(final Node node, final ContentColorTypeBuilder builder) {
     node.attribute("hex").ifPresent(hex -> builder.hex(Integer.decode(this.stringParser.parse(hex))));
   }
 }

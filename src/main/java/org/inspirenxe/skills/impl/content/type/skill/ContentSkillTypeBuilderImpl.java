@@ -44,7 +44,7 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   @Nullable private String name;
   @Nullable private RegistryReference<LevelFunctionType> levelFunction;
   private int minLevel, maxLevel;
-  private final Map<EventType, EventScript.Builder> eventScripts = new HashMap<>();
+  private final Map<EventType<?>, EventScript.Builder> eventScripts = new HashMap<>();
 
   @Override
   public void name(final String name) {
@@ -67,7 +67,7 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   }
 
   @Override
-  public EventScript.Builder eventScript(final EventType type) {
+  public EventScript.Builder eventScript(final EventType<?> type) {
     checkNotNull(type);
     final EventScript.Builder builder = EventScript.builder();
     builder.type(type);
@@ -79,7 +79,7 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   public SkillTypeImpl build() {
     checkNotNull(this.name);
     checkNotNull(this.levelFunction);
-    final Map<EventType, EventScript> eventScripts = this.eventScripts.entrySet()
+    final Map<EventType<?>, EventScript> eventScripts = this.eventScripts.entrySet()
       .stream()
       .filter(entry -> !entry.getValue().branches().isEmpty())
       .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
