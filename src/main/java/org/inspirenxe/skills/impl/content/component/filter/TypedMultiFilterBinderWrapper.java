@@ -8,15 +8,17 @@ import net.kyori.fragment.filter.Filter;
 import net.kyori.fragment.filter.FilterBinder;
 import net.kyori.xml.node.parser.Parser;
 
-public class TypedMultiFilterBinder {
+public class TypedMultiFilterBinderWrapper {
 
-    private final MapBinder<String, Parser<? extends TypedMultiFilter<?>>> binder;
+    private final FilterBinder filterBinder;
 
-    public TypedMultiFilterBinder(final Binder binder) {
-        this.binder = MapBinder.newMapBinder(binder, new TypeLiteral<String>() {}, new TypeLiteral<Parser<? extends TypedMultiFilter<?>>>() {});
+    public TypedMultiFilterBinderWrapper(final FilterBinder filterBinder) {
+        this.filterBinder = filterBinder;
     }
 
+    @SuppressWarnings("unchecked")
     public LinkedBindingBuilder<Parser<? extends TypedMultiFilter<?>>> bindFilter(final String key) {
-        return this.binder.addBinding(key);
+        // Cast to force users of this class to provide TypedMultiFilter parsers
+        return (LinkedBindingBuilder) this.filterBinder.bindFilter(key);
     }
 }
