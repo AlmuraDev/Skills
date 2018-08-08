@@ -93,9 +93,12 @@ public final class SkillManagerImpl implements SkillManager, Witness {
   private final Map<UUID, Task> savingTasks = new HashMap<>();
   private final Map<UUID, SaveContainerToDatabase> containerRunnables = new HashMap<>();
 
+  public static SkillManagerImpl INSTANCE;
+
   @Inject
   public SkillManagerImpl(final PluginContainer container, final DatabaseManager databaseManager, final SpongeExecutorService executorService,
     final SkillHolderImpl.Factory factory) {
+    INSTANCE = this;
     this.container = container;
     this.databaseManager = databaseManager;
     this.executorService = executorService;

@@ -13,6 +13,8 @@ import org.inspirenxe.skills.impl.content.component.filter.cause.CauseQuery;
 import org.inspirenxe.skills.impl.content.component.filter.cause.CauseQueryProducer;
 import org.inspirenxe.skills.impl.content.component.filter.data.DataQuery;
 import org.inspirenxe.skills.impl.content.component.filter.data.DataQueryProducer;
+import org.inspirenxe.skills.impl.content.component.filter.experience.LevelQuery;
+import org.inspirenxe.skills.impl.content.component.filter.experience.LevelQueryProducer;
 import org.inspirenxe.skills.impl.content.component.filter.owner.BlockSnapshotOwnerQueryProducer;
 import org.inspirenxe.skills.impl.content.component.filter.owner.OwnerQuery;
 import org.spongepowered.api.event.Event;
@@ -36,6 +38,7 @@ public class EventFilterProducerRegistry {
         this.registerProducer(CauseQuery.class, new CauseQueryProducer());
         this.registerProducer(DataQuery.class, new DataQueryProducer());
         this.registerProducer(OwnerQuery.class, new BlockSnapshotOwnerQueryProducer());
+        this.registerProducer(LevelQuery.class, new LevelQueryProducer());
     }
 
     @SuppressWarnings("unchecked")
