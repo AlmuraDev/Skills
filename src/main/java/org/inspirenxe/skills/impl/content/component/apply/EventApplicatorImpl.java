@@ -37,5 +37,4 @@ public abstract class EventApplicatorImpl implements EventApplicator {
     protected Skill getSkill(final SkillType skillType, final Player player) {
         return skillManager.getHolder(player.getWorld().getUniqueId(), player.getUniqueId()).get().getSkill(skillType).get();
     }
-
 }

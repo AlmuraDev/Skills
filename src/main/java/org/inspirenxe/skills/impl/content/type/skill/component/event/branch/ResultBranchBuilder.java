@@ -25,6 +25,7 @@
 package org.inspirenxe.skills.impl.content.type.skill.component.event.branch;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import org.inspirenxe.skills.impl.content.component.apply.EventApplicator;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.BranchBuilder;
@@ -46,7 +47,7 @@ public final class ResultBranchBuilder extends BranchBuilder<ResultBranch> imple
 
   @Override
   public ResultBranch build() {
-    //checkState(!this.applicators.isEmpty(), "A result branch that does nothing makes no sense!");
+    checkState(!this.applicators.isEmpty(), "A result branch that does nothing makes no sense!");
     return new ResultBranchImpl(this.applicators);
   }
 }

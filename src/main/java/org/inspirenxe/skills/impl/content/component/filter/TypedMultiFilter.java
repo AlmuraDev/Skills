@@ -49,7 +49,7 @@ public abstract class TypedMultiFilter<Q extends FilterQuery> implements TypedFi
     }
 
     @Override
-    public final FilterResponse typedQuery(final @NonNull EventCompoundFilterQuery query) {
+    public final FilterResponse typedQuery(@NonNull final EventCompoundFilterQuery query) {
         return query.getQuery(this.getFilterQueryType()).map(q -> this.individualQuery(query, q)).orElse(FilterResponse.ABSTAIN);
     }
 

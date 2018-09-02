@@ -35,7 +35,7 @@ import org.spongepowered.api.data.key.Key;
 
 import javax.annotation.Nullable;
 
-public class KeyValue {
+public final class KeyValue {
 
     @Inject private static Injector injector;
 

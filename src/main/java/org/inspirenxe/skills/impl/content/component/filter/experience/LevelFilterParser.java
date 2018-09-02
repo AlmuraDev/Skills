@@ -42,7 +42,6 @@ public final class LevelFilterParser implements Parser<LevelFilter> {
 
   @Override
   public LevelFilter throwingParse(final Node node) throws XMLException {
-    // TODO Operators
     return new LevelFilter(this.intParser.parse(node.requireAttribute("value")));
   }
 }
