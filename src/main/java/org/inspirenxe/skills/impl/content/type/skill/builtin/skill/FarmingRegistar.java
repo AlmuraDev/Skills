@@ -73,8 +73,8 @@ public final class FarmingRegistar {
 
         // Interact Item
         final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(
-            (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
-                TextColors.RESET, " level ", value, " to use this."))
+            (player, skill, value) -> player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+                + "use this."))
         );
 
         listener
@@ -85,8 +85,8 @@ public final class FarmingRegistar {
 
         // Place Crops
         final BlockChain placeChain = new BlockChain().matchTypeOnly().denyLevelRequired(
-            (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
-                TextColors.RESET, " level ", value, " to plant this."))
+            (player, skill, value) -> player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+                + "plant this."))
         );
 
         listener
@@ -95,8 +95,8 @@ public final class FarmingRegistar {
 
         // Break crops
         final BlockChain breakChain = new BlockChain().matchTypeOnly().denyLevelRequired(
-            (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
-                TextColors.RESET, " level ", value, " to break this."))
+            (player, skill, value) -> player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+                + "break this."))
         );
 
         listener
@@ -113,10 +113,10 @@ public final class FarmingRegistar {
         // Messages (Xp change/Level change
         listener
             .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained(
-                (skill, xp) -> Text.of("+ ", SkillsConstants.XP_PRINTOUT.format(xp), "xp ", TextColors.DARK_GREEN, skill.getSkillType().getName())))
+                (skill, xp) -> Text.of("+ ", SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName())))
             .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
-                (skill, integer) -> Text.of("Congratulations, you just advanced a new ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
-                    TextColors.RESET, " level! You are now level ", integer, ".")));
+                (skill, integer) -> Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are "
+                    + "now level ", integer, ".")));
 
         // Effects (Xp change/Level change)
         listener

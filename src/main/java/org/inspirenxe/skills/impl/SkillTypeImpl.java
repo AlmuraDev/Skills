@@ -36,6 +36,8 @@ import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.EventFlattener;
 import org.spongepowered.api.event.Event;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.Map;
 import java.util.Objects;
@@ -45,6 +47,7 @@ public final class SkillTypeImpl implements SkillType, Content {
 
     private final RegistryKey registryKey;
     private final String name;
+    private final Text formattedName;
     private final RegistryReference<LevelFunctionType> levelFunction;
     private final RegistryReference<EconomyFunctionType> economyFunction;
     private final int minlevel, maxLevel;
@@ -52,7 +55,8 @@ public final class SkillTypeImpl implements SkillType, Content {
     public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunctionType> levelFunction,
         final RegistryReference<EconomyFunctionType> economyFunction, final int minLevel, final int maxLevel) {
         this.registryKey = registryKey;
-        this.name = name;
+        this.name = TextSerializers.FORMATTING_CODE.stripCodes(name);
+        this.formattedName = TextSerializers.FORMATTING_CODE.deserialize(name);
         this.levelFunction = levelFunction;
         this.economyFunction = economyFunction;
         this.minlevel = minLevel;
@@ -67,6 +71,11 @@ public final class SkillTypeImpl implements SkillType, Content {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public Text getFormattedName() {
+        return this.formattedName;
     }
 
     @Override

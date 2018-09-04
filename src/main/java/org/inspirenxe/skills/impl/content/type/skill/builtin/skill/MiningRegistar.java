@@ -72,8 +72,8 @@ public final class MiningRegistar {
 
         // Interact Item
         final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(
-            (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.AQUA, skill.getSkillType().getName(), TextColors.RESET,
-                " level ", value, " to use this."))
+            (player, skill, value) -> player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+                + "use this."))
         );
 
         listener
@@ -106,11 +106,10 @@ public final class MiningRegistar {
         // Messages (Xp change/Level change
         listener
             .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained((skill, xp) -> Text.of("+ ",
-                SkillsConstants.XP_PRINTOUT.format(xp), "xp ", TextColors.AQUA, skill.getSkillType().getName()))
+                SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName()))
             )
             .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
-                (skill, integer) -> Text.of("Congratulations, you just advanced a new ", TextColors.AQUA, skill.getSkillType().getName(),
-                    TextColors.RESET, " level! You are now level ", integer, "."))
+                (skill, integer) -> Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now level ", integer, "."))
             );
 
         // Effects (Xp change/Level change)

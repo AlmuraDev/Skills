@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-  <database dialect="h2" initial-catalog="skills">
+  <database dialect="h2" initial-catalog="h2">
     <path>./config/skills/skill</path>    
     <server>locahost</server>
     <port>8082</port>

@@ -43,7 +43,6 @@ import org.spongepowered.api.event.item.inventory.CraftItemEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +68,8 @@ public final class CraftingRegistar {
 
         // Craft Item
         final ItemChain craftChain = new ItemChain().matchTypeOnly().denyLevelRequired(
-            (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.GOLD, skill.getSkillType().getName(), TextColors.RESET,
-                " level ", value, " to craft this."))
+            (player, skill, value) -> player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+                + "craft this."))
         );
 
         listener
@@ -84,11 +83,11 @@ public final class CraftingRegistar {
         // Messages (Xp change/Level change
         listener
             .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained((skill, xp) -> Text.of("+ ",
-                SkillsConstants.XP_PRINTOUT.format(xp), "xp ", TextColors.GOLD, skill.getSkillType().getName()))
+                SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName()))
             )
             .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
-                (skill, integer) -> Text.of("Congratulations, you just advanced a new ", TextColors.GOLD, skill.getSkillType().getName(),
-                    TextColors.RESET, " level! You are now level ", integer, "."))
+                (skill, integer) -> Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are "
+                    + "now level ", integer, "."))
             );
 
         // Effects (Xp change/Level change)

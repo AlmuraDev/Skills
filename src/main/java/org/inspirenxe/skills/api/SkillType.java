@@ -30,11 +30,14 @@ import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.event.Event;
+import org.spongepowered.api.text.Text;
 
 import java.util.Map;
 import java.util.Optional;
 
 public interface SkillType extends CatalogType {
+
+  Text getFormattedName();
 
   LevelFunctionType getLevelFunction();
 

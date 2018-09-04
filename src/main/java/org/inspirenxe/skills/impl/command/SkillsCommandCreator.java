@@ -105,7 +105,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
                 toNextLevelExperience = skillType.getLevelFunction().getXPFor(currentLevel + 1) - currentExperience;
               }
 
-              skillPrintouts.add(Text.of(TextColors.AQUA, skillType.getName(), TextColors.RESET, " :: Lv. ", currentLevel, "/",
+              skillPrintouts.add(Text.of(skillType.getFormattedName(), " :: Lv. ", currentLevel, "/",
                   maxLevel));
 
               skillPrintouts.add(Text.of("  Current XP: ", SkillsConstants.XP_PRINTOUT.format(currentExperience), "/", SkillsConstants.XP_PRINTOUT.format(maxLevelExperience)));

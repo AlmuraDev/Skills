@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet spec="1.0.0">
-  <function formula="(L/100)+M"/>
+  <function formula="1/100L+M"/>
 </droplet>

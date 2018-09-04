@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet spec="1.0.0">
-  <skill name="Mining" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99"/>
+  <skill name="`bMining`r" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99"/>
 </droplet>
