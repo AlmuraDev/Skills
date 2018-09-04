@@ -93,6 +93,15 @@ public final class FarmingRegistar {
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.WHEAT).xp(1.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.CARROTS).level(10).xp(2.0).economy(1.0));
 
+        // Break crops
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().denyLevelRequired(
+            (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
+                TextColors.RESET, " level ", value, " to break this."))
+        );
+
+        listener
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CARROTS).level(10));
+
         // Harvest crops
         final ItemChain dropsChain = new ItemChain().matchTypeOnly();
 
