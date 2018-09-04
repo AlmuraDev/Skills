@@ -37,6 +37,7 @@ import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
 import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
+import org.inspirenxe.skills.api.event.ExperienceResult;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.sound.SoundEffect;
@@ -49,7 +50,10 @@ import org.inspirenxe.skills.impl.content.registry.module.LevelFunctionRegistryM
 import org.inspirenxe.skills.impl.content.registry.module.PotionEffectTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.SoundEffectTypeRegistryModule;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinResult;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinResultBuilder;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
+import org.inspirenxe.skills.impl.event.experience.ExperienceResultBuilder;
 import org.inspirenxe.skills.impl.sound.SoundEffectBuilderImpl;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Key;
@@ -59,9 +63,10 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
 
   @Override
   protected void configure() {
-    // TODO Move this to common...
     this.registry().builder(SoundEffect.Builder.class, SoundEffectBuilderImpl::new);
     this.registry().builder(Result.Builder.class, ResultBuilder::new);
+    this.registry().builder(ExperienceResult.DirectBuilder.class, ExperienceResultBuilder::new);
+    this.registry().builder(BuiltinResult.Builder.class, BuiltinResultBuilder::new);
 
     // API modules
     this.registry().module(ColorType.class, ColorTypeRegistryModule.instance);

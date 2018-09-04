@@ -28,7 +28,7 @@ import org.inspirenxe.skills.impl.content.type.effect.ContentEffectTypeBuilder;
 import org.inspirenxe.skills.impl.effect.potion.SkillsPotionEffectType;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 
-public interface ContentPotionEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsPotionEffectType> {
+public interface ContentPotionEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsPotionEffectType, ContentPotionEffectTypeBuilder> {
 
   void potion(final PotionEffectType potion);
 

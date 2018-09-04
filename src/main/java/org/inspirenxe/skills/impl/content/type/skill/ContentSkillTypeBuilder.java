@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.type.skill;
 
 import com.almuradev.droplet.content.type.ContentBuilder;
 import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
@@ -37,9 +38,9 @@ public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
 
   void levelFunction(final RegistryReference<LevelFunctionType> levelFunction);
 
+  void economyFunction(final RegistryReference<EconomyFunctionType> economyFunction);
+
   void minLevel(final int minLevel);
 
   void maxLevel(final int maxLevel);
-
-  EventScript.Builder eventScript(final EventType<?> type);
 }

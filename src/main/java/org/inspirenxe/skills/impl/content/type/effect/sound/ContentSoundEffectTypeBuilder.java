@@ -29,7 +29,7 @@ import org.inspirenxe.skills.impl.effect.sound.SkillsSoundEffectType;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 
-public interface ContentSoundEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsSoundEffectType> {
+public interface ContentSoundEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsSoundEffectType, ContentSoundEffectTypeBuilder> {
 
   void sound(final SoundType sound);
 

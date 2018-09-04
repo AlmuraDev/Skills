@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.content.type.effect;
 import com.almuradev.droplet.content.type.ContentBuilder;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 
-public interface ContentEffectTypeBuilder<R extends SkillsEffectType> extends ContentBuilder<R> {
+public interface ContentEffectTypeBuilder<R extends SkillsEffectType, B extends ContentEffectTypeBuilder<R, B>> extends ContentBuilder<R> {
 
+    B from(final R value);
 }

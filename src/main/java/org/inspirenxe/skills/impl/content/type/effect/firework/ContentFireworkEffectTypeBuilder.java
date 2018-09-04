@@ -32,7 +32,7 @@ import org.spongepowered.api.item.FireworkShape;
 
 import java.util.List;
 
-public interface ContentFireworkEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsFireworkEffectType> {
+public interface ContentFireworkEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsFireworkEffectType, ContentFireworkEffectTypeBuilder> {
 
   void shape(final FireworkShape shape);
 

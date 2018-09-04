@@ -33,4 +33,6 @@ public interface SkillManager {
   Set<SkillHolder> getHoldersInContainer(final UUID containerUniqueId);
 
   Optional<SkillHolder> getHolder(final UUID containerUniqueId, final UUID holderUniqueId);
+
+  void markDirty(final SkillHolder holder);
 }

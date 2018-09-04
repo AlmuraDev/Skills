@@ -24,18 +24,32 @@
  */
 package org.inspirenxe.skills.impl;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.inspirenxe.skills.api.Result;
 
-public final class ResultImpl implements Result {
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+public class ResultImpl implements Result {
 
   private final Result.Type type;
+  @Nullable private final Exception ex;
 
-  ResultImpl(final ResultBuilder builder) {
-    this.type = builder.type;
+  public ResultImpl(final AbstractResultBuilder builder) {
+    checkNotNull(builder);
+    this.type = checkNotNull(builder.type);
+    this.ex = builder.ex;
   }
 
   @Override
   public Type getType() {
     return this.type;
+  }
+
+  @Override
+  public Optional<Exception> getException() {
+    return Optional.ofNullable(this.ex);
   }
 }

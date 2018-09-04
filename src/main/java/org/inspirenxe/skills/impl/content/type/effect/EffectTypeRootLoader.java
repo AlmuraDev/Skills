@@ -28,6 +28,6 @@ import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.google.inject.Singleton;
 
 @Singleton
-final class EffectTypeRootLoader extends RootContentLoaderImpl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
+final class EffectTypeRootLoader extends RootContentLoaderImpl<ContentEffectType.Child, ContentEffectTypeBuilder<?, ?>> {
 
 }

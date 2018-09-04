@@ -55,8 +55,8 @@ public final class Queries {
   }
 
   public static DatabaseQuery<InsertValuesStep4<SkillsExperienceRecord, byte[], byte[], String, BigDecimal>> createInsertSkillExperienceQuery(final
-  UUID
-    container, final UUID holder, final String skillType, final double experience) {
+    UUID container, final UUID holder, final String skillType, final double experience) {
+
     checkNotNull(container);
     checkNotNull(holder);
     checkNotNull(skillType);
@@ -72,6 +72,7 @@ public final class Queries {
 
   public static DatabaseQuery<UpdateConditionStep<SkillsExperienceRecord>> createUpdateSkillExperienceQuery(final UUID container, final UUID holder,
     final String skillType, final double experience, final Timestamp modified) {
+
     checkNotNull(container);
     checkNotNull(holder);
     checkNotNull(skillType);

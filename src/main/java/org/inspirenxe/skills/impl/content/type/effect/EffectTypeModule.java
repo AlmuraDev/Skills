@@ -35,7 +35,7 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.FireworkEffectTyp
 import org.inspirenxe.skills.impl.content.type.effect.potion.PotionEffectTypeModule;
 import org.inspirenxe.skills.impl.content.type.effect.sound.SoundEffectTypeModule;
 
-public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?>> {
+public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?, ?>> {
 
   @Override
   protected void configure0() {
@@ -43,7 +43,7 @@ public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Ch
     this.bindRootLoader(new TypeLiteral<EffectTypeRootLoader>() {
     });
 
-    this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?>>>() {
+    this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?, ?>>>() {
     }, ForRoot.class));
 
     this.installChild(new FireworkEffectTypeModule(), new BaseChildModule());

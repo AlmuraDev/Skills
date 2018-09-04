@@ -26,6 +26,9 @@ package org.inspirenxe.skills.impl.effect.sound;
 
 import com.almuradev.droplet.registry.RegistryKey;
 import org.inspirenxe.skills.api.sound.SoundEffect;
+import org.spongepowered.api.effect.Viewer;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 public final class SoundEffectTypeImpl implements SkillsSoundEffectType {
 
@@ -50,5 +53,10 @@ public final class SoundEffectTypeImpl implements SkillsSoundEffectType {
   @Override
   public SoundEffect getEffect() {
     return this.effect;
+  }
+
+  @Override
+  public void play(final Location<World> location, final Viewer viewer) {
+    // TODO Need a way to play a sound to only one person..
   }
 }

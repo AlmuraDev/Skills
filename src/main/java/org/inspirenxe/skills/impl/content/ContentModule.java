@@ -24,18 +24,19 @@
  */
 package org.inspirenxe.skills.impl.content;
 
-import com.almuradev.droplet.DropletModule;
+import com.almuradev.droplet.component.range.RangeModule;
 import com.almuradev.droplet.content.configuration.ContentConfiguration;
 import com.almuradev.droplet.content.loader.finder.ContentFinder;
 import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import net.kyori.fragment.filter.FilterModule;
 import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.component.ComponentModule;
 import org.inspirenxe.skills.impl.content.loader.finder.ContentFinderImpl;
 import org.inspirenxe.skills.impl.content.parser.ParserModule;
 import org.inspirenxe.skills.impl.content.registry.RegistryModule;
 import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
 import org.spongepowered.api.config.ConfigDir;
 
 import java.nio.file.Path;
@@ -46,14 +47,19 @@ public final class ContentModule extends AbstractModule implements ToolboxBinder
 
   @Override
   protected void configure() {
+    this.install(new FilterModule());
+    this.install(new net.kyori.xml.node.parser.ParserModule());
+    this.install(new RangeModule());
+    this.install(new com.almuradev.droplet.content.ContentModule());
     this.install(new ContentTypeModule());
-    this.install(new ComponentModule());
-    this.install(new DropletModule());
+    //this.install(new ComponentModule());
+    //this.install(new DropletModule());
     this.install(new ParserModule());
     this.install(new RegistryModule());
 
     this.bind(ContentFinder.class).to(ContentFinderImpl.class);
     this.facet().add(ContentInstaller.class);
+    this.facet().add(BuiltinEventListener.class);
   }
 
   @Provides

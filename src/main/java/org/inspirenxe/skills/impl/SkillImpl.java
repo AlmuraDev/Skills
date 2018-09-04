@@ -34,6 +34,7 @@ import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.inspirenxe.skills.api.event.ExperienceResult;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostEventImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostLevelEventImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePreEventImpl;
@@ -74,7 +75,7 @@ public final class SkillImpl implements Skill {
   }
 
   @Override
-  public Result setExperience(final double experience) {
+  public ExperienceResult setExperience(final double experience) {
     Exception exception = null;
 
     if (experience < 0) {
@@ -84,8 +85,7 @@ public final class SkillImpl implements Skill {
     }
 
     if (exception != null) {
-      exception.printStackTrace();
-      return Result.builder().type(Result.Type.ERROR).build();
+      return ExperienceResult.builder().type(Result.Type.ERROR).exception(exception).build();
     }
 
     if (!this.isInitialized) {
@@ -96,12 +96,12 @@ public final class SkillImpl implements Skill {
     final double originalExperience = this.experience;
     final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(this, originalExperience, experience);
     if (this.eventManager.post(event)) {
-      return Result.builder().type(Result.Type.CANCELLED).build();
+      return ExperienceResult.builder().type(Result.Type.CANCELLED).build();
     }
 
     if (this.skillType.getLevelFunction().getLevelFor(experience) < this.skillType.getMinLevel()) {
-      new ArithmeticException("Experience cannot be lower than the experience at min level!").printStackTrace();
-      return Result.builder().type(Result.Type.ERROR).build();
+      return ExperienceResult.builder().type(Result.Type.ERROR).exception(new ArithmeticException("Experience cannot be lower than the experience at min "
+        + "level!")).build();
     }
 
     this.experience = event.getExperience();
@@ -116,11 +116,11 @@ public final class SkillImpl implements Skill {
 
     this.setDirtyState(true);
 
-    return Result.builder().type(Result.Type.SUCCESS).build();
+    return ExperienceResult.builder().type(Result.Type.SUCCESS).xp(event.getExperienceDifference()).build();
   }
 
   @Override
-  public Result addExperience(final double experience) {
+  public ExperienceResult addExperience(final double experience) {
     return this.setExperience(this.getCurrentExperience() + experience);
   }
 

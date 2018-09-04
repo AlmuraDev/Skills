@@ -25,7 +25,10 @@
 package org.inspirenxe.skills.impl.effect.potion;
 
 import com.almuradev.droplet.registry.RegistryKey;
+import org.spongepowered.api.effect.Viewer;
 import org.spongepowered.api.effect.potion.PotionEffect;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 public final class PotionEffectTypeImpl implements SkillsPotionEffectType {
 
@@ -50,5 +53,10 @@ public final class PotionEffectTypeImpl implements SkillsPotionEffectType {
   @Override
   public PotionEffect getEffect() {
     return this.effect;
+  }
+
+  @Override
+  public void play(final Location<World> location, final Viewer viewer) {
+    // TODO
   }
 }

@@ -77,7 +77,7 @@ public final class EventTypeRegistryModule implements AdditionalCatalogRegistryM
     this.registerAdditionalCatalog(experienceChangePostType);
     this.registerAdditionalCatalog(experienceChangePostType.child("root", ExperienceEvent.Change.Post.class));
 
-    final EventType<ExperienceEvent.Change.Post.Level> experienceChangePostLevelType = experienceChangePostType.child("level", ExperienceEvent.Change.Post.Level.class);
+    final EventType<ExperienceEvent.Change.Post.Level> experienceChangePostLevelType = experienceChangePostType.child("minLevel", ExperienceEvent.Change.Post.Level.class);
     this.registerAdditionalCatalog(experienceChangePostLevelType);
   }
 

@@ -25,7 +25,13 @@
 package org.inspirenxe.skills.impl.effect.firework;
 
 import com.almuradev.droplet.registry.RegistryKey;
+import org.spongepowered.api.effect.Viewer;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.projectile.Firework;
 import org.spongepowered.api.item.FireworkEffect;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 public final class FireworkEffectTypeImpl implements SkillsFireworkEffectType {
 
@@ -50,5 +56,13 @@ public final class FireworkEffectTypeImpl implements SkillsFireworkEffectType {
   @Override
   public FireworkEffect getEffect() {
     return this.effect;
+  }
+
+  @Override
+  public void play(final Location<World> location, final Viewer viewer) {
+    final Firework firework = (Firework) location.getExtent().createEntity(EntityTypes.FIREWORK, location.getPosition().add(0, 2, 0));
+    firework.offer(firework.getFireworkData().addElement(this.effect));
+    location.getExtent().spawnEntity(firework);
+    firework.detonate();
   }
 }

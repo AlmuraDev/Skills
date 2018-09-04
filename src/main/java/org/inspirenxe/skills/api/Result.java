@@ -27,28 +27,36 @@ package org.inspirenxe.skills.api;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.util.ResettableBuilder;
 
+import java.util.Optional;
+
 /**
  * An object representing a result of an action.
  */
 public interface Result {
 
+  @SuppressWarnings("unchecked")
   static Builder builder() {
     return Sponge.getRegistry().createBuilder(Builder.class);
   }
 
   Type getType();
 
-  interface Builder extends ResettableBuilder<Result, Builder> {
+  Optional<Exception> getException();
 
-    Builder type(final Type type);
+  interface Builder<R extends Result, B extends Builder<R, B>> extends ResettableBuilder<R, B> {
 
-    Result build();
+    B type(final Type type);
+
+    B exception(final Exception ex);
+
+    R build();
   }
 
   enum Type {
     SUCCESS,
     FAILURE,
     ERROR,
-    CANCELLED
+    CANCELLED,
+    IGNORED
   }
 }

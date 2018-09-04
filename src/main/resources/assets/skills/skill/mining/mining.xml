@@ -1,24 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <droplet spec="1.0.0">
-  <include src="global/filter/block.xml"/>
-  <include src="global/filter/data.xml"/>
-  <include src="global/filter/event.xml"/>
-  <include src="global/filter/item.xml"/>
-  <include src="filter/block-level.xml"/>
-  <include src="filter/item-level.xml"/>
-  <skill name="Mining" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99">
-    <include src="global/vanilla-world-share.xml"/>
-    <event>
-      <include src="event/change-block-break.xml"/>
-      <experience>
-        <change>
-          <post>
-            <include src="event/experience-change-post.xml"/>
-            <include src="event/experience-change-post-level.xml"/>
-          </post>
-        </change>
-      </experience>
-      <include src="event/interact-item.xml"/>
-    </event>
-  </skill>
+  <skill name="Mining" level-function="skills:level/rs-normal" economy-function="skills:economy/standard" min-level="1" max-level="99"/>
 </droplet>

@@ -36,12 +36,13 @@ import org.spongepowered.api.effect.sound.SoundType;
 
 import javax.annotation.Nullable;
 
-public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsSoundEffectType>
+public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsSoundEffectType, ContentSoundEffectTypeBuilder>
     implements ContentSoundEffectTypeBuilder {
 
   @Nullable private SoundType sound;
   @Nullable private SoundCategory category;
   private double minVolume, volume, pitch;
+  @Nullable private SoundEffect effect;
 
   @Override
   public void sound(final SoundType sound) {
@@ -70,6 +71,10 @@ public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffe
 
   @Override
   public SkillsSoundEffectType build() {
+    if (this.effect != null) {
+      return new SoundEffectTypeImpl(this.key(), this.effect);
+    }
+
     checkNotNull(this.sound);
     checkNotNull(this.category);
 
@@ -82,5 +87,11 @@ public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffe
         .build();
 
     return new SoundEffectTypeImpl(this.key(), effect);
+  }
+
+  @Override
+  public ContentSoundEffectTypeBuilder from(final SkillsSoundEffectType value) {
+    this.effect = value.getEffect();
+    return this;
   }
 }

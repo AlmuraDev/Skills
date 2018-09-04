@@ -31,6 +31,7 @@ import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
 import com.almuradev.droplet.content.processor.Processor;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import org.inspirenxe.skills.impl.content.type.skill.processor.EconomyFunctionProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.EventProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.LevelFunctionProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.MaxLevelProcessor;
@@ -63,9 +64,10 @@ public final class SkillTypeModule extends RootModule.Impl<ContentSkillType.Chil
 
       this.bindProcessor(NameProcessor.class);
       this.bindProcessor(LevelFunctionProcessor.class);
+      this.bindProcessor(EconomyFunctionProcessor.class);
       this.bindProcessor(MinLevelProcessor.class);
       this.bindProcessor(MaxLevelProcessor.class);
-      this.bindProcessor(EventProcessor.class);
+      //this.bindProcessor(EventProcessor.class);
     }
   }
 }

@@ -29,6 +29,7 @@ import com.almuradev.droplet.registry.RegistryKey;
 import com.almuradev.droplet.registry.reference.RegistryReference;
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
@@ -38,23 +39,24 @@ import org.spongepowered.api.event.Event;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public final class SkillTypeImpl implements SkillType, Content {
 
     private final RegistryKey registryKey;
     private final String name;
     private final RegistryReference<LevelFunctionType> levelFunction;
+    private final RegistryReference<EconomyFunctionType> economyFunction;
     private final int minlevel, maxLevel;
-    private final Map<EventType<?>, EventScript> eventScripts;
 
-    public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunctionType> levelFunction, final int minLevel,
-            final int maxLevel, final Map<EventType<?>, EventScript> eventScripts) {
+    public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunctionType> levelFunction,
+        final RegistryReference<EconomyFunctionType> economyFunction, final int minLevel, final int maxLevel) {
         this.registryKey = registryKey;
         this.name = name;
         this.levelFunction = levelFunction;
+        this.economyFunction = economyFunction;
         this.minlevel = minLevel;
         this.maxLevel = maxLevel;
-        this.eventScripts = eventScripts;
     }
 
     @Override
@@ -73,6 +75,11 @@ public final class SkillTypeImpl implements SkillType, Content {
     }
 
     @Override
+    public Optional<EconomyFunctionType> getEconomyFunction() {
+        return Optional.ofNullable(this.economyFunction.get());
+    }
+
+    @Override
     public int getMinLevel() {
         return this.minlevel;
     }
@@ -82,23 +89,6 @@ public final class SkillTypeImpl implements SkillType, Content {
         return this.maxLevel;
     }
 
-    @Override
-    public Map<EventType<?>, EventScript> getEventScripts() {
-        return this.eventScripts;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void processEvent(final Event event) {
-        for (final Map.Entry<EventType<?>, EventScript> entry: this.eventScripts.entrySet()) {
-            if (!entry.getKey().matches(event.getClass())) {
-                continue;
-            }
-            for (final Event subEvent: ((EventFlattener<Event>) entry.getKey().getFlattener()).flatten(event)) {
-                entry.getValue().processEvent(new EventCompoundFilterQuery(subEvent, this));
-            }
-        }
-    }
 
     @Override
     public boolean equals(final Object o) {
@@ -122,9 +112,9 @@ public final class SkillTypeImpl implements SkillType, Content {
         return MoreObjects.toStringHelper(this)
                 .add("id", this.registryKey)
                 .add("levelFunction", this.levelFunction.require())
+                .add("economyFunction", this.economyFunction.get())
                 .add("minLevel", this.minlevel)
                 .add("maxLevel", this.maxLevel)
-                .add("eventScripts", this.eventScripts)
                 .toString();
     }
 }

@@ -69,29 +69,28 @@ public final class ParserModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    this.requestStaticInjection(KeyValue.class);
-    this.requestStaticInjection(EventApplicatorImpl.class);
 
     final ParserBinder parsers = new ParserBinder(this.binder());
-    parsers.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
-    parsers.bindParser(CauseType.class).to(new TypeLiteral<EnumParser<CauseType>>() {});
-    parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
-    parsers.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {});
-    parsers.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
-    parsers.bindParser(new TypeLiteral<LazyStateValue<?>>() {}).to(LazyStateValueParser.class);
-    parsers.bindParser(LazyItemStack.class).to(LazyItemStackParser.class);
-    parsers.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {});
-    parsers.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {});
     parsers.bindParser(RegistryKey.class).to(RegistryKeyParser.class);
     parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
+    parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
+    parsers.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {});
     parsers.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {});
     parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
-    parsers.bindParser(MathOperationType.class).to(new TypeLiteral<EnumParser<MathOperationType>>() {});
+    parsers.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {});
+    parsers.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {});
+    parsers.bindParser(LazyBlockState.class).to(LazyBlockStateParser.class);
+    parsers.bindParser(LazyItemStack.class).to(LazyItemStackParser.class);
+    parsers.bindParser(new TypeLiteral<LazyStateValue<?>>() {}).to(LazyStateValueParser.class);
     parsers.bindParser(BlockTransactionSource.class).to(new TypeLiteral<EnumParser<BlockTransactionSource>>() {});
-    parsers.bindParser(BigDecimal.class).to(BigDecimalParser.class);
-    parsers.bindParser(MathOperation.class).to(MathOperationParser.class);
-    parsers.bindParser(Message.class).to(MessageParser.class);
-    parsers.bindParser(KeyValue.class).to(KeyValueParser.class);
+
+//    parsers.bindParser(CauseOperatorType.class).to(new TypeLiteral<EnumParser<CauseOperatorType>>() {});
+//    parsers.bindParser(CauseType.class).to(new TypeLiteral<EnumParser<CauseType>>() {});
+//    parsers.bindParser(MathOperationType.class).to(new TypeLiteral<EnumParser<MathOperationType>>() {});
+//    parsers.bindParser(BigDecimal.class).to(BigDecimalParser.class);
+//    parsers.bindParser(MathOperation.class).to(MathOperationParser.class);
+//    parsers.bindParser(Message.class).to(MessageParser.class);
+//    parsers.bindParser(KeyValue.class).to(KeyValueParser.class);
 
     // Commence Hacks
     // TODO Add hackery parsers as I need them

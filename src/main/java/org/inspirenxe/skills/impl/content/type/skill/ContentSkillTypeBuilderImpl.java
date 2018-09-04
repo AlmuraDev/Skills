@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.almuradev.droplet.content.type.AbstractContentBuilder;
 import com.almuradev.droplet.registry.reference.RegistryReference;
+import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
 import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
@@ -43,8 +44,8 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
 
   @Nullable private String name;
   @Nullable private RegistryReference<LevelFunctionType> levelFunction;
+  @Nullable private RegistryReference<EconomyFunctionType> economyFunction;
   private int minLevel, maxLevel;
-  private final Map<EventType<?>, EventScript.Builder> eventScripts = new HashMap<>();
 
   @Override
   public void name(final String name) {
@@ -54,6 +55,11 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   @Override
   public void levelFunction(final RegistryReference<LevelFunctionType> levelFunction) {
     this.levelFunction = levelFunction;
+  }
+
+  @Override
+  public void economyFunction(final RegistryReference<EconomyFunctionType> economyFunction) {
+    this.economyFunction = economyFunction;
   }
 
   @Override
@@ -67,22 +73,11 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   }
 
   @Override
-  public EventScript.Builder eventScript(final EventType<?> type) {
-    checkNotNull(type);
-    final EventScript.Builder builder = EventScript.builder();
-    builder.type(type);
-    this.eventScripts.put(type, builder);
-    return builder;
-  }
-
-  @Override
   public SkillTypeImpl build() {
     checkNotNull(this.name);
     checkNotNull(this.levelFunction);
-    final Map<EventType<?>, EventScript> eventScripts = this.eventScripts.entrySet()
-      .stream()
-      .filter(entry -> !entry.getValue().branches().isEmpty())
-      .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
-    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.minLevel, this.maxLevel, eventScripts);
+    checkNotNull(this.economyFunction);
+
+    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.economyFunction, this.minLevel, this.maxLevel);
   }
 }

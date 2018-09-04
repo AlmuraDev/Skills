@@ -48,11 +48,5 @@ public final class DelegatingSkillEventListener implements EventListener<Event> 
         if (!Sponge.isServerAvailable() || !Sponge.getServer().isMainThread()) {
             return;
         }
-        if (event instanceof ChangeBlockEvent.Break) {
-            System.err.println("Break!");
-        }
-        for (final SkillType type: this.skillTypes) {
-            type.processEvent(event);
-        }
     }
 }

@@ -27,7 +27,7 @@ package org.inspirenxe.skills.impl.content.type.effect;
 import com.almuradev.droplet.content.type.AbstractContentBuilder;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 
-public abstract class AbstractContentEffectTypeBuilder<R extends SkillsEffectType> extends AbstractContentBuilder<R> implements
-    ContentEffectTypeBuilder<R> {
+public abstract class AbstractContentEffectTypeBuilder<R extends SkillsEffectType, B extends ContentEffectTypeBuilder<R, B>> extends
+    AbstractContentBuilder<R> implements ContentEffectTypeBuilder<R, B> {
 
 }

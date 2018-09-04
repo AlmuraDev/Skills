@@ -100,7 +100,7 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
 
   @Override
   public void buildLevelTable(final int suggestedMax) {
-    this.logger.warn("Printing level table for: {}", this.getId());
+    this.logger.warn("Printing minLevel table for: {}", this.getId());
     if (suggestedMax > this.xpTable.length) {
       final int length = this.xpTable.length;
       this.xpTable = Arrays.copyOf(this.xpTable, this.xpTable.length * 2);

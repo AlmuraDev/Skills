@@ -28,31 +28,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.Result;
 
-public final class ResultBuilder implements Result.Builder {
+public final class ResultBuilder extends AbstractResultBuilder<Result, ResultBuilder> {
 
-  public Result.Type type;
+    @Override
+    public ResultBuilder from(final Result value) {
+        this.type = value.getType();
+        return this;
+    }
 
-  @Override
-  public Result.Builder type(final Result.Type type) {
-    this.type = type;
-    return this;
-  }
+    @Override
+    public ResultBuilder reset() {
+        this.type = null;
+        this.ex = null;
+        return this;
+    }
 
-  @Override
-  public Result.Builder from(final Result value) {
-    this.type = value.getType();
-    return this;
-  }
+    @Override
+    public Result build() {
+        checkNotNull(this.type);
 
-  @Override
-  public Result.Builder reset() {
-    this.type = Result.Type.SUCCESS;
-    return this;
-  }
-
-  @Override
-  public Result build() {
-    checkNotNull(this.type);
-    return new ResultImpl(this);
-  }
+        return new ResultImpl(this);
+    }
 }

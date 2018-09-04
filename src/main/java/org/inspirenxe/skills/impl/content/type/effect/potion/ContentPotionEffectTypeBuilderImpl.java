@@ -34,12 +34,13 @@ import org.spongepowered.api.effect.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
 
-public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsPotionEffectType>
+public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsPotionEffectType, ContentPotionEffectTypeBuilder>
     implements ContentPotionEffectTypeBuilder {
 
   @Nullable private PotionEffectType potion;
   private int duration, amplifier;
   private boolean isAmbient, showParticles;
+  @Nullable private PotionEffect effect;
 
   @Override
   public void potion(final PotionEffectType potion) {
@@ -68,6 +69,10 @@ public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEff
 
   @Override
   public SkillsPotionEffectType build() {
+    if (this.effect != null) {
+      return new PotionEffectTypeImpl(this.key(), this.effect);
+    }
+
     checkNotNull(this.potion);
 
     final PotionEffect effect = PotionEffect.builder()
@@ -79,5 +84,11 @@ public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEff
         .build();
 
     return new PotionEffectTypeImpl(this.key(), effect);
+  }
+
+  @Override
+  public ContentPotionEffectTypeBuilder from(final SkillsPotionEffectType value) {
+    this.effect = value.getEffect();
+    return this;
   }
 }

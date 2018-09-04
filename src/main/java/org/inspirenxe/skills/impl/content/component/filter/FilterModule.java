@@ -49,7 +49,7 @@ public final class FilterModule extends AbstractModule {
     filters.bindFilter("experience").to(ExperienceFilterParser.class);
     filters.bindFilter("item").to(ItemFilterParser.class);
     filters.bindFilter("key").to(RegistryKeyFilterParser.class);
-    filters.bindFilter("level").to(LevelFilterParser.class);
+    filters.bindFilter("minLevel").to(LevelFilterParser.class);
     filters.bindFilter("owner").to(OwnerFilterParser.class);
     filters.bindFilter("namespace").to(NamespaceFilterParser.class);
     filters.bindFilter("notifier").to(NotifierFilterParser.class);

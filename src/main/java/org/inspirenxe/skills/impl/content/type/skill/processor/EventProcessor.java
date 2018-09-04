@@ -63,39 +63,6 @@ public final class EventProcessor implements Processor<ContentSkillTypeBuilder> 
 
     @Override
     public void process(final Node node, final ContentSkillTypeBuilder builder) {
-
-        for (final EventType eventType : this.eventTypeRegistry.all()) {
-            final PathNodeFlattener flattener = new PathNodeFlattener(NodeFilters.onlyElements(), eventType.getPath());
-
-            flattener
-                    .flatten(node)
-                    .forEach(eventTypeNode -> {
-                        // Don't build an event script unless we have at least one 'apply'
-                        // node. This ensures that we don't build EventScripts for event nodes
-                        // that only contain child events
-                        final EventScript.Builder[] eventScriptBuilder = {null};
-
-                        eventTypeNode
-                                .nodes("apply")
-                                .collect(Collectors.toList())
-                                .forEach(applyNode -> {
-                                    if (eventScriptBuilder[0] == null) {
-                                        eventScriptBuilder[0] = builder.eventScript(eventType);
-                                    }
-
-                                    Branch.Builder branchBuilder = null;
-                                    final Node ifNode = applyNode.nodes("if").collect(MoreCollectors.toOptional()).orElse(null);
-                                    if (ifNode != null) {
-                                        branchBuilder = IfBranch.builder();
-                                        this.traverseIf(applyNode, (IfBranch.Builder) branchBuilder);
-                                    }
-
-                                    if (branchBuilder != null) {
-                                        eventScriptBuilder[0].branch(branchBuilder.build());
-                                    }
-                                });
-                    });
-        }
     }
 
     private void traverseIf(final Node root, final IfBranch.Builder rootBuilder) {

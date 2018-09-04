@@ -39,14 +39,15 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-public final class ContentFireworkEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsFireworkEffectType>
-    implements ContentFireworkEffectTypeBuilder {
+public final class ContentFireworkEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsFireworkEffectType,
+    ContentFireworkEffectTypeBuilder> implements ContentFireworkEffectTypeBuilder {
 
   @Nullable private FireworkShape shape;
   @Nullable private List<RegistryReference<ColorType>> colors;
   @Nullable private List<RegistryReference<ColorType>> fadeColors;
   private boolean flickers;
   private boolean trails;
+  @Nullable private FireworkEffect fireworkEffect;
 
   @Override
   public void shape(final FireworkShape shape) {
@@ -74,7 +75,17 @@ public final class ContentFireworkEffectTypeBuilderImpl extends AbstractContentE
   }
 
   @Override
+  public ContentFireworkEffectTypeBuilder from(final SkillsFireworkEffectType value) {
+    this.fireworkEffect = value.getEffect();
+    return this;
+  }
+
+  @Override
   public SkillsFireworkEffectType build() {
+    if (this.fireworkEffect != null) {
+      return new FireworkEffectTypeImpl(this.key(), this.fireworkEffect);
+    }
+
     checkNotNull(this.shape);
     checkNotNull(this.colors);
 

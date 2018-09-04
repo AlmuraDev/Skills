@@ -24,6 +24,8 @@
  */
 package org.inspirenxe.skills.api;
 
+import org.inspirenxe.skills.api.event.ExperienceResult;
+
 public interface Skill {
 
   SkillType getSkillType();
@@ -32,9 +34,9 @@ public interface Skill {
 
   double getCurrentExperience();
 
-  Result setExperience(final double experience);
+  ExperienceResult setExperience(final double experience);
 
-  Result addExperience(final double experience);
+  ExperienceResult addExperience(final double experience);
 
   default int getCurrentLevel() {
     return this.getSkillType().getLevelFunction().getLevelFor(this.getCurrentExperience());

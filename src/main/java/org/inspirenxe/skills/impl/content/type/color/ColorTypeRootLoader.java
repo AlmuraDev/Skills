@@ -45,7 +45,7 @@ public final class ColorTypeRootLoader extends RootContentLoaderImpl<ContentColo
     this.registry = registry;
   }
 
-  @Listener(order = Order.FIRST)
+  @Listener(order = Order.PRE)
   public void onGameStartingServer(final GameStartingServerEvent event) {
     this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(ColorTypeImpl.class)));
   }
