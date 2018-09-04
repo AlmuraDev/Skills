@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.spongepowered.api.Sponge;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unchecked")
 public final class BlockChain extends Chain<BlockChain> {
 
@@ -45,47 +48,79 @@ public final class BlockChain extends Chain<BlockChain> {
     public boolean inverseQuery = false, matchOnlyType = false;
     public TriConsumer<Player, Skill, Integer> denyLevelRequired;
 
+    private boolean inErrorState = false;
+
     public BlockChain inverseQuery() {
+        if (this.inErrorState) {
+            return this;
+        }
         this.inverseQuery = true;
         return this;
     }
 
     public BlockChain query(final String id) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(id);
-        this.query(Sponge.getRegistry().getType(BlockType.class, id).orElse(null));
+        final BlockType blockType = Sponge.getRegistry().getType(BlockType.class, id).orElse(null);
+        if (blockType == null) {
+            SkillsImpl.INSTANCE.getLogger().error("Unknown block id '" + id + "' given to block chain!");
+            this.inErrorState = true;
+            return this;
+        }
         return this;
     }
 
     public BlockChain query(final BlockType value) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(value);
         this.toQuery.add(value.getDefaultState());
         return this;
     }
 
     public BlockChain query(final BlockState value) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(value);
         this.toQuery.add(value);
         return this;
     }
 
     public BlockChain query(final BlockState... values) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(values);
         this.toQuery.addAll(Arrays.asList(values));
         return this;
     }
 
     public BlockChain matchTypeOnly() {
+        if (this.inErrorState) {
+            return this;
+        }
         this.matchOnlyType = true;
         return this;
     }
 
-    public BlockChain denyLevelRequired(final TriConsumer<Player, Skill, Integer> value) {
+    public BlockChain denyLevelRequired(@Nullable final TriConsumer<Player, Skill, Integer> value) {
+        if (this.inErrorState) {
+            return this;
+        }
         this.denyLevelRequired = value;
         return this;
     }
 
     @Override
     public BlockChain from(final BlockChain builder) {
+        if (this.inErrorState) {
+            return this;
+        }
+        checkNotNull(builder);
         this.matchOnlyType = builder.matchOnlyType;
         this.denyLevelRequired = builder.denyLevelRequired;
 

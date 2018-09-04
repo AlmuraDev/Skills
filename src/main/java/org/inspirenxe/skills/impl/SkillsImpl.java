@@ -104,6 +104,10 @@ public final class SkillsImpl {
     Files.walkFileTree(path, new DefaultFileVisitor());
   }
 
+  public Logger getLogger() {
+    return this.logger;
+  }
+
   private final class DefaultFileVisitor extends SimpleFileVisitor<Path> {
 
     @Override

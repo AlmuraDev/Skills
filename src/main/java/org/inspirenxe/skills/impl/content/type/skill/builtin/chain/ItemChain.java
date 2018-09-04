@@ -27,6 +27,7 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.spongepowered.api.Sponge;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unchecked")
 public final class ItemChain extends Chain<ItemChain> {
 
@@ -45,47 +48,80 @@ public final class ItemChain extends Chain<ItemChain> {
     public boolean inverseQuery = false, matchOnlyType = false;
     public TriConsumer<Player, Skill, Integer> denyLevelRequired;
 
+    private boolean inErrorState;
+
     public ItemChain inverseQuery() {
+        if (this.inErrorState) {
+            return this;
+        }
         this.inverseQuery = true;
         return this;
     }
 
     public ItemChain query(final String id) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(id);
-        this.query(Sponge.getRegistry().getType(ItemType.class, id).orElse(null));
+        final ItemType itemType = Sponge.getRegistry().getType(ItemType.class, id).orElse(null);
+        if (itemType == null) {
+            SkillsImpl.INSTANCE.getLogger().error("Unknown item id '" + id + "' given to item chain!");
+            this.inErrorState = true;
+            return this;
+        }
         return this;
     }
 
     public ItemChain query(final ItemType value) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(value);
         this.toQuery.add(ItemStack.of(value, 1));
         return this;
     }
 
     public ItemChain query(final ItemStack value) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(value);
         this.toQuery.add(value);
         return this;
     }
 
     public ItemChain query(final ItemStack... values) {
+        if (this.inErrorState) {
+            return this;
+        }
         checkNotNull(values);
         this.toQuery.addAll(Arrays.asList(values));
         return this;
     }
 
     public ItemChain matchTypeOnly() {
+        if (this.inErrorState) {
+            return this;
+        }
         this.matchOnlyType = true;
         return this;
     }
 
-    public ItemChain denyLevelRequired(final TriConsumer<Player, Skill, Integer> value) {
+    public ItemChain denyLevelRequired(@Nullable final TriConsumer<Player, Skill, Integer> value) {
+        if (this.inErrorState) {
+            return this;
+        }
         this.denyLevelRequired = value;
         return this;
     }
 
     @Override
     public ItemChain from(final ItemChain builder) {
+        if (this.inErrorState) {
+            return this;
+        }
+
+        checkNotNull(builder);
         this.matchOnlyType = builder.matchOnlyType;
         this.denyLevelRequired = builder.denyLevelRequired;
 
