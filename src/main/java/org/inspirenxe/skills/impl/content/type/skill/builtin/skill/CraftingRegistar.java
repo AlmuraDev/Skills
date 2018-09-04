@@ -33,7 +33,7 @@ import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.EffectBuilder;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChainBuilder;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.MessageBuilder;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
@@ -41,7 +41,6 @@ import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.item.inventory.CraftItemEvent;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.format.TextColors;
@@ -62,66 +61,56 @@ public final class CraftingRegistar {
     private static BuiltinEventListener listener;
 
     public static void configure() {
-        final SkillType skillType = registry.getType(SkillType.class, "skills:crafting").orElse(null);
+        final SkillType type = registry.getType(SkillType.class, "skills:crafting").orElse(null);
 
-        if (skillType == null) {
+        if (type == null) {
             return;
         }
 
         // Craft Item
-        final ItemChainBuilder rootChain = new ItemChainBuilder().matchTypeOnly().denyLevelRequired(
+        final ItemChain craftChain = new ItemChain().matchTypeOnly().denyLevelRequired(
             (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.GOLD, skill.getSkillType().getName(), TextColors.RESET,
                 " level ", value, " to craft this."))
         );
 
         listener
-            .addItemChain(CraftItemEvent.Craft.class, skillType, new ItemChainBuilder().excludeQuery().xp(1.0))
-            .addItemChain(CraftItemEvent.Craft.class, skillType,
-                new ItemChainBuilder().from(rootChain).query(ItemStack.of(ItemTypes.WOODEN_PICKAXE, 1)).xp(5.0)
-            )
-            .addItemChain(CraftItemEvent.Craft.class, skillType,
-                new ItemChainBuilder().from(rootChain).query(ItemStack.of(ItemTypes.STONE_PICKAXE, 1)).minLevel(10).xp(10.0)
-            )
-            .addItemChain(CraftItemEvent.Craft.class, skillType,
-                new ItemChainBuilder().from(rootChain).query(ItemStack.of(ItemTypes.IRON_PICKAXE, 1)).minLevel(20).xp(20.0)
-            )
-            .addItemChain(CraftItemEvent.Craft.class, skillType,
-                new ItemChainBuilder().from(rootChain).query(ItemStack.of(ItemTypes.GOLDEN_PICKAXE, 1)).minLevel(30).xp(30.0)
-            )
-            .addItemChain(CraftItemEvent.Craft.class, skillType,
-                new ItemChainBuilder().from(rootChain).query(ItemStack.of(ItemTypes.DIAMOND_PICKAXE, 1)).minLevel(40).xp(40.0)
-            );
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().inverseQuery().xp(1.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.WOODEN_PICKAXE).xp(5.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_PICKAXE).level(10).xp(10.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_PICKAXE).level(20).xp(20.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.GOLDEN_PICKAXE).level(30).xp(30.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.DIAMOND_PICKAXE).level(40).xp(40.0));
 
         // Messages (Xp change/Level change
         listener
-            .addMessageChain(Event.class, skillType, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained((skill, xp) -> Text.of("+ ",
+            .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained((skill, xp) -> Text.of("+ ",
                 SkillsConstants.XP_PRINTOUT.format(xp), "xp ", TextColors.GOLD, skill.getSkillType().getName()))
             )
-            .addMessageChain(Event.class, skillType, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
+            .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
                 (skill, integer) -> Text.of("Congratulations, you just advanced a new ", TextColors.GOLD, skill.getSkillType().getName(),
                     TextColors.RESET, " level! You are now level ", integer, "."))
             );
 
         // Effects (Xp change/Level change)
         listener
-            .addEffectChain(Event.class, skillType, new EffectBuilder().levelGained(new BiFunction<Skill, Integer, List<SkillsEffectType>>() {
-                    private final List<SkillsEffectType> normalLevelProg;
-                    private final List<SkillsEffectType> level99Prog;
+            .addEffectChain(Event.class, type, new EffectBuilder().levelGained(new BiFunction<Skill, Integer, List<SkillsEffectType>>() {
+                    private final List<SkillsEffectType> level;
+                    private final List<SkillsEffectType> levelMax;
 
                     {
                         final SkillsFireworkEffectType fireworkOnLevel = (SkillsFireworkEffectType) registry.getType(
                             FireworkEffectType.class, "skills:firework/crafting-level-up").orElse(null);
 
                         if (fireworkOnLevel == null) {
-                            this.normalLevelProg = new ArrayList<>();
-                            this.level99Prog = new ArrayList<>();
+                            this.level = new ArrayList<>();
+                            this.levelMax = new ArrayList<>();
                         } else {
-                            this.normalLevelProg = Lists.newArrayList(fireworkOnLevel);
-                            this.level99Prog = Lists.newArrayList(fireworkOnLevel);
+                            this.level = Lists.newArrayList(fireworkOnLevel);
+                            this.levelMax = Lists.newArrayList(fireworkOnLevel);
 
                             for (int i = 0; i < 3; i++) {
                                 final ContentFireworkEffectTypeBuilderImpl builder = new ContentFireworkEffectTypeBuilderImpl();
-                                this.level99Prog.add(builder.from(fireworkOnLevel).build());
+                                this.levelMax.add(builder.from(fireworkOnLevel).build());
                             }
                         }
                     }
@@ -129,10 +118,10 @@ public final class CraftingRegistar {
                     @Override
                     public List<SkillsEffectType> apply(final Skill skill, final Integer integer) {
                         if (integer == 99) {
-                            return this.level99Prog;
+                            return this.levelMax;
                         }
 
-                        return this.normalLevelProg;
+                        return this.level;
                     }
                 })
             );

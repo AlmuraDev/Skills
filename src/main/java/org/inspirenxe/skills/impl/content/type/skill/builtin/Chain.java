@@ -27,13 +27,13 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin;
 import static com.google.common.base.Preconditions.checkState;
 
 @SuppressWarnings("unchecked")
-public abstract class ChainBuilder<B extends ChainBuilder<B>> {
+public abstract class Chain<B extends Chain<B>> {
 
     public Integer level;
     public Double xp;
     public Double economy;
 
-    public B minLevel(final Integer value) {
+    public B level(final Integer value) {
         if (value != null) {
             checkState(value >= 0);
         }

@@ -33,8 +33,8 @@ import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.EffectBuilder;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChainBuilder;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChainBuilder;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.MessageBuilder;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
@@ -45,7 +45,6 @@ import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
 import org.spongepowered.api.text.format.TextColors;
@@ -66,84 +65,71 @@ public final class FarmingRegistar {
     private static BuiltinEventListener listener;
 
     public static void configure() {
-        final SkillType skillType = registry.getType(SkillType.class, "skills:farming").orElse(null);
+        final SkillType type = registry.getType(SkillType.class, "skills:farming").orElse(null);
 
-        if (skillType == null) {
+        if (type == null) {
             return;
         }
 
-        final ItemChainBuilder interactChain = new ItemChainBuilder().matchTypeOnly().denyLevelRequired(
+        // Interact Item
+        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(
             (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
                 TextColors.RESET, " level ", value, " to use this."))
         );
 
-        // Interact Item
         listener
-            .addItemChain(InteractItemEvent.class, skillType,
-                new ItemChainBuilder().from(interactChain).query(ItemStack.of(ItemTypes.STONE_HOE, 1)).minLevel(10)
-            )
-            .addItemChain(InteractItemEvent.class, skillType,
-                new ItemChainBuilder().from(interactChain).query(ItemStack.of(ItemTypes.IRON_HOE, 1)).minLevel(20)
-            )
-            .addItemChain(InteractItemEvent.class, skillType,
-                new ItemChainBuilder().from(interactChain).query(ItemStack.of(ItemTypes.GOLDEN_HOE, 1)).minLevel(30)
-            )
-            .addItemChain(InteractItemEvent.class, skillType,
-                new ItemChainBuilder().from(interactChain).query(ItemStack.of(ItemTypes.DIAMOND_HOE, 1)).minLevel(40)
-            );
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_HOE).level(10))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_HOE).level(20))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_HOE).level(30))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_HOE).level(40));
 
-        listener
-            .addItemChain(DropItemEvent.Destruct.class, skillType,
-                new ItemChainBuilder().from(interactChain).query(ItemStack.of(ItemTypes.WHEAT_SEEDS, 1)).xp(20.0).economy(1.0)
-            )
-            .addItemChain(DropItemEvent.Destruct.class, skillType,
-                new ItemChainBuilder().from(interactChain).query(ItemStack.of(ItemTypes.WHEAT, 1)).xp(50.0).economy(1.5)
-            );
-
-        // Place Block
-        final BlockChainBuilder placeChain = new BlockChainBuilder().matchTypeOnly().denyLevelRequired(
+        // Place Crops
+        final BlockChain placeChain = new BlockChain().matchTypeOnly().denyLevelRequired(
             (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
                 TextColors.RESET, " level ", value, " to plant this."))
         );
 
         listener
-            .addBlockChain(ChangeBlockEvent.Place.class, skillType,
-                new BlockChainBuilder().from(placeChain).query(BlockTypes.WHEAT.getDefaultState()).xp(10.0).economy(1.0)
-            )
-            .addBlockChain(ChangeBlockEvent.Place.class, skillType,
-                new BlockChainBuilder().from(placeChain).query(BlockTypes.CARROTS.getDefaultState()).minLevel(10)
-            );
+            .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.WHEAT).xp(1.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.CARROTS).level(10).xp(2.0).economy(1.0));
+
+        // Harvest crops
+        final ItemChain dropsChain = new ItemChain().matchTypeOnly();
+
+        listener
+            .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.WHEAT_SEEDS).xp(1.0).economy(1.0))
+            .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.WHEAT).xp(10.0).economy(1.5))
+            .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.CARROT).xp(20.0).economy(1.5));
 
         // Messages (Xp change/Level change
         listener
-            .addMessageChain(Event.class, skillType, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained((skill, xp) -> Text.of("+ ",
-                SkillsConstants.XP_PRINTOUT.format(xp), "xp ", TextColors.DARK_GREEN, skill.getSkillType().getName()))
-            )
-            .addMessageChain(Event.class, skillType, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
+            .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained(
+                (skill, xp) -> Text.of("+ ", SkillsConstants.XP_PRINTOUT.format(xp), "xp ", TextColors.DARK_GREEN, skill.getSkillType().getName())))
+            .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
                 (skill, integer) -> Text.of("Congratulations, you just advanced a new ", TextColors.DARK_GREEN, skill.getSkillType().getName(),
-                    TextColors.RESET, " level! You are now level ", integer, "."))
-            );
+                    TextColors.RESET, " level! You are now level ", integer, ".")));
 
         // Effects (Xp change/Level change)
         listener
-            .addEffectChain(Event.class, skillType, new EffectBuilder().levelGained(new BiFunction<Skill, Integer, List<SkillsEffectType>>() {
-                    private final List<SkillsEffectType> normalLevelProg;
-                    private final List<SkillsEffectType> level99Prog;
+            .addEffectChain(Event.class, type, new EffectBuilder().levelGained(
+                new BiFunction<Skill, Integer, List<SkillsEffectType>>() {
+                    private final List<SkillsEffectType> level;
+                    private final List<SkillsEffectType> maxLevel;
 
                     {
                         final SkillsFireworkEffectType fireworkOnLevel = (SkillsFireworkEffectType) registry.getType(
                             FireworkEffectType.class, "skills:firework/farming-level-up").orElse(null);
 
                         if (fireworkOnLevel == null) {
-                            this.normalLevelProg = new ArrayList<>();
-                            this.level99Prog = new ArrayList<>();
+                            this.level = new ArrayList<>();
+                            this.maxLevel = new ArrayList<>();
                         } else {
-                            this.normalLevelProg = Lists.newArrayList(fireworkOnLevel);
-                            this.level99Prog = Lists.newArrayList(fireworkOnLevel);
+                            this.level = Lists.newArrayList(fireworkOnLevel);
+                            this.maxLevel = Lists.newArrayList(fireworkOnLevel);
 
                             for (int i = 0; i < 3; i++) {
                                 final ContentFireworkEffectTypeBuilderImpl builder = new ContentFireworkEffectTypeBuilderImpl();
-                                this.level99Prog.add(builder.from(fireworkOnLevel).build());
+                                this.maxLevel.add(builder.from(fireworkOnLevel).build());
                             }
                         }
                     }
@@ -151,10 +137,10 @@ public final class FarmingRegistar {
                     @Override
                     public List<SkillsEffectType> apply(final Skill skill, final Integer integer) {
                         if (integer == 99) {
-                            return this.level99Prog;
+                            return this.maxLevel;
                         }
 
-                        return this.normalLevelProg;
+                        return this.level;
                     }
                 })
             );

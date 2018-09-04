@@ -36,8 +36,8 @@ import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.api.event.ExperienceResult;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChainBuilder;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChainBuilder;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.MessageBuilder;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CraftingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
@@ -67,6 +67,7 @@ import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackComparators;
+import org.spongepowered.api.item.recipe.crafting.CraftingRecipe;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.text.Text;
@@ -90,8 +91,8 @@ public final class BuiltinEventListener implements Witness {
     private final SkillManager skillManager;
     private final Map<Class<? extends Event>, Map<SkillType, Set<MessageBuilder>>> messageChains = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, Set<EffectBuilder>>> effectChains = new HashMap<>();
-    private final Map<Class<? extends Event>, Map<SkillType, Set<BlockChainBuilder>>> blockChains = new HashMap<>();
-    private final Map<Class<? extends Event>, Map<SkillType, Set<ItemChainBuilder>>> itemChains = new HashMap<>();
+    private final Map<Class<? extends Event>, Map<SkillType, Set<BlockChain>>> blockChains = new HashMap<>();
+    private final Map<Class<? extends Event>, Map<SkillType, Set<ItemChain>>> itemChains = new HashMap<>();
 
     @Inject
     public BuiltinEventListener(final SkillManager skillManager) {
@@ -252,7 +253,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Map<SkillType, Set<BlockChainBuilder>> eventChains = this.blockChains.entrySet()
+        final Map<SkillType, Set<BlockChain>> eventChains = this.blockChains.entrySet()
             .stream()
             .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
             .findAny()
@@ -265,7 +266,7 @@ public final class BuiltinEventListener implements Witness {
 
         final Collection<Skill> skills = skillHolder.getSkills().values();
 
-        final Set<Map.Entry<SkillType, Set<BlockChainBuilder>>> skillChains = eventChains.entrySet()
+        final Set<Map.Entry<SkillType, Set<BlockChain>>> skillChains = eventChains.entrySet()
             .stream()
             .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
@@ -284,21 +285,21 @@ public final class BuiltinEventListener implements Witness {
     }
 
     private boolean processBlockSnapshotFor(final Event event, final Player player, final SkillHolder skillHolder, final EconomyService
-        economyService, final Collection<Skill> skills, final Set<Map.Entry<SkillType, Set<BlockChainBuilder>>> skillChains,
+        economyService, final Collection<Skill> skills, final Set<Map.Entry<SkillType, Set<BlockChain>>> skillChains,
         final BlockSnapshot snapshot, final boolean allowXpForOwned) {
         for (final Skill skill : skills) {
 
-            final Set<BlockChainBuilder> chains = skillChains
+            final Set<BlockChain> chains = skillChains
                 .stream()
                 .filter(kv -> kv.getKey() == skill.getSkillType())
                 .findAny()
                 .map(Map.Entry::getValue)
                 .orElse(new HashSet<>());
 
-            final BlockChainBuilder chain = chains
+            final BlockChain chain = chains
                 .stream()
                 .filter(v -> {
-                    if (v.excludeQuery) {
+                    if (v.inverseQuery) {
                         return false;
                     }
 
@@ -312,7 +313,7 @@ public final class BuiltinEventListener implements Witness {
                 .orElse(chains
                     .stream()
                     .filter(v -> {
-                        if (!v.excludeQuery) {
+                        if (!v.inverseQuery) {
                             return false;
                         }
 
@@ -383,7 +384,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Map<SkillType, Set<ItemChainBuilder>> eventChains = this.itemChains.entrySet()
+        final Map<SkillType, Set<ItemChain>> eventChains = this.itemChains.entrySet()
             .stream()
             .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
             .findAny()
@@ -396,7 +397,7 @@ public final class BuiltinEventListener implements Witness {
 
         final Collection<Skill> skills = skillHolder.getSkills().values();
 
-        final Set<Map.Entry<SkillType, Set<ItemChainBuilder>>> skillChains = eventChains.entrySet()
+        final Set<Map.Entry<SkillType, Set<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
             .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
@@ -417,9 +418,9 @@ public final class BuiltinEventListener implements Witness {
         for (final BuiltinResult cancelledResult : cancelledResults) {
             event.setCancelled(true);
 
-            final ChainBuilder<?> chain = cancelledResult.getChain().orElse(null);
-            if (chain instanceof ItemChainBuilder && ((ItemChainBuilder) chain).denyLevelRequired != null) {
-                ((ItemChainBuilder) chain).denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+            final Chain<?> chain = cancelledResult.getChain().orElse(null);
+            if (chain instanceof ItemChain && ((ItemChain) chain).denyLevelRequired != null) {
+                ((ItemChain) chain).denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
             }
         }
 
@@ -513,7 +514,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Map<SkillType, Set<ItemChainBuilder>> eventChains = this.itemChains.entrySet()
+        final Map<SkillType, Set<ItemChain>> eventChains = this.itemChains.entrySet()
             .stream()
             .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
             .findAny()
@@ -526,7 +527,7 @@ public final class BuiltinEventListener implements Witness {
 
         final Collection<Skill> skills = skillHolder.getSkills().values();
 
-        final Set<Map.Entry<SkillType, Set<ItemChainBuilder>>> skillChains = eventChains.entrySet()
+        final Set<Map.Entry<SkillType, Set<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
             .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
@@ -535,9 +536,30 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final ItemStack stack = event.getCrafted().createStack();
+        final List<BuiltinResult> results = new ArrayList<>();
 
-        final Collection<BuiltinResult> results = this.handleItemStack(skills, skillChains, stack);
+        final List<ItemStack> stacks = new ArrayList<>();
+
+        final ItemStack crafted = event.getCrafted().createStack();
+
+        final CraftingRecipe recipe = event.getRecipe().orElse(null);
+        if (recipe != null) {
+            final ItemStack defaultResult = recipe.getExemplaryResult().createStack();
+
+            final int craftedTimes = crafted.getQuantity() / defaultResult.getQuantity();
+
+            for (int i = 0; i < craftedTimes; i++) {
+                final ItemStack copyStack = crafted.copy();
+                copyStack.setQuantity(defaultResult.getQuantity());
+                stacks.add(copyStack);
+            }
+        } else {
+            stacks.add(crafted);
+        }
+
+        for (final ItemStack stack : stacks) {
+            results.addAll(this.handleItemStack(skills, skillChains, stack));
+        }
 
         final List<BuiltinResult> cancelledResults = results
             .stream()
@@ -547,9 +569,9 @@ public final class BuiltinEventListener implements Witness {
         for (final BuiltinResult cancelledResult : cancelledResults) {
             event.setCancelled(true);
 
-            final ChainBuilder<?> chain = cancelledResult.getChain().orElse(null);
-            if (chain instanceof ItemChainBuilder && ((ItemChainBuilder) chain).denyLevelRequired != null) {
-                ((ItemChainBuilder) chain).denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+            final Chain<?> chain = cancelledResult.getChain().orElse(null);
+            if (chain instanceof ItemChain && ((ItemChain) chain).denyLevelRequired != null) {
+                ((ItemChain) chain).denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
             }
         }
 
@@ -653,7 +675,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Map<SkillType, Set<ItemChainBuilder>> eventChains = this.itemChains.entrySet()
+        final Map<SkillType, Set<ItemChain>> eventChains = this.itemChains.entrySet()
             .stream()
             .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
             .findAny()
@@ -666,7 +688,7 @@ public final class BuiltinEventListener implements Witness {
 
         final Collection<Skill> skills = skillHolder.getSkills().values();
 
-        final Set<Map.Entry<SkillType, Set<ItemChainBuilder>>> skillChains = eventChains.entrySet()
+        final Set<Map.Entry<SkillType, Set<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
             .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
@@ -687,12 +709,12 @@ public final class BuiltinEventListener implements Witness {
             .collect(Collectors.toList());
 
         for (final BuiltinResult cancelledResult : cancelledResults) {
-            final ChainBuilder<?> chain = cancelledResult.getChain().orElse(null);
-            if (chain instanceof ItemChainBuilder && ((ItemChainBuilder) chain).denyLevelRequired != null) {
-                ((ItemChainBuilder) chain).denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+            final Chain<?> chain = cancelledResult.getChain().orElse(null);
+            if (chain instanceof ItemChain && ((ItemChain) chain).denyLevelRequired != null) {
+                ((ItemChain) chain).denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
 
                 // TODO This is likely wrong but we're not using it yet.
-                event.filterEntities(entity -> entity instanceof Item && ((ItemChainBuilder) chain).toQuery.contains(((Item) entity).item().get().createStack()));
+                event.filterEntities(entity -> entity instanceof Item && ((ItemChain) chain).toQuery.contains(((Item) entity).item().get().createStack()));
             }
         }
 
@@ -774,7 +796,7 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    private Collection<BuiltinResult> handleItemStack(final Collection<Skill> skills, final Set<Map.Entry<SkillType, Set<ItemChainBuilder>>>
+    private Collection<BuiltinResult> handleItemStack(final Collection<Skill> skills, final Set<Map.Entry<SkillType, Set<ItemChain>>>
         skillChains, final ItemStack stack) {
 
         final List<BuiltinResult> results = new ArrayList<>();
@@ -783,17 +805,17 @@ public final class BuiltinEventListener implements Witness {
 
             final BuiltinResult.Builder builder = BuiltinResult.builder().skill(skill);
 
-            final Set<ItemChainBuilder> chains = skillChains
+            final Set<ItemChain> chains = skillChains
                 .stream()
                 .filter(kv -> kv.getKey() == skill.getSkillType())
                 .findAny()
                 .map(Map.Entry::getValue)
                 .orElse(new HashSet<>());
 
-            final ItemChainBuilder chain = chains
+            final ItemChain chain = chains
                 .stream()
                 .filter(v -> {
-                    if (v.excludeQuery) {
+                    if (v.inverseQuery) {
                         return false;
                     }
 
@@ -811,7 +833,7 @@ public final class BuiltinEventListener implements Witness {
                 .orElse(chains
                     .stream()
                     .filter(v -> {
-                        if (!v.excludeQuery) {
+                        if (!v.inverseQuery) {
                             return false;
                         }
 
@@ -870,7 +892,7 @@ public final class BuiltinEventListener implements Witness {
         return this;
     }
 
-    public BuiltinEventListener addBlockChain(final Class<? extends Event> clazz, final SkillType type, final BlockChainBuilder builder) {
+    public BuiltinEventListener addBlockChain(final Class<? extends Event> clazz, final SkillType type, final BlockChain builder) {
         checkNotNull(type);
         checkNotNull(builder);
 
@@ -878,7 +900,7 @@ public final class BuiltinEventListener implements Witness {
         return this;
     }
 
-    public BuiltinEventListener addItemChain(final Class<? extends Event> clazz, final SkillType type, final ItemChainBuilder builder) {
+    public BuiltinEventListener addItemChain(final Class<? extends Event> clazz, final SkillType type, final ItemChain builder) {
         checkNotNull(type);
         checkNotNull(builder);
 

@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 public final class BuiltinResultBuilder extends AbstractExperienceResultBuilder<BuiltinResult, BuiltinResult.Builder> implements BuiltinResult.Builder {
 
     @Nullable public Skill skill;
-    @Nullable public ChainBuilder<?> chain;
+    @Nullable public Chain<?> chain;
     @Nullable public BigDecimal money;
 
     @Override
@@ -44,7 +44,7 @@ public final class BuiltinResultBuilder extends AbstractExperienceResultBuilder<
     }
 
     @Override
-    public BuiltinResult.Builder chain(final ChainBuilder<?> chain) {
+    public BuiltinResult.Builder chain(final Chain<?> chain) {
         this.chain = chain;
         return this;
     }

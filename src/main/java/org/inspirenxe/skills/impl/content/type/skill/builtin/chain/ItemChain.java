@@ -27,51 +27,58 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.ChainBuilder;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
-import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public final class BlockChainBuilder extends ChainBuilder<BlockChainBuilder> {
+public final class ItemChain extends Chain<ItemChain> {
 
-    public List<BlockState> toQuery = new ArrayList<>();
-    public boolean excludeQuery = false, matchOnlyType = false;
+    public List<ItemStack> toQuery = new ArrayList<>();
+    public boolean inverseQuery = false, matchOnlyType = false;
     public TriConsumer<Player, Skill, Integer> denyLevelRequired;
 
-    public BlockChainBuilder excludeQuery() {
-        this.excludeQuery = true;
+    public ItemChain inverseQuery() {
+        this.inverseQuery = true;
         return this;
     }
 
-    public BlockChainBuilder query(final BlockState value) {
+    public ItemChain query(final ItemType value) {
+        checkNotNull(value);
+        this.toQuery.add(ItemStack.of(value, 1));
+        return this;
+    }
+
+    public ItemChain query(final ItemStack value) {
         checkNotNull(value);
         this.toQuery.add(value);
         return this;
     }
 
-    public BlockChainBuilder query(final BlockState... values) {
+    public ItemChain query(final ItemStack... values) {
         checkNotNull(values);
         this.toQuery.addAll(Arrays.asList(values));
         return this;
     }
 
-    public BlockChainBuilder matchTypeOnly() {
+    public ItemChain matchTypeOnly() {
         this.matchOnlyType = true;
         return this;
     }
 
-    public BlockChainBuilder denyLevelRequired(final TriConsumer<Player, Skill, Integer> value) {
+    public ItemChain denyLevelRequired(final TriConsumer<Player, Skill, Integer> value) {
         this.denyLevelRequired = value;
         return this;
     }
 
     @Override
-    public BlockChainBuilder from(final BlockChainBuilder builder) {
+    public ItemChain from(final ItemChain builder) {
         this.matchOnlyType = builder.matchOnlyType;
         this.denyLevelRequired = builder.denyLevelRequired;
 

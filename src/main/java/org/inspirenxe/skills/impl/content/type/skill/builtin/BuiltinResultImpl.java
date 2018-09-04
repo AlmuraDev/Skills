@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 public final class BuiltinResultImpl extends ExperienceResultImpl implements BuiltinResult {
 
     @Nullable private Skill skill;
-    @Nullable private ChainBuilder<?> chain;
+    @Nullable private Chain<?> chain;
     @Nullable private BigDecimal money;
 
     public BuiltinResultImpl(final BuiltinResultBuilder builder) {
@@ -53,7 +53,7 @@ public final class BuiltinResultImpl extends ExperienceResultImpl implements Bui
     }
 
     @Override
-    public Optional<ChainBuilder<?>> getChain() {
+    public Optional<Chain<?>> getChain() {
         return Optional.ofNullable(this.chain);
     }
 

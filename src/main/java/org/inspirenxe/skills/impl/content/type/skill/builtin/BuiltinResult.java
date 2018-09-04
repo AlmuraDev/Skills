@@ -39,7 +39,7 @@ public interface BuiltinResult extends ExperienceResult {
 
     Skill getSkill();
 
-    Optional<ChainBuilder<?>> getChain();
+    Optional<Chain<?>> getChain();
 
     Optional<BigDecimal> getMoney();
 
@@ -47,7 +47,7 @@ public interface BuiltinResult extends ExperienceResult {
 
         Builder skill(final Skill skill);
 
-        Builder chain(final ChainBuilder<?> chain);
+        Builder chain(final Chain<?> chain);
 
         Builder money(final BigDecimal money);
     }
