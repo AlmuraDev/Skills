@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -46,6 +47,12 @@ public final class ItemChain extends Chain<ItemChain> {
 
     public ItemChain inverseQuery() {
         this.inverseQuery = true;
+        return this;
+    }
+
+    public ItemChain query(final String id) {
+        checkNotNull(id);
+        this.query(Sponge.getRegistry().getType(ItemType.class, id).orElse(null));
         return this;
     }
 

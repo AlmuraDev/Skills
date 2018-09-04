@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.living.player.Player;
@@ -46,6 +47,12 @@ public final class BlockChain extends Chain<BlockChain> {
 
     public BlockChain inverseQuery() {
         this.inverseQuery = true;
+        return this;
+    }
+
+    public BlockChain query(final String id) {
+        checkNotNull(id);
+        this.query(Sponge.getRegistry().getType(BlockType.class, id).orElse(null));
         return this;
     }
 
