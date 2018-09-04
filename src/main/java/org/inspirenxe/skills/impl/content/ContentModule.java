@@ -37,6 +37,7 @@ import org.inspirenxe.skills.impl.content.parser.ParserModule;
 import org.inspirenxe.skills.impl.content.registry.RegistryModule;
 import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinModule;
 import org.spongepowered.api.config.ConfigDir;
 
 import java.nio.file.Path;
@@ -59,7 +60,7 @@ public final class ContentModule extends AbstractModule implements ToolboxBinder
 
     this.bind(ContentFinder.class).to(ContentFinderImpl.class);
     this.facet().add(ContentInstaller.class);
-    this.facet().add(BuiltinEventListener.class);
+    this.install(new BuiltinModule());
   }
 
   @Provides

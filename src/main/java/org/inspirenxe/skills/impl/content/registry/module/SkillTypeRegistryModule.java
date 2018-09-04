@@ -49,7 +49,6 @@ public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryM
     checkNotNull(catalogType);
     this.map.put(catalogType.getId(), catalogType);
     catalogType.getLevelFunction().buildLevelTable(catalogType.getMaxLevel());
-    ((SkillsLevelFunctionType) catalogType.getLevelFunction()).printTable();
   }
 
   @Override

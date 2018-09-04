@@ -38,6 +38,7 @@ import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.impl.SkillsConstants;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.source.ConsoleSource;
@@ -52,7 +53,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -60,8 +60,6 @@ import java.util.Map;
 import javax.inject.Provider;
 
 public final class SkillsCommandCreator implements Provider<CommandSpec> {
-
-  private static final DecimalFormat prettyExp = new DecimalFormat("###,###.##");
 
   private final PluginContainer container;
   private final SkillManager skillManager;
@@ -110,9 +108,9 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
               skillPrintouts.add(Text.of(TextColors.AQUA, skillType.getName(), TextColors.RESET, " :: Lv. ", currentLevel, "/",
                   maxLevel));
 
-              skillPrintouts.add(Text.of("  Current XP: ", prettyExp.format(currentExperience), "/", prettyExp.format(maxLevelExperience)));
+              skillPrintouts.add(Text.of("  Current XP: ", SkillsConstants.XP_PRINTOUT.format(currentExperience), "/", SkillsConstants.XP_PRINTOUT.format(maxLevelExperience)));
 
-              skillPrintouts.add(Text.of("  Next Level: ", prettyExp.format(toNextLevelExperience)));
+              skillPrintouts.add(Text.of("  Next Level: ", SkillsConstants.XP_PRINTOUT.format(toNextLevelExperience)));
 
               totalLevel += currentLevel;
             }

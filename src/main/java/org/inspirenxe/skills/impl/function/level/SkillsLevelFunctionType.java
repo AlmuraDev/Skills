@@ -33,6 +33,7 @@ import com.google.inject.assistedinject.Assisted;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
+import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 import org.slf4j.Logger;
 
@@ -100,7 +101,6 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
 
   @Override
   public void buildLevelTable(final int suggestedMax) {
-    this.logger.warn("Printing minLevel table for: {}", this.getId());
     if (suggestedMax > this.xpTable.length) {
       final int length = this.xpTable.length;
       this.xpTable = Arrays.copyOf(this.xpTable, this.xpTable.length * 2);
@@ -141,8 +141,7 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
   }
 
   public void printTable() {
-
-    final DecimalFormat format = new DecimalFormat("###,###,###.##");
+    this.logger.warn("Printing level table for: {}", this.getId());
 
     for (int i = 0; i < this.xpTable.length - 1; i++) {
       final Double start = this.xpTable[i];
@@ -152,15 +151,15 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
       }
 
       if (i == this.xpTable.length - 2) {
-        this.logger.warn("Lvl " + (i + 1) + " -> (" + format.format(start) + " - ~)");
+        this.logger.warn("Lvl " + (i + 1) + " -> (" + SkillsConstants.XP_PRINTOUT.format(start) + " - ~)");
       } else {
         final Double end = this.xpTable[i + 1];
 
         if (end == UNKNOWN_EXP) {
-          this.logger.warn("Lvl " + (i + 1) + " -> (" + format.format(start) + " - ~)");
+          this.logger.warn("Lvl " + (i + 1) + " -> (" + SkillsConstants.XP_PRINTOUT.format(start) + " - ~)");
         } else {
-          this.logger.warn("Lvl " + (i + 1) + " -> (" + format.format(start) + " - " + format.format(end) + ", diff: " + format.format(end - start)
-              + ")");
+          this.logger.warn("Lvl " + (i + 1) + " -> (" + SkillsConstants.XP_PRINTOUT.format(start) + " - " + SkillsConstants.XP_PRINTOUT.format(end)
+            + ", diff: " + SkillsConstants.XP_PRINTOUT.format(end - start) + ")");
         }
       }
     }

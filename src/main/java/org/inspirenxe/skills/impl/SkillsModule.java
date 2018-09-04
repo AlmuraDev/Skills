@@ -32,6 +32,7 @@ import net.kyori.xml.node.parser.Parser;
 import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.jdom2.JDOMException;
