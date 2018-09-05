@@ -62,7 +62,7 @@ public final class SkillsImpl {
   @Nullable private final Facets facets;
 
   @Inject
-  public SkillsImpl(final Injector baseInjector, final Logger logger, final @ConfigDir(sharedRoot = false) Path configDir)
+  public SkillsImpl(final Injector baseInjector, final Logger logger, @ConfigDir(sharedRoot = false) final Path configDir)
     throws IOException, URISyntaxException {
 
     INSTANCE = this;
@@ -92,16 +92,24 @@ public final class SkillsImpl {
     this.logger.info("Writing missing assets to '" + this.configDir + "'");
     final URI uri = SkillsImpl.class.getResource("/assets/" + SkillsImpl.ID).toURI();
 
+    FileSystem fileSystem = null;
     final Path path;
 
-    if (uri.getScheme().equals("jar")) {
-      final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-      path = fileSystem.getPath("/assets/" + SkillsImpl.ID);
-    } else {
-      path = Paths.get(uri);
-    }
+    try {
+      if (uri.getScheme().equals("jar")) {
+        fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+        path = fileSystem.getPath("/assets/" + SkillsImpl.ID);
+      } else {
+        path = Paths.get(uri);
+      }
 
-    Files.walkFileTree(path, new DefaultFileVisitor());
+      Files.walkFileTree(path.normalize(), new DefaultFileVisitor());
+
+    } finally {
+      if (fileSystem != null) {
+        fileSystem.close();
+      }
+    }
   }
 
   public Logger getLogger() {
@@ -118,7 +126,7 @@ public final class SkillsImpl {
       if (index == dir.getNameCount()) {
         actual = SkillsImpl.this.configDir;
       } else {
-        actual = SkillsImpl.this.configDir.resolve(dir.subpath(index, dir.getNameCount()));
+        actual = SkillsImpl.this.configDir.resolve(dir.subpath(index, dir.getNameCount()).toString());
       }
 
       if (Files.notExists(actual)) {
@@ -136,7 +144,7 @@ public final class SkillsImpl {
       if (index == file.getNameCount()) {
         actual = SkillsImpl.this.configDir;
       } else {
-        actual = SkillsImpl.this.configDir.resolve(file.subpath(index, file.getNameCount()));
+        actual = SkillsImpl.this.configDir.resolve(file.subpath(index, file.getNameCount()).toString());
       }
 
       if (Files.notExists(actual)) {
