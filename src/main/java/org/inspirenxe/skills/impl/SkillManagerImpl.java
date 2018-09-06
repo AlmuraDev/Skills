@@ -52,6 +52,7 @@ import org.jooq.SelectConditionStep;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
@@ -332,16 +333,14 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
                     if (skill != null) {
 
-                      Sponge.getCauseStackManager().pushCause(SkillManagerImpl.this);
+                      try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                        frame.pushCause(SkillManagerImpl.this);
 
-                      skill.setExperience(experience);
+                        skill.setExperience(experience);
 
-                      Sponge.getCauseStackManager().popCause();
-
-                      Sponge.getCauseStackManager().pushCause(SkillManagerImpl.this);
-                      Sponge.getEventManager().post(new LoadExperiencePostEventImpl(skill, dbExperience, skill
-                          .getCurrentExperience(), !isNewSkill));
-                      Sponge.getCauseStackManager().popCause();
+                        Sponge.getEventManager().post(new LoadExperiencePostEventImpl(skill, dbExperience, skill
+                            .getCurrentExperience(), !isNewSkill));
+                      }
                     }
                   })
                   .submit(this.container);
@@ -389,39 +388,42 @@ public final class SkillManagerImpl implements SkillManager, Witness {
               .keepStatement(false));
         }
 
+
         preEvents.add(event);
+      }
 
-        context.batch(batchInsert).execute();
+      context.batch(batchInsert).execute();
 
-        context.batch(batchUpdate).execute();
+      context.batch(batchUpdate).execute();
 
-        Sponge.getScheduler().createTaskBuilder()
-            .name(this.container.getName() + " - Fire Save Post Events [" + container + " | " + holder + "]")
-            .execute(() -> {
-              for (ExperienceEvent.Save.Pre preEvent : preEvents) {
-                final SkillHolder skillHolder = SkillManagerImpl.this.getHolder(preEvent.getContainerUniqueId(), preEvent
-                    .getHolderUniqueId()).orElse(null);
+      Sponge.getScheduler()
+          .createTaskBuilder()
+          .name(this.container.getName() + " - Fire Save Post Events [" + container + " | " + holder + "]")
+          .execute(() -> {
+            for (ExperienceEvent.Save.Pre preEvent : preEvents) {
+              final SkillHolder skillHolder = SkillManagerImpl.this.getHolder(preEvent.getContainerUniqueId(), preEvent
+                  .getHolderUniqueId()).orElse(null);
 
-                if (skillHolder == null) {
-                  continue;
-                }
+              if (skillHolder == null) {
+                continue;
+              }
 
-                final Skill skill = skillHolder.getSkill(preEvent.getSkillType()).orElse(null);
+              final Skill skill = skillHolder.getSkill(preEvent.getSkillType()).orElse(null);
 
-                if (skill == null) {
-                  continue;
-                }
+              if (skill == null) {
+                continue;
+              }
 
-                Sponge.getCauseStackManager().pushCause(SkillManagerImpl.this);
+              try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                frame.pushCause(SkillManagerImpl.this);
                 Sponge.getEventManager().post(new SaveExperiencePostEventImpl(skill, preEvent.getOriginalExperience(), preEvent
                     .getExperience()));
-                Sponge.getCauseStackManager().popCause();
-
-                skill.setDirtyState(false);
               }
-            })
-            .submit(this.container);
-      }
+
+              skill.setDirtyState(false);
+            }
+          })
+          .submit(this.container);
     } catch (final SQLException e) {
       e.printStackTrace();
     }
