@@ -218,72 +218,72 @@ public final class SkillManagerImpl implements SkillManager, Witness {
     copy.forEach((container, value) -> this.unloadContainer(container, true));
   }
 
-  @Listener(order = Order.LAST)
-  public void onMoveTeleportPlayer(final MoveEntityEvent.Teleport event, final @Getter("getTargetEntity") Player player) {
-    final UUID previousContainer = event.getFromTransform().getExtent().getUniqueId();
-    final UUID holder = event.getTargetEntity().getUniqueId();
-    final UUID container = event.getToTransform().getExtent().getUniqueId();
-
-    // Detect world change, if not bail
-    if (previousContainer.equals(container)) {
-      return;
-    }
-
-    // Save skills for the skillHolder in the old container and remove them
-    final Set<SkillHolder> holdersInContainer = this.containerHolders.get(previousContainer);
-    if (holdersInContainer != null) {
-      final SkillHolder previousHolder = holdersInContainer.stream().filter((h) -> h.getHolderUniqueId().equals(holder)).findFirst()
-          .orElse(null);
-
-      if (previousHolder != null) {
-        holdersInContainer.remove(previousHolder);
-
-        // Remove container map if we no longer have holders
-        if (holdersInContainer.isEmpty()) {
-          this.unloadContainer(previousContainer, false);
-        }
-
-        final Map<String, Double> dirtySkills = new HashMap<>();
-
-        for (final Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
-          final SkillType skillType = skillEntry.getKey();
-          final Skill skill = skillEntry.getValue();
-
-          if (skill.isInitialized() && skill.isDirtyState()) {
-            dirtySkills.put(skillType.getId(), skill.getCurrentExperience());
-          }
-        }
-
-        if (!dirtySkills.isEmpty()) {
-          Sponge.getScheduler().createTaskBuilder()
-              .name(this.container.getName() + "- Save Skills [" + previousContainer + " | " + holder + "]")
-              .async()
-              .execute(new SaveHolderToDatabase(this, previousContainer, new DirtySkillHolderQueueEntry(holder,
-                  dirtySkills)))
-              .submit(this.container);
-        }
-      }
-    }
-
-    final SkillHolder skillHolder = this.factory.create(container, holder);
-
-    // Load skills for the skillHolder in this new container
-    // Load skills for the skillHolder in this new container
-    this.containerHolders.computeIfAbsent(container, k -> {
-      this.loadContainer(container);
-      return new HashSet<>();
-    }).add(skillHolder);
-
-    final Collection<SkillType> skillTypes = Sponge.getRegistry().getAllOf(SkillType.class);
-    skillTypes.forEach(skillHolder::addSkill);
-
-    Sponge.getScheduler().createTaskBuilder()
-        .name(this.container.getName() + "- Load Skills [" + container + " | " + skillHolder + "]")
-        .async()
-        .execute(() -> this.loadSkillsAsync(skillHolder.getContainerUniqueId(), skillHolder.getHolderUniqueId(), skillTypes.stream().map(
-            CatalogType::getId).collect(Collectors.toSet())))
-        .submit(this.container);
-  }
+//  @Listener(order = Order.LAST)
+//  public void onMoveTeleportPlayer(final MoveEntityEvent.Teleport event, final @Getter("getTargetEntity") Player player) {
+//    final UUID previousContainer = event.getFromTransform().getExtent().getUniqueId();
+//    final UUID holder = event.getTargetEntity().getUniqueId();
+//    final UUID container = event.getToTransform().getExtent().getUniqueId();
+//
+//    // Detect world change, if not bail
+//    if (previousContainer.equals(container)) {
+//      return;
+//    }
+//
+//    // Save skills for the skillHolder in the old container and remove them
+//    final Set<SkillHolder> holdersInContainer = this.containerHolders.get(previousContainer);
+//    if (holdersInContainer != null) {
+//      final SkillHolder previousHolder = holdersInContainer.stream().filter((h) -> h.getHolderUniqueId().equals(holder)).findFirst()
+//          .orElse(null);
+//
+//      if (previousHolder != null) {
+//        holdersInContainer.remove(previousHolder);
+//
+//        // Remove container map if we no longer have holders
+//        if (holdersInContainer.isEmpty()) {
+//          this.unloadContainer(previousContainer, false);
+//        }
+//
+//        final Map<String, Double> dirtySkills = new HashMap<>();
+//
+//        for (final Map.Entry<SkillType, Skill> skillEntry : previousHolder.getSkills().entrySet()) {
+//          final SkillType skillType = skillEntry.getKey();
+//          final Skill skill = skillEntry.getValue();
+//
+//          if (skill.isInitialized() && skill.isDirtyState()) {
+//            dirtySkills.put(skillType.getId(), skill.getCurrentExperience());
+//          }
+//        }
+//
+//        if (!dirtySkills.isEmpty()) {
+//          Sponge.getScheduler().createTaskBuilder()
+//              .name(this.container.getName() + "- Save Skills [" + previousContainer + " | " + holder + "]")
+//              .async()
+//              .execute(new SaveHolderToDatabase(this, previousContainer, new DirtySkillHolderQueueEntry(holder,
+//                  dirtySkills)))
+//              .submit(this.container);
+//        }
+//      }
+//    }
+//
+//    final SkillHolder skillHolder = this.factory.create(container, holder);
+//
+//    // Load skills for the skillHolder in this new container
+//    // Load skills for the skillHolder in this new container
+//    this.containerHolders.computeIfAbsent(container, k -> {
+//      this.loadContainer(container);
+//      return new HashSet<>();
+//    }).add(skillHolder);
+//
+//    final Collection<SkillType> skillTypes = Sponge.getRegistry().getAllOf(SkillType.class);
+//    skillTypes.forEach(skillHolder::addSkill);
+//
+//    Sponge.getScheduler().createTaskBuilder()
+//        .name(this.container.getName() + "- Load Skills [" + container + " | " + skillHolder + "]")
+//        .async()
+//        .execute(() -> this.loadSkillsAsync(skillHolder.getContainerUniqueId(), skillHolder.getHolderUniqueId(), skillTypes.stream().map(
+//            CatalogType::getId).collect(Collectors.toSet())))
+//        .submit(this.container);
+//  }
 
   private void loadSkillsAsync(final UUID container, final UUID holder, final Collection<String> skillTypeIds) {
 
