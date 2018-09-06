@@ -25,21 +25,21 @@
 package org.inspirenxe.skills.impl.content.type.skill.builtin;
 
 import org.inspirenxe.skills.api.Skill;
-
-import java.util.function.BiFunction;
+import org.inspirenxe.skills.impl.util.function.TriFunction;
+import org.spongepowered.api.entity.living.player.Player;
 
 @SuppressWarnings("unchecked")
 public abstract class FeedbackBuilder<T, U extends FeedbackBuilder<T, U>> {
-    public BiFunction<Skill, Double, T> xpGained = null;
-    public BiFunction<Skill, Integer, T> levelGained = null;
+    public TriFunction<Player, Skill, Double, T> xpGained = null;
+    public TriFunction<Player, Skill, Integer, T> levelGained = null;
 
-    public U xpGained(final BiFunction<Skill, Double, T> value) {
+    public U xpGained(final TriFunction<Player, Skill, Double, T> value) {
         this.xpGained = value;
 
         return (U) this;
     }
 
-    public U levelGained(final BiFunction<Skill, Integer, T> value) {
+    public U levelGained(final TriFunction<Player, Skill, Integer, T> value) {
         this.levelGained = value;
 
         return (U) this;

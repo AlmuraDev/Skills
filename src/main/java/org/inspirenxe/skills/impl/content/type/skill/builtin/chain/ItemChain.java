@@ -107,23 +107,15 @@ public final class ItemChain extends Chain<ItemChain> {
         return this;
     }
 
-    public ItemChain denyLevelRequired(@Nullable final TriConsumer<Player, Skill, Integer> value) {
-        if (this.inErrorState) {
-            return this;
-        }
-        this.denyLevelRequired = value;
-        return this;
-    }
-
     @Override
     public ItemChain from(final ItemChain builder) {
+        super.from(builder);
+
         if (this.inErrorState) {
             return this;
         }
 
-        checkNotNull(builder);
         this.matchOnlyType = builder.matchOnlyType;
-        this.denyLevelRequired = builder.denyLevelRequired;
 
         return this;
     }

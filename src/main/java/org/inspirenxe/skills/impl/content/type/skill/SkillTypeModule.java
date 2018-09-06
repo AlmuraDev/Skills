@@ -67,7 +67,6 @@ public final class SkillTypeModule extends RootModule.Impl<ContentSkillType.Chil
       this.bindProcessor(EconomyFunctionProcessor.class);
       this.bindProcessor(MinLevelProcessor.class);
       this.bindProcessor(MaxLevelProcessor.class);
-      //this.bindProcessor(EventProcessor.class);
     }
   }
 }

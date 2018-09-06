@@ -180,7 +180,7 @@ public final class BuiltinEventListener implements Witness {
                 .stream()
                 .filter(v -> v.xpGained != null)
                 .forEach(v -> {
-                    final Text message = v.xpGained.apply(event.getSkill(), event.getExperienceDifference());
+                    final Text message = v.xpGained.apply(player, event.getSkill(), event.getExperienceDifference());
                     player.sendMessage(v.chatType, message);
                 });
         }
@@ -192,7 +192,7 @@ public final class BuiltinEventListener implements Witness {
                     .stream()
                     .filter(v -> v.levelGained != null)
                     .forEach(v -> {
-                        final Text message = v.levelGained.apply(event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel());
+                        final Text message = v.levelGained.apply(player, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel());
                         player.sendMessage(v.chatType, message);
                     });
             }
@@ -204,7 +204,8 @@ public final class BuiltinEventListener implements Witness {
                     effectBuilders
                         .stream()
                         .filter(v -> v.levelGained != null)
-                        .forEach(effectBuilder -> effectBuilder.levelGained.apply(event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel())
+                        .forEach(effectBuilder -> effectBuilder.levelGained.apply(player, event.getSkill(),
+                            ((ExperienceEvent.Change.Post.Level) event).getLevel())
                             .forEach(effect -> effect.play(player.getLocation(), player)));
                 }
             }
@@ -214,7 +215,7 @@ public final class BuiltinEventListener implements Witness {
                 effectBuilders
                     .stream()
                     .filter(v -> v.xpGained != null)
-                    .forEach(effectBuilder -> effectBuilder.xpGained.apply(event.getSkill(), event.getExperienceDifference()).forEach(effect ->
+                    .forEach(effectBuilder -> effectBuilder.xpGained.apply(player, event.getSkill(), event.getExperienceDifference()).forEach(effect ->
                         effect.play(player.getLocation(), player)));
             }
         }

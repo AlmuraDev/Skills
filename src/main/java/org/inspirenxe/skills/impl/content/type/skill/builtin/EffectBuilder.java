@@ -28,6 +28,6 @@ import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 
 import java.util.List;
 
-public class EffectBuilder extends FeedbackBuilder<List<SkillsEffectType>, EffectBuilder> {
+public final class EffectBuilder extends FeedbackBuilder<List<SkillsEffectType>, EffectBuilder> {
 
 }

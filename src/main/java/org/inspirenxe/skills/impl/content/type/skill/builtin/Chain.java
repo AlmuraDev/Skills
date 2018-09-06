@@ -24,7 +24,14 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.builtin;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
+import org.inspirenxe.skills.api.Skill;
+import org.inspirenxe.skills.impl.util.function.TriConsumer;
+import org.spongepowered.api.entity.living.player.Player;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
 public abstract class Chain<B extends Chain<B>> {
@@ -32,6 +39,9 @@ public abstract class Chain<B extends Chain<B>> {
     public Integer level;
     public Double xp;
     public Double economy;
+    public TriConsumer<Player, Skill, Integer> denyLevelRequired;
+
+    protected boolean inErrorState = false;
 
     public B level(final Integer value) {
         if (value != null) {
@@ -52,10 +62,25 @@ public abstract class Chain<B extends Chain<B>> {
         return (B) this;
     }
 
+    public B denyLevelRequired(@Nullable final TriConsumer<Player, Skill, Integer> value) {
+        if (this.inErrorState) {
+            return (B) this;
+        }
+        this.denyLevelRequired = value;
+        return (B) this;
+    }
+
     public B from(final B builder) {
+        if (this.inErrorState) {
+            return (B) this;
+        }
+
+        checkNotNull(builder);
+
         this.level = builder.level;
         this.xp = builder.xp;
         this.economy = builder.economy;
+        this.denyLevelRequired = builder.denyLevelRequired;
 
         return (B) this;
     }

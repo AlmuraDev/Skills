@@ -33,6 +33,8 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.processor.Flicker
 import org.inspirenxe.skills.impl.content.type.effect.firework.processor.ShapeProcessor;
 import org.inspirenxe.skills.impl.content.type.effect.firework.processor.TrailsProcessor;
 
+import java.util.Collections;
+
 public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> {
 
   @Override

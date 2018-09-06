@@ -26,29 +26,21 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
-import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
 public final class BlockChain extends Chain<BlockChain> {
 
     public List<BlockState> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
-    public TriConsumer<Player, Skill, Integer> denyLevelRequired;
-
-    private boolean inErrorState = false;
 
     public BlockChain inverseQuery() {
         if (this.inErrorState) {
@@ -107,22 +99,15 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
-    public BlockChain denyLevelRequired(@Nullable final TriConsumer<Player, Skill, Integer> value) {
-        if (this.inErrorState) {
-            return this;
-        }
-        this.denyLevelRequired = value;
-        return this;
-    }
-
     @Override
     public BlockChain from(final BlockChain builder) {
+        super.from(builder);
+
         if (this.inErrorState) {
             return this;
         }
-        checkNotNull(builder);
+
         this.matchOnlyType = builder.matchOnlyType;
-        this.denyLevelRequired = builder.denyLevelRequired;
 
         return this;
     }

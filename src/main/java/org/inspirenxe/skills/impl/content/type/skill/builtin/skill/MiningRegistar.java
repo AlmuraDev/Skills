@@ -24,38 +24,20 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.builtin.skill;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
-import org.inspirenxe.skills.impl.SkillsConstants;
-import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.EffectBuilder;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.MessageBuilder;
-import org.inspirenxe.skills.impl.effect.SkillsEffectType;
-import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.chat.ChatTypes;
-import org.spongepowered.api.text.format.TextColors;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiFunction;
 
 public final class MiningRegistar {
-
-    private MiningRegistar() {
-    }
 
     @Inject
     private static GameRegistry registry;
@@ -70,11 +52,9 @@ public final class MiningRegistar {
             return;
         }
 
-        // Interact Item
-        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(
-            (player, skill, value) -> player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
-                + "use this."))
-        );
+        // Pickaxes
+        final ItemChain interactChain = new ItemChain().matchTypeOnly();
+        CommonRegistrar.insertDenyLink(interactChain, "use");
 
         listener
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_PICKAXE).level(10))
@@ -82,15 +62,9 @@ public final class MiningRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_PICKAXE).level(30))
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_PICKAXE).level(40));
 
-        // Break
-        // Grant xp for any block break unless it is a wheat crop
-        listener
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().inverseQuery().matchTypeOnly().query(BlockTypes.WHEAT).xp(0.5).economy(0.01));
-
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().denyLevelRequired(
-            (player, skill, value) -> player.sendMessage(Text.of("You require ", TextColors.AQUA, skill.getSkillType().getName(), TextColors.RESET,
-                " level ", value, " to break this."))
-        );
+        // Ores/etc
+        final BlockChain breakChain = new BlockChain().matchTypeOnly();
+        CommonRegistrar.insertDenyLink(breakChain, "break");
 
         listener
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STONE).xp(50.0).economy(0.1))
@@ -105,47 +79,14 @@ public final class MiningRegistar {
 
         // Messages (Xp change/Level change
         listener
-            .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained((skill, xp) -> Text.of("+ ",
-                SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName()))
-            )
-            .addMessageChain(Event.class, type, new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
-                (skill, integer) -> Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now level ", integer, "."))
-            );
+            .addMessageChain(Event.class, type, CommonRegistrar.XP_TO_ACTION_BAR)
+            .addMessageChain(Event.class, type, CommonRegistrar.LEVEL_UP_TO_CHAT);
 
         // Effects (Xp change/Level change)
         listener
-            .addEffectChain(Event.class, type, new EffectBuilder().levelGained(
-                new BiFunction<Skill, Integer, List<SkillsEffectType>>() {
-                    private final List<SkillsEffectType> level;
-                    private final List<SkillsEffectType> levelMax;
+            .addEffectChain(Event.class, type, CommonRegistrar.createFireworkEffect(SkillsImpl.ID + ":firework/mining-level-up"));
+    }
 
-                    {
-                        final SkillsFireworkEffectType fireworkOnLevel = (SkillsFireworkEffectType) registry.getType(
-                            FireworkEffectType.class, "skills:firework/mining-level-up").orElse(null);
-
-                        if (fireworkOnLevel == null) {
-                            this.level = new ArrayList<>();
-                            this.levelMax = new ArrayList<>();
-                        } else {
-                            this.level = Lists.newArrayList(fireworkOnLevel);
-                            this.levelMax = Lists.newArrayList(fireworkOnLevel);
-
-                            for (int i = 0; i < 3; i++) {
-                                final ContentFireworkEffectTypeBuilderImpl builder = new ContentFireworkEffectTypeBuilderImpl();
-                                this.levelMax.add(builder.from(fireworkOnLevel).build());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public List<SkillsEffectType> apply(final Skill skill, final Integer integer) {
-                        if (integer == 99) {
-                            return this.levelMax;
-                        }
-
-                        return this.level;
-                    }
-                })
-            );
+    private MiningRegistar() {
     }
 }
