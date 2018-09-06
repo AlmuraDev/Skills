@@ -181,7 +181,9 @@ public final class BuiltinEventListener implements Witness {
                 .filter(v -> v.xpGained != null)
                 .forEach(v -> {
                     final Text message = v.xpGained.apply(player, event.getSkill(), event.getExperienceDifference());
-                    player.sendMessage(v.chatType, message);
+                    if (message != null) {
+                        player.sendMessage(v.chatType, message);
+                    }
                 });
         }
 
@@ -193,7 +195,9 @@ public final class BuiltinEventListener implements Witness {
                     .filter(v -> v.levelGained != null)
                     .forEach(v -> {
                         final Text message = v.levelGained.apply(player, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel());
-                        player.sendMessage(v.chatType, message);
+                        if (message != null) {
+                            player.sendMessage(v.chatType, message);
+                        }
                     });
             }
 
