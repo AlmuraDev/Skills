@@ -149,7 +149,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
   @Listener(order = Order.LAST)
   public void onClientConnectionJoinByPlayer(final ClientConnectionEvent.Join event, final @Root Player player) {
-    final UUID container = player.getWorld().getUniqueId();
+    final UUID container = Sponge.getServer().getDefaultWorld().get().getUniqueId();
     final UUID holder = player.getUniqueId();
 
     final SkillHolder skillHolder = this.factory.create(container, holder);
