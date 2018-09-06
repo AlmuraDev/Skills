@@ -78,22 +78,22 @@ sourceSets {
 
 shadowJar {
     dependencies {
-        include(dependency("com.almuradev:droplet:${project.dropletVersion}"))
-        include(dependency("com.almuradev:toolbox:${project.toolboxVersion}"))
-        include(dependency('net.kyori:feature:1.0.0-SNAPSHOT'))
-        include(dependency('net.kyori:fragment:1.0.0-SNAPSHOT'))
-        include(dependency('net.kyori:lunar:1.0.6'))
-        include(dependency('net.kyori:membrane:1.0.6'))
-        include(dependency('net.kyori:violet:1.1.0'))
-        include(dependency('net.kyori:xml:1.0.0-SNAPSHOT'))
-        include(dependency('org.jdom:jdom2:2.0.6'))
-        include(dependency('org.checkerframework:checker-qual:2.4.0'))
-        include(dependency('com.google.inject.extensions:guice-assistedinject:4.1.0'))
-        include(dependency('com.google.inject.extensions:guice-multibindings:4.1.0'))
-        include(dependency("net.objecthunter:exp4j:${project.expVersion}"))
-        include(dependency("org.jooq:jooq:${project.jooqVersion}"))
-        include(dependency("org.jooq:jooq-meta:${project.jooqVersion}"))
-        include(dependency("org.jooq:jooq-codegen:${project.jooqVersion}"))
+        include(dependency("com.almuradev:droplet"))
+        include(dependency("com.almuradev:toolbox"))
+        include(dependency('net.kyori:feature'))
+        include(dependency('net.kyori:fragment'))
+        include(dependency('net.kyori:lunar'))
+        include(dependency('net.kyori:membrane'))
+        include(dependency('net.kyori:violet'))
+        include(dependency('net.kyori:xml'))
+        include(dependency('org.jdom:jdom2'))
+        include(dependency('org.checkerframework:checker-qual'))
+        include(dependency('com.google.inject.extensions:guice-assistedinject'))
+        include(dependency('com.google.inject.extensions:guice-multibindings'))
+        include(dependency("net.objecthunter:exp4j"))
+        include(dependency("org.jooq:jooq"))
+        include(dependency("org.jooq:jooq-meta"))
+        include(dependency("org.jooq:jooq-codegen"))
     }
     classifier = null
 }
