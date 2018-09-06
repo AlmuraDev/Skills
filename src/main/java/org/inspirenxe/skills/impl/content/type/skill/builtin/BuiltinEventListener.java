@@ -109,37 +109,37 @@ public final class BuiltinEventListener implements Witness {
         this.configure();
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
         this.handleChangeBlockEvent(event, player, true, false);
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onChangeBlockModify(final ChangeBlockEvent.Modify event, @Root final Player player) {
         this.handleChangeBlockEvent(event, player, false, false);
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final Player player) {
         this.handleChangeBlockEvent(event, player, false, true);
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
         this.handleInteractItem(event, player);
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onCraftItemCraft(final CraftItemEvent.Craft event, @First final Player player) {
         this.handleCraftItem(event, player);
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
         this.handleDropItemEvent(event, player);
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onChangeExperiencePost(final ExperienceEvent.Change.Post event, @First final Player player) {
         final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
 
@@ -220,7 +220,7 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    @Listener
+    @Listener(order = Order.PRE)
     public void onDamageEntity(final DamageEntityEvent event, @Root final EntityDamageSource source, @First final Skill skill) {
         if (source.getSource() instanceof Firework) {
             event.setCancelled(true);
