@@ -11,7 +11,7 @@ group = project.group
 version = project.version
 description = project.description
 
-defaultTasks 'clean', 'licenseFormat', 'shadowJar'
+defaultTasks 'clean', 'licenseFormat', 'build'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -76,6 +76,7 @@ sourceSets {
     }
 }
 
+build.dependsOn 'shadowJar'
 shadowJar {
     dependencies {
         include(dependency("com.almuradev:droplet"))
