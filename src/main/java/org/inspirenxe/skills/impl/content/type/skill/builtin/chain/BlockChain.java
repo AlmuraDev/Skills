@@ -61,6 +61,7 @@ public final class BlockChain extends Chain<BlockChain> {
             this.inErrorState = true;
             return this;
         }
+        this.toQuery.add(blockType.getDefaultState());
         return this;
     }
 

@@ -69,6 +69,7 @@ public final class ItemChain extends Chain<ItemChain> {
             this.inErrorState = true;
             return this;
         }
+        this.toQuery.add(ItemStack.of(itemType, 1));
         return this;
     }
 
