@@ -45,7 +45,7 @@ public class BlockSnapshotOwnerQueryProducer implements EventFilterQueryProducer
     @Override
     public Optional<OwnerQuery> produce(final ChangeBlockEvent source) {
         FilterUtils.checkChangeBlockEvent(source);
-        // TODO - Use a BlockTransactionSource to control where the owner comes from
+        // TODO - Use a BlockTransactionSource to control where the creator comes from
         return source.getTransactions().get(0).getOriginal().getCreator().map(OwnerQueryImpl::new);
     }
 }

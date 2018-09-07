@@ -24,19 +24,11 @@
  */
 package org.inspirenxe.skills.impl.content.type.skill.builtin.feedback;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.EventFeedback;
+import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 
-import org.inspirenxe.skills.impl.content.type.skill.builtin.FeedbackBuilder;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.chat.ChatType;
-import org.spongepowered.api.text.chat.ChatTypes;
+import java.util.List;
 
-public final class MessageBuilder extends FeedbackBuilder<Text, MessageBuilder> {
-    public ChatType chatType = ChatTypes.CHAT;
+public final class EventEffect extends EventFeedback<List<SkillsEffectType>, EventEffect> {
 
-    public MessageBuilder chatType(final ChatType value) {
-        checkNotNull(value);
-        this.chatType = value;
-        return this;
-    }
 }

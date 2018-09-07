@@ -63,7 +63,7 @@ public final class MiningRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_PICKAXE).level(40));
 
         // Ores/etc
-        final BlockChain breakChain = new BlockChain().matchTypeOnly();
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_NONE);
         CommonRegistrar.insertDenyLink(breakChain, "break");
 
         listener
@@ -77,7 +77,7 @@ public final class MiningRegistar {
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.END_STONE).level(70).xp(50.0).economy(50.0))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.EMERALD_ORE).level(80).xp(1000.0).economy(200.0));
 
-        // Messages (Xp change/Level change
+        // Messages (Xp change/Level change)
         listener
             .addMessageChain(Event.class, type, CommonRegistrar.XP_TO_ACTION_BAR)
             .addMessageChain(Event.class, type, CommonRegistrar.LEVEL_UP_TO_CHAT);

@@ -75,7 +75,7 @@ public final class FarmingRegistar {
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.CARROTS).level(10).xp(2.0).economy(1.0));
 
         // Break crops
-        final BlockChain breakChain = new BlockChain().matchTypeOnly();
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_OR_NONE);
         CommonRegistrar.insertDenyLink(breakChain, "break");
 
         listener

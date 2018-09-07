@@ -22,12 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin;
+package org.inspirenxe.skills.impl.content.type.skill.builtin.feedback;
 
-import org.inspirenxe.skills.impl.effect.SkillsEffectType;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.EventFeedback;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.chat.ChatType;
+import org.spongepowered.api.text.chat.ChatTypes;
 
-public final class EffectBuilder extends FeedbackBuilder<List<SkillsEffectType>, EffectBuilder> {
+public final class EventMessage extends EventFeedback<Text, EventMessage> {
+    public ChatType chatType = ChatTypes.CHAT;
 
+    public EventMessage chatType(final ChatType value) {
+        checkNotNull(value);
+        this.chatType = value;
+        return this;
+    }
 }

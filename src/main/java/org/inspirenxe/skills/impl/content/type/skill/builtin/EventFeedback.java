@@ -29,7 +29,7 @@ import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.entity.living.player.Player;
 
 @SuppressWarnings("unchecked")
-public abstract class FeedbackBuilder<T, U extends FeedbackBuilder<T, U>> {
+public abstract class EventFeedback<T, U extends EventFeedback<T, U>> {
     public TriFunction<Player, Skill, Double, T> xpGained = null;
     public TriFunction<Player, Skill, Integer, T> levelGained = null;
 

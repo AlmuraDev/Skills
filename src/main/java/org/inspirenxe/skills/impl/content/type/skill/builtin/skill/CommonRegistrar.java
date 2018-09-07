@@ -33,14 +33,15 @@ import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.EffectBuilder;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.MessageBuilder;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventEffect;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventMessage;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
@@ -48,13 +49,14 @@ import org.spongepowered.api.text.chat.ChatTypes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public final class CommonRegistrar {
 
     @Inject
     private static GameRegistry registry;
 
-    public static MessageBuilder XP_TO_ACTION_BAR = new MessageBuilder().chatType(ChatTypes.ACTION_BAR).xpGained(
+    public static EventMessage XP_TO_ACTION_BAR = new EventMessage().chatType(ChatTypes.ACTION_BAR).xpGained(
         (player, skill, xp) -> {
             if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
                 return Text.of("+ ", SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName());
@@ -63,9 +65,9 @@ public final class CommonRegistrar {
         }
     );
 
-    public static MessageBuilder LEVEL_UP_TO_CHAT = new MessageBuilder().chatType(ChatTypes.CHAT).levelGained(
+    public static EventMessage LEVEL_UP_TO_CHAT = new EventMessage().chatType(ChatTypes.CHAT).levelGained(
         (player, skill, integer) -> {
-            if (!player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+            if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
                 return Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now "
                     + "level ", integer, ".");
             }
@@ -87,19 +89,49 @@ public final class CommonRegistrar {
         });
     }
 
-    public static EffectBuilder createFireworkEffect(final String effectId) {
+    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_ONLY = (p, skill, snapshot) -> {
+        final UUID player = p.getUniqueId();
+        final UUID creator = snapshot.getCreator().orElse(null);
+        if (creator == null) {
+            return false;
+        }
+
+        return player.equals(creator);
+    };
+
+    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_NONE = (p, skill, snapshot) -> {
+        final UUID creator = snapshot.getCreator().orElse(null);
+        return creator == null;
+    };
+
+    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_ANY = (p, skill, snapshot) -> {
+        final UUID creator = snapshot.getCreator().orElse(null);
+        return creator != null;
+    };
+
+    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_OR_NONE = (p, skill, snapshot) -> {
+        final UUID player = p.getUniqueId();
+        final UUID creator = snapshot.getCreator().orElse(null);
+        if (creator == null) {
+            return true;
+        }
+
+        return player.equals(creator);
+    };
+
+    public static EventEffect createFireworkEffect(final String effectId) {
         checkNotNull(effectId);
 
         final SkillsFireworkEffectType fireworkOnLevel = (SkillsFireworkEffectType) registry.getType(
             FireworkEffectType.class, effectId).orElse(null);
 
-        final EffectBuilder effectBuilder = new EffectBuilder();
+        final EventEffect effect = new EventEffect();
 
         if (fireworkOnLevel == null) {
-            return effectBuilder;
+            return effect;
         }
 
-        return effectBuilder.levelGained(
+        return effect.levelGained(
             new TriFunction<Player, Skill, Integer, List<SkillsEffectType>>() {
                 private final List<SkillsEffectType> level = new ArrayList<>();
                 private final List<SkillsEffectType> levelMax = new ArrayList<>();
