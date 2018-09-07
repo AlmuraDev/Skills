@@ -53,8 +53,7 @@ public final class MiningRegistar {
         }
 
         // Pickaxes
-        final ItemChain interactChain = new ItemChain().matchTypeOnly();
-        CommonRegistrar.insertDenyLink(interactChain, "use");
+        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistrar.createDenyAction("use"));
 
         listener
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_PICKAXE).level(10))
@@ -63,8 +62,7 @@ public final class MiningRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_PICKAXE).level(40));
 
         // Ores/etc
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_NONE);
-        CommonRegistrar.insertDenyLink(breakChain, "break");
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_NONE).denyLevelRequired(CommonRegistrar.createDenyAction("break"));
 
         listener
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STONE).xp(50.0).economy(0.1))

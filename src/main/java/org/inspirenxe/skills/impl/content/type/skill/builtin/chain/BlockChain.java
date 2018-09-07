@@ -70,6 +70,15 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
+    public BlockChain queryDomain(final String domain) {
+        if (this.inErrorState) {
+            return this;
+        }
+        checkNotNull(domain);
+        Sponge.getRegistry().getAllFor(domain, BlockType.class).forEach(type -> this.toQuery.add(type.getDefaultState()));
+        return this;
+    }
+
     public BlockChain query(final BlockType value) {
         if (this.inErrorState) {
             return this;

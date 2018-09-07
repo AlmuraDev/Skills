@@ -32,7 +32,6 @@ import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventEffect;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventMessage;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
@@ -58,8 +57,9 @@ public final class CommonRegistrar {
 
     public static EventMessage XP_TO_ACTION_BAR = new EventMessage().chatType(ChatTypes.ACTION_BAR).xpGained(
         (player, skill, xp) -> {
+            final char mod = xp >= 0 ? '+' : '-';
             if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                return Text.of(SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName());
+                return Text.of(mod, " ", SkillsConstants.XP_PRINTOUT.format(Math.abs(xp)), "xp ", skill.getSkillType().getFormattedName());
             }
             return null;
         }
@@ -77,16 +77,13 @@ public final class CommonRegistrar {
     );
 
     @SuppressWarnings("unchecked")
-    public static <T extends Chain> T insertDenyLink(final T chain, final String action) {
-        return (T) chain.denyLevelRequired(new TriConsumer<Player, Skill, Integer>() {
-            @Override
-            public void accept(final Player player, final Skill skill, final Integer value) {
-                if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                        player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
-                            + action + " this."));
-                }
+    public static TriConsumer<Player, Skill, Integer> createDenyAction(final String action) {
+        return (player, skill, value) -> {
+            if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+                    player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+                        + action + " this."));
             }
-        });
+        };
     }
 
     public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_ONLY = (p, skill, snapshot) -> {

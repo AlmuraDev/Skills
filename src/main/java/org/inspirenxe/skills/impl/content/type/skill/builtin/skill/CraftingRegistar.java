@@ -50,16 +50,15 @@ public final class CraftingRegistar {
         }
 
         // Craft
-        final ItemChain craftChain = new ItemChain().matchTypeOnly();
-        CommonRegistrar.insertDenyLink(craftChain, "craft");
+        final ItemChain craftChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistrar.createDenyAction("craft"));
 
         listener
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().inverseQuery().xp(1.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.WOODEN_PICKAXE).xp(5.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_PICKAXE).level(10).xp(10.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_PICKAXE).level(20).xp(20.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.GOLDEN_PICKAXE).level(30).xp(30.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.DIAMOND_PICKAXE).level(40).xp(40.0));
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.DIAMOND_PICKAXE).level(40).xp(40.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().inverseQuery().xp(1.0));
 
         // Messages (Xp change/Level change
         listener

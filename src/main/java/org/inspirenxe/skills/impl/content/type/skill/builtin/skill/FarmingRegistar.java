@@ -57,8 +57,7 @@ public final class FarmingRegistar {
         }
 
         // Hoes
-        final ItemChain interactChain = new ItemChain().matchTypeOnly();
-        CommonRegistrar.insertDenyLink(interactChain, "use");
+        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistrar.createDenyAction("use"));
 
         listener
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_HOE).level(10))
@@ -67,16 +66,14 @@ public final class FarmingRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_HOE).level(40));
 
         // Plant crops
-        final BlockChain placeChain = new BlockChain().matchTypeOnly();
-        CommonRegistrar.insertDenyLink(placeChain, "plant");
+        final BlockChain placeChain = new BlockChain().matchTypeOnly().denyLevelRequired(CommonRegistrar.createDenyAction("plant"));
 
         listener
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.WHEAT).xp(1.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.CARROTS).level(10).xp(2.0).economy(1.0));
 
         // Break crops
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_OR_NONE);
-        CommonRegistrar.insertDenyLink(breakChain, "break");
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_OR_NONE).denyLevelRequired(CommonRegistrar.createDenyAction("break"));
 
         listener
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CARROTS).level(10));
