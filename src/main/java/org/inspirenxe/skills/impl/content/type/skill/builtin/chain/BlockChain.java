@@ -105,6 +105,14 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
+    public BlockChain fuzzyMatch() {
+        if (this.inErrorState) {
+            return this;
+        }
+        this.matchOnlyType = false;
+        return this;
+    }
+
     public BlockChain creator(final TriFunction<Player, Skill, BlockSnapshot, Boolean> value) {
         if (this.inErrorState) {
             return this;
