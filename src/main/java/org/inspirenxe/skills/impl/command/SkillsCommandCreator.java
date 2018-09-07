@@ -54,8 +54,11 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Provider;
 
@@ -89,8 +92,16 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
             final Collection<Text> skillPrintouts = new LinkedList<>();
 
             int totalLevel = 0;
+            int maxTotalLevel = 0;
 
-            for (Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
+            final List<Map.Entry<SkillType, Skill>> sorted = holder.getSkills()
+              .entrySet()
+              .stream()
+              .sorted((o1, o2) -> o1.getKey().getName().compareToIgnoreCase(o2.getKey().getName()))
+              .collect(Collectors.toList());
+
+
+            for (Map.Entry<SkillType, Skill> skillEntry : sorted) {
               final SkillType skillType = skillEntry.getKey();
               final Skill skill = skillEntry.getValue();
 
@@ -114,13 +125,14 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
               skillPrintouts.add(Text.of("  Next Level: ", SkillsConstants.XP_PRINTOUT.format(toNextLevelExperience)));
 
               totalLevel += currentLevel;
+              maxTotalLevel += skillType.getMaxLevel();
             }
             final PaginationService pagination = Sponge.getServiceManager().provide(PaginationService.class).orElse(null);
             if (pagination != null) {
               pagination.builder()
                 .title(Text.of(TextColors.RED, "My Skills"))
                 .contents(skillPrintouts)
-                .footer(Text.of(TextColors.YELLOW, "Total Level: ", TextColors.RESET, totalLevel))
+                .footer(Text.of(TextColors.YELLOW, "Total Level: ", TextColors.RESET, totalLevel, " / ", maxTotalLevel))
                 .build()
                 .sendTo(player);
             }
