@@ -46,7 +46,7 @@ public final class MiningRegistar {
     private static BuiltinEventListener listener;
 
     public static void configure() {
-        final SkillType type = registry.getType(SkillType.class, "skills:mining").orElse(null);
+        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":mining").orElse(null);
 
         if (type == null) {
             return;

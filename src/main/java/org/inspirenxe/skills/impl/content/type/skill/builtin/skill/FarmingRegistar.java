@@ -50,7 +50,7 @@ public final class FarmingRegistar {
     private static BuiltinEventListener listener;
 
     public static void configure() {
-        final SkillType type = registry.getType(SkillType.class, "skills:farming").orElse(null);
+        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":farming").orElse(null);
 
         if (type == null) {
             return;

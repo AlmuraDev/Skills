@@ -95,6 +95,8 @@ public final class BuiltinEventListener implements Witness {
     private final Map<Class<? extends Event>, Map<SkillType, Set<BlockChain>>> blockChains = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, Set<ItemChain>>> itemChains = new HashMap<>();
 
+    private final Map<Chain<?>, Long> denyTimers = new HashMap<>();
+
     @Inject
     public BuiltinEventListener(final SkillManager skillManager) {
         this.skillManager = skillManager;
@@ -190,6 +192,10 @@ public final class BuiltinEventListener implements Witness {
 
         if (event instanceof ExperienceEvent.Change.Post.Level) {
 
+            if (event.getExperienceDifference() < 0) {
+                return;
+            }
+
             if (messages != null) {
                 messages
                     .stream()
@@ -238,6 +244,7 @@ public final class BuiltinEventListener implements Witness {
         this.effectBuilders.clear();
         this.itemChains.clear();
         this.messageBuilders.clear();
+        this.denyTimers.clear();
 
         MiningRegistar.configure();
         CraftingRegistar.configure();
@@ -425,6 +432,16 @@ public final class BuiltinEventListener implements Witness {
 
             final Chain<?> chain = cancelledResult.getChain().orElse(null);
             if (chain != null && chain.denyLevelRequired != null) {
+                final long stamp = System.currentTimeMillis();
+                final Long timer = this.denyTimers.computeIfAbsent(chain, (c) -> stamp);
+
+                final long diff = stamp - timer;
+
+                if (diff < 5000) {
+                    continue;
+                }
+
+                this.denyTimers.put(chain, stamp);
                 chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
             }
         }
@@ -575,6 +592,7 @@ public final class BuiltinEventListener implements Witness {
             event.setCancelled(true);
 
             final Chain<?> chain = cancelledResult.getChain().orElse(null);
+
             if (chain != null && chain.denyLevelRequired != null) {
                 chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
             }
@@ -716,7 +734,7 @@ public final class BuiltinEventListener implements Witness {
         for (final BuiltinResult cancelledResult : cancelledResults) {
             final Chain<?> chain = cancelledResult.getChain().orElse(null);
             if (chain != null && chain.denyLevelRequired != null) {
-                ((ItemChain) chain).denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+                chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
 
                 if (chain instanceof ItemChain) {
                     // TODO This is likely wrong but we're not using it yet.

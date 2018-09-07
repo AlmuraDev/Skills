@@ -31,10 +31,8 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListene
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.block.trait.BlockTrait;
 import org.spongepowered.api.block.trait.EnumTraits;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -50,7 +48,7 @@ public final class WoodcuttingRegistar {
     private static BuiltinEventListener listener;
 
     public static void configure() {
-        final SkillType type = registry.getType(SkillType.class, "skills:woodcutting").orElse(null);
+        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":woodcutting").orElse(null);
 
         if (type == null) {
             return;
@@ -71,12 +69,12 @@ public final class WoodcuttingRegistar {
         CommonRegistrar.insertDenyLink(breakChain, "break");
 
         final BlockState log = BlockTypes.LOG.getDefaultState();
-        
+
         listener
             .addBlockChain(ChangeBlockEvent.Break.class, type,
-                new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(50.0).economy(0.1))
+                new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(1.0).economy(0.1))
             .addBlockChain(ChangeBlockEvent.Break.class, type,
-                new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).xp(100.0).economy(0.1));
+                new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).level(10).xp(5.0).economy(0.5));
 
         // Messages (Xp change/Level change)
         listener

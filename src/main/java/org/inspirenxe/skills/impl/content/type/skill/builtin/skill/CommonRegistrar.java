@@ -59,7 +59,7 @@ public final class CommonRegistrar {
     public static EventMessage XP_TO_ACTION_BAR = new EventMessage().chatType(ChatTypes.ACTION_BAR).xpGained(
         (player, skill, xp) -> {
             if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                return Text.of("+ ", SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName());
+                return Text.of(SkillsConstants.XP_PRINTOUT.format(xp), "xp ", skill.getSkillType().getFormattedName());
             }
             return null;
         }

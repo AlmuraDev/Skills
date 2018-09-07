@@ -26,12 +26,9 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
-import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 
@@ -39,14 +36,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 @SuppressWarnings("unchecked")
 public final class ItemChain extends Chain<ItemChain> {
 
     public List<ItemStack> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
-    public TriConsumer<Player, Skill, Integer> denyLevelRequired;
 
     private boolean inErrorState;
 

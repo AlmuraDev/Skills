@@ -43,7 +43,7 @@ public final class CraftingRegistar {
     private static BuiltinEventListener listener;
 
     public static void configure() {
-        final SkillType type = registry.getType(SkillType.class, "skills:crafting").orElse(null);
+        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":crafting").orElse(null);
 
         if (type == null) {
             return;
