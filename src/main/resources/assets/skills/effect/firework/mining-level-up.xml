@@ -2,12 +2,12 @@
 <droplet spec="1.0.0">
   <effect shape="star">
     <colors>
-      <color>minecraft:blue</color>
-      <color>minecraft:gray</color>
+      <color>minecraft:dark_gray</color>
+      <color>minecraft:aqua</color>
     </colors>
     <fade-colors>
-      <color>minecraft:blue</color>
-      <color>minecraft:gray</color>
+      <color>minecraft:dark_gray</color>
+      <color>minecraft:aqua</color>
     </fade-colors>
     <flickers>false</flickers>
     <trails>false</trails>
