@@ -68,7 +68,7 @@ public final class FarmingRegistar {
 
         // Plant crops
         final BlockChain placeChain = new BlockChain().matchTypeOnly();
-        CommonRegistrar.insertDenyLink(interactChain, "plant");
+        CommonRegistrar.insertDenyLink(placeChain, "plant");
 
         listener
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.WHEAT).xp(1.0).economy(1.0))
