@@ -30,6 +30,7 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CommonRegistr
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CraftingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.MiningRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.WoodcuttingRegistar;
 
 public final class BuiltinModule extends AbstractModule implements ToolboxBinder {
 
@@ -40,5 +41,6 @@ public final class BuiltinModule extends AbstractModule implements ToolboxBinder
         this.requestStaticInjection(MiningRegistar.class);
         this.requestStaticInjection(CraftingRegistar.class);
         this.requestStaticInjection(FarmingRegistar.class);
+        this.requestStaticInjection(WoodcuttingRegistar.class);
     }
 }

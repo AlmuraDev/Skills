@@ -38,12 +38,12 @@ import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.api.event.ExperienceResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.OwnerState;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventEffect;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventMessage;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CraftingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.MiningRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.WoodcuttingRegistar;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
@@ -82,7 +82,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 // TODO Plan B. Move to scripting engine later.
@@ -243,6 +242,7 @@ public final class BuiltinEventListener implements Witness {
         MiningRegistar.configure();
         CraftingRegistar.configure();
         FarmingRegistar.configure();
+        WoodcuttingRegistar.configure();
     }
 
     private void handleChangeBlockEvent(final ChangeBlockEvent event, final Player player, final boolean originalState) {
