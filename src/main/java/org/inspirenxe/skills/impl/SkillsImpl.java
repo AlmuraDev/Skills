@@ -124,16 +124,16 @@ public final class SkillsImpl {
       final Path actual;
 
       if (index == dir.getNameCount()) {
-        actual = SkillsImpl.this.configDir;
+        return FileVisitResult.CONTINUE;
       } else {
         actual = SkillsImpl.this.configDir.resolve(dir.subpath(index, dir.getNameCount()).toString());
+
+        if (Files.exists(actual)) {
+          return FileVisitResult.SKIP_SUBTREE;
+        }
       }
 
-      if (Files.notExists(actual)) {
-        return FileVisitResult.CONTINUE;
-      }
-
-      return FileVisitResult.SKIP_SUBTREE;
+      return FileVisitResult.CONTINUE;
     }
 
     @Override
