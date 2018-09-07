@@ -70,11 +70,13 @@ public final class WoodcuttingRegistar {
         final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_ANY);
         CommonRegistrar.insertDenyLink(breakChain, "break");
 
+        final BlockState log = BlockTypes.LOG.getDefaultState();
+        
         listener
             .addBlockChain(ChangeBlockEvent.Break.class, type,
-                new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.LOG.getDefaultState().withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(50.0).economy(0.1))
+                new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(50.0).economy(0.1))
             .addBlockChain(ChangeBlockEvent.Break.class, type,
-                new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.LOG.getDefaultState().withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).xp(100.0).economy(0.1));
+                new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).xp(100.0).economy(0.1));
 
         // Messages (Xp change/Level change)
         listener
