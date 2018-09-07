@@ -119,6 +119,8 @@ public final class CommonRegistrar {
         return player.equals(creator);
     };
 
+    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (p, skill, snapshot) -> true;
+
     public static EventEffect createFireworkEffect(final String effectId) {
         checkNotNull(effectId);
 
