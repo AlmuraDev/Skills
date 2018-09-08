@@ -67,6 +67,15 @@ public final class ItemChain extends Chain<ItemChain> {
         return this;
     }
 
+    public ItemChain queryDomain(final String domain) {
+        if (this.inErrorState) {
+            return this;
+        }
+        checkNotNull(domain);
+        Sponge.getRegistry().getAllFor(domain, ItemType.class).forEach(type -> this.toQuery.add(ItemStack.of(type, 1)));
+        return this;
+    }
+
     public ItemChain query(final ItemType value) {
         if (this.inErrorState) {
             return this;
