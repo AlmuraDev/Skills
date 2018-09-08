@@ -58,6 +58,7 @@ import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -130,6 +131,11 @@ public final class BuiltinEventListener implements Witness {
     @Listener(order = Order.PRE)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
         this.handleInteractItem(event, player);
+    }
+
+    @Listener(order = Order.PRE)
+    public void onInteractItem(final InteractBlockEvent event, @Root final Player player) {
+        this.handleInteractBlock(event, player);
     }
 
     @Listener(order = Order.PRE)
@@ -428,6 +434,144 @@ public final class BuiltinEventListener implements Witness {
         final ItemStack stack = event.getItemStack().createStack();
 
         final Collection<BuiltinResult> results = this.handleItemStack(skills, skillChains, stack);
+
+        final List<BuiltinResult> cancelledResults = results
+            .stream()
+            .filter(result -> result.getType() == Result.Type.CANCELLED)
+            .collect(Collectors.toList());
+
+        for (final BuiltinResult cancelledResult : cancelledResults) {
+            event.setCancelled(true);
+
+            final Chain<?> chain = cancelledResult.getChain().orElse(null);
+            if (chain != null && chain.denyLevelRequired != null) {
+                final long stamp = System.currentTimeMillis();
+                final Long timer = this.denyTimers.computeIfAbsent(chain, (c) -> stamp - 5000);
+
+                final long diff = stamp - timer;
+
+                if (diff < 5000) {
+                    continue;
+                }
+
+                this.denyTimers.put(chain, stamp);
+                chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+            }
+        }
+
+        if (event.isCancelled()) {
+            return;
+        }
+
+        final List<BuiltinResult> successResults = results
+            .stream()
+            .filter(result -> result.getType() == Result.Type.SUCCESS)
+            .collect(Collectors.toList());
+
+        final Map<Skill, Double> totalXpGained = new HashMap<>();
+        final Map<Skill, BigDecimal> totalMoneyGained = new HashMap<>();
+
+        for (final BuiltinResult successResult : successResults) {
+            final Double xp = successResult.getXp().orElse(null);
+
+            if (xp != null) {
+                Double value = totalXpGained.get(successResult.getSkill());
+                if (value != null) {
+                    value = value + xp;
+                } else {
+                    value = xp;
+                }
+
+                totalXpGained.put(successResult.getSkill(), value);
+            }
+
+            final BigDecimal money = successResult.getMoney().orElse(null);
+            if (money != null) {
+                BigDecimal value = totalMoneyGained.get(successResult.getSkill());
+                if (value != null) {
+                    value = value.add(money);
+                } else {
+                    value = money;
+                }
+
+                totalMoneyGained.put(successResult.getSkill(), value);
+            }
+        }
+
+        for (final Map.Entry<Skill, Double> entry : totalXpGained.entrySet()) {
+            final Skill skill = entry.getKey();
+            final Double value = entry.getValue();
+
+            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                frame.pushCause(skill);
+                frame.pushCause(event);
+
+                final ExperienceResult result = skill.addExperience(value);
+                if (result.getType() == Result.Type.CANCELLED) {
+                    totalMoneyGained.remove(skill);
+                }
+            }
+        }
+
+        final EconomyService economyService = Sponge.getServiceManager().provide(EconomyService.class).orElse(null);
+
+        if (economyService == null) {
+            return;
+        }
+
+        final UniqueAccount account = economyService.getOrCreateAccount(player.getUniqueId()).orElse(null);
+        if (account == null) {
+            return;
+        }
+
+        for (final Map.Entry<Skill, BigDecimal> entry : totalMoneyGained.entrySet()) {
+            final Skill skill = entry.getKey();
+            final BigDecimal value = entry.getValue();
+
+            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                frame.pushCause(skill);
+                frame.pushCause(event);
+
+                account.deposit(economyService.getDefaultCurrency(), value, frame.getCurrentCause());
+            }
+        }
+    }
+
+    private void handleInteractBlock(final InteractBlockEvent event, final Player player) {
+        if (player.gameMode().get() == GameModes.CREATIVE) {
+            return;
+        }
+
+        final SkillHolder skillHolder =
+            this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
+
+        if (skillHolder == null) {
+            return;
+        }
+
+        final Map<SkillType, List<BlockChain>> eventChains = this.blockChains.entrySet()
+            .stream()
+            .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
+            .findAny()
+            .map(Map.Entry::getValue)
+            .orElse(new HashMap<>());
+
+        if (eventChains.isEmpty()) {
+            return;
+        }
+
+        final Collection<Skill> skills = skillHolder.getSkills().values();
+
+        final Set<Map.Entry<SkillType, List<BlockChain>>> skillChains = eventChains.entrySet()
+            .stream()
+            .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
+            .collect(Collectors.toSet());
+
+        if (skillChains.isEmpty()) {
+            return;
+        }
+
+        final Collection<BuiltinResult> results = this.processBlockSnapshotFor(skills, skillChains, event.getTargetBlock());
 
         final List<BuiltinResult> cancelledResults = results
             .stream()

@@ -28,9 +28,11 @@ import com.google.inject.Inject;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.item.inventory.CraftItemEvent;
 import org.spongepowered.api.item.ItemTypes;
 
@@ -59,6 +61,11 @@ public final class CraftingRegistar {
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.GOLDEN_PICKAXE).level(30).xp(30.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.DIAMOND_PICKAXE).level(40).xp(40.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().inverseQuery().xp(1.0));
+
+        final BlockChain blockInteractChain = new BlockChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
+
+        listener
+            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("minecraft").level(50));
 
         // Messages (Xp change/Level change
         listener

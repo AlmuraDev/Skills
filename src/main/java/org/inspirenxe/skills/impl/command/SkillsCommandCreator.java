@@ -83,7 +83,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
           if (source instanceof Player) {
             final Player player = (Player) source;
 
-            final SkillHolder holder = this.skillManager.getHolder(player.getWorld().getUniqueId(), player.getUniqueId()).orElse(null);
+            final SkillHolder holder = this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
 
             if (holder == null) {
               return CommandResult.success();
