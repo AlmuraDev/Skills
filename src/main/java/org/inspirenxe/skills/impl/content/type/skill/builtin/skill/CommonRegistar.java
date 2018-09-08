@@ -50,7 +50,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public final class CommonRegistrar {
+public final class CommonRegistar {
 
     @Inject
     private static GameRegistry registry;

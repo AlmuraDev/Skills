@@ -55,16 +55,17 @@ public final class WoodcuttingRegistar {
         }
 
         // Axes
-        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistrar.createDenyAction("use"));
+        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
 
         listener
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_AXE).level(10))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_AXE).level(20))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_AXE).level(30))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_AXE).level(40));
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.WOODEN_AXE).level(10))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_AXE).level(20))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_AXE).level(30))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_AXE).level(40))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_AXE).level(50));
 
         // Logs/etc
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_ANY).denyLevelRequired(CommonRegistrar.createDenyAction("break"));
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_ANY).denyLevelRequired(CommonRegistar.createDenyAction("break"));
 
         final BlockState log = BlockTypes.LOG.getDefaultState();
 
@@ -76,12 +77,12 @@ public final class WoodcuttingRegistar {
 
         // Messages (Xp change/Level change)
         listener
-            .addMessageChain(Event.class, type, CommonRegistrar.XP_TO_ACTION_BAR)
-            .addMessageChain(Event.class, type, CommonRegistrar.LEVEL_UP_TO_CHAT);
+            .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
+            .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT);
 
         // Effects (Xp change/Level change)
         listener
-            .addEffectChain(Event.class, type, CommonRegistrar.createFireworkEffect(SkillsImpl.ID + ":firework/woodcutting-level-up"));
+            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/woodcutting-level-up"));
     }
 
     private WoodcuttingRegistar() {

@@ -41,6 +41,7 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventEffect;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventMessage;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CraftingRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.DiggerRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.MiningRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.WoodcuttingRegistar;
@@ -249,6 +250,7 @@ public final class BuiltinEventListener implements Witness {
         CraftingRegistar.configure();
         FarmingRegistar.configure();
         WoodcuttingRegistar.configure();
+        DiggerRegistar.configure();
     }
 
     private void handleChangeBlock(final ChangeBlockEvent event, final Player player, final boolean originalState) {

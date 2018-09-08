@@ -53,7 +53,7 @@ public final class MiningRegistar {
         }
 
         // Pickaxes
-        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistrar.createDenyAction("use"));
+        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
 
         listener
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_PICKAXE).level(10))
@@ -62,7 +62,7 @@ public final class MiningRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_PICKAXE).level(40));
 
         // Ores/etc
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistrar.CREATOR_NONE).denyLevelRequired(CommonRegistrar.createDenyAction("break"));
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
 
         listener
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STONE).xp(50.0).economy(0.1))
@@ -77,12 +77,12 @@ public final class MiningRegistar {
 
         // Messages (Xp change/Level change)
         listener
-            .addMessageChain(Event.class, type, CommonRegistrar.XP_TO_ACTION_BAR)
-            .addMessageChain(Event.class, type, CommonRegistrar.LEVEL_UP_TO_CHAT);
+            .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
+            .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT);
 
         // Effects (Xp change/Level change)
         listener
-            .addEffectChain(Event.class, type, CommonRegistrar.createFireworkEffect(SkillsImpl.ID + ":firework/mining-level-up"));
+            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/mining-level-up"));
     }
 
     private MiningRegistar() {

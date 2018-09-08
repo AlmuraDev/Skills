@@ -50,7 +50,7 @@ public final class CraftingRegistar {
         }
 
         // Craft
-        final ItemChain craftChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistrar.createDenyAction("craft"));
+        final ItemChain craftChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("craft"));
 
         listener
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.WOODEN_PICKAXE).xp(5.0))
@@ -62,12 +62,12 @@ public final class CraftingRegistar {
 
         // Messages (Xp change/Level change
         listener
-            .addMessageChain(Event.class, type, CommonRegistrar.XP_TO_ACTION_BAR)
-            .addMessageChain(Event.class, type, CommonRegistrar.LEVEL_UP_TO_CHAT);
+            .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
+            .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT);
 
         // Effects (Xp change/Level change)
         listener
-            .addEffectChain(Event.class, type, CommonRegistrar.createFireworkEffect(SkillsImpl.ID + ":firework/crafting-level-up"));
+            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/crafting-level-up"));
     }
 
     private CraftingRegistar() {
