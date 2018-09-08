@@ -1045,8 +1045,8 @@ public final class BuiltinEventListener implements Witness {
                 .filter(v -> {
                     if (v.matchOnlyType) {
                         return v.inverseQuery ?
-                            v.toQuery.stream().noneMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0 && ItemStackComparators.ITEM_DATA_IGNORE_DAMAGE.compare(s, stack) == 0) :
-                            v.toQuery.stream().anyMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0 && ItemStackComparators.ITEM_DATA_IGNORE_DAMAGE.compare(s, stack) == 0);
+                            v.toQuery.stream().noneMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0) :
+                            v.toQuery.stream().anyMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0);
                     } else {
                         return v.inverseQuery ? v.toQuery.stream().noneMatch(s -> ItemStackComparators.ALL.compare(s, stack) == 0) :
                             v.toQuery.stream().anyMatch(s -> ItemStackComparators.ALL.compare(s, stack) == 0);
