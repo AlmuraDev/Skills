@@ -76,66 +76,71 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
   @Override
   public CommandSpec get() {
     return CommandSpec.builder()
+      .arguments(playerOrSource(Text.of("player")))
       .permission(this.container.getId() + ".command.info")
       .description(Text.of("Displays user skills when logged in or commands in console"))
       .executor((source, args) -> {
+          final Player player = args.<Player>getOne("player").orElse(null);
+          if (player == null) {
+            return CommandResult.empty();
+          }
 
-          if (source instanceof Player) {
-            final Player player = (Player) source;
+          if (player != source && !source.hasPermission(this.container.getId() + ".command.info.other")) {
+            return CommandResult.empty();
+          }
 
-            final SkillHolder holder = this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
+          final SkillHolder holder = this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
 
-            if (holder == null) {
-              return CommandResult.success();
+          if (holder == null) {
+            return CommandResult.success();
+          }
+
+          final Collection<Text> skillPrintouts = new LinkedList<>();
+
+          int totalLevel = 0;
+          int maxTotalLevel = 0;
+
+          final List<Map.Entry<SkillType, Skill>> sorted = holder.getSkills()
+            .entrySet()
+            .stream()
+            .sorted((o1, o2) -> o1.getKey().getName().compareToIgnoreCase(o2.getKey().getName()))
+            .collect(Collectors.toList());
+
+
+          for (Map.Entry<SkillType, Skill> skillEntry : sorted) {
+            final SkillType skillType = skillEntry.getKey();
+            final Skill skill = skillEntry.getValue();
+
+            final int currentLevel = skill.getCurrentLevel();
+            final int maxLevel = skillType.getMaxLevel();
+
+            final double currentExperience = skill.getCurrentExperience();
+            final double maxLevelExperience = skillType.getLevelFunction().getXPFor(maxLevel);
+            double toNextLevelExperience = 0;
+
+            if (currentLevel != maxLevel) {
+              toNextLevelExperience = skillType.getLevelFunction().getXPFor(currentLevel + 1) - currentExperience;
             }
 
-            final Collection<Text> skillPrintouts = new LinkedList<>();
+            skillPrintouts.add(Text.of(skillType.getFormattedName(), " :: Lv. ", currentLevel, " / ",
+                maxLevel));
 
-            int totalLevel = 0;
-            int maxTotalLevel = 0;
+            skillPrintouts.add(Text.of("  Current XP: ", SkillsConstants.XP_PRINTOUT.format(currentExperience), " / ",
+                SkillsConstants.XP_PRINTOUT.format(maxLevelExperience)));
 
-            final List<Map.Entry<SkillType, Skill>> sorted = holder.getSkills()
-              .entrySet()
-              .stream()
-              .sorted((o1, o2) -> o1.getKey().getName().compareToIgnoreCase(o2.getKey().getName()))
-              .collect(Collectors.toList());
+            skillPrintouts.add(Text.of("  Next Level: ", SkillsConstants.XP_PRINTOUT.format(toNextLevelExperience)));
 
-
-            for (Map.Entry<SkillType, Skill> skillEntry : sorted) {
-              final SkillType skillType = skillEntry.getKey();
-              final Skill skill = skillEntry.getValue();
-
-              final int currentLevel = skill.getCurrentLevel();
-              final int maxLevel = skillType.getMaxLevel();
-
-              final double currentExperience = skill.getCurrentExperience();
-              final double maxLevelExperience = skillType.getLevelFunction().getXPFor(maxLevel);
-              double toNextLevelExperience = 0;
-
-              if (currentLevel != maxLevel) {
-                toNextLevelExperience = skillType.getLevelFunction().getXPFor(currentLevel + 1) - currentExperience;
-              }
-
-              skillPrintouts.add(Text.of(skillType.getFormattedName(), " :: Lv. ", currentLevel, " / ",
-                  maxLevel));
-
-              skillPrintouts.add(Text.of("  Current XP: ", SkillsConstants.XP_PRINTOUT.format(currentExperience), " / ",
-                  SkillsConstants.XP_PRINTOUT.format(maxLevelExperience)));
-
-              skillPrintouts.add(Text.of("  Next Level: ", SkillsConstants.XP_PRINTOUT.format(toNextLevelExperience)));
-
-              totalLevel += currentLevel;
-              maxTotalLevel += skillType.getMaxLevel();
-            }
-            final PaginationService pagination = Sponge.getServiceManager().provide(PaginationService.class).orElse(null);
-            if (pagination != null) {
-              pagination.builder()
-                .title(Text.of(TextColors.RED, "My Skills"))
-                .contents(skillPrintouts)
-                .footer(Text.of(TextColors.YELLOW, "Total Level: ", TextColors.RESET, totalLevel, " / ", maxTotalLevel))
-                .build()
-                .sendTo(player);
-            }
+            totalLevel += currentLevel;
+            maxTotalLevel += skillType.getMaxLevel();
+          }
+          final PaginationService pagination = Sponge.getServiceManager().provide(PaginationService.class).orElse(null);
+          if (pagination != null) {
+            pagination.builder()
+              .title(Text.of(TextColors.RED, "My Skills"))
+              .contents(skillPrintouts)
+              .footer(Text.of(TextColors.YELLOW, "Total Level: ", TextColors.RESET, totalLevel, " / ", maxTotalLevel))
+              .build()
+              .sendTo(source);
           }
 
           return CommandResult.success();
