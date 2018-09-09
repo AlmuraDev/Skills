@@ -62,11 +62,6 @@ public final class CraftingRegistar {
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.DIAMOND_PICKAXE).level(40).xp(40.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().inverseQuery().xp(1.0));
 
-        final BlockChain blockInteractChain = new BlockChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
-
-        listener
-            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("minecraft").level(50));
-
         // Messages (Xp change/Level change
         listener
             .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)

@@ -39,8 +39,7 @@ public abstract class ExperienceEventImpl implements ExperienceEvent {
   protected double experience;
 
   protected ExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType, final double originalExperience,
-      final
-      double experience) {
+      final double experience) {
     this.containerUniqueId = containerUniqueId;
     this.holderUniqueId = holderUniqueId;
     this.skillType = skillType;

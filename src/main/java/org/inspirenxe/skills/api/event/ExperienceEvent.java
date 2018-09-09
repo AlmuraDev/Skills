@@ -76,7 +76,9 @@ public interface ExperienceEvent extends Event {
    * @return The difference in experience
    */
   default double getExperienceDifference() {
-    return this.getExperience() - this.getOriginalExperience();
+    final double xp = this.getExperience();
+    final double oldXp = this.getOriginalExperience();
+    return xp - oldXp;
   }
 
   interface Change extends ExperienceEvent {

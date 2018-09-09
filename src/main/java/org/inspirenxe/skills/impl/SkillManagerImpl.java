@@ -173,7 +173,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
   @Listener
   public void onClientConnectionDisconnectByPlayer(final ClientConnectionEvent.Disconnect event, final @Root Player player) {
-    final UUID container = player.getWorld().getUniqueId();
+    final UUID container = Sponge.getServer().getDefaultWorld().get().getUniqueId();
     final UUID holder = player.getUniqueId();
 
     // Save skills for the holder in the old container and remove them
@@ -202,11 +202,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
         }
 
         if (!dirtySkills.isEmpty()) {
-          Sponge.getScheduler().createTaskBuilder()
-              .name(this.container.getName() + "- Save Skills [" + container + " | " + holder + "]")
-              .async()
-              .execute(new SaveHolderToDatabase(this, container, new DirtySkillHolderQueueEntry(holder, dirtySkills)))
-              .submit(this.container);
+          new SaveHolderToDatabase(this, container, new DirtySkillHolderQueueEntry(holder, dirtySkills)).run();
         }
       }
     }
@@ -396,34 +392,40 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
       context.batch(batchUpdate).execute();
 
-      Sponge.getScheduler()
-          .createTaskBuilder()
-          .name(this.container.getName() + " - Fire Save Post Events [" + container + " | " + holder + "]")
-          .execute(() -> {
-            for (ExperienceEvent.Save.Pre preEvent : preEvents) {
-              final SkillHolder skillHolder = SkillManagerImpl.this.getHolder(preEvent.getContainerUniqueId(), preEvent
-                  .getHolderUniqueId()).orElse(null);
+      final Runnable runnable = () -> {
+        for (ExperienceEvent.Save.Pre preEvent : preEvents) {
+          final SkillHolder skillHolder = SkillManagerImpl.this.getHolder(preEvent.getContainerUniqueId(), preEvent
+              .getHolderUniqueId()).orElse(null);
 
-              if (skillHolder == null) {
-                continue;
-              }
+          if (skillHolder == null) {
+            continue;
+          }
 
-              final Skill skill = skillHolder.getSkill(preEvent.getSkillType()).orElse(null);
+          final Skill skill = skillHolder.getSkill(preEvent.getSkillType()).orElse(null);
 
-              if (skill == null) {
-                continue;
-              }
+          if (skill == null) {
+            continue;
+          }
 
-              try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(SkillManagerImpl.this);
-                Sponge.getEventManager().post(new SaveExperiencePostEventImpl(skill, preEvent.getOriginalExperience(), preEvent
-                    .getExperience()));
-              }
+          try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+            frame.pushCause(SkillManagerImpl.this);
+            Sponge.getEventManager().post(new SaveExperiencePostEventImpl(skill, preEvent.getOriginalExperience(), preEvent
+                .getExperience()));
+          }
 
-              skill.setDirtyState(false);
-            }
-          })
-          .submit(this.container);
+          skill.setDirtyState(false);
+        }
+      };
+
+      if (!Sponge.getServer().isMainThread()) {
+        Sponge.getScheduler()
+            .createTaskBuilder()
+            .name(this.container.getName() + " - Fire Save Post Events [" + container + " | " + holder + "]")
+            .execute(runnable)
+            .submit(this.container);
+      } else {
+        runnable.run();
+      }
     } catch (final SQLException e) {
       e.printStackTrace();
     }
@@ -435,7 +437,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
     final Task task = Sponge.getScheduler().createTaskBuilder()
         .name(this.container.getName() + " - Save Skills in Container [" + container + "]")
         .async()
-        .interval(60, TimeUnit.SECONDS)
+        .interval(30, TimeUnit.SECONDS)
         .execute(runnable)
         .submit(this.container);
 

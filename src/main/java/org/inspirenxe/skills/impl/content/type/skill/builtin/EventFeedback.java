@@ -25,23 +25,23 @@
 package org.inspirenxe.skills.impl.content.type.skill.builtin;
 
 import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.util.function.TriFunction;
+import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.spongepowered.api.entity.living.player.Player;
 
 @SuppressWarnings("unchecked")
-public abstract class EventFeedback<T, U extends EventFeedback<T, U>> {
-    public TriFunction<Player, Skill, Double, T> xpGained = null;
-    public TriFunction<Player, Skill, Integer, T> levelGained = null;
+public final class EventFeedback {
+    public TriConsumer<Player, Skill, Double> xpGained = null;
+    public TriConsumer<Player, Skill, Integer> levelGained = null;
 
-    public U xpGained(final TriFunction<Player, Skill, Double, T> value) {
+    public EventFeedback xpGained(final TriConsumer<Player, Skill, Double> value) {
         this.xpGained = value;
 
-        return (U) this;
+        return this;
     }
 
-    public U levelGained(final TriFunction<Player, Skill, Integer, T> value) {
+    public EventFeedback levelGained(final TriConsumer<Player, Skill, Integer> value) {
         this.levelGained = value;
 
-        return (U) this;
+        return this;
     }
 }

@@ -32,8 +32,7 @@ import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventEffect;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventMessage;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.EventFeedback;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
@@ -46,7 +45,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,24 +53,31 @@ public final class CommonRegistar {
     @Inject
     private static GameRegistry registry;
 
-    public static EventMessage XP_TO_ACTION_BAR = new EventMessage().chatType(ChatTypes.ACTION_BAR).xpGained(
+    public static EventFeedback XP_TO_ACTION_BAR = new EventFeedback().xpGained(
         (player, skill, xp) -> {
-            final char mod = xp >= 0 ? '+' : '-';
             if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                return Text.of(mod, " ", SkillsConstants.XP_PRINTOUT.format(Math.abs(xp)), "xp ", skill.getSkillType().getFormattedName());
+
+                final char mod = xp >= 0 ? '+' : '-';
+
+                player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", SkillsConstants.XP_PRINTOUT.format(Math.abs(xp)), "xp ",
+                    skill.getSkillType().getFormattedName()));
             }
-            return null;
         }
     );
 
-    public static EventMessage LEVEL_UP_TO_CHAT = new EventMessage().chatType(ChatTypes.CHAT).levelGained(
-        (player, skill, integer) -> {
+    public static EventFeedback LEVEL_UP_TO_CHAT = new EventFeedback().levelGained(
+        (player, skill, level) -> {
             if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                return Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now "
-                    + "level ", integer, ".");
+                player.sendMessage(Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now "
+                    + "level ", level, "."));
             }
 
-            return null;
+            Sponge.getServer().getOnlinePlayers().forEach(p -> {
+                if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()) + ".other")) {
+                    p.sendMessage(ChatTypes.CHAT, Text.of(player.getName(), " has advanced to ", skill.getSkillType().getFormattedName(), " level "
+                        , level, "."));
+                }
+            });
         }
     );
 
@@ -118,45 +123,52 @@ public final class CommonRegistar {
 
     public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (p, skill, snapshot) -> true;
 
-    public static EventEffect createFireworkEffect(final String effectId) {
+    public static EventFeedback createFireworkEffect(final String effectId) {
         checkNotNull(effectId);
+
+        final EventFeedback feedback = new EventFeedback();
 
         final SkillsFireworkEffectType fireworkOnLevel = (SkillsFireworkEffectType) registry.getType(
             FireworkEffectType.class, effectId).orElse(null);
 
-        final EventEffect effect = new EventEffect();
-
         if (fireworkOnLevel == null) {
-            return effect;
+            return feedback;
         }
 
-        return effect.levelGained(
-            new TriFunction<Player, Skill, Integer, List<SkillsEffectType>>() {
-                private final List<SkillsEffectType> level = new ArrayList<>();
-                private final List<SkillsEffectType> levelMax = new ArrayList<>();
+        return feedback.levelGained(new TriConsumer<Player, Skill, Integer>() {
 
-                {
-                    this.level.add(fireworkOnLevel);
-                    this.levelMax.add(fireworkOnLevel);
+            private final List<SkillsEffectType> level = new ArrayList<>();
+            private final List<SkillsEffectType> levelMax = new ArrayList<>();
 
-                    for (int i = 0; i < 3; i++) {
-                        final ContentFireworkEffectTypeBuilderImpl builder = new ContentFireworkEffectTypeBuilderImpl();
-                        this.levelMax.add(builder.from(fireworkOnLevel).build());
-                    }
+            {
+                this.level.add(fireworkOnLevel);
+                this.levelMax.add(fireworkOnLevel);
+
+                for (int i = 0; i < 3; i++) {
+                    final ContentFireworkEffectTypeBuilderImpl builder = new ContentFireworkEffectTypeBuilderImpl();
+                    this.levelMax.add(builder.from(fireworkOnLevel).build());
+                }
+            }
+
+            @Override
+            public void accept(final Player player, final Skill skill, final Integer level) {
+                if (!player.hasPermission(
+                    SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+                    return;
                 }
 
-                @Override
-                public List<SkillsEffectType> apply(final Player player, final Skill skill, final Integer integer) {
-                    if (!player.hasPermission(SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                        return Collections.emptyList();
-                    }
+                final List<SkillsEffectType> effects;
 
-                    if (integer == 99) {
-                        return this.levelMax;
-                    }
-
-                    return this.level;
+                if (skill.getSkillType().getMaxLevel() == level) {
+                    effects = this.levelMax;
+                } else {
+                    effects = this.level;
                 }
-            });
+
+                effects.forEach(effect -> {
+                    effect.play(player.getLocation(), player);
+                });
+            }
+        });
     }
 }

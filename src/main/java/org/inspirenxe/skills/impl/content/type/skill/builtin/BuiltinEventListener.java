@@ -38,8 +38,6 @@ import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.api.event.ExperienceResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventEffect;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.feedback.EventMessage;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CraftingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.DiggerRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
@@ -74,7 +72,6 @@ import org.spongepowered.api.item.inventory.ItemStackComparators;
 import org.spongepowered.api.item.recipe.crafting.CraftingRecipe;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
-import org.spongepowered.api.text.Text;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -91,8 +88,8 @@ import java.util.stream.Collectors;
 public final class BuiltinEventListener implements Witness {
 
     private final SkillManager skillManager;
-    private final Map<Class<? extends Event>, Map<SkillType, List<EventMessage>>> messageBuilders = new HashMap<>();
-    private final Map<Class<? extends Event>, Map<SkillType, List<EventEffect>>> effectBuilders = new HashMap<>();
+    private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> messageBuilders = new HashMap<>();
+    private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> effectBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<BlockChain>>> blockChains = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<ItemChain>>> itemChains = new HashMap<>();
 
@@ -152,8 +149,8 @@ public final class BuiltinEventListener implements Witness {
     public void onChangeExperiencePost(final ExperienceEvent.Change.Post event, @First final Player player) {
         final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
 
-        List<EventMessage> messages = null;
-        List<EventEffect> effects = null;
+        List<EventFeedback> messages = null;
+        List<EventFeedback> effects = null;
 
         final Cause cause = event.getCause();
         final Event causeEvent = cause.first(Event.class).orElse(null);
@@ -184,21 +181,18 @@ public final class BuiltinEventListener implements Witness {
                 .orElse(new ArrayList<>());
         }
 
+        final double xpDiff = event.getExperienceDifference();
+
         if (messages != null) {
             messages
                 .stream()
                 .filter(v -> v.xpGained != null)
-                .forEach(v -> {
-                    final Text message = v.xpGained.apply(player, event.getSkill(), event.getExperienceDifference());
-                    if (message != null) {
-                        player.sendMessage(v.chatType, message);
-                    }
-                });
+                .forEach(v -> v.xpGained.accept(player, event.getSkill(), xpDiff));
         }
 
         if (event instanceof ExperienceEvent.Change.Post.Level) {
 
-            if (event.getExperienceDifference() < 0) {
+            if (xpDiff < 0) {
                 return;
             }
 
@@ -206,12 +200,7 @@ public final class BuiltinEventListener implements Witness {
                 messages
                     .stream()
                     .filter(v -> v.levelGained != null)
-                    .forEach(v -> {
-                        final Text message = v.levelGained.apply(player, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel());
-                        if (message != null) {
-                            player.sendMessage(v.chatType, message);
-                        }
-                    });
+                    .forEach(v -> v.levelGained.accept(player, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel()));
             }
 
             if (!sneaking && effects != null) {
@@ -221,9 +210,8 @@ public final class BuiltinEventListener implements Witness {
                     effects
                         .stream()
                         .filter(v -> v.levelGained != null)
-                        .forEach(effectBuilder -> effectBuilder.levelGained.apply(player, event.getSkill(),
-                            ((ExperienceEvent.Change.Post.Level) event).getLevel())
-                            .forEach(effect -> effect.play(player.getLocation(), player)));
+                        .forEach(effect -> effect.levelGained.accept(player, event.getSkill(),
+                            ((ExperienceEvent.Change.Post.Level) event).getLevel()));
                 }
             }
         } else {
@@ -232,8 +220,7 @@ public final class BuiltinEventListener implements Witness {
                 effects
                     .stream()
                     .filter(v -> v.xpGained != null)
-                    .forEach(effectBuilder -> effectBuilder.xpGained.apply(player, event.getSkill(), event.getExperienceDifference()).forEach(effect ->
-                        effect.play(player.getLocation(), player)));
+                    .forEach(effect -> effect.xpGained.accept(player, event.getSkill(), xpDiff));
             }
         }
     }
@@ -369,6 +356,8 @@ public final class BuiltinEventListener implements Witness {
                 final ExperienceResult result = skill.addExperience(value);
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
+                } else {
+                    this.skillManager.markDirty(skillHolder);
                 }
             }
         }
@@ -509,6 +498,8 @@ public final class BuiltinEventListener implements Witness {
                 final ExperienceResult result = skill.addExperience(value);
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
+                } else {
+                    this.skillManager.markDirty(skillHolder);
                 }
             }
         }
@@ -647,6 +638,8 @@ public final class BuiltinEventListener implements Witness {
                 final ExperienceResult result = skill.addExperience(value);
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
+                } else {
+                    this.skillManager.markDirty(skillHolder);
                 }
             }
         }
@@ -799,6 +792,8 @@ public final class BuiltinEventListener implements Witness {
                 final ExperienceResult result = skill.addExperience(value);
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
+                } else {
+                    this.skillManager.markDirty(skillHolder);
                 }
             }
         }
@@ -937,6 +932,8 @@ public final class BuiltinEventListener implements Witness {
                 final ExperienceResult result = skill.addExperience(value);
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
+                } else {
+                    this.skillManager.markDirty(skillHolder);
                 }
             }
         }
@@ -1081,35 +1078,35 @@ public final class BuiltinEventListener implements Witness {
         return results;
     }
 
-    public BuiltinEventListener addEffectChain(final Class<? extends Event> clazz, final SkillType type, final EventEffect builder) {
+    public BuiltinEventListener addEffectChain(final Class<? extends Event> clazz, final SkillType type, final EventFeedback feedback) {
         checkNotNull(type);
-        checkNotNull(builder);
+        checkNotNull(feedback);
 
-        this.effectBuilders.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(builder);
+        this.effectBuilders.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(feedback);
         return this;
     }
 
-    public BuiltinEventListener addMessageChain(final Class<? extends Event> clazz, final SkillType type, final EventMessage builder) {
+    public BuiltinEventListener addMessageChain(final Class<? extends Event> clazz, final SkillType type, final EventFeedback feedback) {
         checkNotNull(type);
-        checkNotNull(builder);
+        checkNotNull(feedback);
 
-        this.messageBuilders.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(builder);
+        this.messageBuilders.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(feedback);
         return this;
     }
 
-    public BuiltinEventListener addBlockChain(final Class<? extends Event> clazz, final SkillType type, final BlockChain builder) {
+    public BuiltinEventListener addBlockChain(final Class<? extends Event> clazz, final SkillType type, final BlockChain chain) {
         checkNotNull(type);
-        checkNotNull(builder);
+        checkNotNull(chain);
 
-        this.blockChains.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(builder);
+        this.blockChains.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(chain);
         return this;
     }
 
-    public BuiltinEventListener addItemChain(final Class<? extends Event> clazz, final SkillType type, final ItemChain builder) {
+    public BuiltinEventListener addItemChain(final Class<? extends Event> clazz, final SkillType type, final ItemChain chain) {
         checkNotNull(type);
-        checkNotNull(builder);
+        checkNotNull(chain);
 
-        this.itemChains.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(builder);
+        this.itemChains.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(chain);
         return this;
     }
 }
