@@ -86,6 +86,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
           }
 
           if (player != source && !source.hasPermission(this.container.getId() + ".command.info.other")) {
+            source.sendMessage(Text.of(TextColors.RED, "You do not have permission to view another players skills."));
             return CommandResult.empty();
           }
 
@@ -136,7 +137,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
           final PaginationService pagination = Sponge.getServiceManager().provide(PaginationService.class).orElse(null);
           if (pagination != null) {
             pagination.builder()
-              .title(Text.of(TextColors.RED, "My Skills"))
+              .title(Text.of(TextColors.RED, source == player ? "My" : player.getName() + " Skills"))
               .contents(skillPrintouts)
               .footer(Text.of(TextColors.YELLOW, "Total Level: ", TextColors.RESET, totalLevel, " / ", maxTotalLevel))
               .build()
