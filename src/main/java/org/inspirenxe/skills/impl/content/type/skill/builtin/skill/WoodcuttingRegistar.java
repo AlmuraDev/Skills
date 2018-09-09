@@ -65,7 +65,7 @@ public final class WoodcuttingRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_AXE).level(50));
 
         // Logs/etc
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_ANY).denyLevelRequired(CommonRegistar.createDenyAction("break"));
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
 
         final BlockState log = BlockTypes.LOG.getDefaultState();
 
