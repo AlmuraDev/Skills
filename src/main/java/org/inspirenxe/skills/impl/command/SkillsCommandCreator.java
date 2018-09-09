@@ -213,6 +213,8 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
                 default:
                     return CommandResult.empty();
             }
+
+            this.skillManager.markDirty(skillHolder);
         }
 
         return CommandResult.success();
