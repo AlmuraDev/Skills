@@ -82,7 +82,6 @@ public final class FarmingRegistar {
         final ItemChain dropsChain = new ItemChain().matchTypeOnly();
 
         listener
-            .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.WHEAT_SEEDS).xp(1.0).economy(1.0))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.WHEAT).xp(10.0).economy(1.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.CARROT).xp(20.0).economy(1.5).level(10));
 
