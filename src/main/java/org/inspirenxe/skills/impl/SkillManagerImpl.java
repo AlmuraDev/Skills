@@ -53,6 +53,7 @@ import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.CauseStackManager;
+import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
@@ -87,6 +88,7 @@ import java.util.stream.Collectors;
 public final class SkillManagerImpl implements SkillManager, Witness {
 
   private final PluginContainer container;
+  private final EventManager eventManager;
   private final DatabaseManager databaseManager;
   private final SpongeExecutorService executorService;
   private final SkillHolderImpl.Factory factory;
@@ -98,10 +100,11 @@ public final class SkillManagerImpl implements SkillManager, Witness {
   public static SkillManagerImpl INSTANCE;
 
   @Inject
-  public SkillManagerImpl(final PluginContainer container, final DatabaseManager databaseManager, final SpongeExecutorService executorService,
-    final SkillHolderImpl.Factory factory) {
+  public SkillManagerImpl(final PluginContainer container, final EventManager eventManager, final DatabaseManager databaseManager,
+      final SpongeExecutorService executorService, final SkillHolderImpl.Factory factory) {
     INSTANCE = this;
     this.container = container;
+    this.eventManager = eventManager;
     this.databaseManager = databaseManager;
     this.executorService = executorService;
     this.factory = factory;
@@ -334,7 +337,7 @@ public final class SkillManagerImpl implements SkillManager, Witness {
 
                         skill.setExperience(experience);
 
-                        Sponge.getEventManager().post(new LoadExperiencePostEventImpl(skill, dbExperience, skill
+                        this.eventManager.post(new LoadExperiencePostEventImpl(skill, dbExperience, skill
                             .getCurrentExperience(), !isNewSkill));
                       }
                     }

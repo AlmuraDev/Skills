@@ -38,6 +38,7 @@ import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.AsynchronousExecutor;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
@@ -86,8 +87,8 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
   @Provides
   @Singleton
-  SkillManagerImpl skillManager(final PluginContainer container, final DatabaseManager databaseManager,
+  SkillManagerImpl skillManager(final PluginContainer container, final EventManager eventManager, final DatabaseManager databaseManager,
     @AsynchronousExecutor final SpongeExecutorService executor, final SkillHolderImpl.Factory factory) {
-    return new SkillManagerImpl(container, databaseManager, executor, factory);
+    return new SkillManagerImpl(container, eventManager, databaseManager, executor, factory);
   }
 }
