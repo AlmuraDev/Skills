@@ -1004,27 +1004,33 @@ public final class BuiltinEventListener implements Witness {
 
                 boolean cont = true;
 
-                final TriFunction<Player, Skill, BlockSnapshot, Boolean> owner = chain.owner;
-                if (owner != null) {
-                    final Boolean ownerCheck = owner.apply(player, skill, snapshot);
+                // Check level first to set result cancellation
+                if (chain.level != null && chain.level > skill.getCurrentLevel()) {
+                    builder.type(Result.Type.CANCELLED);
+                    cont = false;
+                }
 
-                    if (ownerCheck != null && !ownerCheck) {
-                        cont = false;
+                // Check owner second
+                // TODO Could print a different message here if it failed the owner check to the breaker
+                if (cont) {
+                    final TriFunction<Player, Skill, BlockSnapshot, Boolean> owner = chain.owner;
+                    if (owner != null) {
+                        final Boolean ownerCheck = owner.apply(player, skill, snapshot);
+
+                        if (ownerCheck != null && !ownerCheck) {
+                            cont = false;
+                        }
                     }
                 }
 
                 if (cont) {
-                    if (chain.level != null && chain.level > skill.getCurrentLevel()) {
-                        builder.type(Result.Type.CANCELLED);
-                    } else {
-                        if (chain.economy != null) {
-                            skill.getSkillType().getEconomyFunction()
-                                .ifPresent(func -> builder.money(func.getMoneyFor(skill.getCurrentLevel(), chain.economy)));
-                        }
+                    if (chain.xp != null) {
+                        builder.xp(chain.xp);
+                    }
 
-                        if (chain.xp != null) {
-                            builder.xp(chain.xp);
-                        }
+                    if (chain.economy != null) {
+                        skill.getSkillType().getEconomyFunction()
+                            .ifPresent(func -> builder.money(func.getMoneyFor(skill.getCurrentLevel(), chain.economy)));
                     }
                 }
             }
