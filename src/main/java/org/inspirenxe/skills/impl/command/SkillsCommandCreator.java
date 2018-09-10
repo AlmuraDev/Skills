@@ -27,7 +27,6 @@ package org.inspirenxe.skills.impl.command;
 import static org.spongepowered.api.command.args.GenericArguments.catalogedElement;
 import static org.spongepowered.api.command.args.GenericArguments.doubleNum;
 import static org.spongepowered.api.command.args.GenericArguments.optional;
-import static org.spongepowered.api.command.args.GenericArguments.playerOrSource;
 import static org.spongepowered.api.command.args.GenericArguments.seq;
 import static org.spongepowered.api.command.args.GenericArguments.string;
 import static org.spongepowered.api.command.args.GenericArguments.userOrSource;
@@ -40,7 +39,6 @@ import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.generated.Tables;
 import org.inspirenxe.skills.generated.tables.records.SkillsExperienceRecord;
-import org.inspirenxe.skills.impl.SkillHolderImpl;
 import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.database.Queries;
@@ -64,8 +62,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -106,12 +105,11 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
       .executor((source, args) -> {
         final User user = args.<Player>getOne("user").orElse(null);
         if (user == null) {
-          // TODO
           return CommandResult.empty();
         }
 
         if (user != source && !source.hasPermission(this.container.getId() + ".command.info.other")) {
-          source.sendMessage(Text.of(TextColors.RED, "You do not have permission to view another players skills."));
+          source.sendMessage(Text.of(TextColors.RED, "You do not have permission to view another player's skills."));
           return CommandResult.empty();
         }
 
@@ -130,7 +128,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
               .sorted((o1, o2) -> o1.getKey().getName().compareToIgnoreCase(o2.getKey().getName()))
               .collect(Collectors.toList());
 
-          this.sendSkillsPrintout(source, user, sorted);
+          this.handleSkillsPrintout(source, user, sorted);
 
         } else {
           final Collection<SkillType> skillTypes = this.registry.getAllOf(SkillType.class);
@@ -162,7 +160,13 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
                 this.scheduler
                   .createTaskBuilder()
                   .execute(() -> {
-                    this.sendSkillsPrintout(source, user, sorted);
+                    if (source instanceof Player) {
+                      if (!((Player) source).isOnline()) {
+                        return;
+                      }
+                    }
+
+                    this.handleSkillsPrintout(source, user, sorted);
                   })
                   .submit(this.container);
               } catch (SQLException e) {
@@ -174,10 +178,240 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
         return CommandResult.success();
       })
       .child(this.createExperienceCommand(), "experience", "xp")
+      .child(this.createResetCommand(), "reset")
       .build();
   }
 
-  private void sendSkillsPrintout(final CommandSource source, final User user, final List<Map.Entry<SkillType, Double>> sorted) {
+  private CommandSpec createExperienceCommand() {
+    return CommandSpec
+      .builder()
+      .arguments(
+      seq(userOrSource(Text.of("user")), optional(world(Text.of("world"))), catalogedElement(Text.of("skill"), SkillType.class),
+        string(Text.of("mode")), doubleNum(Text.of("xp"))))
+      .permission(this.container.getId() + ".command.xp")
+      .description(Text.of("Allows adjustment of experience of a skill"))
+      .executor((source, args) -> {
+        final User user = args.<Player>getOne("user").orElse(null);
+        if (user == null) {
+          return CommandResult.empty();
+        }
+
+        if (user != source && !source.hasPermission(this.container.getId() + ".command.xp.other")) {
+          source.sendMessage(Text.of(TextColors.RED, "You do not have permission to modify the xp of other user's skills."));
+          return CommandResult.success();
+        }
+
+        final UUID holder = user.getUniqueId();
+
+        final WorldProperties world = args.<WorldProperties>getOne("world").orElse(Sponge.getServer().getDefaultWorld().orElse(null));
+        if (world == null) {
+          return CommandResult.empty();
+        }
+
+        final UUID container = world.getUniqueId();
+
+        final SkillType skillType = args.<SkillType>getOne("skill").orElse(null);
+        if (skillType == null) {
+          return CommandResult.empty();
+        }
+
+        final Double xp = args.<Double>getOne("xp").orElse(null);
+
+        if (xp == null) {
+          return CommandResult.empty();
+        }
+
+        final String mode = args.<String>getOne(Text.of("mode")).orElse(null);
+        if (mode == null) {
+          return CommandResult.empty();
+        }
+
+        boolean validMode = "ADD".equalsIgnoreCase(mode) || "REMOVE".equalsIgnoreCase(mode) || "SET".equalsIgnoreCase(mode);
+
+        if (!validMode) {
+          return CommandResult.empty();
+        }
+
+        final SkillHolder skillHolder = this.skillManager.getHolder(container, holder).orElse(null);
+
+        // In-memory holder
+        if (skillHolder != null) {
+          this.handleSkillsXp(source, user, world, skillHolder, skillType, mode, xp);
+        } else {
+          // Database set
+          this.scheduler
+            .createTaskBuilder()
+            .async()
+            .execute(() -> {
+              try (final DSLContext context = this.databaseManager.createContext(true)) {
+                boolean update;
+                Double currentXp = 0.0;
+
+                if ("SET".equalsIgnoreCase(mode)) {
+                  currentXp = xp;
+
+                  final int result = Queries
+                    .createHasExperienceInSkillQuery(container, holder, skillType.getId())
+                    .build(context)
+                    .execute();
+
+                  update = result == 1;
+                } else {
+                  final SkillsExperienceRecord record = Queries
+                    .createFetchExperienceQuery(container, holder, skillType.getId())
+                    .build(context)
+                    .fetchOne();
+
+                  if (record != null) {
+                    final double dbXp = record.getValue(Tables.SKILLS_EXPERIENCE.EXPERIENCE).doubleValue();
+
+                    if ("ADD".equalsIgnoreCase(mode)) {
+                      currentXp = dbXp + xp;
+                    } else if ("REMOVE".equalsIgnoreCase(mode)) {
+                      currentXp = dbXp - xp;
+                    }
+
+                    update = true;
+                  } else {
+                    if ("ADD".equalsIgnoreCase(mode)) {
+                      currentXp = xp;
+                    }
+
+                    update = false;
+                  }
+                }
+
+                final boolean finalUpdate = update;
+                final Double finalXp = currentXp;
+
+                this.scheduler
+                  .createTaskBuilder()
+                  .execute(() -> {
+
+                    if (finalXp < 0) {
+                      // TODO message
+                      return;
+                    }
+
+                    final SkillHolder potHolder = this.skillManager.getHolder(container, holder).orElse(null);
+
+                    if (potHolder != null) {
+                      // Hmm, they came online! We need to run this through the normal systems..
+
+                      this.handleSkillsXp(source, user, world, potHolder, skillType, mode, finalXp);
+                      return;
+                    }
+
+                    boolean success;
+
+                    if (!finalUpdate) {
+                      final int execute = Queries
+                        .createInsertSkillExperienceQuery(container, holder, skillType.getId(), finalXp)
+                        .build(context)
+                        .execute();
+
+                      success = execute != 0;
+                    } else {
+                      final int execute = Queries
+                        .createUpdateSkillExperienceQuery(container, holder, skillType.getId(), finalXp, Timestamp.from(Instant.now()))
+                        .build(context)
+                        .execute();
+
+                      success = execute != 0;
+                    }
+
+                    if (success) {
+                      if (source instanceof Player && !((Player) source).isOnline()) {
+                        return;
+                      }
+
+                      source.sendMessage(Text.of(user.getName(), " had their xp in ", skillType.getFormattedName(), " set to ",
+                        SkillsConstants.XP_PRINTOUT.format(finalXp)));
+                    }
+                  })
+                  .submit(this.container);
+              } catch (SQLException e) {
+                e.printStackTrace();
+              }
+            })
+            .submit(this.container);
+        }
+
+        return CommandResult.success();
+      }).build();
+  }
+
+  private CommandSpec createResetCommand() {
+    return CommandSpec
+      .builder()
+      .arguments(seq(userOrSource(Text.of("user")), optional(world(Text.of("world")))))
+      .permission(this.container.getId() + ".command.reset")
+      .description(Text.of("Allows resetting of a user's skills"))
+      .executor((source, args) -> {
+
+        final User user = args.<Player>getOne("user").orElse(null);
+        if (user == null) {
+          return CommandResult.empty();
+        }
+
+        if (user != source && !source.hasPermission(this.container.getId() + ".command.reset.other")) {
+          source.sendMessage(Text.of(TextColors.RED, "You do not have permission to reset the xp of other user's skills."));
+          return CommandResult.success();
+        }
+
+        final UUID holder = user.getUniqueId();
+
+        final WorldProperties world = args.<WorldProperties>getOne("world").orElse(Sponge.getServer().getDefaultWorld().orElse(null));
+        if (world == null) {
+          return CommandResult.empty();
+        }
+
+        final UUID container = world.getUniqueId();
+
+        final SkillHolder skillHolder = this.skillManager.getHolder(container, holder).orElse(null);
+
+        final boolean load;
+
+        if (skillHolder != null) {
+          this.skillManager.removeHolder(skillHolder);
+          load = true;
+        } else {
+          load = false;
+        }
+
+        final Collection<SkillType> skillTypes = this.registry.getAllOf(SkillType.class);
+
+        this.scheduler
+          .createTaskBuilder()
+          .async()
+          .execute(() -> {
+            try (final DSLContext context = this.databaseManager.createContext(true)) {
+              for (final SkillType skillType : skillTypes) {
+                Queries
+                  .createUpdateSkillExperienceQuery(container, holder, skillType.getId(), 0.0, Timestamp.from(Instant.now()))
+                  .build(context)
+                  .execute();
+              }
+
+              this.scheduler
+                .createTaskBuilder()
+                .execute(() -> {
+                  if (load) {
+                    this.skillManager.loadHolder(container, holder);
+                  }
+                })
+                .submit(this.container);
+            } catch (SQLException e) {
+              e.printStackTrace();
+            }
+          })
+          .submit(this.container);
+        return CommandResult.success();
+      })
+      .build();
+  }
+
+  private void handleSkillsPrintout(final CommandSource source, final User user, final List<Map.Entry<SkillType, Double>> sorted) {
     final Collection<Text> skillPrintouts = new LinkedList<>();
 
     int totalLevel = 0;
@@ -220,80 +454,44 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
     }
   }
 
-  private CommandSpec createExperienceCommand() {
-    return CommandSpec.builder().arguments(
-      seq(playerOrSource(Text.of("player")), optional(world(Text.of("world"))), catalogedElement(Text.of("skill"), SkillType.class),
-        string(Text.of("mode")), doubleNum(Text.of("xp")))).permission(this.container.getId() + ".command.xp")
-      .description(Text.of("Allows adjustment of experience of a skill")).executor((source, args) -> {
-        final Player player = args.<Player>getOne("player").orElse(null);
-        if (player == null) {
-          return CommandResult.empty();
-        }
+  private CommandResult handleSkillsXp(final CommandSource source, final User user, final WorldProperties world, final SkillHolder skillHolder,
+    final SkillType skillType, final String mode, final double xp) {
 
-        final WorldProperties world = args.<WorldProperties>getOne("world").orElse(Sponge.getServer().getDefaultWorld().orElse(null));
-        if (world == null) {
-          return CommandResult.empty();
-        }
+    final boolean feedback = source instanceof ConsoleSource || (source instanceof Player && ((Player) source).isOnline());
 
-        final SkillHolder skillHolder = this.skillManager.getHolder(world.getUniqueId(), player.getUniqueId()).orElse(null);
-        if (skillHolder == null) {
-          final Text message =
-            source instanceof ConsoleSource ? Text.of("Player ", player.getName(), " has no skills for World ", world.getWorldName()) :
-              Text.of("You do not have any skills for World ", world.getWorldName());
+    final Skill skill = skillHolder.getSkill(skillType).orElse(null);
+    if (skill == null) {
+      if (feedback) {
+        final Text message = source instanceof ConsoleSource ?
+          Text.of("Player ", user.getName(), " has no ", skillType.getName(), " skill" + " for World ", world.getWorldName()) :
+          Text.of("You do not have the ", skillType.getName(), " skill for World ", world.getWorldName());
 
-          source.sendMessage(message);
-          return CommandResult.empty();
-        }
+        source.sendMessage(message);
+      }
+      return CommandResult.empty();
+    }
 
-        final SkillType skillType = args.<SkillType>getOne("skill").orElse(null);
-        if (skillType == null) {
-          return CommandResult.empty();
-        }
+    try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+      frame.pushCause(new FakeEvent());
+      frame.pushCause(user);
+      frame.pushCause(source);
 
-        final Skill skill = skillHolder.getSkill(skillType).orElse(null);
-        if (skill == null) {
-          final Text message = source instanceof ConsoleSource ?
-            Text.of("Player ", player.getName(), " has no ", skillType.getName(), " skill" + " for World ", world.getWorldName()) :
-            Text.of("You do not have the ", skillType.getName(), " skill for World ", world.getWorldName());
+      switch (mode.toUpperCase(Sponge.getServer().getConsole().getLocale())) {
+        case "ADD":
+          skill.addExperience(xp);
+          break;
+        case "REMOVE":
+          skill.addExperience(-xp);
+          break;
+        case "SET":
+          skill.setExperience(xp);
+          break;
+      }
 
-          source.sendMessage(message);
-          return CommandResult.empty();
-        }
+      this.skillManager.saveHolder(skillHolder);
+    }
 
-        final Double xp = args.<Double>getOne("xp").orElse(null);
-
-        if (xp == null) {
-          return CommandResult.empty();
-        }
-
-        final String mode = args.<String>getOne(Text.of("mode")).orElse(null);
-        if (mode == null) {
-          return CommandResult.empty();
-        }
-
-        try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-          frame.pushCause(player);
-          frame.pushCause(new FakeEvent());
-
-          switch (mode.toUpperCase(Sponge.getServer().getConsole().getLocale())) {
-            case "ADD":
-              skill.addExperience(xp);
-              break;
-            case "REMOVE":
-              skill.addExperience(-xp);
-              break;
-            case "SET":
-              skill.setExperience(xp);
-              break;
-            default:
-              return CommandResult.empty();
-          }
-
-          this.skillManager.markDirty(skillHolder);
-        }
-
-        return CommandResult.success();
-      }).build();
+    return CommandResult.success();
   }
 
   private static class FakeEvent implements Event {

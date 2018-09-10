@@ -30,9 +30,17 @@ import java.util.UUID;
 
 public interface SkillManager {
 
-  Set<SkillHolder> getHoldersInContainer(final UUID containerUniqueId);
+  Set<SkillHolder> getHoldersInContainer(final UUID container);
 
-  Optional<SkillHolder> getHolder(final UUID containerUniqueId, final UUID holderUniqueId);
+  Optional<SkillHolder> getHolder(final UUID container, final UUID holder);
 
-  void markDirty(final SkillHolder holder);
+  void removeHolder(final UUID container, final UUID holder);
+
+  default void removeHolder(final SkillHolder skillHolder) {
+    this.removeHolder(skillHolder.getContainerUniqueId(), skillHolder.getHolderUniqueId());
+  }
+
+  void saveHolder(final SkillHolder holder);
+
+  void loadHolder(final UUID container, final UUID holder);
 }

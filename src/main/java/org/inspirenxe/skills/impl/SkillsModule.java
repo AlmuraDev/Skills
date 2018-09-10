@@ -37,10 +37,12 @@ import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.AsynchronousExecutor;
+import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.service.ServiceManager;
 
@@ -72,7 +74,7 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
   @Singleton
   Node configuration(@ConfigDir(sharedRoot = false) final Path configDir) throws IOException, JDOMException {
     final SAXBuilder sb = new SAXBuilder();
-    return Node.of(sb.build(configDir.resolve("skills.xml").toFile()).getRootElement());
+    return Node.of(sb.build(configDir.resolve(SkillsImpl.ID + ".xml").toFile()).getRootElement());
   }
 
   @Provides
@@ -87,8 +89,8 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
   @Provides
   @Singleton
-  SkillManagerImpl skillManager(final PluginContainer container, final EventManager eventManager, final DatabaseManager databaseManager,
-    @AsynchronousExecutor final SpongeExecutorService executor, final SkillHolderImpl.Factory factory) {
-    return new SkillManagerImpl(container, eventManager, databaseManager, executor, factory);
+  SkillManagerImpl skillManager(final PluginContainer container, final Scheduler scheduler, final EventManager eventManager,
+    final GameRegistry registry, final DatabaseManager databaseManager, final SkillHolderImpl.Factory factory) {
+    return new SkillManagerImpl(container, scheduler, eventManager, registry, databaseManager, factory);
   }
 }

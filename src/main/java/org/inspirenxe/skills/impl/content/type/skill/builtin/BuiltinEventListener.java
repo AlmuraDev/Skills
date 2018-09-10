@@ -71,6 +71,7 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackComparators;
 import org.spongepowered.api.item.recipe.crafting.CraftingRecipe;
+import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 
@@ -88,6 +89,7 @@ import java.util.stream.Collectors;
 @Singleton
 public final class BuiltinEventListener implements Witness {
 
+    private final ServiceManager serviceManager;
     private final SkillManager skillManager;
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> messageBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> effectBuilders = new HashMap<>();
@@ -97,7 +99,8 @@ public final class BuiltinEventListener implements Witness {
     private final Map<Chain<?>, Long> denyTimers = new HashMap<>();
 
     @Inject
-    public BuiltinEventListener(final SkillManager skillManager) {
+    public BuiltinEventListener(final ServiceManager serviceManager, final SkillManager skillManager) {
+        this.serviceManager = serviceManager;
         this.skillManager = skillManager;
     }
 
@@ -358,12 +361,16 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.markDirty(skillHolder);
+                    this.skillManager.saveHolder(skillHolder);
                 }
             }
         }
 
-        final EconomyService economyService = Sponge.getServiceManager().provide(EconomyService.class).orElse(null);
+        if (totalMoneyGained.isEmpty()) {
+            return;
+        }
+
+        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
 
         if (economyService == null) {
             return;
@@ -500,12 +507,16 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.markDirty(skillHolder);
+                    this.skillManager.saveHolder(skillHolder);
                 }
             }
         }
 
-        final EconomyService economyService = Sponge.getServiceManager().provide(EconomyService.class).orElse(null);
+        if (totalMoneyGained.isEmpty()) {
+            return;
+        }
+
+        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
 
         if (economyService == null) {
             return;
@@ -640,12 +651,16 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.markDirty(skillHolder);
+                    this.skillManager.saveHolder(skillHolder);
                 }
             }
         }
 
-        final EconomyService economyService = Sponge.getServiceManager().provide(EconomyService.class).orElse(null);
+        if (totalMoneyGained.isEmpty()) {
+            return;
+        }
+
+        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
 
         if (economyService == null) {
             return;
@@ -794,12 +809,16 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.markDirty(skillHolder);
+                    this.skillManager.saveHolder(skillHolder);
                 }
             }
         }
 
-        final EconomyService economyService = Sponge.getServiceManager().provide(EconomyService.class).orElse(null);
+        if (totalMoneyGained.isEmpty()) {
+            return;
+        }
+
+        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
 
         if (economyService == null) {
             return;
@@ -934,12 +953,16 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.markDirty(skillHolder);
+                    this.skillManager.saveHolder(skillHolder);
                 }
             }
         }
 
-        final EconomyService economyService = Sponge.getServiceManager().provide(EconomyService.class).orElse(null);
+        if (totalMoneyGained.isEmpty()) {
+            return;
+        }
+
+        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
 
         if (economyService == null) {
             return;
