@@ -43,6 +43,7 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.DiggerRegista
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.MiningRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.WoodcuttingRegistar;
+import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
@@ -282,7 +283,7 @@ public final class BuiltinEventListener implements Witness {
 
             final BlockSnapshot snapshot = originalState ? transaction.getOriginal() : transaction.getFinal();
 
-            final Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(skills, skillChains, snapshot);
+            final Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(player, skills, skillChains, snapshot);
 
             final List<BuiltinResult> cancelledResults = transactionResults
                 .stream()
@@ -562,7 +563,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Collection<BuiltinResult> results = this.processBlockSnapshotFor(skills, skillChains, event.getTargetBlock());
+        final Collection<BuiltinResult> results = this.processBlockSnapshotFor(player, skills, skillChains, event.getTargetBlock());
 
         final List<BuiltinResult> cancelledResults = results
             .stream()
@@ -962,8 +963,8 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    private Collection<BuiltinResult> processBlockSnapshotFor(final Collection<Skill> skills, final Set<Map.Entry<SkillType, List<BlockChain>>>
-        skillChains, final BlockSnapshot snapshot) {
+    private Collection<BuiltinResult> processBlockSnapshotFor(final Player player, final Collection<Skill> skills, final Set<Map.Entry<SkillType,
+        List<BlockChain>>> skillChains, final BlockSnapshot snapshot) {
 
         final List<BuiltinResult> results = new ArrayList<>();
 
@@ -1001,16 +1002,29 @@ public final class BuiltinEventListener implements Witness {
 
                 builder.chain(chain);
 
-                if (chain.level != null && chain.level > skill.getCurrentLevel()) {
-                    builder.type(Result.Type.CANCELLED);
-                } else {
-                    if (chain.economy != null) {
-                        skill.getSkillType().getEconomyFunction()
-                            .ifPresent(func -> builder.money(func.getMoneyFor(skill.getCurrentLevel(), chain.economy)));
-                    }
+                boolean cont = true;
 
-                    if (chain.xp != null) {
-                        builder.xp(chain.xp);
+                final TriFunction<Player, Skill, BlockSnapshot, Boolean> owner = chain.owner;
+                if (owner != null) {
+                    final Boolean ownerCheck = owner.apply(player, skill, snapshot);
+
+                    if (ownerCheck != null && !ownerCheck) {
+                        cont = false;
+                    }
+                }
+
+                if (cont) {
+                    if (chain.level != null && chain.level > skill.getCurrentLevel()) {
+                        builder.type(Result.Type.CANCELLED);
+                    } else {
+                        if (chain.economy != null) {
+                            skill.getSkillType().getEconomyFunction()
+                                .ifPresent(func -> builder.money(func.getMoneyFor(skill.getCurrentLevel(), chain.economy)));
+                        }
+
+                        if (chain.xp != null) {
+                            builder.xp(chain.xp);
+                        }
                     }
                 }
             }
@@ -1057,7 +1071,6 @@ public final class BuiltinEventListener implements Witness {
             if (chain != null) {
 
                 builder.chain(chain);
-
                 if (chain.level != null && chain.level > skill.getCurrentLevel()) {
                     builder.type(Result.Type.CANCELLED);
                 } else {
