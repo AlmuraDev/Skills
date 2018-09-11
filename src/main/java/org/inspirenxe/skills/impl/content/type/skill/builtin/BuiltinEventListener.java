@@ -48,6 +48,7 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.Woodcuttin
 import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Item;
@@ -149,7 +150,7 @@ public final class BuiltinEventListener implements Witness {
     }
 
     @Listener(order = Order.PRE)
-    public void onCraftItemCraft(final CraftItemEvent.Craft event, @First final Player player) {
+    public void onCraftItemCraft(final CraftItemEvent.Craft event, @Root final Player player) {
       final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleCraftItem(skillService, event, player);
@@ -164,6 +165,8 @@ public final class BuiltinEventListener implements Witness {
 
     @Listener(order = Order.PRE)
     public void onChangeExperiencePost(final ExperienceEvent.Change.Post event, @First final Player player) {
+        final CommandCallable command = event.getCause().first(CommandCallable.class).orElse(null);
+
         final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
 
         List<EventFeedback> messages = null;
@@ -204,7 +207,7 @@ public final class BuiltinEventListener implements Witness {
             messages
                 .stream()
                 .filter(v -> v.xpGained != null)
-                .forEach(v -> v.xpGained.accept(player, event.getSkill(), xpDiff));
+                .forEach(v -> v.xpGained.accept(cause, event.getSkill(), xpDiff));
         }
 
         if (event instanceof ExperienceEvent.Change.Post.Level) {
@@ -217,27 +220,27 @@ public final class BuiltinEventListener implements Witness {
                 messages
                     .stream()
                     .filter(v -> v.levelGained != null)
-                    .forEach(v -> v.levelGained.accept(player, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel()));
+                    .forEach(v -> v.levelGained.accept(cause, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel()));
             }
 
-            if (!sneaking && effects != null) {
+            if (command == null && !sneaking && effects != null) {
                 try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
                     frame.pushCause(event.getSkill());
 
                     effects
                         .stream()
                         .filter(v -> v.levelGained != null)
-                        .forEach(effect -> effect.levelGained.accept(player, event.getSkill(),
-                            ((ExperienceEvent.Change.Post.Level) event).getLevel()));
+                        .forEach(effect -> effect.levelGained.accept(cause, event.getSkill(),
+                          ((ExperienceEvent.Change.Post.Level) event).getLevel()));
                 }
             }
         } else {
-            if (!sneaking && effects != null) {
+            if (command == null && !sneaking && effects != null) {
                 // Xp effects
                 effects
                     .stream()
                     .filter(v -> v.xpGained != null)
-                    .forEach(effect -> effect.xpGained.accept(player, event.getSkill(), xpDiff));
+                    .forEach(effect -> effect.xpGained.accept(cause, event.getSkill(), xpDiff));
             }
         }
     }
@@ -299,7 +302,7 @@ public final class BuiltinEventListener implements Witness {
 
             final BlockSnapshot snapshot = originalState ? transaction.getOriginal() : transaction.getFinal();
 
-            final Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(player, skills, skillChains, snapshot);
+            final Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, snapshot);
 
             final List<BuiltinResult> cancelledResults = transactionResults
                 .stream()
@@ -321,7 +324,7 @@ public final class BuiltinEventListener implements Witness {
                     }
 
                     this.denyTimers.put(chain, stamp);
-                    chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+                    chain.denyLevelRequired.accept(event.getCause(), cancelledResult.getSkill(), chain.level);
                 }
             }
 
@@ -467,7 +470,7 @@ public final class BuiltinEventListener implements Witness {
                 }
 
                 this.denyTimers.put(chain, stamp);
-                chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+                chain.denyLevelRequired.accept(event.getCause(), cancelledResult.getSkill(), chain.level);
             }
         }
 
@@ -591,7 +594,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Collection<BuiltinResult> results = this.processBlockSnapshotFor(player, skills, skillChains, event.getTargetBlock());
+        final Collection<BuiltinResult> results = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, event.getTargetBlock());
 
         final List<BuiltinResult> cancelledResults = results
             .stream()
@@ -613,7 +616,7 @@ public final class BuiltinEventListener implements Witness {
                 }
 
                 this.denyTimers.put(chain, stamp);
-                chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+                chain.denyLevelRequired.accept(event.getCause(), cancelledResult.getSkill(), chain.level);
             }
         }
 
@@ -773,7 +776,7 @@ public final class BuiltinEventListener implements Witness {
             final Chain<?> chain = cancelledResult.getChain().orElse(null);
 
             if (chain != null && chain.denyLevelRequired != null) {
-                chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+                chain.denyLevelRequired.accept(event.getCause(), cancelledResult.getSkill(), chain.level);
             }
         }
 
@@ -917,7 +920,7 @@ public final class BuiltinEventListener implements Witness {
             for (final BuiltinResult cancelledResult : cancelledResults) {
                 final Chain<?> chain = cancelledResult.getChain().orElse(null);
                 if (chain != null && chain.denyLevelRequired != null) {
-                    chain.denyLevelRequired.accept(player, cancelledResult.getSkill(), chain.level);
+                    chain.denyLevelRequired.accept(event.getCause(), cancelledResult.getSkill(), chain.level);
                 }
 
                 event.filterEntities(entity -> entity == item);
@@ -1005,7 +1008,7 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    private Collection<BuiltinResult> processBlockSnapshotFor(final Player player, final Collection<Skill> skills, final Set<Map.Entry<SkillType,
+    private Collection<BuiltinResult> processBlockSnapshotFor(final Cause cause, final Collection<Skill> skills, final Set<Map.Entry<SkillType,
         List<BlockChain>>> skillChains, final BlockSnapshot snapshot) {
 
         final List<BuiltinResult> results = new ArrayList<>();
@@ -1055,9 +1058,9 @@ public final class BuiltinEventListener implements Witness {
                 // Check owner second
                 // TODO Could print a different message here if it failed the owner check to the breaker
                 if (cont) {
-                    final TriFunction<Player, Skill, BlockSnapshot, Boolean> owner = chain.owner;
+                    final TriFunction<Cause, Skill, BlockSnapshot, Boolean> owner = chain.owner;
                     if (owner != null) {
-                        final Boolean ownerCheck = owner.apply(player, skill, snapshot);
+                        final Boolean ownerCheck = owner.apply(cause, skill, snapshot);
 
                         if (ownerCheck != null && !ownerCheck) {
                             cont = false;

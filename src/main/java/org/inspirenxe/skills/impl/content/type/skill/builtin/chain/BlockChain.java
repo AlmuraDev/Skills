@@ -35,7 +35,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public final class BlockChain extends Chain<BlockChain> {
     private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
     public List<BlockState> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
-    @Nullable public TriFunction<Player, Skill, BlockSnapshot, Boolean> owner;
+    @Nullable public TriFunction<Cause, Skill, BlockSnapshot, Boolean> owner;
 
     public BlockChain inverseQuery() {
         if (this.inErrorState) {
@@ -126,7 +126,7 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
-    public BlockChain creator(final TriFunction<Player, Skill, BlockSnapshot, Boolean> value) {
+    public BlockChain creator(final TriFunction<Cause, Skill, BlockSnapshot, Boolean> value) {
         if (this.inErrorState) {
             return this;
         }

@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 
 import javax.annotation.Nullable;
 
@@ -39,7 +39,7 @@ public abstract class Chain<B extends Chain<B>> {
     public Integer level;
     public Double xp;
     public Double economy;
-    public TriConsumer<Player, Skill, Integer> denyLevelRequired;
+    public TriConsumer<Cause, Skill, Integer> denyLevelRequired;
 
     protected boolean inErrorState = false;
 
@@ -62,7 +62,7 @@ public abstract class Chain<B extends Chain<B>> {
         return (B) this;
     }
 
-    public B denyLevelRequired(@Nullable final TriConsumer<Player, Skill, Integer> value) {
+    public B denyLevelRequired(@Nullable final TriConsumer<Cause, Skill, Integer> value) {
         if (this.inErrorState) {
             return (B) this;
         }

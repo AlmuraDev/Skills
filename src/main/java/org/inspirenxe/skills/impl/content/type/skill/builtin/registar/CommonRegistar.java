@@ -40,7 +40,9 @@ import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
 
@@ -54,47 +56,71 @@ public final class CommonRegistar {
     private static GameRegistry registry;
 
     public static EventFeedback XP_TO_ACTION_BAR = new EventFeedback().xpGained(
-        (player, skill, xp) -> {
+        (cause, skill, xp) -> {
           final SkillService skillService = Sponge.getServiceManager().provideUnchecked(SkillService.class);
 
-          if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+            final Player player = cause.first(Player.class).orElse(null);
+            if (player != null) {
 
-                final char mod = xp >= 0 ? '+' : '-';
+                if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
+                  .getConsole().getLocale()))) {
 
-                player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", skillService.getXpFormat().format(Math.abs(xp)), "xp ",
-                    skill.getSkillType().getFormattedName()));
+                    final char mod = xp >= 0 ? '+' : '-';
+
+                    player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", skillService.getXpFormat().format(Math.abs(xp)), "xp ", skill
+                      .getSkillType().getFormattedName()));
+                }
             }
         }
     );
 
     public static EventFeedback LEVEL_UP_TO_CHAT = new EventFeedback().levelGained(
-        (player, skill, level) -> {
-            if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                player.sendMessage(Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now "
-                    + "level ", level, "."));
+        (cause, skill, level) -> {
+            final Player player = cause.first(Player.class).orElse(null);
+
+            if (player == null) {
+                return;
             }
 
-            Sponge.getServer().getOnlinePlayers().forEach(p -> {
-                if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()) + ".other")) {
-                    p.sendMessage(ChatTypes.CHAT, Text.of(player.getName(), " has advanced to ", skill.getSkillType().getFormattedName(), " level "
-                        , level, "."));
-                }
-            });
+            if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
+              .getConsole().getLocale()))) {
+                player.sendMessage(Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now"
+                  + " level ", level, "."));
+            }
+
+            if (!cause.containsType(CommandCallable.class)) {
+                Sponge.getServer().getOnlinePlayers().forEach(p -> {
+                    if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(
+                      Sponge.getServer().getConsole().getLocale()) + ".other")) {
+                        p.sendMessage(ChatTypes.CHAT, Text.of(player.getName(), " has advanced to ", skill.getSkillType().getFormattedName(),
+                          " level ", level, "."));
+                    }
+                });
+            }
         }
     );
 
     @SuppressWarnings("unchecked")
-    public static TriConsumer<Player, Skill, Integer> createDenyAction(final String action) {
-        return (player, skill, value) -> {
-            if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                    player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
-                        + action + " this."));
+    public static TriConsumer<Cause, Skill, Integer> createDenyAction(final String action) {
+        return (cause, skill, value) -> {
+            if (!(cause.root() instanceof Player)) {
+                return;
+            }
+
+            final Player player = (Player) cause.root();
+            if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName()
+              .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+                player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+                  + action + " this."));
             }
         };
     }
 
-    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_ONLY = (p, skill, snapshot) -> {
-        final UUID player = p.getUniqueId();
+    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ONLY = (cause, skill, snapshot) -> {
+        if (!(cause.root() instanceof Player)) {
+            return false;
+        }
+        final UUID player = ((Player) cause.root()).getUniqueId();
         final UUID creator = snapshot.getCreator().orElse(null);
         if (creator == null) {
             return false;
@@ -103,27 +129,38 @@ public final class CommonRegistar {
         return player.equals(creator);
     };
 
-    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_NONE = (p, skill, snapshot) -> {
+    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_NONE = (cause, skill, snapshot) -> {
+        if (!(cause.root() instanceof Player)) {
+            return false;
+        }
+
         final UUID creator = snapshot.getCreator().orElse(null);
         return creator == null;
     };
 
-    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_ANY = (p, skill, snapshot) -> {
-        final UUID creator = snapshot.getCreator().orElse(null);
-        return creator != null;
+    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ANY = (cause, skill, snapshot) -> {
+        if (cause.root() instanceof Player) {
+            final UUID creator = snapshot.getCreator().orElse(null);
+            return creator != null;
+        }
+        return false;
     };
 
-    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_OR_NONE = (p, skill, snapshot) -> {
-        final UUID player = p.getUniqueId();
-        final UUID creator = snapshot.getCreator().orElse(null);
-        if (creator == null) {
-            return true;
+    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_NONE = (cause, skill, snapshot) -> {
+        if (cause.root() instanceof Player) {
+            final UUID player = ((Player) cause.root()).getUniqueId();
+            final UUID creator = snapshot.getCreator().orElse(null);
+            if (creator == null) {
+                return true;
+            }
+
+            return player.equals(creator);
         }
 
-        return player.equals(creator);
+        return false;
     };
 
-    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (p, skill, snapshot) -> true;
+    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (cause, skill, snapshot) -> true;
 
     public static EventFeedback createFireworkEffect(final String effectId) {
         checkNotNull(effectId);
@@ -137,7 +174,7 @@ public final class CommonRegistar {
             return feedback;
         }
 
-        return feedback.levelGained(new TriConsumer<Player, Skill, Integer>() {
+        return feedback.levelGained(new TriConsumer<Cause, Skill, Integer>() {
 
             private final List<SkillsEffectType> level = new ArrayList<>();
             private final List<SkillsEffectType> levelMax = new ArrayList<>();
@@ -153,7 +190,13 @@ public final class CommonRegistar {
             }
 
             @Override
-            public void accept(final Player player, final Skill skill, final Integer level) {
+            public void accept(final Cause cause, final Skill skill, final Integer level) {
+                final Player player = cause.first(Player.class).orElse(null);
+
+                if (player == null) {
+                    return;
+                }
+
                 if (!player.hasPermission(
                     SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
                     return;
