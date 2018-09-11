@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
@@ -36,10 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
 public final class PotionEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<PotionEffectType> {
-
-  public static final PotionEffectTypeRegistryModule instance = new PotionEffectTypeRegistryModule();
 
   private final Map<String, PotionEffectType> map = new HashMap<>();
 

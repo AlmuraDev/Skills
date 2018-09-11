@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
@@ -36,10 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
 public final class SoundEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<SoundEffectType> {
-
-  public static final SoundEffectTypeRegistryModule instance = new SoundEffectTypeRegistryModule();
 
   private final Map<String, SoundEffectType> map = new HashMap<>();
 

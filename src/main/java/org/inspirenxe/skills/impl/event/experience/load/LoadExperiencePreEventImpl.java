@@ -26,14 +26,15 @@ package org.inspirenxe.skills.impl.event.experience.load;
 
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.event.cause.Cause;
 
 import java.util.UUID;
 
 public final class LoadExperiencePreEventImpl extends LoadExperienceEventImpl implements ExperienceEvent.Load.Pre {
 
-  public LoadExperiencePreEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType, final double
-      originalExperience, final double experience, final boolean hasGainedExperienceBefore) {
-    super(containerUniqueId, holderUniqueId, skillType, originalExperience, experience, hasGainedExperienceBefore);
+  public LoadExperiencePreEventImpl(final Cause cause, final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType,
+    final double originalExperience, final double experience, final boolean hasGainedExperienceBefore) {
+    super(cause, containerUniqueId, holderUniqueId, skillType, originalExperience, experience, hasGainedExperienceBefore);
   }
 
   @Override

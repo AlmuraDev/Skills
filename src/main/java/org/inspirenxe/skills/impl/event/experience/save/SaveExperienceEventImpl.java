@@ -27,13 +27,14 @@ package org.inspirenxe.skills.impl.event.experience.save;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.impl.event.experience.ExperienceEventImpl;
+import org.spongepowered.api.event.cause.Cause;
 
 import java.util.UUID;
 
 abstract class SaveExperienceEventImpl extends ExperienceEventImpl implements ExperienceEvent.Save {
 
-  SaveExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType, final double originalExperience, final double
-      experience) {
-    super(containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
+  SaveExperienceEventImpl(final Cause cause, final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType,
+    final double originalExperience, final double experience) {
+    super(cause, containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
   }
 }

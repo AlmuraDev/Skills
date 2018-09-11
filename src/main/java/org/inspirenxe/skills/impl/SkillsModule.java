@@ -25,25 +25,22 @@
 package org.inspirenxe.skills.impl;
 
 import com.almuradev.toolbox.inject.ToolboxBinder;
+import com.almuradev.toolbox.inject.command.CommandInstaller;
+import com.almuradev.toolbox.inject.event.WitnessModule;
+import com.almuradev.toolbox.inject.registry.RegistryInstaller;
 import com.google.inject.Provides;
 import net.kyori.violet.AbstractModule;
 import net.kyori.xml.node.Node;
 import net.kyori.xml.node.parser.Parser;
-import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinModule;
+import org.inspirenxe.skills.impl.content.ContentModule;
 import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.AsynchronousExecutor;
-import org.spongepowered.api.scheduler.Scheduler;
-import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.service.ServiceManager;
 
 import java.io.IOException;
@@ -56,17 +53,22 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
   @Override
   protected void configure() {
 
-    this.bind(SkillManager.class).to(SkillManagerImpl.class);
+    this.install(new WitnessModule());
+    this.install(new ContentModule());
 
     // Register factories (for assisted injections)
+    this.installFactory(SkillServiceImpl.Factory.class);
     this.installFactory(SkillHolderImpl.Factory.class);
     this.installFactory(SkillImpl.Factory.class);
 
     // Register command tree
     this.command().rootProvider(SkillsCommandCreator.class, SkillsImpl.ID);
 
-    this.facet().add(DatabaseManager.class);
-    this.facet().add(SkillManagerImpl.class);
+    this.facet()
+      .add(CommandInstaller.class)
+      .add(RegistryInstaller.class)
+      .add(DatabaseManager.class)
+      .add(SkillLoader.class);
   }
 
   @ForConfiguration
@@ -80,17 +82,10 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
   @Provides
   @Singleton
   DatabaseManager database(final PluginContainer container, final ServiceManager serviceManager, @ForConfiguration final Node node,
-      final Parser<DatabaseConfiguration> parser) {
+    final Parser<DatabaseConfiguration> parser) {
     final Node databaseNode = node.elements("database")
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("database configuration not found"));
     return new DatabaseManager(container, serviceManager, parser.parse(databaseNode));
-  }
-
-  @Provides
-  @Singleton
-  SkillManagerImpl skillManager(final PluginContainer container, final Scheduler scheduler, final EventManager eventManager,
-    final GameRegistry registry, final DatabaseManager databaseManager, final SkillHolderImpl.Factory factory) {
-    return new SkillManagerImpl(container, scheduler, eventManager, registry, databaseManager, factory);
   }
 }

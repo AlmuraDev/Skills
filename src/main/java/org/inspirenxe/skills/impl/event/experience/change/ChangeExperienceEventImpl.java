@@ -27,13 +27,15 @@ package org.inspirenxe.skills.impl.event.experience.change;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.impl.event.experience.ExperienceEventImpl;
+import org.spongepowered.api.event.cause.Cause;
 
 public abstract class ChangeExperienceEventImpl extends ExperienceEventImpl implements ExperienceEvent.Change {
 
   private final Skill skill;
 
-  ChangeExperienceEventImpl(final Skill skill, final double originalExperience, final double experience) {
-    super(skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience, experience);
+  ChangeExperienceEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience) {
+    super(cause, skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience,
+      experience);
     this.skill = skill;
   }
 

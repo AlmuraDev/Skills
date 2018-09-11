@@ -24,7 +24,7 @@
  */
 package org.inspirenxe.skills.api;
 
-import org.inspirenxe.skills.api.event.ExperienceResult;
+import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 
 public interface Skill {
 
@@ -50,17 +50,16 @@ public interface Skill {
   boolean isInitialized();
 
   /**
-   * Returns if this {@link Skill} has been marked dirty and will be saved to the storage mechanism of the implementation. How this is
-   * used is completely up to the implementation.
+   * Returns if this {@link Skill} has been marked dirty. How this is used is completely up to the implementation.
    *
    * @return True if dirty, false if not
    */
-  boolean isDirtyState();
+  boolean isDirty();
 
   /**
-   * Sets the dirty state of the {@link Skill}. @see isDirtyState.
+   * Sets the dirty state of the {@link Skill}. See {@link Skill#isDirty()}.
    *
-   * @param dirtyState True if dirty, false if not
+   * @param dirty True if dirty, false if not
    */
-  void setDirtyState(final boolean dirtyState);
+  void setDirty(final boolean dirty);
 }

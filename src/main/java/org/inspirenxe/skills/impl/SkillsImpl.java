@@ -27,14 +27,21 @@ package org.inspirenxe.skills.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.membrane.facet.internal.Facets;
+import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.impl.content.ContentModule;
 import org.slf4j.Logger;
+import org.spongepowered.api.GameRegistry;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Scheduler;
+import org.spongepowered.api.service.ServiceManager;
 
 import java.io.IOException;
 import java.net.URI;
@@ -55,7 +62,6 @@ import javax.annotation.Nullable;
 public final class SkillsImpl {
 
   public static final String ID = "skills";
-  public static SkillsImpl INSTANCE;
 
   private final Logger logger;
   private final Path configDir;
@@ -65,13 +71,11 @@ public final class SkillsImpl {
   public SkillsImpl(final Injector baseInjector, final Logger logger, @ConfigDir(sharedRoot = false) final Path configDir)
     throws IOException, URISyntaxException {
 
-    INSTANCE = this;
     this.logger = logger;
     this.configDir = configDir;
-
     this.writeDefaultAssets();
 
-    this.facets = baseInjector.createChildInjector(new ContentModule(), new ToolboxModule(), new SkillsModule()).getInstance(Facets.class);
+    this.facets = baseInjector.createChildInjector(new SkillsModule()).getInstance(Facets.class);
   }
 
   @Listener(order = Order.PRE)

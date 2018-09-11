@@ -32,7 +32,6 @@ import com.almuradev.droplet.content.processor.Processor;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import org.inspirenxe.skills.impl.content.type.skill.processor.EconomyFunctionProcessor;
-import org.inspirenxe.skills.impl.content.type.skill.processor.EventProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.LevelFunctionProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.MaxLevelProcessor;
 import org.inspirenxe.skills.impl.content.type.skill.processor.MinLevelProcessor;

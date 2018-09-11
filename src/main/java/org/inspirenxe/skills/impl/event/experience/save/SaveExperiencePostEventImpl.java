@@ -26,13 +26,15 @@ package org.inspirenxe.skills.impl.event.experience.save;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.event.cause.Cause;
 
 public final class SaveExperiencePostEventImpl extends SaveExperienceEventImpl implements ExperienceEvent.Save.Post {
 
   private final Skill skill;
 
-  public SaveExperiencePostEventImpl(final Skill skill, final double originalExperience, final double experience) {
-    super(skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience, experience);
+  public SaveExperiencePostEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience) {
+    super(cause, skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience,
+      experience);
 
     this.skill = skill;
   }

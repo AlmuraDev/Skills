@@ -26,14 +26,15 @@ package org.inspirenxe.skills.impl.event.experience.change;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.event.cause.Cause;
 
 public final class ChangeExperiencePostLevelEventImpl extends ChangeExperiencePostEventImpl implements ExperienceEvent.Change.Post.Level {
 
   private final int originalLevel, level;
 
-  public ChangeExperiencePostLevelEventImpl(final Skill skill, final double originalExperience, final double experience, final int originalLevel,
-    final int level) {
-    super(skill, originalExperience, experience);
+  public ChangeExperiencePostLevelEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience,
+    final int originalLevel, final int level) {
+    super(cause, skill, originalExperience, experience);
     this.originalLevel = originalLevel;
     this.level = level;
   }

@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
@@ -36,10 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
 public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
-
-  public static final FireworkEffectTypeRegistryModule instance = new FireworkEffectTypeRegistryModule();
 
   private final Map<String, FireworkEffectType> map = new HashMap<>();
 

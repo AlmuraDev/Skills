@@ -31,15 +31,9 @@ import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.content.component.filter.EventCompoundFilterQuery;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.flatten.EventFlattener;
-import org.spongepowered.api.event.Event;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -50,7 +44,7 @@ public final class SkillTypeImpl implements SkillType, Content {
     private final Text formattedName;
     private final RegistryReference<LevelFunctionType> levelFunction;
     private final RegistryReference<EconomyFunctionType> economyFunction;
-    private final int minlevel, maxLevel;
+    private final int minLevel, maxLevel;
 
     public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunctionType> levelFunction,
         final RegistryReference<EconomyFunctionType> economyFunction, final int minLevel, final int maxLevel) {
@@ -59,7 +53,7 @@ public final class SkillTypeImpl implements SkillType, Content {
         this.formattedName = TextSerializers.FORMATTING_CODE.deserialize(name);
         this.levelFunction = levelFunction;
         this.economyFunction = economyFunction;
-        this.minlevel = minLevel;
+        this.minLevel = minLevel;
         this.maxLevel = maxLevel;
     }
 
@@ -90,7 +84,7 @@ public final class SkillTypeImpl implements SkillType, Content {
 
     @Override
     public int getMinLevel() {
-        return this.minlevel;
+        return this.minLevel;
     }
 
     @Override
@@ -122,7 +116,7 @@ public final class SkillTypeImpl implements SkillType, Content {
                 .add("id", this.registryKey)
                 .add("levelFunction", this.levelFunction.require())
                 .add("economyFunction", this.economyFunction.get())
-                .add("minLevel", this.minlevel)
+                .add("minLevel", this.minLevel)
                 .add("maxLevel", this.maxLevel)
                 .toString();
     }

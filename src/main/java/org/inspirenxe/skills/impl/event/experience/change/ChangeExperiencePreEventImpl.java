@@ -26,13 +26,14 @@ package org.inspirenxe.skills.impl.event.experience.change;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.event.cause.Cause;
 
 public final class ChangeExperiencePreEventImpl extends ChangeExperienceEventImpl implements ExperienceEvent.Change.Pre {
 
   private boolean isCancelled = false;
 
-  public ChangeExperiencePreEventImpl(final Skill skill, final double originalExperience, final double experience) {
-    super(skill, originalExperience, experience);
+  public ChangeExperiencePreEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience) {
+    super(cause, skill, originalExperience, experience);
   }
 
   @Override

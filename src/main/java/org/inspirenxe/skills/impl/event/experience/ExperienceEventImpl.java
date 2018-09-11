@@ -26,20 +26,22 @@ package org.inspirenxe.skills.impl.event.experience;
 
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.cause.Cause;
 
 import java.util.UUID;
 
 public abstract class ExperienceEventImpl implements ExperienceEvent {
 
+  private final Cause cause;
   private final UUID containerUniqueId, holderUniqueId;
   private final SkillType skillType;
   private final double originalExperience;
   protected double experience;
 
-  protected ExperienceEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType, final double originalExperience,
-      final double experience) {
+  protected ExperienceEventImpl(final Cause cause, final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType,
+    final double originalExperience, final double experience) {
+
+    this.cause = cause;
     this.containerUniqueId = containerUniqueId;
     this.holderUniqueId = holderUniqueId;
     this.skillType = skillType;
@@ -49,7 +51,7 @@ public abstract class ExperienceEventImpl implements ExperienceEvent {
 
   @Override
   public final Cause getCause() {
-    return Sponge.getCauseStackManager().getCurrentCause();
+    return this.cause;
   }
 
   @Override

@@ -52,7 +52,7 @@ public final class FadeColorsProcessor implements Processor<ContentFireworkEffec
     node.nodes("fade-colors").collect(MoreCollectors.toOptional()).ifPresent(fadeColors -> {
       final ImmutableList.Builder<RegistryReference<ColorType>> fadeColorsList = ImmutableList.builder();
 
-      node.nodes("fade-color").forEach(fadeColor -> fadeColorsList.add(this.registry.ref(this.registryKeyParser.parse(fadeColor))));
+      node.nodes("color").forEach(color -> fadeColorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
       builder.fadeColors(fadeColorsList.build());
     });
   }

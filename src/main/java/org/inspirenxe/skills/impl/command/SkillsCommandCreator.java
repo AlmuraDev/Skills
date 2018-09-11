@@ -35,11 +35,10 @@ import static org.spongepowered.api.command.args.GenericArguments.world;
 import com.google.inject.Inject;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
-import org.inspirenxe.skills.api.SkillManager;
+import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.generated.Tables;
 import org.inspirenxe.skills.generated.tables.records.SkillsExperienceRecord;
-import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.database.Queries;
 import org.jooq.DSLContext;
@@ -82,17 +81,15 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
   private final GameRegistry registry;
   private final ServiceManager serviceManager;
   private final DatabaseManager databaseManager;
-  private final SkillManager skillManager;
 
   @Inject
   public SkillsCommandCreator(final PluginContainer container, final Scheduler scheduler, final GameRegistry registry,
-    final ServiceManager serviceManager, final DatabaseManager databaseManager, final SkillManager skillManager) {
+    final ServiceManager serviceManager, final DatabaseManager databaseManager) {
     this.container = container;
     this.scheduler = scheduler;
     this.registry = registry;
     this.serviceManager = serviceManager;
     this.databaseManager = databaseManager;
-    this.skillManager = skillManager;
   }
 
   @Override
@@ -101,8 +98,10 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
       .builder()
       .arguments(userOrSource(Text.of("user")))
       .permission(this.container.getId() + ".command.info")
-      .description(Text.of("Displays user skills or list of commands if no user provided in console"))
+      .description(Text.of("Displays user skills or list of commands if no user provided in console."))
       .executor((source, args) -> {
+        final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
         final User user = args.<Player>getOne("user").orElse(null);
         if (user == null) {
           return CommandResult.empty();
@@ -116,7 +115,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
         final UUID container = Sponge.getServer().getDefaultWorld().get().getUniqueId();
         final UUID holder = user.getUniqueId();
 
-        final SkillHolder skillHolder = this.skillManager.getHolder(container, holder).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(container, holder).orElse(null);
 
         if (skillHolder != null) {
 
@@ -128,7 +127,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
               .sorted((o1, o2) -> o1.getKey().getName().compareToIgnoreCase(o2.getKey().getName()))
               .collect(Collectors.toList());
 
-          this.handleSkillsPrintout(source, user, sorted);
+          this.handleSkillsPrintout(skillService, source, user, sorted);
 
         } else {
           final Collection<SkillType> skillTypes = this.registry.getAllOf(SkillType.class);
@@ -143,7 +142,10 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
 
                 for (final SkillType skillType : skillTypes) {
                   final SkillsExperienceRecord record =
-                    Queries.createFetchExperienceQuery(container, holder, skillType.getId()).build(context).fetchOne();
+                    Queries
+                      .createFetchExperienceQuery(container, holder, skillType.getId())
+                      .build(context)
+                      .fetchOne();
 
                   if (record == null) {
                     skills.put(skillType, 0.0);
@@ -166,7 +168,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
                       }
                     }
 
-                    this.handleSkillsPrintout(source, user, sorted);
+                    this.handleSkillsPrintout(skillService, source, user, sorted);
                   })
                   .submit(this.container);
               } catch (SQLException e) {
@@ -189,8 +191,10 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
       seq(userOrSource(Text.of("user")), optional(world(Text.of("world"))), catalogedElement(Text.of("skill"), SkillType.class),
         string(Text.of("mode")), doubleNum(Text.of("xp"))))
       .permission(this.container.getId() + ".command.xp")
-      .description(Text.of("Allows adjustment of experience of a skill"))
+      .description(Text.of("Allows adjustment of experience of a skill."))
       .executor((source, args) -> {
+        final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
         final User user = args.<Player>getOne("user").orElse(null);
         if (user == null) {
           return CommandResult.empty();
@@ -232,11 +236,11 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
           return CommandResult.empty();
         }
 
-        final SkillHolder skillHolder = this.skillManager.getHolder(container, holder).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(container, holder).orElse(null);
 
         // In-memory holder
         if (skillHolder != null) {
-          this.handleSkillsXp(source, user, world, skillHolder, skillType, mode, xp);
+          this.handleSkillsXp(skillService, source, user, world, skillHolder, skillType, mode, xp);
         } else {
           // Database set
           this.scheduler
@@ -293,12 +297,12 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
                       return;
                     }
 
-                    final SkillHolder potHolder = this.skillManager.getHolder(container, holder).orElse(null);
+                    final SkillHolder potHolder = skillService.getHolder(container, holder).orElse(null);
 
                     if (potHolder != null) {
                       // Hmm, they came online! We need to run this through the normal systems..
 
-                      this.handleSkillsXp(source, user, world, potHolder, skillType, mode, finalXp);
+                      this.handleSkillsXp(skillService, source, user, world, potHolder, skillType, mode, finalXp);
                       return;
                     }
 
@@ -326,7 +330,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
                       }
 
                       source.sendMessage(Text.of(user.getName(), " had their xp in ", skillType.getFormattedName(), " set to ",
-                        SkillsConstants.XP_PRINTOUT.format(finalXp)));
+                        skillService.getXpFormat().format(finalXp)));
                     }
                   })
                   .submit(this.container);
@@ -346,8 +350,9 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
       .builder()
       .arguments(seq(userOrSource(Text.of("user")), optional(world(Text.of("world")))))
       .permission(this.container.getId() + ".command.reset")
-      .description(Text.of("Allows resetting of a user's skills"))
+      .description(Text.of("Allows resetting of a user's skills."))
       .executor((source, args) -> {
+        final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
 
         final User user = args.<Player>getOne("user").orElse(null);
         if (user == null) {
@@ -368,12 +373,12 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
 
         final UUID container = world.getUniqueId();
 
-        final SkillHolder skillHolder = this.skillManager.getHolder(container, holder).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(container, holder).orElse(null);
 
         final boolean load;
 
         if (skillHolder != null) {
-          this.skillManager.removeHolder(skillHolder);
+          skillService.removeHolder(skillHolder);
           load = true;
         } else {
           load = false;
@@ -397,7 +402,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
                 .createTaskBuilder()
                 .execute(() -> {
                   if (load) {
-                    this.skillManager.loadHolder(container, holder);
+                    skillService.loadHolder(container, holder, true);
                   }
                 })
                 .submit(this.container);
@@ -411,8 +416,8 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
       .build();
   }
 
-  private void handleSkillsPrintout(final CommandSource source, final User user, final List<Map.Entry<SkillType, Double>> sorted) {
-    final Collection<Text> skillPrintouts = new LinkedList<>();
+  private void handleSkillsPrintout(final SkillService skillService, final CommandSource source, final User user,
+    final List<Map.Entry<SkillType, Double>> sorted) { final Collection<Text> skillPrintouts = new LinkedList<>();
 
     int totalLevel = 0;
     int maxTotalLevel = 0;
@@ -433,10 +438,10 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
 
       skillPrintouts.add(Text.of(skillType.getFormattedName(), " :: Lv. ", currentLevel, " / ", maxLevel));
 
-      skillPrintouts.add(Text.of("  Current XP: ", SkillsConstants.XP_PRINTOUT.format(currentExperience), " / ",
-        SkillsConstants.XP_PRINTOUT.format(maxLevelExperience)));
+      skillPrintouts.add(Text.of("  Current XP: ", skillService.getXpFormat().format(currentExperience), " / ",
+        skillService.getXpFormat().format(maxLevelExperience)));
 
-      skillPrintouts.add(Text.of("  Next Level: ", SkillsConstants.XP_PRINTOUT.format(toNextLevelExperience)));
+      skillPrintouts.add(Text.of("  Next Level: ", skillService.getXpFormat().format(toNextLevelExperience)));
 
       totalLevel += currentLevel;
       maxTotalLevel += skillType.getMaxLevel();
@@ -446,7 +451,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
     if (pagination != null) {
       pagination
         .builder()
-        .title(Text.of(TextColors.RED, source == user ? "My" : user.getName() + " Skills"))
+        .title(Text.of(TextColors.RED, source == user ? "My" : user.getName(), " Skills"))
         .contents(skillPrintouts)
         .footer(Text.of(TextColors.YELLOW, "Total Level: ", TextColors.RESET, totalLevel, " / ", maxTotalLevel))
         .build()
@@ -454,8 +459,8 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
     }
   }
 
-  private CommandResult handleSkillsXp(final CommandSource source, final User user, final WorldProperties world, final SkillHolder skillHolder,
-    final SkillType skillType, final String mode, final double xp) {
+  private CommandResult handleSkillsXp(final SkillService skillService, final CommandSource source, final User user, final WorldProperties world,
+    final SkillHolder skillHolder, final SkillType skillType, final String mode, final double xp) {
 
     final boolean feedback = source instanceof ConsoleSource || (source instanceof Player && ((Player) source).isOnline());
 
@@ -463,7 +468,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
     if (skill == null) {
       if (feedback) {
         final Text message = source instanceof ConsoleSource ?
-          Text.of("Player ", user.getName(), " has no ", skillType.getName(), " skill" + " for World ", world.getWorldName()) :
+          Text.of("Player ", user.getName(), " has no ", skillType.getName(), " skill for World ", world.getWorldName()) :
           Text.of("You do not have the ", skillType.getName(), " skill for World ", world.getWorldName());
 
         source.sendMessage(message);
@@ -488,7 +493,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
           break;
       }
 
-      this.skillManager.saveHolder(skillHolder);
+      skillService.saveHolder(skillHolder, true);
     }
 
     return CommandResult.success();
@@ -498,7 +503,7 @@ public final class SkillsCommandCreator implements Provider<CommandSpec> {
 
     @Override
     public Cause getCause() {
-      throw new UnsupportedOperationException("Do not call me");
+      throw new UnsupportedOperationException("Do not call me.");
     }
   }
 }

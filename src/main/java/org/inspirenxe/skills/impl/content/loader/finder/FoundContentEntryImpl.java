@@ -48,12 +48,20 @@ public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extend
   FoundContentEntryImpl(final String namespace, final R rootType, final Path rootPath, final C childType, final Path absolutePath,
       final DocumentFactory documentFactory, final ContentBuilder builder) {
     super(rootType, childType);
+
     this.namespace = namespace;
+
     if (absolutePath.getFileName().toString().replace(".xml", "").equalsIgnoreCase(absolutePath.getParent().getFileName().toString())) {
       this.key = new CatalogKey(namespace + ':' + rootPath.relativize(absolutePath.getParent()).toString().replace(".xml", "").replace('\\', '/'));
     } else {
-      this.key = new CatalogKey(namespace + ':' + rootPath.relativize(absolutePath).toString().replace(".xml", "").replace('\\', '/'));
+      String value = rootPath.relativize(absolutePath).toString();
+      final int index = value.indexOf("\\");
+      if (index != -1) {
+        value = value.substring(index + 1);
+      }
+      this.key = new CatalogKey(namespace + ':' + value.replace(".xml", "").replace('\\', '/'));
     }
+
     this.absolutePath = absolutePath;
     this.rootElement = Suppliers.memoize(Exceptions.rethrowSupplier(() -> documentFactory.read(this.absolutePath).getRootElement())::get);
     this.builder = builder;

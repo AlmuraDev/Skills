@@ -33,11 +33,10 @@ import com.google.inject.assistedinject.Assisted;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.SkillsConstants;
 import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 import org.slf4j.Logger;
+import org.spongepowered.api.Sponge;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -45,15 +44,13 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
 
   private final RegistryKey registryKey;
   private final Expression expression;
-  private final Logger logger;
 
   private double[] xpTable = new double[100];
 
   @Inject
-  public SkillsLevelFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula, final Logger logger) {
+  public SkillsLevelFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
     this.registryKey = registryKey;
     this.expression = new ExpressionBuilder(formula).variable("L").build();
-    this.logger = logger;
     Arrays.fill(this.xpTable, UNKNOWN_EXP);
   }
 
@@ -138,31 +135,6 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
         .add("id", this.registryKey)
         .add("formula", this.expression)
         .toString();
-  }
-
-  public void printTable() {
-    this.logger.warn("Printing level table for: {}", this.getId());
-
-    for (int i = 0; i < this.xpTable.length - 1; i++) {
-      final Double start = this.xpTable[i];
-
-      if (start == UNKNOWN_EXP) {
-        break;
-      }
-
-      if (i == this.xpTable.length - 2) {
-        this.logger.warn("Lvl " + (i + 1) + " -> (" + SkillsConstants.XP_PRINTOUT.format(start) + " - ~)");
-      } else {
-        final Double end = this.xpTable[i + 1];
-
-        if (end == UNKNOWN_EXP) {
-          this.logger.warn("Lvl " + (i + 1) + " -> (" + SkillsConstants.XP_PRINTOUT.format(start) + " - ~)");
-        } else {
-          this.logger.warn("Lvl " + (i + 1) + " -> (" + SkillsConstants.XP_PRINTOUT.format(start) + " - " + SkillsConstants.XP_PRINTOUT.format(end)
-            + ", diff: " + SkillsConstants.XP_PRINTOUT.format(end - start) + ")");
-        }
-      }
-    }
   }
 
   public interface Factory {

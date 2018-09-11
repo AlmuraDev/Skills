@@ -27,7 +27,8 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.impl.SkillsImpl;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -39,6 +40,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public final class ItemChain extends Chain<ItemChain> {
 
+    private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
     public List<ItemStack> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
 
@@ -59,7 +61,7 @@ public final class ItemChain extends Chain<ItemChain> {
         checkNotNull(id);
         final ItemType itemType = Sponge.getRegistry().getType(ItemType.class, id).orElse(null);
         if (itemType == null) {
-            SkillsImpl.INSTANCE.getLogger().error("Unknown item id '" + id + "' given to item chain!");
+            logger.error("Unknown item id '" + id + "' given to item chain!");
             this.inErrorState = true;
             return this;
         }

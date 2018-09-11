@@ -26,14 +26,15 @@ package org.inspirenxe.skills.impl.event.experience.save;
 
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.event.cause.Cause;
 
 import java.util.UUID;
 
 public final class SaveExperiencePreEventImpl extends SaveExperienceEventImpl implements ExperienceEvent.Save.Pre {
 
-  public SaveExperiencePreEventImpl(final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType,
+  public SaveExperiencePreEventImpl(final Cause cause, final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType,
       final double originalExperience, final double experience) {
-    super(containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
+    super(cause, containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
   }
 
   @Override

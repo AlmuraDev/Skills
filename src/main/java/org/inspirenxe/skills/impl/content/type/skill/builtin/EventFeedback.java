@@ -28,10 +28,12 @@ import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.spongepowered.api.entity.living.player.Player;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unchecked")
 public final class EventFeedback {
-    public TriConsumer<Player, Skill, Double> xpGained = null;
-    public TriConsumer<Player, Skill, Integer> levelGained = null;
+    @Nullable public TriConsumer<Player, Skill, Double> xpGained;
+    @Nullable public TriConsumer<Player, Skill, Integer> levelGained;
 
     public EventFeedback xpGained(final TriConsumer<Player, Skill, Double> value) {
         this.xpGained = value;

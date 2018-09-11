@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.impl.color.ColorTypeImpl;
 import org.inspirenxe.skills.impl.content.registry.CatalogKey;
@@ -41,10 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
 public final class ColorTypeRegistryModule implements AdditionalCatalogRegistryModule<ColorType> {
-
-  public static final ColorTypeRegistryModule instance = new ColorTypeRegistryModule();
 
   private final Map<String, ColorType> map = new HashMap<>();
 

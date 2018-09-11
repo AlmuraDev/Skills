@@ -26,15 +26,16 @@ package org.inspirenxe.skills.impl.event.experience.load;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
+import org.spongepowered.api.event.cause.Cause;
 
 public final class LoadExperiencePostEventImpl extends LoadExperienceEventImpl implements ExperienceEvent.Load.Post {
 
   private final Skill skill;
 
-  public LoadExperiencePostEventImpl(final Skill skill, final double originalExperience, final double experience,
+  public LoadExperiencePostEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience,
       final boolean hasGainedExperienceBefore) {
-    super(skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience, experience,
-        hasGainedExperienceBefore);
+    super(cause, skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience,
+      experience, hasGainedExperienceBefore);
     this.skill = skill;
   }
 

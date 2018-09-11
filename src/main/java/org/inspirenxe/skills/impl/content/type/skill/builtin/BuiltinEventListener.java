@@ -29,20 +29,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.Result;
+import org.inspirenxe.skills.api.SkillService;
+import org.inspirenxe.skills.api.result.Result;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
-import org.inspirenxe.skills.api.SkillManager;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.inspirenxe.skills.api.event.ExperienceResult;
+import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.Chain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CraftingRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.DiggerRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.MiningRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.WoodcuttingRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.result.BuiltinResult;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CraftingRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.DiggerRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.FarmingRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.MiningRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.WoodcuttingRegistar;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -90,7 +92,6 @@ import java.util.stream.Collectors;
 public final class BuiltinEventListener implements Witness {
 
     private final ServiceManager serviceManager;
-    private final SkillManager skillManager;
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> messageBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> effectBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<BlockChain>>> blockChains = new HashMap<>();
@@ -99,9 +100,8 @@ public final class BuiltinEventListener implements Witness {
     private final Map<Chain<?>, Long> denyTimers = new HashMap<>();
 
     @Inject
-    public BuiltinEventListener(final ServiceManager serviceManager, final SkillManager skillManager) {
+    public BuiltinEventListener(final ServiceManager serviceManager) {
         this.serviceManager = serviceManager;
-        this.skillManager = skillManager;
     }
 
     @Listener(order = Order.LAST)
@@ -116,37 +116,50 @@ public final class BuiltinEventListener implements Witness {
 
     @Listener(order = Order.PRE)
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
-        this.handleChangeBlock(event, player, true);
+      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+      this.handleChangeBlock(skillService, event, player, true);
     }
 
     @Listener(order = Order.PRE)
     public void onChangeBlockModify(final ChangeBlockEvent.Modify event, @Root final Player player) {
-        this.handleChangeBlock(event, player, false);
+      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
+      this.handleChangeBlock(skillService, event, player, false);
     }
 
     @Listener(order = Order.PRE)
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final Player player) {
-        this.handleChangeBlock(event, player, false);
+      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
+      this.handleChangeBlock(skillService, event, player, false);
     }
 
     @Listener(order = Order.PRE)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
-        this.handleInteractItem(event, player);
+      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
+      this.handleInteractItem(skillService, event, player);
     }
 
     @Listener(order = Order.PRE)
     public void onInteractItem(final InteractBlockEvent event, @Root final Player player) {
-        this.handleInteractBlock(event, player);
+      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
+      this.handleInteractBlock(skillService, event, player);
     }
 
     @Listener(order = Order.PRE)
     public void onCraftItemCraft(final CraftItemEvent.Craft event, @First final Player player) {
-        this.handleCraftItem(event, player);
+      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
+      this.handleCraftItem(skillService, event, player);
     }
 
     @Listener(order = Order.PRE)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
-        this.handleDropItemEvent(event, player);
+      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+
+      this.handleDropItemEvent(skillService, event, player);
     }
 
     @Listener(order = Order.PRE)
@@ -250,13 +263,13 @@ public final class BuiltinEventListener implements Witness {
         DiggerRegistar.configure();
     }
 
-    private void handleChangeBlock(final ChangeBlockEvent event, final Player player, final boolean originalState) {
+    private void handleChangeBlock(final SkillService skillService, final ChangeBlockEvent event, final Player player, final boolean originalState) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder =
-            this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
+          .orElse(null);
 
         if (skillHolder == null) {
             return;
@@ -361,7 +374,7 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.saveHolder(skillHolder);
+                    skillService.saveHolder(skillHolder, true);
                 }
             }
         }
@@ -394,13 +407,13 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    private void handleInteractItem(final InteractItemEvent event, final Player player) {
+    private void handleInteractItem(final SkillService skillService, final InteractItemEvent event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder =
-            this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
+          .orElse(null);
 
         if (skillHolder == null) {
             return;
@@ -421,7 +434,9 @@ public final class BuiltinEventListener implements Witness {
 
         final Set<Map.Entry<SkillType, List<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
-            .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
+            .filter(kv -> skills
+              .stream()
+              .anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
 
         if (skillChains.isEmpty()) {
@@ -507,7 +522,7 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.saveHolder(skillHolder);
+                    skillService.saveHolder(skillHolder, true);
                 }
             }
         }
@@ -540,13 +555,13 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    private void handleInteractBlock(final InteractBlockEvent event, final Player player) {
+    private void handleInteractBlock(final SkillService skillService, final InteractBlockEvent event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder =
-            this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
+          .orElse(null);
 
         if (skillHolder == null) {
             return;
@@ -567,7 +582,9 @@ public final class BuiltinEventListener implements Witness {
 
         final Set<Map.Entry<SkillType, List<BlockChain>>> skillChains = eventChains.entrySet()
             .stream()
-            .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
+            .filter(kv -> skills
+              .stream()
+              .anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
 
         if (skillChains.isEmpty()) {
@@ -651,7 +668,7 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.saveHolder(skillHolder);
+                    skillService.saveHolder(skillHolder, true);
                 }
             }
         }
@@ -684,13 +701,13 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    private void handleCraftItem(final CraftItemEvent.Craft event, final Player player) {
+    private void handleCraftItem(final SkillService skillService, final CraftItemEvent.Craft event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder =
-            this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
+          .orElse(null);
 
         if (skillHolder == null) {
             return;
@@ -711,7 +728,9 @@ public final class BuiltinEventListener implements Witness {
 
         final Set<Map.Entry<SkillType, List<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
-            .filter(kv -> skills.stream().anyMatch(v -> v.getSkillType() == kv.getKey()))
+            .filter(kv -> skills
+              .stream()
+              .anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
 
         if (skillChains.isEmpty()) {
@@ -809,7 +828,7 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.saveHolder(skillHolder);
+                    skillService.saveHolder(skillHolder, true);
                 }
             }
         }
@@ -842,7 +861,7 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    private void handleDropItemEvent(final DropItemEvent.Destruct event, final Player player) {
+    private void handleDropItemEvent(final SkillService skillService, final DropItemEvent.Destruct event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
@@ -857,8 +876,8 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final SkillHolder skillHolder =
-            this.skillManager.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId()).orElse(null);
+        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
+          .orElse(null);
 
         if (skillHolder == null) {
             return;
@@ -953,7 +972,7 @@ public final class BuiltinEventListener implements Witness {
                 if (result.getType() == Result.Type.CANCELLED) {
                     totalMoneyGained.remove(skill);
                 } else {
-                    this.skillManager.saveHolder(skillHolder);
+                    skillService.saveHolder(skillHolder, true);
                 }
             }
         }

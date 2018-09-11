@@ -29,15 +29,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import org.inspirenxe.skills.api.Result;
+import org.inspirenxe.skills.api.result.Result;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.inspirenxe.skills.api.event.ExperienceResult;
+import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostEventImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePostLevelEventImpl;
 import org.inspirenxe.skills.impl.event.experience.change.ChangeExperiencePreEventImpl;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.EventManager;
 
 import java.util.Objects;
@@ -94,29 +96,37 @@ public final class SkillImpl implements Skill {
 
     final int originalLevel = this.getCurrentLevel();
     final double originalExperience = this.experience;
-    final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(this, originalExperience, experience);
-    if (this.eventManager.post(event)) {
-      return ExperienceResult.builder().type(Result.Type.CANCELLED).build();
+
+    try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+
+      final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(frame.getCurrentCause(), this, originalExperience, experience);
+      if (this.eventManager.post(event)) {
+        return ExperienceResult.builder().type(Result.Type.CANCELLED).build();
+      }
+
+      if (this.skillType.getLevelFunction().getLevelFor(experience) < this.skillType.getMinLevel()) {
+        return ExperienceResult
+          .builder()
+          .type(Result.Type.ERROR)
+          .exception(new ArithmeticException("Experience cannot be lower than the experience at min level!"))
+          .build();
+      }
+
+      this.experience = event.getExperience();
+
+      final int level = this.getCurrentLevel();
+
+      if (originalLevel != level) {
+        this.eventManager.post(new ChangeExperiencePostLevelEventImpl(frame.getCurrentCause(), this, originalExperience, this.experience,
+          originalLevel, level));
+      } else {
+        this.eventManager.post(new ChangeExperiencePostEventImpl(frame.getCurrentCause(), this, originalExperience, this.experience));
+      }
+
+      this.setDirty(true);
+
+      return ExperienceResult.builder().type(Result.Type.SUCCESS).xp(event.getExperienceDifference()).build();
     }
-
-    if (this.skillType.getLevelFunction().getLevelFor(experience) < this.skillType.getMinLevel()) {
-      return ExperienceResult.builder().type(Result.Type.ERROR).exception(new ArithmeticException("Experience cannot be lower than the experience at min "
-        + "level!")).build();
-    }
-
-    this.experience = event.getExperience();
-
-    final int level = this.getCurrentLevel();
-
-    if (originalLevel != level) {
-      this.eventManager.post(new ChangeExperiencePostLevelEventImpl(this, originalExperience, this.experience, originalLevel, level));
-    } else {
-      this.eventManager.post(new ChangeExperiencePostEventImpl(this, originalExperience, this.experience));
-    }
-
-    this.setDirtyState(true);
-
-    return ExperienceResult.builder().type(Result.Type.SUCCESS).xp(event.getExperienceDifference()).build();
   }
 
   @Override
@@ -130,12 +140,12 @@ public final class SkillImpl implements Skill {
   }
 
   @Override
-  public boolean isDirtyState() {
+  public boolean isDirty() {
     return this.dirtyState;
   }
 
   @Override
-  public void setDirtyState(final boolean dirtyState) {
+  public void setDirty(final boolean dirtyState) {
     this.dirtyState = dirtyState;
   }
 

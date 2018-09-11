@@ -26,18 +26,19 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin;
 
 import com.almuradev.toolbox.inject.ToolboxBinder;
 import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CommonRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.CraftingRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.DiggerRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.FarmingRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.MiningRegistar;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.skill.WoodcuttingRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CommonRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CraftingRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.DiggerRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.FarmingRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.MiningRegistar;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.WoodcuttingRegistar;
 
 public final class BuiltinModule extends AbstractModule implements ToolboxBinder {
 
     @Override
     protected void configure() {
-        this.facet().add(BuiltinEventListener.class);
+        this.facet()
+          .add(BuiltinEventListener.class);
         this.requestStaticInjection(CommonRegistar.class);
         this.requestStaticInjection(MiningRegistar.class);
         this.requestStaticInjection(CraftingRegistar.class);

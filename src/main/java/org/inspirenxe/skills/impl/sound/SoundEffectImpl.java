@@ -31,7 +31,6 @@ import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 
-// TODO This needs to go to common..
 public final class SoundEffectImpl implements SoundEffect {
 
   private final SoundType type;

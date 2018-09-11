@@ -26,9 +26,7 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
 import java.util.Collection;
@@ -37,10 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
 public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<SkillType> {
-
-  public static final SkillTypeRegistryModule instance = new SkillTypeRegistryModule();
 
   private final Map<String, SkillType> map = new HashMap<>();
 

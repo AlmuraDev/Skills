@@ -31,12 +31,6 @@ import com.almuradev.droplet.registry.reference.RegistryReference;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 

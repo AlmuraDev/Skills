@@ -28,8 +28,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.SkillsImpl;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.Chain;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -40,12 +41,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unchecked")
 public final class BlockChain extends Chain<BlockChain> {
 
+    private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
     public List<BlockState> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
-    public TriFunction<Player, Skill, BlockSnapshot, Boolean> owner;
+    @Nullable public TriFunction<Player, Skill, BlockSnapshot, Boolean> owner;
 
     public BlockChain inverseQuery() {
         if (this.inErrorState) {
@@ -62,7 +66,7 @@ public final class BlockChain extends Chain<BlockChain> {
         checkNotNull(id);
         final BlockType blockType = Sponge.getRegistry().getType(BlockType.class, id).orElse(null);
         if (blockType == null) {
-            SkillsImpl.INSTANCE.getLogger().error("Unknown block id '" + id + "' given to block chain!");
+            logger.error("Unknown block id '" + id + "' given to block chain!");
             this.inErrorState = true;
             return this;
         }

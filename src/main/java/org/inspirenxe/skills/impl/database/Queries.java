@@ -41,6 +41,7 @@ public final class Queries {
 
   public static DatabaseQuery<SelectConditionStep<SkillsExperienceRecord>> createFetchExperienceQuery(final UUID container, final UUID holder,
     final String skillType) {
+
     checkNotNull(container);
     checkNotNull(holder);
     checkNotNull(skillType);
@@ -88,6 +89,7 @@ public final class Queries {
 
   public static DatabaseQuery<SelectConditionStep<Record1<Integer>>> createHasExperienceInSkillQuery(final UUID container, final UUID holder, final
   String skillType) {
+
     checkNotNull(container);
     checkNotNull(holder);
     checkNotNull(skillType);

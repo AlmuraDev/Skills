@@ -27,24 +27,13 @@ package org.inspirenxe.skills.impl.content.type.skill;
 import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
 import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillTypeImpl;
-import org.inspirenxe.skills.impl.SkillsImpl;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventScript;
-import org.inspirenxe.skills.impl.content.type.skill.component.event.EventType;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 @Singleton
 public final class SkillTypeRootLoader extends RootContentLoaderImpl<ContentSkillType.Child, ContentSkillTypeBuilder> implements Witness {

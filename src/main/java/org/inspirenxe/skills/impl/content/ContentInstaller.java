@@ -44,7 +44,7 @@ public final class ContentInstaller implements Witness {
     this.contentManager = contentManager;
   }
 
-  @Listener(order = Order.AFTER_PRE)
+  @Listener(order = Order.PRE)
   public void onGameConstruction(final GameConstructionEvent event) {
     this.contentManager.discover();
     this.contentManager.parse();

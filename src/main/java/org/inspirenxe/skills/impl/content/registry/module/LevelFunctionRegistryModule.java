@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
@@ -36,10 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
 public final class LevelFunctionRegistryModule implements AdditionalCatalogRegistryModule<LevelFunctionType> {
-
-  public static final LevelFunctionRegistryModule instance = new LevelFunctionRegistryModule();
 
   private final Map<String, LevelFunctionType> map = new HashMap<>();
 

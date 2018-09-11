@@ -127,12 +127,14 @@ public interface ExperienceEvent extends Event {
 
         /**
          * Gets the original level.
+         *
          * @return The original level
          */
         int getOriginalLevel();
 
         /**
          * Gets the new level.
+         *
          * @return The new level
          */
         int getLevel();

@@ -33,7 +33,6 @@ import org.spongepowered.api.effect.sound.SoundType;
 
 import javax.annotation.Nullable;
 
-// TODO This needs to go to common..
 public final class SoundEffectBuilderImpl implements SoundEffect.Builder {
 
   @Nullable private SoundType soundType;

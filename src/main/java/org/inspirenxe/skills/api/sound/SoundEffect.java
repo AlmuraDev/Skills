@@ -30,7 +30,6 @@ import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.util.ResettableBuilder;
 
-// TODO This needs to go to API...
 public interface SoundEffect extends DataSerializable {
 
   static Builder builder() {

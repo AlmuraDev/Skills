@@ -26,7 +26,6 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
@@ -36,10 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
 public final class EconomyFunctionRegistryModule implements AdditionalCatalogRegistryModule<EconomyFunctionType> {
-
-  public static final EconomyFunctionRegistryModule instance = new EconomyFunctionRegistryModule();
 
   private final Map<String, EconomyFunctionType> map = new HashMap<>();
 

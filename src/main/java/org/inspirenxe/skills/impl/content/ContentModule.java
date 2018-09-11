@@ -26,17 +26,24 @@ package org.inspirenxe.skills.impl.content;
 
 import com.almuradev.droplet.component.range.RangeModule;
 import com.almuradev.droplet.content.configuration.ContentConfiguration;
+import com.almuradev.droplet.content.feature.context.FeatureContext;
+import com.almuradev.droplet.content.inject.DynamicProvider;
+import com.almuradev.droplet.content.inject.GlobalBinder;
+import com.almuradev.droplet.content.loader.ContentManager;
+import com.almuradev.droplet.content.loader.ContentManagerImpl;
 import com.almuradev.droplet.content.loader.finder.ContentFinder;
+import com.almuradev.droplet.content.processor.GlobalProcessor;
 import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import net.kyori.fragment.filter.FilterModule;
+import com.google.inject.TypeLiteral;
 import net.kyori.violet.AbstractModule;
+import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.ParserModule;
 import org.inspirenxe.skills.impl.content.loader.finder.ContentFinderImpl;
-import org.inspirenxe.skills.impl.content.parser.ParserModule;
+import org.inspirenxe.skills.impl.content.parser.SkillsParserModule;
 import org.inspirenxe.skills.impl.content.registry.RegistryModule;
 import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinModule;
 import org.spongepowered.api.config.ConfigDir;
 
@@ -44,23 +51,26 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-public final class ContentModule extends AbstractModule implements ToolboxBinder {
+public final class ContentModule extends AbstractModule implements ToolboxBinder, GlobalBinder {
 
   @Override
   protected void configure() {
-    this.install(new FilterModule());
-    this.install(new net.kyori.xml.node.parser.ParserModule());
-    this.install(new RangeModule());
-    this.install(new com.almuradev.droplet.content.ContentModule());
-    this.install(new ContentTypeModule());
-    //this.install(new ComponentModule());
-    //this.install(new DropletModule());
-    this.install(new ParserModule());
-    this.install(new RegistryModule());
+    this.bindGlobalProcessor(DummyGlobalProcessor.class);
 
+    this.bind(ContentManager.class).to(ContentManagerImpl.class);
+    this.bind(net.kyori.feature.FeatureDefinitionContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {});
+    this.bind(FeatureContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {});
+    this.bind(new TypeLiteral<DynamicProvider<FeatureContext>>() {}).toInstance(new DynamicProvider<>());
     this.bind(ContentFinder.class).to(ContentFinderImpl.class);
-    this.facet().add(ContentInstaller.class);
+
+    this.install(new ParserModule());
+    this.install(new RangeModule());
+    this.install(new ContentTypeModule());
+    this.install(new SkillsParserModule());
+    this.install(new RegistryModule());
     this.install(new BuiltinModule());
+
+    this.facet().add(ContentInstaller.class);
   }
 
   @Provides
@@ -80,5 +90,14 @@ public final class ContentModule extends AbstractModule implements ToolboxBinder
         return this.maxDepth;
       }
     };
+  }
+
+  @Singleton
+  private static class DummyGlobalProcessor implements GlobalProcessor {
+
+    @Override
+    public void process(final Node node) {
+
+    }
   }
 }
