@@ -41,6 +41,7 @@ import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
@@ -194,6 +195,15 @@ public final class CommonRegistar {
                 final Player player = cause.first(Player.class).orElse(null);
 
                 if (player == null) {
+                    return;
+                }
+
+                if (cause.containsType(CommandCallable.class)) {
+                    return;
+                }
+                
+                final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
+                if (sneaking) {
                     return;
                 }
 

@@ -165,10 +165,6 @@ public final class BuiltinEventListener implements Witness {
 
     @Listener(order = Order.PRE)
     public void onChangeExperiencePost(final ExperienceEvent.Change.Post event, @First final Player player) {
-        final CommandCallable command = event.getCause().first(CommandCallable.class).orElse(null);
-
-        final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
-
         List<EventFeedback> messages = null;
         List<EventFeedback> effects = null;
 
@@ -223,7 +219,7 @@ public final class BuiltinEventListener implements Witness {
                     .forEach(v -> v.levelGained.accept(cause, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel()));
             }
 
-            if (command == null && !sneaking && effects != null) {
+            if (effects != null) {
                 try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
                     frame.pushCause(event.getSkill());
 
@@ -235,7 +231,7 @@ public final class BuiltinEventListener implements Witness {
                 }
             }
         } else {
-            if (command == null && !sneaking && effects != null) {
+            if (effects != null) {
                 // Xp effects
                 effects
                     .stream()
