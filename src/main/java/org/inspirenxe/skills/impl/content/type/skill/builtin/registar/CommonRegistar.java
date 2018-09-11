@@ -201,7 +201,7 @@ public final class CommonRegistar {
                 if (cause.containsType(CommandCallable.class)) {
                     return;
                 }
-                
+
                 final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
                 if (sneaking) {
                     return;

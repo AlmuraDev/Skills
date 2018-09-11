@@ -113,6 +113,14 @@ public final class ItemChain extends Chain<ItemChain> {
         return this;
     }
 
+    public ItemChain fuzzyMatch() {
+        if (this.inErrorState) {
+            return this;
+        }
+        this.matchOnlyType = false;
+        return this;
+    }
+
     @Override
     public ItemChain from(final ItemChain builder) {
         super.from(builder);

@@ -143,7 +143,7 @@ public final class BuiltinEventListener implements Witness {
     }
 
     @Listener(order = Order.PRE)
-    public void onInteractItem(final InteractBlockEvent event, @Root final Player player) {
+    public void onInteractBlock(final InteractBlockEvent event, @Root final Player player) {
       final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleInteractBlock(skillService, event, player);
@@ -1106,8 +1106,8 @@ public final class BuiltinEventListener implements Witness {
                             v.toQuery.stream().noneMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0) :
                             v.toQuery.stream().anyMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0);
                     } else {
-                        return v.inverseQuery ? v.toQuery.stream().noneMatch(s -> ItemStackComparators.ALL.compare(s, stack) == 0) :
-                            v.toQuery.stream().anyMatch(s -> ItemStackComparators.ALL.compare(s, stack) == 0);
+                        return v.inverseQuery ? v.toQuery.stream().noneMatch(s -> ItemStackComparators.IGNORE_SIZE.compare(s, stack) == 0) :
+                            v.toQuery.stream().anyMatch(s -> ItemStackComparators.IGNORE_SIZE.compare(s, stack) == 0);
                     }
                 })
                 .findAny()

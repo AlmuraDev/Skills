@@ -32,11 +32,14 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 public final class FarmingRegistar {
 
@@ -67,8 +70,11 @@ public final class FarmingRegistar {
         ;
 
         // Bonemeal
+        final ItemStack bonemealStack = ItemStack.of(ItemTypes.DYE, 1);
+        bonemealStack.offer(Keys.DYE_COLOR, DyeColors.WHITE);
+
         listener
-          .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DYE).level(20))
+          .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).fuzzyMatch().query(bonemealStack).level(20))
         ;
 
         // Plant crops
