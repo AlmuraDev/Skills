@@ -82,8 +82,6 @@ public final class SkillImpl implements Skill {
 
     if (experience < 0) {
       exception = new ArithmeticException("Experience must be positive!");
-    } else if (this.skillType.getLevelFunction().getLevelFor(experience) < this.skillType.getMinLevel()) {
-      exception = new ArithmeticException("Experience cannot be lower than the experience at min level!");
     }
 
     if (exception != null) {
@@ -102,14 +100,6 @@ public final class SkillImpl implements Skill {
       final ExperienceEvent.Change.Pre event = new ChangeExperiencePreEventImpl(frame.getCurrentCause(), this, originalExperience, experience);
       if (this.eventManager.post(event)) {
         return ExperienceResult.builder().type(Result.Type.CANCELLED).build();
-      }
-
-      if (this.skillType.getLevelFunction().getLevelFor(experience) < this.skillType.getMinLevel()) {
-        return ExperienceResult
-          .builder()
-          .type(Result.Type.ERROR)
-          .exception(new ArithmeticException("Experience cannot be lower than the experience at min level!"))
-          .build();
       }
 
       this.experience = event.getExperience();

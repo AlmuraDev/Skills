@@ -44,16 +44,15 @@ public final class SkillTypeImpl implements SkillType, Content {
     private final Text formattedName;
     private final RegistryReference<LevelFunctionType> levelFunction;
     private final RegistryReference<EconomyFunctionType> economyFunction;
-    private final int minLevel, maxLevel;
+    private final int maxLevel;
 
     public SkillTypeImpl(final RegistryKey registryKey, final String name, final RegistryReference<LevelFunctionType> levelFunction,
-        final RegistryReference<EconomyFunctionType> economyFunction, final int minLevel, final int maxLevel) {
+        final RegistryReference<EconomyFunctionType> economyFunction, final int maxLevel) {
         this.registryKey = registryKey;
         this.name = TextSerializers.FORMATTING_CODE.stripCodes(name);
         this.formattedName = TextSerializers.FORMATTING_CODE.deserialize(name);
         this.levelFunction = levelFunction;
         this.economyFunction = economyFunction;
-        this.minLevel = minLevel;
         this.maxLevel = maxLevel;
     }
 
@@ -80,11 +79,6 @@ public final class SkillTypeImpl implements SkillType, Content {
     @Override
     public Optional<EconomyFunctionType> getEconomyFunction() {
         return Optional.ofNullable(this.economyFunction.get());
-    }
-
-    @Override
-    public int getMinLevel() {
-        return this.minLevel;
     }
 
     @Override
@@ -116,7 +110,6 @@ public final class SkillTypeImpl implements SkillType, Content {
                 .add("id", this.registryKey)
                 .add("levelFunction", this.levelFunction.require())
                 .add("economyFunction", this.economyFunction.get())
-                .add("minLevel", this.minLevel)
                 .add("maxLevel", this.maxLevel)
                 .toString();
     }

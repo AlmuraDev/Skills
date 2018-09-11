@@ -39,7 +39,5 @@ public interface SkillType extends CatalogType {
 
   Optional<EconomyFunctionType> getEconomyFunction();
 
-  int getMinLevel();
-
   int getMaxLevel();
 }

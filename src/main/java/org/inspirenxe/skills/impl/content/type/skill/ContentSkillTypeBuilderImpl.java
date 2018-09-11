@@ -39,7 +39,7 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   @Nullable private String name;
   @Nullable private RegistryReference<LevelFunctionType> levelFunction;
   @Nullable private RegistryReference<EconomyFunctionType> economyFunction;
-  private int minLevel, maxLevel;
+  private int maxLevel;
 
   @Override
   public void name(final String name) {
@@ -57,11 +57,6 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
   }
 
   @Override
-  public void minLevel(final int minLevel) {
-    this.minLevel = minLevel;
-  }
-
-  @Override
   public void maxLevel(final int maxLevel) {
     this.maxLevel = maxLevel;
   }
@@ -72,6 +67,6 @@ public final class ContentSkillTypeBuilderImpl extends AbstractContentBuilder<Sk
     checkNotNull(this.levelFunction);
     checkNotNull(this.economyFunction);
 
-    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.economyFunction, this.minLevel, this.maxLevel);
+    return new SkillTypeImpl(this.key(), this.name, this.levelFunction, this.economyFunction, this.maxLevel);
   }
 }

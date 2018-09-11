@@ -38,7 +38,5 @@ public interface ContentSkillTypeBuilder extends ContentBuilder<SkillTypeImpl> {
 
   void economyFunction(final RegistryReference<EconomyFunctionType> economyFunction);
 
-  void minLevel(final int minLevel);
-
   void maxLevel(final int maxLevel);
 }
