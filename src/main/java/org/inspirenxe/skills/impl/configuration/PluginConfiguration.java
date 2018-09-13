@@ -22,32 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event.experience.change;
+package org.inspirenxe.skills.impl.configuration;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.event.cause.Cause;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
-public final class ChangeExperiencePreEventImpl extends ChangeExperienceEventImpl implements ExperienceEvent.Change.Pre {
+import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfiguration;
+import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
 
-  private boolean isCancelled = false;
+public final class PluginConfiguration {
 
-  public ChangeExperiencePreEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience) {
-    super(cause, skill, originalExperience, experience);
+  private final DatabaseConfiguration databaseConfiguration;
+  private final ContainerShareConfiguration containerShareConfiguration;
+  private final int saveInterval;
+
+  PluginConfiguration(final DatabaseConfiguration databaseConfiguration, final ContainerShareConfiguration containerShareConfiguration,
+    final int saveInterval) {
+    this.databaseConfiguration = checkNotNull(databaseConfiguration);
+    this.containerShareConfiguration = checkNotNull(containerShareConfiguration);
+
+    checkState(saveInterval > 0);
+
+    this.saveInterval = saveInterval;
   }
 
-  @Override
-  public void setExperience(final double experience) {
-    this.experience = experience;
+  public DatabaseConfiguration getDatabaseConfiguration() {
+    return this.databaseConfiguration;
   }
 
-  @Override
-  public boolean isCancelled() {
-    return this.isCancelled;
+  public ContainerShareConfiguration getContainerShareConfiguration() {
+    return this.containerShareConfiguration;
   }
 
-  @Override
-  public void setCancelled(final boolean cancel) {
-    this.isCancelled = cancel;
+  public int getSaveInterval() {
+    return this.saveInterval;
   }
 }

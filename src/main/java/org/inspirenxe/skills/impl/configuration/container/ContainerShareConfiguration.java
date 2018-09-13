@@ -22,23 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event.experience.save;
+package org.inspirenxe.skills.impl.configuration.container;
 
-import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.event.cause.Cause;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.UUID;
+import java.util.Map;
+import java.util.Optional;
 
-public final class SaveExperiencePreEventImpl extends SaveExperienceEventImpl implements ExperienceEvent.Save.Pre {
+public class ContainerShareConfiguration {
 
-  public SaveExperiencePreEventImpl(final Cause cause, final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType,
-      final double originalExperience, final double experience) {
-    super(cause, containerUniqueId, holderUniqueId, skillType, originalExperience, experience);
+  private final Map<String, String> containerShares;
+
+  public ContainerShareConfiguration(final Map<String, String> containerShares) {
+    this.containerShares = containerShares;
   }
 
-  @Override
-  public void setExperience(final double experience) {
-    this.experience = experience;
+  public Optional<String> getShare(final String name) {
+    checkNotNull(name);
+
+    return Optional.ofNullable(this.containerShares.get(name));
   }
 }

@@ -26,8 +26,6 @@ package org.inspirenxe.skills.impl.sound;
 
 import com.google.common.base.MoreObjects;
 import org.inspirenxe.skills.api.sound.SoundEffect;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 
@@ -79,16 +77,5 @@ public final class SoundEffectImpl implements SoundEffect {
         .add("volume", this.volume)
         .add("pitch", this.pitch)
         .toString();
-  }
-
-  @Override
-  public int getContentVersion() {
-    return 1;
-  }
-
-  @Override
-  public DataContainer toContainer() {
-    // TODO Need to ask gabizou on this
-    return new MemoryDataContainer();
   }
 }

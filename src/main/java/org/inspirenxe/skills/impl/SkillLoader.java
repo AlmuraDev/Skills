@@ -26,85 +26,166 @@ package org.inspirenxe.skills.impl;
 
 import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
+import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
+import org.inspirenxe.skills.api.SkillHolderContainer;
 import org.inspirenxe.skills.api.SkillService;
+import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.service.ServiceManager;
 
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 
 public final class SkillLoader implements Witness {
 
   private final PluginContainer container;
+  private final Scheduler scheduler;
   private final ServiceManager serviceManager;
-  private final SkillServiceImpl.Factory serviceFactory;
+  private final SkillServiceImpl.Factory factory;
 
   @Inject
-  public SkillLoader(final PluginContainer container, final ServiceManager serviceManager, final SkillServiceImpl.Factory serviceFactory) {
+  public SkillLoader(final PluginContainer container, final Scheduler scheduler, final ServiceManager serviceManager,
+    final SkillServiceImpl.Factory factory) {
     this.container = container;
+    this.scheduler = scheduler;
     this.serviceManager = serviceManager;
-    this.serviceFactory = serviceFactory;
+    this.factory = factory;
   }
 
   @Listener(order = Order.AFTER_PRE)
   public void onGameConstruction(final GameConstructionEvent event) {
-    this.serviceManager.setProvider(this.container, SkillService.class, this.serviceFactory.create());
+    this.serviceManager.setProvider(this.container, SkillService.class, this.factory.create());
   }
 
-  @Listener
+  @Listener(order = Order.PRE)
+  public void onLoadWorld(final LoadWorldEvent event) {
+    final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
+    service.createContainer(event.getTargetWorld().getUniqueId(), event.getTargetWorld().getName());
+  }
+
+  @Listener(order = Order.PRE)
   public void onUnloadWorld(final UnloadWorldEvent event) {
-    final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
-    skillService.saveContainer(event.getTargetWorld().getUniqueId(), false);
-    skillService.removeContainer(event.getTargetWorld().getUniqueId());
+    final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
+    service.removeContainer(event.getTargetWorld().getUniqueId()).ifPresent(SkillHolderContainer::save);
   }
 
   @Listener(order = Order.LAST)
-  public void onClientConnectionJoinByPlayer(final ClientConnectionEvent.Join event, @Root final Player player) {
-    final UUID container = Sponge.getServer().getDefaultWorld().get().getUniqueId();
-    final UUID holder = player.getUniqueId();
+  public void onClientConnectionJoinByPlayer(final ClientConnectionEvent.Join event, @Getter("getTargetEntity") final Player player) {
+    final UUID containerId = player.getWorld().getUniqueId();
+    final UUID holderId = player.getUniqueId();
 
-    final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+    final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-    skillService.loadHolder(container, holder, true);
+    this.getContainerOrParent(service, containerId).ifPresent(container -> {
+      final SkillHolder holder = container.createHolder(holderId, player.getName());
+
+      this.scheduler
+        .createTaskBuilder()
+        .async()
+        .execute(() -> holder.getSkills().values().forEach(Skill::load))
+        .submit(this.container);
+    });
   }
 
-  @Listener
-  public void onClientConnectionDisconnectByPlayer(final ClientConnectionEvent.Disconnect event, @Root final Player player) {
-    final UUID container = Sponge.getServer().getDefaultWorld().get().getUniqueId();
-    final UUID holder = player.getUniqueId();
+  @Listener(order = Order.LAST)
+  public void onMoveEntityTeleport(final MoveEntityEvent.Teleport event, @Getter("getTargetEntity") final Player player) {
+    final UUID fromContainerId = event.getFromTransform().getExtent().getUniqueId();
+    final UUID toContainerId = event.getToTransform().getExtent().getUniqueId();
+    final UUID holderId = player.getUniqueId();
+    final String holderName = player.getName();
 
-    final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
-
-    // Save skills for the holder in the old container and remove them
-    final Set<SkillHolder> holders = skillService.getHoldersInContainer(container);
-    if (holders.isEmpty()) {
+    if (fromContainerId.equals(toContainerId)) {
       return;
     }
 
-    final SkillHolder skillHolder = holders
-      .stream()
-      .filter((h) -> h.getHolderUniqueId().equals(holder))
-      .findFirst()
-      .orElse(null);
+    this.handleContainerChange(fromContainerId, toContainerId, holderId, holderName);
+  }
 
-    if (skillHolder == null) {
+  @Listener(order = Order.LAST)
+  public void onRespawnPlayer(final RespawnPlayerEvent event, @Getter("getTargetEntity") final Player player) {
+    final UUID fromContainerId = event.getFromTransform().getExtent().getUniqueId();
+    final UUID toContainerId = event.getToTransform().getExtent().getUniqueId();
+    final UUID holderId = player.getUniqueId();
+    final String holderName = player.getName();
+
+    if (fromContainerId.equals(toContainerId)) {
       return;
     }
 
-    if (holders.size() == 1) {
-      skillService.saveContainer(container, false);
-      skillService.removeContainer(container);
-    } else {
-      holders.remove(skillHolder);
+    this.handleContainerChange(fromContainerId, toContainerId, holderId, holderName);
+  }
+
+  @Listener(order = Order.PRE)
+  public void onClientConnectionDisconnectByPlayer(final ClientConnectionEvent.Disconnect event, @Getter("getTargetEntity") final Player player) {
+    final UUID containerId = player.getWorld().getUniqueId();
+    final UUID holderId = player.getUniqueId();
+
+    final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
+    try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+      this.getContainerOrParent(service, containerId).ifPresent(container -> container.removeHolder(holderId).ifPresent(SkillHolder::save));
+    }
+  }
+
+  private Optional<SkillHolderContainer> getContainerOrParent(final SkillService service, final UUID containerId) {
+    SkillHolderContainer container = service.getContainer(containerId).orElse(null);
+
+    if (container != null) {
+      container = service.getParentContainer(container).orElse(null);
+    }
+
+    return Optional.ofNullable(container);
+  }
+
+  private void handleContainerChange(final UUID fromContainerId, final UUID toContainerId, final UUID holderId, final String holderName) {
+    final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+    final SkillHolderContainer fromContainer = service.getContainer(fromContainerId).orElse(null);
+    SkillHolderContainer toContainer = service.getContainer(toContainerId).orElse(null);
+
+    boolean remove = true;
+
+    if (fromContainer == null) {
+      remove = false;
+    }
+
+    if (toContainer != null) {
+      final SkillHolderContainer parentContainer = service.getParentContainer(toContainer).orElse(null);
+      if (fromContainer == parentContainer) {
+        remove = false;
+      }
+    }
+
+    if (remove) {
+      this.scheduler
+        .createTaskBuilder()
+        .async()
+        .execute(() -> fromContainer.removeHolder(holderId).ifPresent(SkillHolder::save))
+        .submit(this.container);
+
+      if (toContainer != null) {
+        final SkillHolder holder = toContainer.createHolder(holderId, holderName);
+        this.scheduler
+          .createTaskBuilder()
+          .async()
+          .execute(() -> holder.getSkills().values().forEach(Skill::load))
+          .submit(this.container);
+      }
     }
   }
 }

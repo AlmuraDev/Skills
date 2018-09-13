@@ -56,7 +56,7 @@ public final class SoundEffectTypeImpl implements SkillsSoundEffectType {
   }
 
   @Override
-  public void play(final Location<World> location, final Viewer viewer) {
+  public void play(final Location<World> location) {
     // TODO Need a way to play a sound to only one person..
   }
 }

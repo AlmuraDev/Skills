@@ -22,15 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event.experience.change;
-
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.event.cause.Cause;
-
-public class ChangeExperiencePostEventImpl extends ChangeExperienceEventImpl implements ExperienceEvent.Change.Post {
-
-  public ChangeExperiencePostEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience) {
-    super(cause, skill, originalExperience, experience);
-  }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.api.result.experience;

@@ -24,19 +24,34 @@
  */
 package org.inspirenxe.skills.api;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.spongepowered.api.util.Identifiable;
+
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
-public interface SkillHolder {
+public interface SkillHolder extends Identifiable, Nameable {
 
-  UUID getContainerUniqueId();
-
-  UUID getHolderUniqueId();
-
-  Optional<Skill> getSkill(final SkillType type);
+  SkillHolderContainer getContainer();
 
   Map<SkillType, Skill> getSkills();
 
-  Skill addSkill(final SkillType skillType);
+  default Optional<Skill> getSkill(final SkillType type) {
+    checkNotNull(type);
+
+    return Optional.ofNullable(this.getSkills().get(type));
+  }
+
+  Skill createSkill(final SkillType type);
+
+  default void saveSkill(final SkillType type) {
+    this.getSkill(type).ifPresent(Skill::save);
+  }
+
+  Optional<Skill> removeSkill(final SkillType skillType);
+
+  default void save() {
+    this.getSkills().values().forEach(Skill::save);
+  }
 }

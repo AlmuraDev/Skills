@@ -29,11 +29,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillHolderContainer;
+import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.SkillType;
+import org.spongepowered.api.GameRegistry;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,27 +43,22 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public final class SkillHolderImpl implements SkillHolder {
+public final class SkillHolderContainerImpl implements SkillHolderContainer {
 
-  private final SkillImpl.Factory factory;
-  private final SkillHolderContainer container;
+  private final GameRegistry registry;
+  private final SkillHolderImpl.Factory factory;
   private final UUID uniqueId;
   private final String name;
 
-  private final Map<SkillType, Skill> skills = new HashMap<>();
+  private final Map<UUID, SkillHolder> holders = new HashMap<>();
 
   @Inject
-  private SkillHolderImpl(final SkillImpl.Factory factory, @Assisted final SkillHolderContainer container, @Assisted final UUID uniqueId,
+  public SkillHolderContainerImpl(final GameRegistry registry, final SkillHolderImpl.Factory factory, @Assisted final UUID uniqueId,
     @Assisted final String name) {
+    this.registry = registry;
     this.factory = factory;
-    this.container = checkNotNull(container);
     this.uniqueId = checkNotNull(uniqueId);
     this.name = checkNotNull(name);
-  }
-
-  @Override
-  public SkillHolderContainer getContainer() {
-    return this.container;
   }
 
   @Override
@@ -75,24 +72,29 @@ public final class SkillHolderImpl implements SkillHolder {
   }
 
   @Override
-  public Map<SkillType, Skill> getSkills() {
-    return Collections.unmodifiableMap(this.skills);
+  public Map<UUID, SkillHolder> getHolders() {
+    return Collections.unmodifiableMap(this.holders);
   }
 
   @Override
-  public Skill createSkill(final SkillType type) {
-    checkNotNull(type);
+  public SkillHolder createHolder(final UUID holderId, final String name) {
+    checkNotNull(holderId);
+    checkNotNull(name);
 
-    final SkillImpl skill = this.factory.create(this, type);
-    this.skills.put(type, skill);
-    return skill;
+    final SkillHolderImpl holder = this.factory.create(this, holderId, name);
+    this.holders.put(holderId, holder);
+
+    final Collection<SkillType> skillTypes = this.registry.getAllOf(SkillType.class);
+    skillTypes.forEach(holder::createSkill);
+
+    return holder;
   }
 
   @Override
-  public Optional<Skill> removeSkill(final SkillType type) {
-    checkNotNull(type);
+  public Optional<SkillHolder> removeHolder(final UUID holderId) {
+    checkNotNull(holderId);
 
-    return Optional.ofNullable(this.skills.remove(type));
+    return Optional.ofNullable(this.holders.remove(holderId));
   }
 
   @Override
@@ -100,11 +102,11 @@ public final class SkillHolderImpl implements SkillHolder {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof SkillHolderImpl)) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final SkillHolderImpl other = (SkillHolderImpl) o;
-    return Objects.equals(this.uniqueId, other.uniqueId);
+    final SkillHolderContainerImpl that = (SkillHolderContainerImpl) o;
+    return Objects.equals(this.uniqueId, that.uniqueId);
   }
 
   @Override
@@ -115,14 +117,12 @@ public final class SkillHolderImpl implements SkillHolder {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-      .add("container", this.container.getUniqueId())
       .add("id", this.uniqueId)
       .add("name", this.name)
-      .add("skills", this.skills)
       .toString();
   }
 
-  public interface Factory {
-    SkillHolderImpl create(final SkillHolderContainer container, final UUID uniqueId, final String name);
+  interface Factory {
+    SkillHolderContainerImpl create(final SkillService service, final UUID uniqueId, final String name);
   }
 }
