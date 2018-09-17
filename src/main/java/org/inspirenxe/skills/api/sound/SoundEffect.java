@@ -30,7 +30,7 @@ import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.util.ResettableBuilder;
 
-public interface SoundEffect extends DataSerializable {
+public interface SoundEffect {
 
   static Builder builder() {
     return Sponge.getRegistry().createBuilder(Builder.class);

@@ -29,12 +29,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.SkillHolderContainer;
 import org.inspirenxe.skills.api.SkillService;
+import org.inspirenxe.skills.api.event.ChangeExperienceEvent;
 import org.inspirenxe.skills.api.result.Result;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
 import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.Chain;
@@ -50,7 +51,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -117,64 +117,76 @@ public final class BuiltinEventListener implements Witness {
 
     @Listener(order = Order.PRE)
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
-      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
-      this.handleChangeBlock(skillService, event, player, true);
+      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
+      this.handleChangeBlock(service, event, player, true);
     }
 
     @Listener(order = Order.PRE)
     public void onChangeBlockModify(final ChangeBlockEvent.Modify event, @Root final Player player) {
-      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleChangeBlock(skillService, event, player, false);
+      this.handleChangeBlock(service, event, player, false);
     }
 
     @Listener(order = Order.PRE)
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final Player player) {
-      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleChangeBlock(skillService, event, player, false);
+      this.handleChangeBlock(service, event, player, false);
     }
 
     @Listener(order = Order.PRE)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
-      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleInteractItem(skillService, event, player);
+      this.handleInteractItem(service, event, player);
     }
 
     @Listener(order = Order.PRE)
     public void onInteractBlock(final InteractBlockEvent event, @Root final Player player) {
-      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleInteractBlock(skillService, event, player);
+      this.handleInteractBlock(service, event, player);
     }
 
     @Listener(order = Order.PRE)
     public void onCraftItemCraft(final CraftItemEvent.Craft event, @Root final Player player) {
-      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleCraftItem(skillService, event, player);
+      this.handleCraftItem(service, event, player);
     }
 
     @Listener(order = Order.PRE)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
-      final SkillService skillService = this.serviceManager.provideUnchecked(SkillService.class);
+      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleDropItemEvent(skillService, event, player);
+      this.handleDropItemEvent(service, event, player);
     }
 
     @Listener(order = Order.PRE)
-    public void onChangeExperiencePost(final ExperienceEvent.Change.Post event, @First final Player player) {
+    public void onChangeExperiencePost(final ChangeExperienceEvent.Post event, @First final Player player) {
+
         List<EventFeedback> messages = null;
         List<EventFeedback> effects = null;
 
         final Cause cause = event.getCause();
-        final Event causeEvent = cause.first(Event.class).orElse(null);
 
+        Class<? extends Event> parentEventClazz = null;
+
+        final Event causeEvent = cause.first(Event.class).orElse(null);
         if (causeEvent != null) {
+            parentEventClazz = causeEvent.getClass();
+        } else if (cause.containsType(CommandCallable.class)) {
+            parentEventClazz = Event.class;
+        }
+
+        final Class<? extends Event> eventClazz = parentEventClazz;
+
+        if (eventClazz != null) {
             messages = this.messageBuilders.entrySet()
                 .stream()
-                .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
+                .filter(kv -> kv.getKey().isAssignableFrom(eventClazz))
                 .findAny()
                 .map(Map.Entry::getValue)
                 .orElse(new HashMap<>()).entrySet()
@@ -186,7 +198,7 @@ public final class BuiltinEventListener implements Witness {
 
             effects = this.effectBuilders.entrySet()
                 .stream()
-                .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
+                .filter(kv -> kv.getKey().isAssignableFrom(eventClazz))
                 .findAny()
                 .map(Map.Entry::getValue)
                 .orElse(new HashMap<>()).entrySet()
@@ -206,7 +218,9 @@ public final class BuiltinEventListener implements Witness {
                 .forEach(v -> v.xpGained.accept(cause, event.getSkill(), xpDiff));
         }
 
-        if (event instanceof ExperienceEvent.Change.Post.Level) {
+        if (event instanceof ChangeExperienceEvent.Post.Level) {
+
+            ChangeExperienceEvent.Post.Level levelEvent = (ChangeExperienceEvent.Post.Level) event;
 
             if (xpDiff < 0) {
                 return;
@@ -216,7 +230,7 @@ public final class BuiltinEventListener implements Witness {
                 messages
                     .stream()
                     .filter(v -> v.levelGained != null)
-                    .forEach(v -> v.levelGained.accept(cause, event.getSkill(), ((ExperienceEvent.Change.Post.Level) event).getLevel()));
+                    .forEach(v -> v.levelGained.accept(cause, event.getSkill(), levelEvent.getLevel()));
             }
 
             if (effects != null) {
@@ -226,8 +240,7 @@ public final class BuiltinEventListener implements Witness {
                     effects
                         .stream()
                         .filter(v -> v.levelGained != null)
-                        .forEach(effect -> effect.levelGained.accept(cause, event.getSkill(),
-                          ((ExperienceEvent.Change.Post.Level) event).getLevel()));
+                        .forEach(effect -> effect.levelGained.accept(cause, event.getSkill(), levelEvent.getLevel()));
                 }
             }
         } else {
@@ -262,13 +275,22 @@ public final class BuiltinEventListener implements Witness {
         DiggerRegistar.configure();
     }
 
-    private void handleChangeBlock(final SkillService skillService, final ChangeBlockEvent event, final Player player, final boolean originalState) {
+    private void handleChangeBlock(final SkillService service, final ChangeBlockEvent event, final Player player, final boolean originalState) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
-          .orElse(null);
+        final SkillHolderContainer worldContainer = service.getContainer(player.getWorld().getUniqueId()).orElse(null);
+        if (worldContainer == null) {
+            return;
+        }
+
+        final SkillHolderContainer container = service.getParentContainer(worldContainer).orElse(null);
+        if (container == null) {
+            return;
+        }
+
+        final SkillHolder skillHolder = container.getHolder(player.getUniqueId()).orElse(null);
 
         if (skillHolder == null) {
             return;
@@ -331,88 +353,28 @@ public final class BuiltinEventListener implements Witness {
             );
         }
 
-        final Map<Skill, Double> totalXpGained = new HashMap<>();
-        final Map<Skill, BigDecimal> totalMoneyGained = new HashMap<>();
+        final Map<Skill, Double> totalXPGained = this.calculateXPGainedFor(successResults);
+        final Map<Skill, BigDecimal> totalMoneyGained = this.calculateMoneyGainedFor(successResults);
 
-        for (final BuiltinResult successResult : successResults) {
-            final Double xp = successResult.getXp().orElse(null);
-
-            if (xp != null) {
-                Double value = totalXpGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value + xp;
-                } else {
-                    value = xp;
-                }
-
-                totalXpGained.put(successResult.getSkill(), value);
-            }
-
-            final BigDecimal money = successResult.getMoney().orElse(null);
-            if (money != null) {
-                BigDecimal value = totalMoneyGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value.add(money);
-                } else {
-                    value = money;
-                }
-
-                totalMoneyGained.put(successResult.getSkill(), value);
-            }
-        }
-
-        for (final Map.Entry<Skill, Double> entry : totalXpGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final Double value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                final ExperienceResult result = skill.addExperience(value);
-                if (result.getType() == Result.Type.CANCELLED) {
-                    totalMoneyGained.remove(skill);
-                } else {
-                    skillService.saveHolder(skillHolder, true);
-                }
-            }
-        }
-
-        if (totalMoneyGained.isEmpty()) {
-            return;
-        }
-
-        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
-
-        if (economyService == null) {
-            return;
-        }
-
-        final UniqueAccount account = economyService.getOrCreateAccount(player.getUniqueId()).orElse(null);
-        if (account == null) {
-            return;
-        }
-
-        for (final Map.Entry<Skill, BigDecimal> entry : totalMoneyGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final BigDecimal value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                account.deposit(economyService.getDefaultCurrency(), value, frame.getCurrentCause());
-            }
-        }
+        this.adjustXPAndMoney(event, player, totalXPGained, totalMoneyGained);
     }
 
-    private void handleInteractItem(final SkillService skillService, final InteractItemEvent event, final Player player) {
+    private void handleInteractItem(final SkillService service, final InteractItemEvent event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
-          .orElse(null);
+        final SkillHolderContainer worldContainer = service.getContainer(player.getWorld().getUniqueId()).orElse(null);
+        if (worldContainer == null) {
+            return;
+        }
+
+        final SkillHolderContainer container = service.getParentContainer(worldContainer).orElse(null);
+        if (container == null) {
+            return;
+        }
+
+        final SkillHolder skillHolder = container.getHolder(player.getUniqueId()).orElse(null);
 
         if (skillHolder == null) {
             return;
@@ -479,90 +441,30 @@ public final class BuiltinEventListener implements Witness {
             .filter(result -> result.getType() == Result.Type.SUCCESS)
             .collect(Collectors.toList());
 
-        final Map<Skill, Double> totalXpGained = new HashMap<>();
-        final Map<Skill, BigDecimal> totalMoneyGained = new HashMap<>();
+        final Map<Skill, Double> totalXPGained = this.calculateXPGainedFor(successResults);
+        final Map<Skill, BigDecimal> totalMoneyGained = this.calculateMoneyGainedFor(successResults);
 
-        for (final BuiltinResult successResult : successResults) {
-            final Double xp = successResult.getXp().orElse(null);
-
-            if (xp != null) {
-                Double value = totalXpGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value + xp;
-                } else {
-                    value = xp;
-                }
-
-                totalXpGained.put(successResult.getSkill(), value);
-            }
-
-            final BigDecimal money = successResult.getMoney().orElse(null);
-            if (money != null) {
-                BigDecimal value = totalMoneyGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value.add(money);
-                } else {
-                    value = money;
-                }
-
-                totalMoneyGained.put(successResult.getSkill(), value);
-            }
-        }
-
-        for (final Map.Entry<Skill, Double> entry : totalXpGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final Double value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                final ExperienceResult result = skill.addExperience(value);
-                if (result.getType() == Result.Type.CANCELLED) {
-                    totalMoneyGained.remove(skill);
-                } else {
-                    skillService.saveHolder(skillHolder, true);
-                }
-            }
-        }
-
-        if (totalMoneyGained.isEmpty()) {
-            return;
-        }
-
-        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
-
-        if (economyService == null) {
-            return;
-        }
-
-        final UniqueAccount account = economyService.getOrCreateAccount(player.getUniqueId()).orElse(null);
-        if (account == null) {
-            return;
-        }
-
-        for (final Map.Entry<Skill, BigDecimal> entry : totalMoneyGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final BigDecimal value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                account.deposit(economyService.getDefaultCurrency(), value, frame.getCurrentCause());
-            }
-        }
+        this.adjustXPAndMoney(event, player, totalXPGained, totalMoneyGained);
     }
 
-    private void handleInteractBlock(final SkillService skillService, final InteractBlockEvent event, final Player player) {
+    private void handleInteractBlock(final SkillService service, final InteractBlockEvent event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
-          .orElse(null);
+        final SkillHolderContainer worldContainer = service.getContainer(player.getWorld().getUniqueId()).orElse(null);
+        if (worldContainer == null) {
+            return;
+        }
 
-        if (skillHolder == null) {
+        final SkillHolderContainer container = service.getParentContainer(worldContainer).orElse(null);
+        if (container == null) {
+            return;
+        }
+
+        final SkillHolder holder = container.getHolder(player.getUniqueId()).orElse(null);
+
+        if (holder == null) {
             return;
         }
 
@@ -577,7 +479,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Collection<Skill> skills = skillHolder.getSkills().values();
+        final Collection<Skill> skills = holder.getSkills().values();
 
         final Set<Map.Entry<SkillType, List<BlockChain>>> skillChains = eventChains.entrySet()
             .stream()
@@ -607,7 +509,7 @@ public final class BuiltinEventListener implements Witness {
 
                 final long diff = stamp - timer;
 
-                if (diff < 5000) {
+                if (diff < 3500) {
                     continue;
                 }
 
@@ -625,90 +527,30 @@ public final class BuiltinEventListener implements Witness {
             .filter(result -> result.getType() == Result.Type.SUCCESS)
             .collect(Collectors.toList());
 
-        final Map<Skill, Double> totalXpGained = new HashMap<>();
-        final Map<Skill, BigDecimal> totalMoneyGained = new HashMap<>();
+        final Map<Skill, Double> totalXPGained = this.calculateXPGainedFor(successResults);
+        final Map<Skill, BigDecimal> totalMoneyGained = this.calculateMoneyGainedFor(successResults);
 
-        for (final BuiltinResult successResult : successResults) {
-            final Double xp = successResult.getXp().orElse(null);
-
-            if (xp != null) {
-                Double value = totalXpGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value + xp;
-                } else {
-                    value = xp;
-                }
-
-                totalXpGained.put(successResult.getSkill(), value);
-            }
-
-            final BigDecimal money = successResult.getMoney().orElse(null);
-            if (money != null) {
-                BigDecimal value = totalMoneyGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value.add(money);
-                } else {
-                    value = money;
-                }
-
-                totalMoneyGained.put(successResult.getSkill(), value);
-            }
-        }
-
-        for (final Map.Entry<Skill, Double> entry : totalXpGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final Double value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                final ExperienceResult result = skill.addExperience(value);
-                if (result.getType() == Result.Type.CANCELLED) {
-                    totalMoneyGained.remove(skill);
-                } else {
-                    skillService.saveHolder(skillHolder, true);
-                }
-            }
-        }
-
-        if (totalMoneyGained.isEmpty()) {
-            return;
-        }
-
-        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
-
-        if (economyService == null) {
-            return;
-        }
-
-        final UniqueAccount account = economyService.getOrCreateAccount(player.getUniqueId()).orElse(null);
-        if (account == null) {
-            return;
-        }
-
-        for (final Map.Entry<Skill, BigDecimal> entry : totalMoneyGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final BigDecimal value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                account.deposit(economyService.getDefaultCurrency(), value, frame.getCurrentCause());
-            }
-        }
+        this.adjustXPAndMoney(event, player, totalXPGained, totalMoneyGained);
     }
 
-    private void handleCraftItem(final SkillService skillService, final CraftItemEvent.Craft event, final Player player) {
+    private void handleCraftItem(final SkillService service, final CraftItemEvent.Craft event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
 
-        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
-          .orElse(null);
+        final SkillHolderContainer worldContainer = service.getContainer(player.getWorld().getUniqueId()).orElse(null);
+        if (worldContainer == null) {
+            return;
+        }
 
-        if (skillHolder == null) {
+        final SkillHolderContainer container = service.getParentContainer(worldContainer).orElse(null);
+        if (container == null) {
+            return;
+        }
+
+        final SkillHolder holder = container.getHolder(player.getUniqueId()).orElse(null);
+
+        if (holder == null) {
             return;
         }
 
@@ -723,7 +565,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Collection<Skill> skills = skillHolder.getSkills().values();
+        final Collection<Skill> skills = holder.getSkills().values();
 
         final Set<Map.Entry<SkillType, List<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
@@ -746,7 +588,7 @@ public final class BuiltinEventListener implements Witness {
         if (recipe != null) {
             final ItemStack defaultResult = recipe.getExemplaryResult().createStack();
 
-            final int craftedTimes = crafted.getQuantity() / defaultResult.getQuantity();
+            final int craftedTimes = crafted.getQuantity() / (defaultResult.getQuantity() == 0 ? crafted.getQuantity() : defaultResult.getQuantity());
 
             for (int i = 0; i < craftedTimes; i++) {
                 final ItemStack copyStack = crafted.copy();
@@ -785,82 +627,13 @@ public final class BuiltinEventListener implements Witness {
             .filter(result -> result.getType() == Result.Type.SUCCESS)
             .collect(Collectors.toList());
 
-        final Map<Skill, Double> totalXpGained = new HashMap<>();
-        final Map<Skill, BigDecimal> totalMoneyGained = new HashMap<>();
+        final Map<Skill, Double> totalXPGained = this.calculateXPGainedFor(successResults);
+        final Map<Skill, BigDecimal> totalMoneyGained = this.calculateMoneyGainedFor(successResults);
 
-        for (final BuiltinResult successResult : successResults) {
-            final Double xp = successResult.getXp().orElse(null);
-
-            if (xp != null) {
-                Double value = totalXpGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value + xp;
-                } else {
-                    value = xp;
-                }
-
-                totalXpGained.put(successResult.getSkill(), value);
-            }
-
-            final BigDecimal money = successResult.getMoney().orElse(null);
-            if (money != null) {
-                BigDecimal value = totalMoneyGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value.add(money);
-                } else {
-                    value = money;
-                }
-
-                totalMoneyGained.put(successResult.getSkill(), value);
-            }
-        }
-
-        for (final Map.Entry<Skill, Double> entry : totalXpGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final Double value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                final ExperienceResult result = skill.addExperience(value);
-                if (result.getType() == Result.Type.CANCELLED) {
-                    totalMoneyGained.remove(skill);
-                } else {
-                    skillService.saveHolder(skillHolder, true);
-                }
-            }
-        }
-
-        if (totalMoneyGained.isEmpty()) {
-            return;
-        }
-
-        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
-
-        if (economyService == null) {
-            return;
-        }
-
-        final UniqueAccount account = economyService.getOrCreateAccount(player.getUniqueId()).orElse(null);
-        if (account == null) {
-            return;
-        }
-
-        for (final Map.Entry<Skill, BigDecimal> entry : totalMoneyGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final BigDecimal value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                account.deposit(economyService.getDefaultCurrency(), value, frame.getCurrentCause());
-            }
-        }
+        this.adjustXPAndMoney(event, player, totalXPGained, totalMoneyGained);
     }
 
-    private void handleDropItemEvent(final SkillService skillService, final DropItemEvent.Destruct event, final Player player) {
+    private void handleDropItemEvent(final SkillService service, final DropItemEvent.Destruct event, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
@@ -875,10 +648,19 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final SkillHolder skillHolder = skillService.getHolder(Sponge.getServer().getDefaultWorld().get().getUniqueId(), player.getUniqueId())
-          .orElse(null);
+        final SkillHolderContainer worldContainer = service.getContainer(player.getWorld().getUniqueId()).orElse(null);
+        if (worldContainer == null) {
+            return;
+        }
 
-        if (skillHolder == null) {
+        final SkillHolderContainer container = service.getParentContainer(worldContainer).orElse(null);
+        if (container == null) {
+            return;
+        }
+
+        final SkillHolder holder = container.getHolder(player.getUniqueId()).orElse(null);
+
+        if (holder == null) {
             return;
         }
 
@@ -893,7 +675,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final Collection<Skill> skills = skillHolder.getSkills().values();
+        final Collection<Skill> skills = holder.getSkills().values();
 
         final Set<Map.Entry<SkillType, List<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
@@ -929,79 +711,10 @@ public final class BuiltinEventListener implements Witness {
             );
         }
 
-        final Map<Skill, Double> totalXpGained = new HashMap<>();
-        final Map<Skill, BigDecimal> totalMoneyGained = new HashMap<>();
+        final Map<Skill, Double> totalXPGained = this.calculateXPGainedFor(successResults);
+        final Map<Skill, BigDecimal> totalMoneyGained = this.calculateMoneyGainedFor(successResults);
 
-        for (final BuiltinResult successResult : successResults) {
-            final Double xp = successResult.getXp().orElse(null);
-
-            if (xp != null) {
-                Double value = totalXpGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value + xp;
-                } else {
-                    value = xp;
-                }
-
-                totalXpGained.put(successResult.getSkill(), value);
-            }
-
-            final BigDecimal money = successResult.getMoney().orElse(null);
-            if (money != null) {
-                BigDecimal value = totalMoneyGained.get(successResult.getSkill());
-                if (value != null) {
-                    value = value.add(money);
-                } else {
-                    value = money;
-                }
-
-                totalMoneyGained.put(successResult.getSkill(), value);
-            }
-        }
-
-        for (final Map.Entry<Skill, Double> entry : totalXpGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final Double value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                final ExperienceResult result = skill.addExperience(value);
-                if (result.getType() == Result.Type.CANCELLED) {
-                    totalMoneyGained.remove(skill);
-                } else {
-                    skillService.saveHolder(skillHolder, true);
-                }
-            }
-        }
-
-        if (totalMoneyGained.isEmpty()) {
-            return;
-        }
-
-        final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
-
-        if (economyService == null) {
-            return;
-        }
-
-        final UniqueAccount account = economyService.getOrCreateAccount(player.getUniqueId()).orElse(null);
-        if (account == null) {
-            return;
-        }
-
-        for (final Map.Entry<Skill, BigDecimal> entry : totalMoneyGained.entrySet()) {
-            final Skill skill = entry.getKey();
-            final BigDecimal value = entry.getValue();
-
-            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.pushCause(skill);
-                frame.pushCause(event);
-
-                account.deposit(economyService.getDefaultCurrency(), value, frame.getCurrentCause());
-            }
-        }
+        this.adjustXPAndMoney(event, player, totalXPGained, totalMoneyGained);
     }
 
     private Collection<BuiltinResult> processBlockSnapshotFor(final Cause cause, final Collection<Skill> skills, final Set<Map.Entry<SkillType,
@@ -1052,7 +765,6 @@ public final class BuiltinEventListener implements Witness {
                 }
 
                 // Check owner second
-                // TODO Could print a different message here if it failed the owner check to the breaker
                 if (cont) {
                     final TriFunction<Cause, Skill, BlockSnapshot, Boolean> owner = chain.owner;
                     if (owner != null) {
@@ -1168,5 +880,83 @@ public final class BuiltinEventListener implements Witness {
 
         this.itemChains.computeIfAbsent(clazz, v -> new HashMap<>()).computeIfAbsent(type, v -> new ArrayList<>()).add(chain);
         return this;
+    }
+
+    private Map<Skill, Double> calculateXPGainedFor(final Collection<BuiltinResult> results) {
+        final Map<Skill, Double> totalXPGained = new HashMap<>();
+
+        for (final BuiltinResult successResult : results) {
+            final Double xp = successResult.getXp().orElse(null);
+
+            if (xp != null) {
+                Double value = totalXPGained.get(successResult.getSkill());
+                if (value != null) {
+                    value = value + xp;
+                } else {
+                    value = xp;
+                }
+
+                totalXPGained.put(successResult.getSkill(), value);
+            }
+        }
+
+        return totalXPGained;
+    }
+
+    private Map<Skill, BigDecimal> calculateMoneyGainedFor(final Collection<BuiltinResult> results) {
+        final Map<Skill, BigDecimal> totalMoneyGained = new HashMap<>();
+
+        for (final BuiltinResult successResult : results) {
+            final BigDecimal money = successResult.getMoney().orElse(null);
+            if (money != null) {
+                BigDecimal value = totalMoneyGained.get(successResult.getSkill());
+                if (value != null) {
+                    value = value.add(money);
+                } else {
+                    value = money;
+                }
+
+                totalMoneyGained.put(successResult.getSkill(), value);
+            }
+        }
+
+        return totalMoneyGained;
+    }
+
+    private void adjustXPAndMoney(final Event event, final Player player, final Map<Skill, Double> totalXPGained,
+      final Map<Skill, BigDecimal> totalMoneyGained) {
+
+        try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+            frame.pushCause(event);
+
+            for (final Map.Entry<Skill, Double> entry : totalXPGained.entrySet()) {
+                final Skill skill = entry.getKey();
+                final Double xpValue = entry.getValue();
+
+                final ExperienceResult result = skill.addExperience(xpValue);
+
+                if (result.getType() == Result.Type.CANCELLED) {
+                    totalMoneyGained.remove(entry.getKey());
+                }
+            }
+
+            if (totalMoneyGained.isEmpty()) {
+                return;
+            }
+
+            final EconomyService economyService = this.serviceManager.provide(EconomyService.class).orElse(null);
+
+            final UniqueAccount account = economyService == null ? null : economyService.getOrCreateAccount(player.getUniqueId()).orElse(null);
+
+            if (account == null) {
+                return;
+            }
+
+            for (final Map.Entry<Skill, BigDecimal> entry : totalMoneyGained.entrySet()) {
+                final BigDecimal moneyValue = totalMoneyGained.get(entry.getKey());
+
+                account.deposit(economyService.getDefaultCurrency(), moneyValue, frame.getCurrentCause());
+            }
+        }
     }
 }

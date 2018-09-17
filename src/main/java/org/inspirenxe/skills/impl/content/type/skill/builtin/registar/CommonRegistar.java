@@ -68,7 +68,7 @@ public final class CommonRegistar {
 
                     final char mod = xp >= 0 ? '+' : '-';
 
-                    player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", skillService.getXpFormat().format(Math.abs(xp)), "xp ", skill
+                    player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", skillService.getXPFormat().format(Math.abs(xp)), "xp ", skill
                       .getSkillType().getFormattedName()));
                 }
             }
@@ -220,9 +220,7 @@ public final class CommonRegistar {
                     effects = this.level;
                 }
 
-                effects.forEach(effect -> {
-                    effect.play(player.getLocation(), player);
-                });
+                effects.forEach(effect -> effect.play(player.getLocation()));
             }
         });
     }

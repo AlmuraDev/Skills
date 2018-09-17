@@ -1,17 +1,33 @@
-import org.apache.tools.ant.filters.ReplaceTokens
+buildscript {
+  repositories {
+    mavenLocal()
+    maven {
+        name = 'sponge'
+        url = 'http://repo.spongepowered.org/maven'
+    }
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "org.spongepowered:event-impl-gen:${project.eventImplGenPluginVersion}"
+  }
+}
 
 plugins {
-    id 'org.spongepowered.plugin' version '0.8.1'
-    id 'net.minecrell.licenser' version '0.3'
-    id 'nu.studer.jooq' version '3.0.0'
+    id 'org.spongepowered.plugin' version '0.9.0'
+    id 'net.minecrell.licenser' version '0.4.1'
+    id 'nu.studer.jooq' version '3.0.2'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
+
+apply plugin: "org.spongepowered.event-impl-gen"
 
 group = project.group
 version = project.version
 description = project.description
 
-defaultTasks 'clean', 'licenseFormat', 'build'
+defaultTasks 'clean', 'updateLicenses', 'build'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -31,23 +47,23 @@ repositories {
 }
 
 dependencies {
+    compile "com.google.inject.extensions:guice-assistedinject:${project.assistedInjectVersion}"
+    compile "org.checkerframework:checker-qual:${project.checkerQualVersion}"
     compile "com.almuradev:droplet:${project.dropletVersion}"
-    compile "com.almuradev:toolbox:${project.toolboxVersion}"
-    compile 'net.kyori:feature:1.0.0-SNAPSHOT'
-    compile 'net.kyori:fragment:1.0.0-SNAPSHOT'
-    compile 'net.kyori:lunar:1.0.6'
-    compile 'net.kyori:membrane:1.0.6'
-    compile 'net.kyori:violet:1.1.0'
-    compile 'net.kyori:xml:1.0.0-SNAPSHOT'
-    compile 'org.jdom:jdom2:2.0.6'
-    compile 'org.checkerframework:checker-qual:2.4.0'
-    compile 'com.google.inject.extensions:guice-assistedinject:4.1.0'
-    compile 'com.google.inject.extensions:guice-multibindings:4.1.0'
-    compile "org.spongepowered:spongeapi:${project.spongeAPIVersion}"
-    compile "net.objecthunter:exp4j:${project.expVersion}"
+    compile "net.objecthunter:exp4j:${project.exp4JVersion}"
+    compile "net.kyori:feature:${project.featureVersion}"
+    compile "net.kyori:fragment:${project.fragmentVersion}"
+    compile "com.google.inject.extensions:guice-multibindings:${project.guiceMultibindingsVersion}"
+    compile "org.jdom:jdom2:${project.jdom2Version}"
     compile "org.jooq:jooq:${project.jooqVersion}"
     compile "org.jooq:jooq-meta:${project.jooqVersion}"
     compile "org.jooq:jooq-codegen:${project.jooqVersion}"
+    compile "net.kyori:lunar:${project.lunarVersion}"
+    compile "net.kyori:membrane:${project.membraneVersion}"
+    compile "org.spongepowered:spongeapi:${project.spongeAPIVersion}"
+    compile "com.almuradev:toolbox:${project.toolboxVersion}"
+    compile "net.kyori:violet:${project.violetVersion}"
+    compile "net.kyori:xml:${project.xmlVersion}"
     jooqRuntime "org.jooq:jooq-meta-extensions:${project.jooqVersion}"
     testCompile "junit:junit:${project.junitVersion}"
 }
@@ -59,12 +75,15 @@ license {
     newLine false
 }
 
-processResources {
-    filesMatching('**/mcmod.info') {
-        filter ReplaceTokens, tokens: [
-                'version': project.version
-        ]
-    }
+genEventImpl {
+    // The full qualified class name of the factory
+    outputFactory = 'org.inspirenxe.skills.api.event.SkillsEventFactory'
+
+    // The path to your event interfaces
+
+    include 'org/inspirenxe/skills/api/event/*'
+    exclude 'org/inspirenxe/skills/api/event/ExperienceEvent.java'
+
 }
 
 def generatedDir = 'src/main/generated'

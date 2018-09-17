@@ -29,16 +29,30 @@ import com.almuradev.toolbox.inject.command.CommandInstaller;
 import com.almuradev.toolbox.inject.event.WitnessModule;
 import com.almuradev.toolbox.inject.registry.RegistryInstaller;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.LinkedBindingBuilder;
 import net.kyori.violet.AbstractModule;
+import net.kyori.violet.FriendlyTypeLiteral;
+import net.kyori.violet.TypeArgument;
 import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.EnumParser;
 import net.kyori.xml.node.parser.Parser;
-import org.inspirenxe.skills.impl.command.SkillsCommandCreator;
+import net.kyori.xml.node.parser.ParserBinder;
+import org.inspirenxe.skills.impl.command.SkillsCommandProvider;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;
+import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
+import org.inspirenxe.skills.impl.configuration.PluginConfigurationParser;
+import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfiguration;
+import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfigurationParser;
+import org.inspirenxe.skills.impl.configuration.database.DatabaseConfigurationParser;
 import org.inspirenxe.skills.impl.content.ContentModule;
-import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
+import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
+import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
+import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jooq.SQLDialect;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.ServiceManager;
@@ -58,17 +72,31 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
     // Register factories (for assisted injections)
     this.installFactory(SkillServiceImpl.Factory.class);
+    this.installFactory(SkillHolderContainerImpl.Factory.class);
     this.installFactory(SkillHolderImpl.Factory.class);
     this.installFactory(SkillImpl.Factory.class);
 
+    final ParserBinder parsers = new ParserBinder(this.binder());
+    parsers.bindParser(PluginConfiguration.class).to(PluginConfigurationParser.class);
+    parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
+    parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
+    parsers.bindParser(ContainerShareConfiguration.class).to(ContainerShareConfigurationParser.class);
+    this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {});
+    this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {});
+    this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {});
+
     // Register command tree
-    this.command().rootProvider(SkillsCommandCreator.class, SkillsImpl.ID);
+    this.command().rootProvider(SkillsCommandProvider.class, SkillsImpl.ID);
 
     this.facet()
       .add(CommandInstaller.class)
       .add(RegistryInstaller.class)
       .add(DatabaseManager.class)
       .add(SkillLoader.class);
+  }
+
+  private <T> LinkedBindingBuilder<StringToValueParser<T>> bindRawParser(final Class<T> type) {
+    return this.bind(new FriendlyTypeLiteral<StringToValueParser<T>>() {}.where(new TypeArgument<T>(type) {}));
   }
 
   @ForConfiguration
@@ -81,11 +109,13 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
   @Provides
   @Singleton
-  DatabaseManager database(final PluginContainer container, final ServiceManager serviceManager, @ForConfiguration final Node node,
-    final Parser<DatabaseConfiguration> parser) {
-    final Node databaseNode = node.elements("database")
-        .findFirst()
-        .orElseThrow(() -> new IllegalStateException("database configuration not found"));
-    return new DatabaseManager(container, serviceManager, parser.parse(databaseNode));
+  PluginConfiguration pluginConfiguration(@ForConfiguration final Node node, final Parser<PluginConfiguration> parser) {
+    return parser.parse(node);
+  }
+
+  @Provides
+  @Singleton
+  DatabaseManager database(final PluginContainer container, final ServiceManager serviceManager, final PluginConfiguration pluginConfiguration) {
+    return new DatabaseManager(container, serviceManager, pluginConfiguration.getDatabaseConfiguration());
   }
 }

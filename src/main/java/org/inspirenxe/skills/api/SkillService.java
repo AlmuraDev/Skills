@@ -24,35 +24,46 @@
  */
 package org.inspirenxe.skills.api;
 
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 public interface SkillService {
 
-  DecimalFormat getXpFormat();
+  String UNKNOWN_NAME = "Unknown";
 
-  Map<UUID, Set<SkillHolder>> getHolders();
+  DecimalFormat getXPFormat();
 
-  void loadContainer(final UUID container);
+  /**
+   * Returns the passed in {@link SkillHolderContainer} or the container this skill states it inherits from.
+   *
+   * <Note>
+   *   It is expected to only return {@link Optional#empty()} if the parent container is not loaded currently.
+   * </Note>
+   * @param container The container
+   * @return The parent container
+   */
+  Optional<SkillHolderContainer> getParentContainer(final SkillHolderContainer container);
 
-  void removeContainer(final UUID container);
+  Map<UUID, SkillHolderContainer> getContainers();
 
-  void saveContainer(final UUID container, final boolean async);
+  default Optional<SkillHolderContainer> getContainer(final UUID containerId) {
+    checkNotNull(containerId);
 
-  Set<SkillHolder> getHoldersInContainer(final UUID container);
-
-  Optional<SkillHolder> getHolder(final UUID container, final UUID holder);
-
-  void loadHolder(final UUID container, final UUID holder, final boolean async);
-
-  void removeHolder(final UUID container, final UUID holder);
-
-  default void removeHolder(final SkillHolder skillHolder) {
-    this.removeHolder(skillHolder.getContainerUniqueId(), skillHolder.getHolderUniqueId());
+    return Optional.ofNullable(this.getContainers().get(containerId));
   }
 
-  void saveHolder(final SkillHolder holder, final boolean async);
+  default SkillHolderContainer createContainer(final UUID containerId) {
+    return this.createContainer(containerId, UNKNOWN_NAME);
+  }
+
+  SkillHolderContainer createContainer(final UUID containerId, final String name);
+
+  void saveContainer(final UUID containerId);
+
+  Optional<SkillHolderContainer> removeContainer(final UUID containerId);
 }

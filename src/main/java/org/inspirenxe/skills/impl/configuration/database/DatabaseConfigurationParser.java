@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.database;
+package org.inspirenxe.skills.impl.configuration.database;
 
 import com.google.common.collect.MoreCollectors;
 import com.google.inject.Inject;
@@ -61,7 +61,7 @@ public final class DatabaseConfigurationParser implements Parser<DatabaseConfigu
     final String connectionStringNoSchema;
 
     if (dialect == SQLDialect.H2 || dialect == SQLDialect.POSTGRES_9_5) {
-      initialCatalog = this.stringParser.parse(node.requireAttribute("initial-catalog"));
+      initialCatalog = this.stringParser.parse(node.requireAttribute("name"));
 
       if (dialect == SQLDialect.H2) {
         path = Paths.get(this.stringParser.parse(node.nodes("path").collect(MoreCollectors.onlyElement())));

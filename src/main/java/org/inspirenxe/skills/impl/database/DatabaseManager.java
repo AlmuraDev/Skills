@@ -29,6 +29,7 @@ import com.almuradev.toolbox.inject.event.WitnessScope;
 import com.google.common.base.Charsets;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.impl.SkillsImpl;
+import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
 import org.jooq.DSLContext;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;

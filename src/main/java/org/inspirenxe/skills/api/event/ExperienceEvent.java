@@ -26,200 +26,41 @@ package org.inspirenxe.skills.api.event;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillType;
-import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
+import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
 
 import java.util.UUID;
 
 public interface ExperienceEvent extends Event {
 
   /**
-   * Gets the {@link UUID} of the container.
+   * The {@link UUID} which is unique per container.
    *
-   * @return The container unique id
+   * @return The unique id
    */
-  UUID getContainerUniqueId();
+  @AbsoluteSortPosition(1)
+  UUID getContainerId();
 
   /**
-   * Gets the {@link UUID} of the holder.
+   * The {@link UUID} which is unique per holder.
    *
-   * @return The holder unique id
+   * @return The unique id
    */
-  UUID getHolderUniqueId();
+  @AbsoluteSortPosition(2)
+  UUID getHolderId();
 
   /**
    * Gets the {@link SkillType}.
    *
    * @return The skill type
    */
+  @AbsoluteSortPosition(3)
   SkillType getSkillType();
 
   /**
-   * Gets the original experience change that would occur barring no other changes.
-   *
-   * @return The original experience change
-   */
-  double getOriginalExperience();
-
-  /**
-   * Gets the experience that will be changed on the {@link Skill}. Barring no other changes in a sub event,
-   * this will equal the result of {@link ExperienceEvent#getOriginalExperience()}.
+   * Gets the experience that will be changed on the {@link Skill}.
    *
    * @return The experience change
    */
   double getExperience();
-
-  /**
-   * Helper method that returns the difference in experience from the original amount passed to the event
-   * from what it'll be when the event is resolved.
-   *
-   * @return The difference in experience
-   */
-  default double getExperienceDifference() {
-    final double xp = this.getExperience();
-    final double oldXp = this.getOriginalExperience();
-    return xp - oldXp;
-  }
-
-  interface Change extends ExperienceEvent {
-
-    /**
-     * Gets the {@link Skill}.
-     *
-     * @return The skill
-     */
-    Skill getSkill();
-
-    /**
-     * Called before the change in experience occurs.
-     *
-     * <Note>
-     *   May be called asynchronously.
-     * </Note>
-     */
-    interface Pre extends Change, Cancellable {
-
-      /**
-       * Sets the experience that will be changed on the {@link Skill}.
-       *
-       * @param experience The new experience change
-       */
-      void setExperience(final double experience);
-    }
-
-    /**
-     * Called after the change in experience occurs.
-     *
-     * <Note>
-     *   This will always be called on the main thread.
-     * </Note>
-     */
-    interface Post extends Change {
-
-      /**
-       * Called after the change in experience occurs and the level changed.
-       *
-       * <Note>
-       *   This will always be called on the main thread.
-       * </Note>
-       */
-      interface Level extends Post {
-
-        /**
-         * Gets the original level.
-         *
-         * @return The original level
-         */
-        int getOriginalLevel();
-
-        /**
-         * Gets the new level.
-         *
-         * @return The new level
-         */
-        int getLevel();
-      }
-    }
-  }
-
-  interface Load extends ExperienceEvent {
-
-    /**
-     * Returns true if experience has been gained before.
-     *
-     * @return True if experience has been gained before, false if not
-     */
-    boolean hasGainedExperienceBefore();
-
-    /**
-     * Called before loading experience.
-     *
-     * <Note>
-     *   May be called asynchronously.
-     * </Note>
-     */
-    interface Pre extends Load {
-
-      /**
-       * Sets the experience that will be changed.
-       *
-       * @param experience The new experience change
-       */
-      void setExperience(final double experience);
-    }
-
-    /**
-     * Called after experience is loaded.
-     *
-     * <Note>
-     *   This will always be called on the main thread.
-     * </Note>
-     */
-    interface Post extends Load {
-
-      /**
-       * Gets the {@link Skill}.
-       *
-       * @return The skill
-       */
-      Skill getSkill();
-    }
-  }
-
-  interface Save extends ExperienceEvent {
-
-    /**
-     * Called before saving experience.
-     *
-     * <Note>
-     *   May be called asynchronously.
-     * </Note>
-     */
-    interface Pre extends Save {
-
-      /**
-       * Sets the experience that will be changed.
-       *
-       * @param experience The new experience change
-       */
-      void setExperience(final double experience);
-    }
-
-    /**
-     * Called after experience is saved.
-     *
-     * <Note>
-     *   This will always be called on the main thread.
-     * </Note>
-     */
-    interface Post extends Save {
-
-      /**
-       * Gets the {@link Skill}.
-       *
-       * @return The skill
-       */
-      Skill getSkill();
-    }
-  }
 }

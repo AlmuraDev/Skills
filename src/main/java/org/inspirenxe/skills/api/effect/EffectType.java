@@ -31,5 +31,5 @@ import org.spongepowered.api.world.World;
 
 public interface EffectType extends CatalogType {
 
-    void play(final Location<World> location, final Viewer viewer);
+    void play(final Location<World> location);
 }

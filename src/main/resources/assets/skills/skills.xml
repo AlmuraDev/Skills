@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-  <database dialect="h2" initial-catalog="h2">
+  <!--
+    Valid dialects are "h2" or "postgres_9_5".
+    
+    If specifying a name that does not exist as a database, Skills will create the database for you.
+  -->
+  <database dialect="h2" name="h2">
+    <!-- This is the path to the database file. Only used with the "h2" dialect. Omit the file extension. -->
     <path>./config/skills/h2</path>
+    <!-- The following parameters are only used with the "postgres_9_5" dialect. -->
     <server>locahost</server>
     <port>8082</port>
     <user></user>
     <password></password>
   </database>
+  <!-- 
+    Notate containers that should use skill data from another container. By default, Skills makes each 
+    world a "Skill Container" so that The End and The Nether share from Overworld.
+  -->
+  <container-share>
+    <container name="DIM-1" from="world"/>
+    <container name="DIM1" from="world"/>
+  </container-share>
+  <!-- The time (in seconds) between saves -->
+  <save-interval>60</save-interval>
 </configuration>

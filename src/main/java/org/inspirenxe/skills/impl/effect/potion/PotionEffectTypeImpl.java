@@ -56,7 +56,7 @@ public final class PotionEffectTypeImpl implements SkillsPotionEffectType {
   }
 
   @Override
-  public void play(final Location<World> location, final Viewer viewer) {
+  public void play(final Location<World> location) {
     // TODO
   }
 }

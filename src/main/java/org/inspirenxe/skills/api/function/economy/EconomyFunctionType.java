@@ -36,6 +36,7 @@ public interface EconomyFunctionType extends FunctionType, BiFunction<Integer, D
 
   /**
    * Gets the money value calculated by the passed in level and modifier.
+   *
    * @param level The level
    * @param modifier The modifier
    * @return The money value

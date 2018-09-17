@@ -59,7 +59,7 @@ public final class FireworkEffectTypeImpl implements SkillsFireworkEffectType {
   }
 
   @Override
-  public void play(final Location<World> location, final Viewer viewer) {
+  public void play(final Location<World> location) {
     final Firework firework = (Firework) location.getExtent().createEntity(EntityTypes.FIREWORK, location.getPosition().add(0, 2, 0));
     firework.offer(firework.getFireworkData().addElement(this.effect));
     location.getExtent().spawnEntity(firework);

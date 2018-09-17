@@ -22,23 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event.experience.load;
+package org.inspirenxe.skills.api;
 
-import org.inspirenxe.skills.api.SkillType;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.event.cause.Cause;
+public interface Nameable {
 
-import java.util.UUID;
-
-public final class LoadExperiencePreEventImpl extends LoadExperienceEventImpl implements ExperienceEvent.Load.Pre {
-
-  public LoadExperiencePreEventImpl(final Cause cause, final UUID containerUniqueId, final UUID holderUniqueId, final SkillType skillType,
-    final double originalExperience, final double experience, final boolean hasGainedExperienceBefore) {
-    super(cause, containerUniqueId, holderUniqueId, skillType, originalExperience, experience, hasGainedExperienceBefore);
-  }
-
-  @Override
-  public void setExperience(final double experience) {
-    this.experience = experience;
-  }
+  String getName();
 }

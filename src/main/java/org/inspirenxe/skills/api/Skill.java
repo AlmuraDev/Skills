@@ -26,7 +26,7 @@ package org.inspirenxe.skills.api;
 
 import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 
-public interface Skill {
+public interface Skill extends Nameable {
 
   SkillType getSkillType();
 
@@ -42,24 +42,7 @@ public interface Skill {
     return this.getSkillType().getLevelFunction().getLevelFor(this.getCurrentExperience());
   }
 
-  /**
-   * Returns if this {@link Skill} is initialized. Initialization is defined by the implementation of the skill.
-   *
-   * @return True if initialized, false if not
-   */
-  boolean isInitialized();
+  void load();
 
-  /**
-   * Returns if this {@link Skill} has been marked dirty. How this is used is completely up to the implementation.
-   *
-   * @return True if dirty, false if not
-   */
-  boolean isDirty();
-
-  /**
-   * Sets the dirty state of the {@link Skill}. See {@link Skill#isDirty()}.
-   *
-   * @param dirty True if dirty, false if not
-   */
-  void setDirty(final boolean dirty);
+  void save();
 }

@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.database;
+package org.inspirenxe.skills.impl.configuration.database;
 
 import org.jooq.SQLDialect;
 

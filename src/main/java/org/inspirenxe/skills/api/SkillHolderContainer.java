@@ -22,25 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event.experience.load;
+package org.inspirenxe.skills.api;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.event.cause.Cause;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class LoadExperiencePostEventImpl extends LoadExperienceEventImpl implements ExperienceEvent.Load.Post {
+import org.spongepowered.api.util.Identifiable;
 
-  private final Skill skill;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
-  public LoadExperiencePostEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience,
-      final boolean hasGainedExperienceBefore) {
-    super(cause, skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience,
-      experience, hasGainedExperienceBefore);
-    this.skill = skill;
+public interface SkillHolderContainer extends Identifiable, Nameable {
+
+  Map<UUID, SkillHolder> getHolders();
+
+  default Optional<SkillHolder> getHolder(final UUID holderId) {
+    checkNotNull(holderId);
+
+    return Optional.ofNullable(this.getHolders().get(holderId));
   }
 
-  @Override
-  public Skill getSkill() {
-    return this.skill;
+  default SkillHolder createHolder(final UUID holderId) {
+    return this.createHolder(holderId, SkillService.UNKNOWN_NAME);
+  }
+
+  SkillHolder createHolder(final UUID holderId, final String name);
+
+  default void saveHolder(final UUID holderId) {
+    this.getHolder(holderId).ifPresent(SkillHolder::save);
+  }
+
+  Optional<SkillHolder> removeHolder(final UUID holderId);
+
+  default void save() {
+    this.getHolders().values().forEach(SkillHolder::save);
   }
 }

@@ -22,25 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event.experience.save;
-
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.event.cause.Cause;
-
-public final class SaveExperiencePostEventImpl extends SaveExperienceEventImpl implements ExperienceEvent.Save.Post {
-
-  private final Skill skill;
-
-  public SaveExperiencePostEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience) {
-    super(cause, skill.getHolder().getContainerUniqueId(), skill.getHolder().getHolderUniqueId(), skill.getSkillType(), originalExperience,
-      experience);
-
-    this.skill = skill;
-  }
-
-  @Override
-  public Skill getSkill() {
-    return this.skill;
-  }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.api.result;

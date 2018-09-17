@@ -41,7 +41,7 @@ import net.kyori.violet.AbstractModule;
 import net.kyori.xml.node.Node;
 import net.kyori.xml.node.parser.ParserModule;
 import org.inspirenxe.skills.impl.content.loader.finder.ContentFinderImpl;
-import org.inspirenxe.skills.impl.content.parser.SkillsParserModule;
+import org.inspirenxe.skills.impl.content.parser.ContentParserModule;
 import org.inspirenxe.skills.impl.content.registry.RegistryModule;
 import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinModule;
@@ -66,7 +66,7 @@ public final class ContentModule extends AbstractModule implements ToolboxBinder
     this.install(new ParserModule());
     this.install(new RangeModule());
     this.install(new ContentTypeModule());
-    this.install(new SkillsParserModule());
+    this.install(new ContentParserModule());
     this.install(new RegistryModule());
     this.install(new BuiltinModule());
 

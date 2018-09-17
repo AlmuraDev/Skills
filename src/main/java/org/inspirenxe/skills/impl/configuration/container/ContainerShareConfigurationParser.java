@@ -22,30 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event.experience.change;
+package org.inspirenxe.skills.impl.configuration.container;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.event.ExperienceEvent;
-import org.spongepowered.api.event.cause.Cause;
+import com.google.inject.Inject;
+import net.kyori.xml.node.Node;
+import net.kyori.xml.node.parser.Parser;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public final class ChangeExperiencePostLevelEventImpl extends ChangeExperiencePostEventImpl implements ExperienceEvent.Change.Post.Level {
+import java.util.HashMap;
+import java.util.Map;
 
-  private final int originalLevel, level;
+public final class ContainerShareConfigurationParser implements Parser<ContainerShareConfiguration> {
 
-  public ChangeExperiencePostLevelEventImpl(final Cause cause, final Skill skill, final double originalExperience, final double experience,
-    final int originalLevel, final int level) {
-    super(cause, skill, originalExperience, experience);
-    this.originalLevel = originalLevel;
-    this.level = level;
+  private final Parser<String> stringParser;
+  @Inject
+  public ContainerShareConfigurationParser(final Parser<String> stringParser) {
+    this.stringParser = stringParser;
   }
 
+  @NonNull
   @Override
-  public int getOriginalLevel() {
-    return this.originalLevel;
-  }
+  public ContainerShareConfiguration throwingParse(@NonNull final Node node) {
+    final Map<String, String> containerShares = new HashMap<>();
 
-  @Override
-  public int getLevel() {
-    return this.level;
+    node.elements("container").forEach(shareNode -> {
+      final String name = this.stringParser.parse(shareNode.attribute("name").required());
+      final String from = this.stringParser.parse(shareNode.attribute("from").required());
+
+      containerShares.put(name, from);
+    });
+
+    return new ContainerShareConfiguration(containerShares);
   }
 }

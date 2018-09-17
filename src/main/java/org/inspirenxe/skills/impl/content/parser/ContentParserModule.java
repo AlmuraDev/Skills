@@ -33,38 +33,29 @@ import net.kyori.violet.TypeArgument;
 import net.kyori.xml.node.parser.EnumParser;
 import net.kyori.xml.node.parser.ParserBinder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
+import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfiguration;
+import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfigurationParser;
 import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
-import org.inspirenxe.skills.impl.database.DatabaseConfiguration;
-import org.inspirenxe.skills.impl.database.DatabaseConfigurationParser;
+import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
+import org.inspirenxe.skills.impl.configuration.database.DatabaseConfigurationParser;
 import org.jooq.SQLDialect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.item.FireworkShape;
 
-public final class SkillsParserModule extends AbstractModule {
+public final class ContentParserModule extends AbstractModule {
 
   @Override
   protected void configure() {
 
     final ParserBinder parsers = new ParserBinder(this.binder());
     parsers.bindParser(RegistryKey.class).to(RegistryKeyParser.class);
-    parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
-    parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
     parsers.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {});
     parsers.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {});
     parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
     parsers.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {});
     parsers.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {});
-
-    // Commence Hacks
-    this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {});
-    this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {});
-    this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {});
-  }
-
-  private <T> LinkedBindingBuilder<StringToValueParser<T>> bindRawParser(final Class<T> type) {
-    return this.bind(new FriendlyTypeLiteral<StringToValueParser<T>>() {}.where(new TypeArgument<T>(type) {}));
   }
 }
