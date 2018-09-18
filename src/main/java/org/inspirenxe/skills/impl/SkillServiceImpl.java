@@ -79,7 +79,7 @@ public final class SkillServiceImpl implements SkillService {
 
     return this.containers.values()
       .stream()
-      .filter(c -> c.getName().equals(share))
+      .filter(c -> c.getName().equalsIgnoreCase(share))
       .findFirst();
   }
 
@@ -181,7 +181,7 @@ public final class SkillServiceImpl implements SkillService {
       }
     }
 
-    public void skipProcessing(final boolean skipProcessing) {
+    void skipProcessing(final boolean skipProcessing) {
       this.skipProcessing = skipProcessing;
     }
   }
