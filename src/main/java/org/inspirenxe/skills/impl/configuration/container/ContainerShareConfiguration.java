@@ -40,6 +40,10 @@ public class ContainerShareConfiguration {
   public Optional<String> getShare(final String name) {
     checkNotNull(name);
 
-    return Optional.ofNullable(this.containerShares.get(name));
+    return this.containerShares.entrySet()
+      .stream()
+      .filter(kv -> kv.getKey().equalsIgnoreCase(name))
+      .map(Map.Entry::getValue)
+      .findAny();
   }
 }
