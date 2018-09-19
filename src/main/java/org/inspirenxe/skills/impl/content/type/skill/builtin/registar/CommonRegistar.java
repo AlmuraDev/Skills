@@ -161,7 +161,7 @@ public final class CommonRegistar {
         return false;
     };
 
-    public static TriFunction<Player, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (cause, skill, snapshot) -> true;
+    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (cause, skill, snapshot) -> true;
 
     public static EventFeedback createFireworkEffect(final String effectId) {
         checkNotNull(effectId);
