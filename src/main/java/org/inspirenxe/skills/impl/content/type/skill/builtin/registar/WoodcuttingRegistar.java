@@ -28,7 +28,16 @@ import com.google.inject.Inject;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.trait.EnumTraits;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.item.inventory.InteractItemEvent;
+import org.spongepowered.api.item.ItemTypes;
 
 public final class WoodcuttingRegistar {
 
@@ -48,6 +57,43 @@ public final class WoodcuttingRegistar {
     if (type == null) {
       return;
     }
+
+    // Axes
+    final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
+
+    listener
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.WOODEN_AXE).level(10))
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_AXE).level(20))
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_AXE).level(30))
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_AXE).level(40))
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_AXE).level(50))
+    ;
+
+    // Logs/etc
+    final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
+
+    final BlockState log = BlockTypes.LOG.getDefaultState();
+    final BlockState log2 = BlockTypes.LOG2.getDefaultState();
+
+    listener
+      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(5.0).economy(0.1))
+      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "dark_oak").orElse(null)).level(10).xp(7.0).economy(0.3))
+      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).level(20).xp(9.0).economy(0.7))
+      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "birch").orElse(null)).level(30).xp(11.0).economy(0.9))
+      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "jungle").orElse(null)).level(40).xp(13.0).economy(1.1))
+      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "acacia").orElse(null)).level(50).xp(15.0).economy(1.3))
+    ;
+
+    // Messages (Xp change/Level change)
+    listener
+      .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
+      .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT)
+    ;
+
+    // Effects (Xp change/Level change)
+    listener
+      .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":woodcutting-level-up"))
+    ;
   }
   // @formatter:on
 }

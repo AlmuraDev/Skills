@@ -28,13 +28,23 @@ import com.google.inject.Inject;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
+import org.spongepowered.api.event.item.inventory.InteractItemEvent;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 public final class FarmingRegistar {
 
   @Inject
   private static GameRegistry registry;
-
   @Inject
   private static BuiltinEventListener listener;
 
@@ -48,6 +58,57 @@ public final class FarmingRegistar {
     if (type == null) {
       return;
     }
+
+    // Hoes
+    final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
+
+    listener
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_HOE).level(10))
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_HOE).level(20))
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_HOE).level(30))
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_HOE).level(40))
+    ;
+
+    // Bonemeal
+    final ItemStack bonemealStack = ItemStack.of(ItemTypes.DYE, 1);
+    bonemealStack.offer(Keys.DYE_COLOR, DyeColors.WHITE);
+
+    listener
+      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).fuzzyMatch().query(bonemealStack).level(20))
+    ;
+
+    // Plant crops
+    final BlockChain placeChain = new BlockChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("plant"));
+
+    listener
+      .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.CARROTS).level(10).xp(2.0).economy(1.0))
+    ;
+
+    // Break crops
+    final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_OR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
+
+    listener
+      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CARROTS).level(10))
+    ;
+
+    // Harvest crops
+    final ItemChain dropsChain = new ItemChain().matchTypeOnly();
+
+    listener
+      .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.WHEAT).xp(10.0).economy(1.5))
+      .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query(ItemTypes.CARROT).xp(20.0).economy(1.5).level(10))
+    ;
+
+    // Messages (Xp change/Level change
+    listener
+      .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
+      .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT)
+    ;
+
+    // Effects (Xp change/Level change)
+    listener
+      .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":farming-level-up"))
+    ;
   }
   // @formatter:on
 }
