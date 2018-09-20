@@ -53,175 +53,169 @@ import java.util.UUID;
 
 public final class CommonRegistar {
 
-    @Inject
-    private static GameRegistry registry;
+  @Inject
+  private static GameRegistry registry;
 
-    public static EventFeedback XP_TO_ACTION_BAR = new EventFeedback().xpGained(
-        (cause, skill, xp) -> {
-          final SkillService skillService = Sponge.getServiceManager().provideUnchecked(SkillService.class);
+  public static EventFeedback XP_TO_ACTION_BAR = new EventFeedback().xpGained(
+    (cause, skill, xp) -> {
+      final SkillService skillService = Sponge.getServiceManager().provideUnchecked(SkillService.class);
 
-            final Player player = cause.first(Player.class).orElse(null);
-            if (player != null) {
+      final Player player = cause.first(Player.class).orElse(null);
+      if (player != null) {
 
-                if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
-                  .getConsole().getLocale()))) {
+        if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
+          .getConsole().getLocale()))) {
 
-                    final char mod = xp >= 0 ? '+' : '-';
+          final char mod = xp >= 0 ? '+' : '-';
 
-                    player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", skillService.getXPFormat().format(Math.abs(xp)), "xp ", skill
-                      .getSkillType().getFormattedName()));
-                }
-            }
+          player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", skillService.getXPFormat().format(Math.abs(xp)), "xp ", skill
+            .getSkillType().getFormattedName()));
         }
-    );
-
-    public static EventFeedback LEVEL_UP_TO_CHAT = new EventFeedback().levelGained(
-        (cause, skill, level) -> {
-            final Player player = cause.first(Player.class).orElse(null);
-
-            if (player == null) {
-                return;
-            }
-
-            if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
-              .getConsole().getLocale()))) {
-                player.sendMessage(Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now"
-                  + " level ", level, "."));
-            }
-
-            if (!cause.containsType(CommandCallable.class)) {
-                Sponge.getServer().getOnlinePlayers().forEach(p -> {
-                    if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(
-                      Sponge.getServer().getConsole().getLocale()) + ".other")) {
-                        p.sendMessage(ChatTypes.CHAT, Text.of(player.getName(), " has advanced to ", skill.getSkillType().getFormattedName(),
-                          " level ", level, "."));
-                    }
-                });
-            }
-        }
-    );
-
-    @SuppressWarnings("unchecked")
-    public static TriConsumer<Cause, Skill, Integer> createDenyAction(final String action) {
-        return (cause, skill, value) -> {
-            if (!(cause.root() instanceof Player)) {
-                return;
-            }
-
-            final Player player = (Player) cause.root();
-            if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName()
-              .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
-                  + action + " this."));
-            }
-        };
+      }
     }
+  );
+  public static EventFeedback LEVEL_UP_TO_CHAT = new EventFeedback().levelGained(
+    (cause, skill, level) -> {
+      final Player player = cause.first(Player.class).orElse(null);
 
-    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ONLY = (cause, skill, snapshot) -> {
-        if (!(cause.root() instanceof Player)) {
-            return false;
-        }
-        final UUID player = ((Player) cause.root()).getUniqueId();
-        final UUID creator = snapshot.getCreator().orElse(null);
-        if (creator == null) {
-            return false;
-        }
+      if (player == null) {
+        return;
+      }
 
-        return player.equals(creator);
-    };
+      if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
+        .getConsole().getLocale()))) {
+        player.sendMessage(Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now"
+          + " level ", level, "."));
+      }
 
-    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_NONE = (cause, skill, snapshot) -> {
-        if (!(cause.root() instanceof Player)) {
-            return false;
-        }
-
-        final UUID creator = snapshot.getCreator().orElse(null);
-        return creator == null;
-    };
-
-    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ANY = (cause, skill, snapshot) -> {
-        if (cause.root() instanceof Player) {
-            final UUID creator = snapshot.getCreator().orElse(null);
-            return creator != null;
-        }
-        return false;
-    };
-
-    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_NONE = (cause, skill, snapshot) -> {
-        if (cause.root() instanceof Player) {
-            final UUID player = ((Player) cause.root()).getUniqueId();
-            final UUID creator = snapshot.getCreator().orElse(null);
-            if (creator == null) {
-                return true;
-            }
-
-            return player.equals(creator);
-        }
-
-        return false;
-    };
-
-    public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (cause, skill, snapshot) -> true;
-
-    public static EventFeedback createFireworkEffect(final String effectId) {
-        checkNotNull(effectId);
-
-        final EventFeedback feedback = new EventFeedback();
-
-        final SkillsFireworkEffectType fireworkOnLevel = (SkillsFireworkEffectType) registry.getType(
-            FireworkEffectType.class, effectId).orElse(null);
-
-        if (fireworkOnLevel == null) {
-            return feedback;
-        }
-
-        return feedback.levelGained(new TriConsumer<Cause, Skill, Integer>() {
-
-            private final List<SkillsEffectType> level = new ArrayList<>();
-            private final List<SkillsEffectType> levelMax = new ArrayList<>();
-
-            {
-                this.level.add(fireworkOnLevel);
-                this.levelMax.add(fireworkOnLevel);
-
-                for (int i = 0; i < 3; i++) {
-                    final ContentFireworkEffectTypeBuilderImpl builder = new ContentFireworkEffectTypeBuilderImpl();
-                    this.levelMax.add(builder.from(fireworkOnLevel).build());
-                }
-            }
-
-            @Override
-            public void accept(final Cause cause, final Skill skill, final Integer level) {
-                final Player player = cause.first(Player.class).orElse(null);
-
-                if (player == null) {
-                    return;
-                }
-
-                if (cause.containsType(CommandCallable.class)) {
-                    return;
-                }
-
-                final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
-                if (sneaking) {
-                    return;
-                }
-
-                if (!player.hasPermission(
-                    SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                    return;
-                }
-
-                final List<SkillsEffectType> effects;
-
-                if (skill.getSkillType().getMaxLevel() == level) {
-                    effects = this.levelMax;
-                } else {
-                    effects = this.level;
-                }
-
-                effects.forEach(effect -> effect.play(player.getLocation()));
-            }
+      if (!cause.containsType(CommandCallable.class)) {
+        Sponge.getServer().getOnlinePlayers().forEach(p -> {
+          if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(
+            Sponge.getServer().getConsole().getLocale()) + ".other")) {
+            p.sendMessage(ChatTypes.CHAT, Text.of(player.getName(), " has advanced to ", skill.getSkillType().getFormattedName(),
+              " level ", level, "."));
+          }
         });
+      }
     }
+  );
+  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ONLY = (cause, skill, snapshot) -> {
+    if (!(cause.root() instanceof Player)) {
+      return false;
+    }
+    final UUID player = ((Player) cause.root()).getUniqueId();
+    final UUID creator = snapshot.getCreator().orElse(null);
+    if (creator == null) {
+      return false;
+    }
+
+    return player.equals(creator);
+  };
+  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_NONE = (cause, skill, snapshot) -> {
+    if (!(cause.root() instanceof Player)) {
+      return false;
+    }
+
+    final UUID creator = snapshot.getCreator().orElse(null);
+    return creator == null;
+  };
+  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ANY = (cause, skill, snapshot) -> {
+    if (cause.root() instanceof Player) {
+      final UUID creator = snapshot.getCreator().orElse(null);
+      return creator != null;
+    }
+    return false;
+  };
+  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_NONE = (cause, skill, snapshot) -> {
+    if (cause.root() instanceof Player) {
+      final UUID player = ((Player) cause.root()).getUniqueId();
+      final UUID creator = snapshot.getCreator().orElse(null);
+      if (creator == null) {
+        return true;
+      }
+
+      return player.equals(creator);
+    }
+
+    return false;
+  };
+  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (cause, skill, snapshot) -> true;
+
+  @SuppressWarnings("unchecked")
+  public static TriConsumer<Cause, Skill, Integer> createDenyAction(final String action) {
+    return (cause, skill, value) -> {
+      if (!(cause.root() instanceof Player)) {
+        return;
+      }
+
+      final Player player = (Player) cause.root();
+      if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName()
+        .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+        player.sendMessage(Text.of("You require ", skill.getSkillType().getFormattedName(), " level ", value, " to "
+          + action + " this."));
+      }
+    };
+  }
+
+  public static EventFeedback createFireworkEffect(final String effectId) {
+    checkNotNull(effectId);
+
+    final EventFeedback feedback = new EventFeedback();
+
+    final SkillsFireworkEffectType fireworkOnLevel = (SkillsFireworkEffectType) registry.getType(
+      FireworkEffectType.class, effectId).orElse(null);
+
+    if (fireworkOnLevel == null) {
+      return feedback;
+    }
+
+    return feedback.levelGained(new TriConsumer<Cause, Skill, Integer>() {
+
+      private final List<SkillsEffectType> level = new ArrayList<>();
+      private final List<SkillsEffectType> levelMax = new ArrayList<>();
+
+      {
+        this.level.add(fireworkOnLevel);
+        this.levelMax.add(fireworkOnLevel);
+
+        for (int i = 0; i < 3; i++) {
+          final ContentFireworkEffectTypeBuilderImpl builder = new ContentFireworkEffectTypeBuilderImpl();
+          this.levelMax.add(builder.from(fireworkOnLevel).build());
+        }
+      }
+
+      @Override
+      public void accept(final Cause cause, final Skill skill, final Integer level) {
+        final Player player = cause.first(Player.class).orElse(null);
+
+        if (player == null) {
+          return;
+        }
+
+        if (cause.containsType(CommandCallable.class)) {
+          return;
+        }
+
+        final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
+        if (sneaking) {
+          return;
+        }
+
+        if (!player.hasPermission(
+          SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName().toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+          return;
+        }
+
+        final List<SkillsEffectType> effects;
+
+        if (skill.getSkillType().getMaxLevel() == level) {
+          effects = this.levelMax;
+        } else {
+          effects = this.level;
+        }
+
+        effects.forEach(effect -> effect.play(player.getLocation()));
+      }
+    });
+  }
 }

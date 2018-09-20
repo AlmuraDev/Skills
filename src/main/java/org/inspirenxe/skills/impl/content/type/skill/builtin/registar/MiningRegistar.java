@@ -28,64 +28,26 @@ import com.google.inject.Inject;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.item.inventory.InteractItemEvent;
-import org.spongepowered.api.item.ItemTypes;
 
 public final class MiningRegistar {
 
-    @Inject
-    private static GameRegistry registry;
+  @Inject
+  private static GameRegistry registry;
 
-    @Inject
-    private static BuiltinEventListener listener;
+  @Inject
+  private static BuiltinEventListener listener;
 
-    public static void configure() {
-        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":mining").orElse(null);
+  private MiningRegistar() {
+  }
 
-        if (type == null) {
-            return;
-        }
+  // @formatter:off
+  public static void configure() {
+    final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":mining").orElse(null);
 
-        // Pickaxes
-        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
-
-        listener
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_PICKAXE).level(10))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_PICKAXE).level(20))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_PICKAXE).level(30))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_PICKAXE).level(40));
-
-        // Ores/etc
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
-
-        listener
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STONE).xp(5.0).economy(0.1))
-            .addBlockChain(ChangeBlockEvent.Break.class, type,
-              new BlockChain().from(breakChain).query(BlockTypes.COAL_ORE).level(10).xp(10.0).economy(0.3))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.IRON_ORE).level(20).xp(20.0).economy(5.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GOLD_ORE).level(30).xp(40.0).economy(10.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.DIAMOND_ORE).level(40).xp(200.0).economy(200.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.OBSIDIAN).level(50).xp(100.0).economy(100.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.NETHERRACK).level(60).xp(25.0).economy(25.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.END_STONE).level(70).xp(50.0).economy(50.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.EMERALD_ORE).level(80).xp(1000.0).economy(200.0));
-
-        // Messages (Xp change/Level change)
-        listener
-            .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
-            .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT);
-
-        // Effects (Xp change/Level change)
-        listener
-            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":mining-level-up"));
+    if (type == null) {
+      return;
     }
-
-    private MiningRegistar() {
-    }
+  }
+  // @formatter:on
 }

@@ -28,58 +28,26 @@ import com.google.inject.Inject;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.item.inventory.InteractItemEvent;
-import org.spongepowered.api.item.ItemTypes;
 
 public final class DiggerRegistar {
 
-    @Inject
-    private static GameRegistry registry;
+  @Inject
+  private static GameRegistry registry;
 
-    @Inject
-    private static BuiltinEventListener listener;
+  @Inject
+  private static BuiltinEventListener listener;
 
-    public static void configure() {
-        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":digger").orElse(null);
+  private DiggerRegistar() {
+  }
 
-        if (type == null) {
-            return;
-        }
+  // @formatter:off
+  public static void configure() {
+    final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":digger").orElse(null);
 
-        // Shovels
-        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
-
-        listener
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.WOODEN_SHOVEL).level(10))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_SHOVEL).level(20))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_SHOVEL).level(30))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_SHOVEL).level(40))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_SHOVEL).level(50));
-
-        // Dirt/etc
-        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
-
-        listener
-          .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.DIRT).xp(2.5).economy(0.1))
-          .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS).xp(2.5).economy(0.1))
-          .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SAND).xp(3.0).level(10).economy(0.3));
-
-        // Messages (Xp change/Level change
-        listener
-            .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
-            .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT);
-
-        // Effects (Xp change/Level change)
-        listener
-            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":crafting-level-up"));
+    if (type == null) {
+      return;
     }
-
-    private DiggerRegistar() {
-    }
+  }
+  // @formatter:on
 }

@@ -28,52 +28,26 @@ import com.google.inject.Inject;
 import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.item.inventory.CraftItemEvent;
-import org.spongepowered.api.event.item.inventory.InteractItemEvent;
-import org.spongepowered.api.item.ItemTypes;
 
 public final class CraftingRegistar {
 
-    @Inject
-    private static GameRegistry registry;
+  @Inject
+  private static GameRegistry registry;
 
-    @Inject
-    private static BuiltinEventListener listener;
+  @Inject
+  private static BuiltinEventListener listener;
 
-    public static void configure() {
-        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":crafting").orElse(null);
+  private CraftingRegistar() {
+  }
 
-        if (type == null) {
-            return;
-        }
+  // @formatter:off
+  public static void configure() {
+    final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":crafting").orElse(null);
 
-        // Craft
-        final ItemChain craftChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("craft"));
-
-        listener
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.WOODEN_PICKAXE).xp(5.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_PICKAXE).level(10).xp(10.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_PICKAXE).level(20).xp(15.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.GOLDEN_PICKAXE).level(30).xp(20.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.DIAMOND_PICKAXE).level(40).xp(25.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().inverseQuery().xp(1.0));
-
-        listener
-          .addItemChain(InteractItemEvent.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_SWORD).level(10));
-
-        // Messages (Xp change/Level change
-        listener
-            .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
-            .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT);
-
-        // Effects (Xp change/Level change)
-        listener
-            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":crafting-level-up"));
+    if (type == null) {
+      return;
     }
-
-    private CraftingRegistar() {
-    }
+  }
+  // @formatter:on
 }
