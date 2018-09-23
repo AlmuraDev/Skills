@@ -161,3 +161,11 @@ task cleanDatabaseClasses() {
 generateDdlJooqSchemaSource.dependsOn 'cleanDatabaseClasses'
 
 project.tasks.getByName('compileJava').dependsOn -= 'generateDdlJooqSchemaSource'
+
+shadowJar.dependsOn 'genApiJar'
+task genApiJar(type: Jar) {
+    classifier = 'api'
+    from (sourceSets.main.output) {
+        include "org/inspirenxe/skills/api/**"
+    }
+}
