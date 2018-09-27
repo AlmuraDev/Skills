@@ -64,8 +64,8 @@ public final class WoodcuttingRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_AXE).level(40))
 
             // Mods
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:lumberaxe").level(60))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:hatchet").level(60))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:lumberaxe").level(50))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:hatchet").level(50))
         ;
 
 
@@ -76,12 +76,12 @@ public final class WoodcuttingRegistar {
         final BlockState log2 = BlockTypes.LOG2.getDefaultState();
 
         listener
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(1.0).economy(0.1))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).level(5).xp(1.5).economy(0.5))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "jungle").orElse(null)).level(10).xp(2.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "birch").orElse(null)).level(15).xp(3.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "dark_oak").orElse(null)).level(20).xp(4.0).economy(1.5))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "acacia").orElse(null)).level(25).xp(5.0).economy(1.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(2.5).economy(0.1))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).level(5).xp(3.5).economy(0.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "jungle").orElse(null)).level(10).xp(4.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "birch").orElse(null)).level(15).xp(4.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "dark_oak").orElse(null)).level(20).xp(7.0).economy(1.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "acacia").orElse(null)).level(25).xp(10.0).economy(1.5))
 
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("ic2:rubber_wood").level(50).xp(15.0).economy(1.0))
 

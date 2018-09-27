@@ -63,8 +63,8 @@ public final class DiggerRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_SHOVEL).level(40))
 
             // Mods
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:shovel").level(60))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:excavator").level(60))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:shovel").level(50))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:excavator").level(50))
         ;
 
 
@@ -73,13 +73,13 @@ public final class DiggerRegistar {
         final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
 
         listener
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.DIRT).xp(1.0).economy(0.10))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS).xp(1.0).economy(0.15))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.DIRT).xp(2.5).economy(0.10))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS).xp(2.5).economy(0.15))
 
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SAND).level(5).xp(2.0).economy(0.25))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRAVEL).level(5).xp(3.0).economy(0.35))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SAND).level(5).xp(5.0).economy(0.25))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRAVEL).level(5).xp(6.0).economy(0.35))
 
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CLAY).level(10).xp(4.0).economy(0.15))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CLAY).level(10).xp(6.0).economy(0.15))
 
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS_PATH).level(20).xp(4.5).economy(0.20))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STAINED_HARDENED_CLAY).level(20).xp(5.0).economy(0.35))
