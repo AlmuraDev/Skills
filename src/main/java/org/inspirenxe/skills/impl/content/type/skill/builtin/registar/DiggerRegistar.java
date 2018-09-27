@@ -39,61 +39,63 @@ import org.spongepowered.api.item.ItemTypes;
 
 public final class DiggerRegistar {
 
-  @Inject
-  private static GameRegistry registry;
+    @Inject
+    private static GameRegistry registry;
 
-  @Inject
-  private static BuiltinEventListener listener;
+    @Inject
+    private static BuiltinEventListener listener;
 
-  private DiggerRegistar() {
-  }
+    public static void configure() {
+        final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":digger").orElse(null);
 
-  // @formatter:off
-  public static void configure() {
-    final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":digger").orElse(null);
+        if (type == null) {
+            return;
+        }
 
-    if (type == null) {
-      return;
+        // Shovels
+        final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
+
+        listener
+            // Vanilla Tools
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_SHOVEL).level(10))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_SHOVEL).level(20))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_SHOVEL).level(30))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_SHOVEL).level(40))
+
+            // Mods
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:shovel").level(60))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:excavator").level(60))
+        ;
+
+
+
+        // Dirt/etc
+        final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
+
+        listener
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.DIRT).xp(1.0).economy(0.10))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS).xp(1.0).economy(0.15))
+
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SAND).level(5).xp(2.0).economy(0.25))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRAVEL).level(5).xp(3.0).economy(0.35))
+
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CLAY).level(10).xp(4.0).economy(0.15))
+
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS_PATH).level(20).xp(4.5).economy(0.20))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STAINED_HARDENED_CLAY).level(20).xp(5.0).economy(0.35))
+
+            ;
+
+        // Messages (Xp change/Level change
+        listener
+            .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
+            .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT);
+
+        // Effects (Xp change/Level change)
+        listener
+            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/crafting-level-up"));
     }
 
-    // Shovels
-    final ItemChain interactChain = new ItemChain().matchTypeOnly().denyLevelRequired(CommonRegistar.createDenyAction("use"));
-
-    listener
-      // Vanilla Tools
-      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_SHOVEL).level(10))
-      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_SHOVEL).level(20))
-      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_SHOVEL).level(30))
-      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_SHOVEL).level(40))
-
-      // Mods
-      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:shovel").level(60))
-      .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:excavator").level(60))
-    ;
-
-    // Dirt/etc
-    final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
-
-    listener
-      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.DIRT).xp(1.0).economy(0.10))
-      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS).xp(1.0).economy(0.15))
-      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SAND).level(5).xp(2.0).economy(0.25))
-      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRAVEL).level(5).xp(3.0).economy(0.35))
-      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CLAY).level(10).xp(4.0).economy(0.15))
-      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS_PATH).level(20).xp(4.5).economy(0.20))
-      .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STAINED_HARDENED_CLAY).level(20).xp(5.0).economy(0.35))
-    ;
-
-    // Messages (Xp change/Level change
-    listener
-      .addMessageChain(Event.class, type, CommonRegistar.XP_TO_ACTION_BAR)
-      .addMessageChain(Event.class, type, CommonRegistar.LEVEL_UP_TO_CHAT)
-    ;
-
-    // Effects (Xp change/Level change)
-    listener
-      .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/crafting-level-up"))
-    ;
-  }
-  // @formatter:on
+    private DiggerRegistar() {
+    }
 }
