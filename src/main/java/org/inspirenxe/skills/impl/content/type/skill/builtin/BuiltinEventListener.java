@@ -115,56 +115,56 @@ public final class BuiltinEventListener implements Witness {
         this.configure();
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleChangeBlock(service, event, player, true);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockModify(final ChangeBlockEvent.Modify event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleChangeBlock(service, event, player, false);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleChangeBlock(service, event, player, false);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleInteractItem(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onInteractBlock(final InteractBlockEvent event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleInteractBlock(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onCraftItemCraft(final CraftItemEvent.Craft event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleCraftItem(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleDropItemEvent(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeExperiencePost(final ChangeExperienceEvent.Post event, @First final Player player) {
 
         List<EventFeedback> messages = null;
@@ -254,7 +254,7 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onDamageEntity(final DamageEntityEvent event, @Root final EntityDamageSource source, @First final Skill skill) {
         if (source.getSource() instanceof Firework) {
             event.setCancelled(true);
