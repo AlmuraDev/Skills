@@ -115,21 +115,21 @@ public final class BuiltinEventListener implements Witness {
         this.configure();
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleChangeBlock(service, event, player, true);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockModify(final ChangeBlockEvent.Modify event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleChangeBlock(service, event, player, false);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
