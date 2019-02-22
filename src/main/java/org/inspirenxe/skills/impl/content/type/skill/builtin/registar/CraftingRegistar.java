@@ -83,13 +83,13 @@ public final class CraftingRegistar {
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_AXE).level(10).xp(4.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_SHOVEL).level(10).xp(4.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_HOE).level(10).xp(4.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_SWORD).level(10).xp(4.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.STONE_SWORD).xp(4.0))
 
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_PICKAXE).level(20).xp(8.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_AXE).level(20).xp(8.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_SHOVEL).level(20).xp(8.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_HOE).level(20).xp(8.0))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_SWORD).level(20).xp(8.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.IRON_SWORD).xp(8.0))
 
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.GOLDEN_PICKAXE).level(30).xp(15.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.GOLDEN_AXE).level(30).xp(15.0))
@@ -344,8 +344,15 @@ public final class CraftingRegistar {
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("almura:food/drink/juice_whitegrape").xp(7.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("almura:food/drink/juice_yummyberry").xp(7.0))
 
-
-
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:furnace").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:crafting_table").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:sign").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:wooden_door").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:iron_door").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:spruce_door").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:jungle_door").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:dark_oak_door").xp(3.0))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("minecraft:acacia_door").xp(3.0))
         ;
 
         // Interact?
@@ -354,9 +361,10 @@ public final class CraftingRegistar {
         listener
 
             // Mods
-            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("ic2").level(50))
-            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("buildcraft").level(50))
-            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("railcraft").level(50))
+            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("ic2").level(35))
+            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("buildcraft").level(40))
+            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("railcraft").level(45))
+            .addBlockChain(InteractBlockEvent.Secondary.class, type, new BlockChain().from(blockInteractChain).queryDomain("tconstruct").level(55))
         ;
 
         // Messages (Xp change/Level change

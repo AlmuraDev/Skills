@@ -31,7 +31,9 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListene
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.trait.EnumTraits;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
@@ -69,6 +71,7 @@ public final class MiningRegistar {
 
         // Ores/etc
         final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
+        final BlockState stoneBrick = BlockTypes.STONEBRICK.getDefaultState();
 
         listener
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STONE).xp(2.5).economy(0.1))
@@ -85,7 +88,12 @@ public final class MiningRegistar {
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.END_STONE).level(70).xp(35.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.EMERALD_ORE).level(80).xp(40.0).economy(20.0))
 
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(stoneBrick.withTrait(EnumTraits.STONEBRICK_VARIANT, "mossy_stonebrick").orElse(null)).level(15).xp(7.0).economy(0.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(stoneBrick.withTrait(EnumTraits.STONEBRICK_VARIANT, "stonebrick").orElse(null)).level(15).xp(4.0).economy(0.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(stoneBrick.withTrait(EnumTraits.STONEBRICK_VARIANT, "cracked_stonebrick").orElse(null)).level(15).xp(5.0).economy(0.5))
+
             // Mod Blocks
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).queryDomain("railcraft").level(40).xp(40.0).economy(6.0))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).queryDomain("ic2").level(50).xp(40.0).economy(8.0))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("sgcraft:naquadahore").level(60).xp(50.0).economy(8.0))
 

@@ -47,6 +47,7 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.FarmingReg
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.MiningRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.WoodcuttingRegistar;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
+import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandCallable;
@@ -92,6 +93,7 @@ import java.util.stream.Collectors;
 @Singleton
 public final class BuiltinEventListener implements Witness {
 
+    private final Logger logger;
     private final ServiceManager serviceManager;
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> messageBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> effectBuilders = new HashMap<>();
@@ -101,7 +103,8 @@ public final class BuiltinEventListener implements Witness {
     private final Map<Chain<?>, Long> denyTimers = new HashMap<>();
 
     @Inject
-    public BuiltinEventListener(final ServiceManager serviceManager) {
+    public BuiltinEventListener(final Logger logger, final ServiceManager serviceManager) {
+        this.logger = logger;
         this.serviceManager = serviceManager;
     }
 
@@ -587,14 +590,7 @@ public final class BuiltinEventListener implements Witness {
         final CraftingRecipe recipe = event.getRecipe().orElse(null);
         if (recipe != null) {
             final ItemStack defaultResult = recipe.getExemplaryResult().createStack();
-
-            final int craftedTimes = crafted.getQuantity() / (defaultResult.getQuantity() == 0 ? crafted.getQuantity() : defaultResult.getQuantity());
-
-            for (int i = 0; i < craftedTimes; i++) {
-                final ItemStack copyStack = crafted.copy();
-                copyStack.setQuantity(defaultResult.getQuantity());
-                stacks.add(copyStack);
-            }
+            stacks.add(defaultResult);
         } else {
             stacks.add(crafted);
         }
