@@ -52,6 +52,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.FallingBlock;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -122,6 +123,11 @@ public final class BuiltinEventListener implements Witness {
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
+      // Patch getting XP for blocks that fall
+      if (event.getCause().containsType(FallingBlock.class)) {
+          return;
+      }
+      
       this.handleChangeBlock(service, event, player, true);
     }
 
