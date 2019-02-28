@@ -64,8 +64,8 @@ public final class WoodcuttingRegistar {
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_AXE).level(40))
 
             // Mods
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:lumberaxe").level(50))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:hatchet").level(50))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:lumberaxe").level(55))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:hatchet").level(55))
         ;
 
 

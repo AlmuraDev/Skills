@@ -104,13 +104,13 @@ public final class CraftingRegistar {
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query(ItemTypes.DIAMOND_SWORD).level(40).xp(30.0))
 
             // Mod Tools
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:pickaxe").level(50))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:hammer").level(50))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:mattock").level(50))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:scythe").level(50))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:kama").level(50))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:shovel").level(50))
-            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:excavator").level(50))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:pickaxe").level(55))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:hammer").level(55))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:mattock").level(55))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:scythe").level(55))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:kama").level(55))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:shovel").level(55))
+            .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("tconstruct:excavator").level(55))
 
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("sgcraft:sgcorecrystal").level(55).xp(30.0))
             .addItemChain(CraftItemEvent.Craft.class, type, new ItemChain().from(craftChain).query("sgcraft:sgcontrollercrystal").level(55).xp(30.0))
