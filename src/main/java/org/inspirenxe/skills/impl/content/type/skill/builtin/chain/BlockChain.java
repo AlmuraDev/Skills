@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.SkillsImpl;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilter;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public final class BlockChain extends Chain<BlockChain> {
     private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
     public List<BlockState> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
-    @Nullable public TriFunction<Cause, Skill, BlockSnapshot, Boolean> owner;
+    @Nullable public CreatorFilter creator;
 
     public BlockChain inverseQuery() {
         if (this.inErrorState) {
@@ -126,12 +127,12 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
-    public BlockChain creator(final TriFunction<Cause, Skill, BlockSnapshot, Boolean> value) {
+    public BlockChain creator(final CreatorFilter value) {
         if (this.inErrorState) {
             return this;
         }
         checkNotNull(value);
-        this.owner = value;
+        this.creator = value;
 
         return this;
     }
@@ -145,7 +146,7 @@ public final class BlockChain extends Chain<BlockChain> {
         }
 
         this.matchOnlyType = builder.matchOnlyType;
-        this.owner = builder.owner;
+        this.creator = builder.creator;
         return this;
     }
 }

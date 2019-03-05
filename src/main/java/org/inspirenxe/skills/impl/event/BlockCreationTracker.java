@@ -177,7 +177,7 @@ public final class BlockCreationTracker implements Witness {
 
             final Vector3i chunkPos = location.getChunkPosition();
             final Vector3i blockPos = location.getBlockPosition();
-            final long key = this.getKey(chunkPos.getX(), chunkPos.getZ(), blockPos.getX()&0x000F, blockPos.getY()&0x00FF, blockPos.getZ()&0x000F);
+            final long key = this.getKey(chunkPos.getX(), chunkPos.getZ(), blockPos.getX() & 15, blockPos.getY()&0x00FF, blockPos.getZ() & 15);
 
             this.cache.computeIfAbsent(location.getExtent().getUniqueId(), (k) -> new Long2ObjectArrayMap<>()).put(key, BlockCreationTypes.SAPLING);
             toInsert.add(Queries.createInsertBlockCreationQuery(location.getExtent().getUniqueId(), key, BlockCreationTypes.SAPLING.getIndex()));

@@ -33,16 +33,16 @@ import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.EventFeedback;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilter;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
-import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
@@ -99,47 +99,74 @@ public final class CommonRegistar {
       }
     }
   );
-  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ONLY = (cause, skill, snapshot) -> {
-    if (!(cause.root() instanceof Player)) {
+  public static CreatorFilter CREATOR_ONLY = (cause, skill, snapshot, tracker) -> {
+    if (!(cause.root() instanceof User)) {
       return false;
     }
-    final UUID player = ((Player) cause.root()).getUniqueId();
+
+    final UUID user = ((User) cause.root()).getUniqueId();
     final UUID creator = snapshot.getCreator().orElse(null);
     if (creator == null) {
       return false;
     }
 
-    return player.equals(creator);
+    return user.equals(creator);
   };
-  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_NONE = (cause, skill, snapshot) -> {
-    if (!(cause.root() instanceof Player)) {
+
+  public static CreatorFilter NO_CREATOR = (cause, skill, snapshot, tracker) -> {
+    if (!(cause.root() instanceof User)) {
+      return false;
+    }
+
+    return snapshot.getCreator().orElse(null) == null;
+  };
+
+  public static CreatorFilter ANY_CREATOR = (cause, skill, snapshot, tracker) -> {
+    if (!(cause.root() instanceof User)) {
       return false;
     }
 
     final UUID creator = snapshot.getCreator().orElse(null);
-    return creator == null;
+    return creator != null;
   };
-  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_ANY = (cause, skill, snapshot) -> {
-    if (cause.root() instanceof Player) {
-      final UUID creator = snapshot.getCreator().orElse(null);
-      return creator != null;
+
+  public static CreatorFilter CREATOR_OR_NATURAL = (cause, skill, snapshot, tracker) -> {
+    final UUID creator = snapshot.getCreator().orElse(null);
+    if (creator == null) {
+      return true;
     }
+
+    if (cause.root() instanceof User) {
+      final UUID user = ((User) cause.root()).getUniqueId();
+
+      return user.equals(creator);
+    }
+
     return false;
   };
-  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_NONE = (cause, skill, snapshot) -> {
-    if (cause.root() instanceof Player) {
-      final UUID player = ((Player) cause.root()).getUniqueId();
-      final UUID creator = snapshot.getCreator().orElse(null);
-      if (creator == null) {
-        return true;
+
+  public static CreatorFilter CREATOR_BUT_TRACKED_OR_NATURAL = (cause, skill, snapshot, tracker) -> {
+    final UUID creator = snapshot.getCreator().orElse(null);
+    if (creator == null) {
+      return true;
+    }
+
+    if (cause.root() instanceof User) {
+      final UUID user = ((User) cause.root()).getUniqueId();
+
+      // We only want to return true if the block has an creator and is tracked
+
+      if (!user.equals(creator)) {
+        return false;
       }
 
-      return player.equals(creator);
+      return tracker.getCreationType(snapshot) != null;
     }
 
     return false;
   };
-  public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (cause, skill, snapshot) -> true;
+
+  public static CreatorFilter ANY = (cause, skill, snapshot, tracker) -> true;
 
   @SuppressWarnings("unchecked")
   public static TriConsumer<Cause, Skill, Integer> createDenyAction(final String action) {

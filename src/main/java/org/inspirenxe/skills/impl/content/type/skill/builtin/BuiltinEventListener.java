@@ -40,6 +40,7 @@ import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.Chain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilter;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CommonRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.result.BuiltinResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CraftingRegistar;
@@ -772,20 +773,13 @@ public final class BuiltinEventListener implements Witness {
                     cont = false;
                 }
 
-                // Check owner second
+                // Check creator second
                 if (cont) {
-                    final TriFunction<Cause, Skill, BlockSnapshot, Boolean> owner = chain.owner;
-                    if (owner != null) {
-                        final Boolean ownerCheck = owner.apply(cause, skill, snapshot);
-
-                        if (ownerCheck != null) {
-                            if (!ownerCheck) {
-                                cont = false;
-                            } else {
-                                if (owner == CommonRegistar.CREATOR_OR_NONE || this.tracker.getCreationType(snapshot) == null) {
-                                    cont = false;
-                                }
-                            }
+                    final CreatorFilter creator = chain.creator;
+                    if (creator != null) {
+                        final boolean test = creator.test(cause, skill, snapshot, this.tracker);
+                        if (!test) {
+                            cont = false;
                         }
                     }
                 }
