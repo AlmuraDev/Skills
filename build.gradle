@@ -52,6 +52,7 @@ dependencies {
     compile "com.google.inject.extensions:guice-assistedinject:${project.assistedInjectVersion}"
     compile "org.checkerframework:checker-qual:${project.checkerQualVersion}"
     compile "com.almuradev:droplet:${project.dropletVersion}"
+    compile "it.unimi.dsi:fastutil:8.2.2"    
     compile "net.objecthunter:exp4j:${project.exp4JVersion}"
     compile "net.kyori:feature:${project.featureVersion}"
     compile "net.kyori:fragment:${project.fragmentVersion}"

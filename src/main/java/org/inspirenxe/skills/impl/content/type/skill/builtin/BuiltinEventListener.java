@@ -40,12 +40,14 @@ import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.Chain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CommonRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.result.BuiltinResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CraftingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.DiggerRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.FarmingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.MiningRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.WoodcuttingRegistar;
+import org.inspirenxe.skills.impl.event.BlockCreationTracker;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -96,6 +98,8 @@ public final class BuiltinEventListener implements Witness {
 
     private final Logger logger;
     private final ServiceManager serviceManager;
+    private final BlockCreationTracker tracker;
+
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> messageBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> effectBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<BlockChain>>> blockChains = new HashMap<>();
@@ -104,9 +108,10 @@ public final class BuiltinEventListener implements Witness {
     private final Map<Chain<?>, Long> denyTimers = new HashMap<>();
 
     @Inject
-    public BuiltinEventListener(final Logger logger, final ServiceManager serviceManager) {
+    public BuiltinEventListener(final Logger logger, final ServiceManager serviceManager, final BlockCreationTracker tracker) {
         this.logger = logger;
         this.serviceManager = serviceManager;
+        this.tracker = tracker;
     }
 
     @Listener(order = Order.LAST)
@@ -127,7 +132,7 @@ public final class BuiltinEventListener implements Witness {
       if (event.getCause().containsType(FallingBlock.class)) {
           return;
       }
-      
+
       this.handleChangeBlock(service, event, player, true);
     }
 
@@ -773,8 +778,14 @@ public final class BuiltinEventListener implements Witness {
                     if (owner != null) {
                         final Boolean ownerCheck = owner.apply(cause, skill, snapshot);
 
-                        if (ownerCheck != null && !ownerCheck) {
-                            cont = false;
+                        if (ownerCheck != null) {
+                            if (!ownerCheck) {
+                                cont = false;
+                            } else {
+                                if (owner == CommonRegistar.CREATOR_OR_NONE || this.tracker.getCreationType(snapshot) == null) {
+                                    cont = false;
+                                }
+                            }
                         }
                     }
                 }
