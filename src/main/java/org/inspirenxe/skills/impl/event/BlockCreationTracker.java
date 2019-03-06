@@ -45,7 +45,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -55,6 +54,7 @@ import org.spongepowered.api.world.World;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +105,7 @@ public final class BlockCreationTracker implements Witness {
                         .createTaskBuilder()
                         .execute(() -> {
                             final Long2LongArrayMap worldCache = new Long2LongArrayMap();
+                            worldCache.defaultReturnValue(Long.MIN_VALUE);
 
                             results.forEach(r -> r.forEach(result -> {
                                 final Long key = result.getValue(SkillsBlockCreation.SKILLS_BLOCK_CREATION.POS);
@@ -124,12 +125,12 @@ public final class BlockCreationTracker implements Witness {
 
     @Listener
     public void onUnloadWorld(final UnloadWorldEvent event) {
-
+        this.cache.remove(event.getTargetWorld().getUniqueId());
     }
 
     // We only care about saplings placing blocks, need to track those positions
     @Listener
-    public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final BlockSnapshot snapshot, @First final Player player) {
+    public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @First Player player) {
         final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(event.getCause(), event.getContext());
         if (flags.isEmpty()) {
             return;
@@ -152,8 +153,10 @@ public final class BlockCreationTracker implements Witness {
             final Vector3i chunkPos = location.getChunkPosition();
             final Vector3i blockPos = location.getBlockPosition();
             final long key = this.getKey(chunkPos.getX(), chunkPos.getZ(), blockPos.getX() & 15, blockPos.getY()&0x00FF, blockPos.getZ() & 15);
-            this.cache.computeIfAbsent(location.getExtent().getUniqueId(), (k) -> new Long2LongArrayMap()).put(key, mask);
-            toInsert.add(Queries.createInsertBlockCreationQuery(location.getExtent().getUniqueId(), key, mask));
+
+            if (this.cache.computeIfAbsent(location.getExtent().getUniqueId(), k -> new Long2LongArrayMap()).put(key, mask) == Long.MIN_VALUE) {
+                toInsert.add(Queries.createInsertBlockCreationQuery(location.getExtent().getUniqueId(), key, mask));
+            }
         }
 
         this.submitQueries(toInsert);
@@ -187,9 +190,9 @@ public final class BlockCreationTracker implements Witness {
             final Vector3i chunkPos = location.getChunkPosition();
             final Vector3i blockPos = location.getBlockPosition();
             final long key = this.getKey(chunkPos.getX(), chunkPos.getZ(), blockPos.getX() & 15, blockPos.getY()&0x00FF, blockPos.getZ() & 15);
-            worldCache.remove(key);
-
-            toDelete.add(Queries.createDeleteBlockCreationQuery(location.getExtent().getUniqueId(), key));
+            if (worldCache.remove(key) != Long.MIN_VALUE) {
+                toDelete.add(Queries.createDeleteBlockCreationQuery(location.getExtent().getUniqueId(), key));
+            }
         }
 
         this.submitQueries(toDelete);
@@ -221,7 +224,7 @@ public final class BlockCreationTracker implements Witness {
         return cx << 38 | cz << 16 | packedPos;
     }
 
-    private void submitQueries(final List<? extends DatabaseQuery<?>> builders) {
+    private void submitQueries(final Collection<? extends DatabaseQuery<?>> builders) {
         this.scheduler
             .createTaskBuilder()
             .async()

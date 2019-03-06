@@ -30,6 +30,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColor;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.data.value.mutable.Value;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
@@ -42,11 +43,12 @@ import java.util.function.BiPredicate;
 
 public enum BlockCreationFlags {
     SAPLING((cause, context) -> {
-        if (!(cause.root() instanceof BlockSnapshot)) {
+        final BlockSnapshot snapshot = cause.first(BlockSnapshot.class).orElse(null);
+        if (snapshot == null || snapshot.getState().getType() != BlockTypes.SAPLING) {
             return false;
         }
-
-        return ((BlockSnapshot) cause.root()).getState().getType() == BlockTypes.SAPLING;
+        final User user = cause.first(User.class).orElse(null);
+        return user != null;
     }),
 
     BONEMEAL((cause, context) -> {
