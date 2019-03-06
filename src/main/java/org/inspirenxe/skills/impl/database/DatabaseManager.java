@@ -35,6 +35,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.ServiceManager;
@@ -115,7 +116,7 @@ public final class DatabaseManager implements Witness {
     }
 
     @Listener(order = Order.FIRST)
-    public void onGameStartingServer(final GameStartingServerEvent event) {
+    public void onGameAboutToStartServer(final GameAboutToStartServerEvent event) {
         try (final DSLContext context = this.createContext(false)) {
             context.createSchemaIfNotExists(this.getConfiguration().getInitialCatalog()).execute();
         } catch (final Exception ex) {

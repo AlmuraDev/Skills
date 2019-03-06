@@ -25,12 +25,18 @@
 package org.inspirenxe.skills.impl.database;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.inspirenxe.skills.generated.Tables.SKILLS_BLOCK_CREATION;
+import static org.inspirenxe.skills.generated.Tables.SKILLS_CONTAINER_PALETTE;
 import static org.inspirenxe.skills.generated.Tables.SKILLS_EXPERIENCE;
 
+import org.inspirenxe.skills.generated.tables.SkillsContainerPalette;
 import org.inspirenxe.skills.generated.tables.records.SkillsBlockCreationRecord;
+import org.inspirenxe.skills.generated.tables.records.SkillsContainerPaletteRecord;
 import org.inspirenxe.skills.generated.tables.records.SkillsExperienceRecord;
 import org.jooq.DeleteConditionStep;
+import org.jooq.InsertResultStep;
+import org.jooq.InsertValuesStep1;
 import org.jooq.InsertValuesStep3;
 import org.jooq.InsertValuesStep4;
 import org.jooq.Record1;
@@ -105,33 +111,52 @@ public final class Queries {
       (holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType))));
   }
 
-  public static DatabaseQuery<SelectConditionStep<SkillsBlockCreationRecord>> createFetchBlockCreationQuery(final UUID container) {
+  public static DatabaseQuery<SelectConditionStep<SkillsContainerPaletteRecord>> createFetchContainerPaletteQuery(final UUID container) {
     checkNotNull(container);
 
     final byte[] containerData = DatabaseUtils.toBytes(container);
+    return context -> context
+        .selectFrom(SKILLS_CONTAINER_PALETTE)
+        .where(SKILLS_CONTAINER_PALETTE.CONTAINER.eq(containerData));
+  }
+
+  public static DatabaseQuery<InsertResultStep<SkillsContainerPaletteRecord>> createInsertContainerPaletteQuery(final UUID container) {
+    checkNotNull(container);
+
+    final byte[] containerData = DatabaseUtils.toBytes(container);
+    return context -> {
+      final InsertValuesStep1<SkillsContainerPaletteRecord, byte[]> insertionStep = context
+          .insertInto(SkillsContainerPalette.SKILLS_CONTAINER_PALETTE)
+          .columns(SkillsContainerPalette.SKILLS_CONTAINER_PALETTE.CONTAINER);
+      insertionStep.values(containerData);
+      return insertionStep.returning();
+    };
+  }
+
+  public static DatabaseQuery<SelectConditionStep<SkillsBlockCreationRecord>> createFetchBlockCreationQuery(final int container) {
+    checkState(container >= 0);
+
     return context -> context
         .selectFrom(SKILLS_BLOCK_CREATION)
-        .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(containerData));
+        .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(container));
   }
 
-  public static DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, byte[], Long, Long>> createInsertBlockCreationQuery(final UUID container
+  public static DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, Integer, Long, Long>> createInsertBlockCreationQuery(final int container
       , final long pos, final long mask) {
-    checkNotNull(container);
+    checkState(container >= 0);
 
-    final byte[] containerData = DatabaseUtils.toBytes(container);
     return context -> context
         .insertInto(SKILLS_BLOCK_CREATION, SKILLS_BLOCK_CREATION.CONTAINER, SKILLS_BLOCK_CREATION.POS,
-            SKILLS_BLOCK_CREATION.CREATION_TYPE)
-        .values(containerData, pos, mask);
+            SKILLS_BLOCK_CREATION.MASK)
+        .values(container, pos, mask);
   }
 
-  public static DatabaseQuery<DeleteConditionStep<SkillsBlockCreationRecord>> createDeleteBlockCreationQuery(final UUID container,
+  public static DatabaseQuery<DeleteConditionStep<SkillsBlockCreationRecord>> createDeleteBlockCreationQuery(final int container,
       final long pos) {
-    checkNotNull(container);
+    checkState(container >= 0);
 
-    final byte[] containerData = DatabaseUtils.toBytes(container);
     return context -> context
         .deleteFrom(SKILLS_BLOCK_CREATION)
-        .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(containerData).and(SKILLS_BLOCK_CREATION.POS.eq(pos)));
+        .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(container).and(SKILLS_BLOCK_CREATION.POS.eq(pos)));
   }
 }

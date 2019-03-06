@@ -10,11 +10,17 @@ create table if not exists "skills_experience"
   constraint "pk_skill_experience_skill_type_container_holder" primary key("container", "holder", "skill")
 );
 
-create table if not exists "skills_block_creation"
+create table if not exists "skills_container_palette"
 (
   "rec_no"        int        auto_increment,
-  "container"     binary(16) not null,
+  "container"  binary(16)    not null,
+  constraint "pk_skills_container_palette_container" primary key("container")
+);
+
+create table if not exists "skills_block_creation"
+(
+  "container"     int        not null,
   "pos"           bigint     not null,
-  "creation_type" bigint     not null,
+  "mask"          bigint     not null,
   constraint "pk_skills_block_creation_container_pos" primary key("container", "pos")
 );
