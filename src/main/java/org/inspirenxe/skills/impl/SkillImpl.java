@@ -111,7 +111,7 @@ public final class SkillImpl implements Skill {
     }
 
     if (exception != null) {
-      return ExperienceResult.builder().type(Result.Type.ERROR).exception(exception).build();
+      return ExperienceResult.builder().result(Result.Type.ERROR).exception(exception).build();
     }
 
     final int originalLevel = this.getCurrentLevel();
@@ -121,7 +121,7 @@ public final class SkillImpl implements Skill {
       this, originalExperience, experience);
 
     if (this.eventManager.post(event)) {
-      return ExperienceResult.builder().type(Result.Type.CANCELLED).build();
+      return ExperienceResult.builder().result(Result.Type.CANCELLED).build();
     }
 
     this.experience = event.getExperience();
@@ -139,7 +139,7 @@ public final class SkillImpl implements Skill {
     }
 
     this.isDirty = true;
-    return ExperienceResult.builder().type(Result.Type.SUCCESS).xp(event.getExperienceDifference()).build();
+    return ExperienceResult.builder().result(Result.Type.SUCCESS).xp(event.getExperienceDifference()).build();
   }
 
   @Override

@@ -22,14 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event;
-
-import org.inspirenxe.skills.impl.SkillsImpl;
-
-public final class BlockCreationTypes {
-
-    public static final BlockCreationType SAPLING = new BlockCreationType(SkillsImpl.ID + ":sapling", "Sapling", 0);
-
-    private BlockCreationTypes() {
-    }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.content.type.skill.builtin.filter;

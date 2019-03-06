@@ -50,6 +50,7 @@ import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
+import org.inspirenxe.skills.impl.event.BlockCreationTracker;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jooq.SQLDialect;
@@ -92,7 +93,8 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
       .add(CommandInstaller.class)
       .add(RegistryInstaller.class)
       .add(DatabaseManager.class)
-      .add(SkillLoader.class);
+      .add(SkillLoader.class)
+      .add(BlockCreationTracker.class);
   }
 
   private <T> LinkedBindingBuilder<StringToValueParser<T>> bindRawParser(final Class<T> type) {

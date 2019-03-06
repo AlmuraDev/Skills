@@ -26,23 +26,19 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilter;
-import org.inspirenxe.skills.impl.util.function.TriFunction;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilters;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CommonRegistar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.event.cause.Cause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
 public final class BlockChain extends Chain<BlockChain> {
@@ -50,7 +46,7 @@ public final class BlockChain extends Chain<BlockChain> {
     private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
     public List<BlockState> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
-    @Nullable public CreatorFilter creator;
+    public CreatorFilter creator = CreatorFilters.NO_FILTER;
 
     public BlockChain inverseQuery() {
         if (this.inErrorState) {

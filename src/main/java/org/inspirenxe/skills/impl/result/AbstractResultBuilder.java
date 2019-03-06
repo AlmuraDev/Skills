@@ -35,7 +35,7 @@ public abstract class AbstractResultBuilder<R extends Result, B extends Result.B
   @Nullable public Exception ex;
 
   @Override
-  public B type(final Result.Type type) {
+  public B result(final Result.Type type) {
     this.type = type;
     return (B) this;
   }

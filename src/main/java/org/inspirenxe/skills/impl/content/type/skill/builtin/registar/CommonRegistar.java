@@ -33,7 +33,6 @@ import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEffectTypeBuilderImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.EventFeedback;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilter;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
@@ -42,14 +41,12 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public final class CommonRegistar {
 
@@ -74,6 +71,7 @@ public final class CommonRegistar {
       }
     }
   );
+
   public static EventFeedback LEVEL_UP_TO_CHAT = new EventFeedback().levelGained(
     (cause, skill, level) -> {
       final Player player = cause.first(Player.class).orElse(null);
@@ -99,74 +97,6 @@ public final class CommonRegistar {
       }
     }
   );
-  public static CreatorFilter CREATOR_ONLY = (cause, skill, snapshot, tracker) -> {
-    if (!(cause.root() instanceof User)) {
-      return false;
-    }
-
-    final UUID user = ((User) cause.root()).getUniqueId();
-    final UUID creator = snapshot.getCreator().orElse(null);
-    if (creator == null) {
-      return false;
-    }
-
-    return user.equals(creator);
-  };
-
-  public static CreatorFilter NO_CREATOR = (cause, skill, snapshot, tracker) -> {
-    if (!(cause.root() instanceof User)) {
-      return false;
-    }
-
-    return snapshot.getCreator().orElse(null) == null;
-  };
-
-  public static CreatorFilter ANY_CREATOR = (cause, skill, snapshot, tracker) -> {
-    if (!(cause.root() instanceof User)) {
-      return false;
-    }
-
-    final UUID creator = snapshot.getCreator().orElse(null);
-    return creator != null;
-  };
-
-  public static CreatorFilter CREATOR_OR_NATURAL = (cause, skill, snapshot, tracker) -> {
-    final UUID creator = snapshot.getCreator().orElse(null);
-    if (creator == null) {
-      return true;
-    }
-
-    if (cause.root() instanceof User) {
-      final UUID user = ((User) cause.root()).getUniqueId();
-
-      return user.equals(creator);
-    }
-
-    return false;
-  };
-
-  public static CreatorFilter CREATOR_BUT_TRACKED_OR_NATURAL = (cause, skill, snapshot, tracker) -> {
-    final UUID creator = snapshot.getCreator().orElse(null);
-    if (creator == null) {
-      return true;
-    }
-
-    if (cause.root() instanceof User) {
-      final UUID user = ((User) cause.root()).getUniqueId();
-
-      // We only want to return true if the block has an creator and is tracked
-
-      if (!user.equals(creator)) {
-        return false;
-      }
-
-      return tracker.getCreationType(snapshot) != null;
-    }
-
-    return false;
-  };
-
-  public static CreatorFilter ANY = (cause, skill, snapshot, tracker) -> true;
 
   @SuppressWarnings("unchecked")
   public static TriConsumer<Cause, Skill, Integer> createDenyAction(final String action) {

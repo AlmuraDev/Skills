@@ -40,16 +40,14 @@ import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.Chain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilter;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CommonRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.result.BuiltinResult;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CraftingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.DiggerRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.FarmingRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.MiningRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.WoodcuttingRegistar;
+import org.inspirenxe.skills.impl.event.BlockCreationFlags;
 import org.inspirenxe.skills.impl.event.BlockCreationTracker;
-import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -759,40 +757,33 @@ public final class BuiltinEventListener implements Witness {
                 continue;
             }
 
-            builder.type(Result.Type.SUCCESS);
+            builder.chain(chain);
 
-            if (chain != null) {
+            builder.result(Result.Type.SUCCESS);
 
-                builder.chain(chain);
+            boolean reward = true;
 
-                boolean cont = true;
+            // Check level first to set result cancellation
+            if (chain.level != null && chain.level > skill.getCurrentLevel()) {
+                builder.result(Result.Type.CANCELLED);
+                reward = false;
+            }
 
-                // Check level first to set result cancellation
-                if (chain.level != null && chain.level > skill.getCurrentLevel()) {
-                    builder.type(Result.Type.CANCELLED);
-                    cont = false;
+            // Check creator to determine candidacy for reward
+            final Set<BlockCreationFlags> flags = this.tracker.getCreationFlags(snapshot);
+
+            if (reward) {
+                reward = chain.creator.test(cause, skill, snapshot, flags);
+            }
+
+            if (reward) {
+                if (chain.xp != null) {
+                    builder.xp(chain.xp);
                 }
 
-                // Check creator second
-                if (cont) {
-                    final CreatorFilter creator = chain.creator;
-                    if (creator != null) {
-                        final boolean test = creator.test(cause, skill, snapshot, this.tracker);
-                        if (!test) {
-                            cont = false;
-                        }
-                    }
-                }
-
-                if (cont) {
-                    if (chain.xp != null) {
-                        builder.xp(chain.xp);
-                    }
-
-                    if (chain.economy != null) {
-                        skill.getSkillType().getEconomyFunction()
-                            .ifPresent(func -> builder.money(func.getMoneyFor(skill.getCurrentLevel(), chain.economy)));
-                    }
+                if (chain.economy != null) {
+                    skill.getSkillType().getEconomyFunction()
+                        .ifPresent(func -> builder.money(func.getMoneyFor(skill.getCurrentLevel(), chain.economy)));
                 }
             }
 
@@ -833,13 +824,13 @@ public final class BuiltinEventListener implements Witness {
                 .findAny()
                 .orElse(null);
 
-            builder.type(Result.Type.SUCCESS);
+            builder.result(Result.Type.SUCCESS);
 
             if (chain != null) {
 
                 builder.chain(chain);
                 if (chain.level != null && chain.level > skill.getCurrentLevel()) {
-                    builder.type(Result.Type.CANCELLED);
+                    builder.result(Result.Type.CANCELLED);
                 } else {
                     if (chain.economy != null) {
                         skill.getSkillType().getEconomyFunction()

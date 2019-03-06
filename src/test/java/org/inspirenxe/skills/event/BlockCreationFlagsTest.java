@@ -22,17 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin.filter;
+package org.inspirenxe.skills.event;
 
-import org.inspirenxe.skills.api.Skill;
+import com.google.common.collect.Sets;
 import org.inspirenxe.skills.impl.event.BlockCreationFlags;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.event.cause.Cause;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.Set;
 
-@FunctionalInterface
-public interface CreatorFilter {
-
-    boolean test(Cause cause, Skill skill, BlockSnapshot snapshot, Set<BlockCreationFlags> flags);
+public final class BlockCreationFlagsTest {
+    @Test
+    public void testMaskAndUnmask() {
+        final Set<BlockCreationFlags> flags = Sets.newHashSet(BlockCreationFlags.SAPLING, BlockCreationFlags.BONEMEAL);
+        final long mask = BlockCreationFlags.mask(flags);
+        final Set<BlockCreationFlags> flags2 = BlockCreationFlags.unmask(mask);
+        Assert.assertEquals(flags, flags2);
+    }
 }

@@ -45,7 +45,7 @@ public interface Result {
 
   interface Builder<R extends Result, B extends Builder<R, B>> extends ResettableBuilder<R, B> {
 
-    B type(final Type type);
+    B result(final Type type);
 
     B exception(final Exception ex);
 

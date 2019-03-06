@@ -22,17 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin.filter;
-
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.event.BlockCreationFlags;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.event.cause.Cause;
-
-import java.util.Set;
-
-@FunctionalInterface
-public interface CreatorFilter {
-
-    boolean test(Cause cause, Skill skill, BlockSnapshot snapshot, Set<BlockCreationFlags> flags);
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;

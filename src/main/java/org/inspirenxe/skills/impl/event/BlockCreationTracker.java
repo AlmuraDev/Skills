@@ -26,9 +26,9 @@ package org.inspirenxe.skills.impl.event;
 
 import com.almuradev.toolbox.inject.event.Witness;
 import com.flowpowered.math.vector.Vector3i;
+import it.unimi.dsi.fastutil.longs.Long2LongArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import org.inspirenxe.skills.generated.tables.SkillsBlockCreation;
-import org.inspirenxe.skills.generated.tables.records.SkillsBlockCreationPalleteRecord;
 import org.inspirenxe.skills.generated.tables.records.SkillsBlockCreationRecord;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.database.DatabaseQuery;
@@ -36,9 +36,7 @@ import org.inspirenxe.skills.impl.database.Queries;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
 import org.jooq.InsertValuesStep3;
-import org.jooq.InsertValuesStep4;
 import org.jooq.Query;
-import org.jooq.Result;
 import org.jooq.Results;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockTypes;
@@ -48,7 +46,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -61,6 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -69,43 +67,18 @@ import javax.inject.Singleton;
 
 @Singleton
 public final class BlockCreationTracker implements Witness {
+
     private final PluginContainer container;
     private final DatabaseManager databaseManager;
     private final Scheduler scheduler;
 
-    private final Map<UUID, Long2ObjectArrayMap<BlockCreationType>> cache = new HashMap<>();
+    private final Map<UUID, Long2LongArrayMap> cache = new HashMap<>();
 
     @Inject
     public BlockCreationTracker(final PluginContainer container, final DatabaseManager databaseManager, final Scheduler scheduler) {
         this.container = container;
         this.databaseManager = databaseManager;
         this.scheduler = scheduler;
-    }
-
-    @Listener
-    public void onGameStartingServer(final GameStartingServerEvent event) {
-        // Yes, this needs to be on the server thread as the database must be prepped.
-        try (final DSLContext context = this.databaseManager.createContext(true)) {
-            final SkillsBlockCreationPalleteRecord record = Queries
-                .createFetchBlockCreationPalleteQuery(BlockCreationTypes.SAPLING.getId())
-                .build(context)
-                .keepStatement(false)
-                .fetchOne();
-
-            if (record == null) {
-                final int result = Queries
-                    .createInsertBlockCreationPalleteQuery(BlockCreationTypes.SAPLING.getId(), BlockCreationTypes.SAPLING.getName())
-                    .build(context)
-                    .keepStatement(false)
-                    .execute();
-
-                if (result == 0) {
-                    // TODO Insert failed! What to do!?
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Listener
@@ -131,14 +104,12 @@ public final class BlockCreationTracker implements Witness {
                     this.scheduler
                         .createTaskBuilder()
                         .execute(() -> {
-                            final Long2ObjectArrayMap<BlockCreationType> worldCache = new Long2ObjectArrayMap<>();
+                            final Long2LongArrayMap worldCache = new Long2LongArrayMap();
 
                             results.forEach(r -> r.forEach(result -> {
                                 final Long key = result.getValue(SkillsBlockCreation.SKILLS_BLOCK_CREATION.POS);
-                                final Integer creationIndex = result.getValue(SkillsBlockCreation.SKILLS_BLOCK_CREATION.CREATION_TYPE);
-
-                                // TODO Lookup by index
-                                worldCache.put(key, BlockCreationTypes.SAPLING);
+                                final Long mask = result.getValue(SkillsBlockCreation.SKILLS_BLOCK_CREATION.CREATION_TYPE);
+                                worldCache.put(key, mask);
                             }));
 
                             this.cache.put(container, worldCache);
@@ -159,11 +130,14 @@ public final class BlockCreationTracker implements Witness {
     // We only care about saplings placing blocks, need to track those positions
     @Listener
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final BlockSnapshot snapshot, @First final Player player) {
-        if (snapshot.getState().getType() != BlockTypes.SAPLING) {
+        final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(event.getCause(), event.getContext());
+        if (flags.isEmpty()) {
             return;
         }
 
-        final List<DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, byte[], Long, Integer>>> toInsert = new ArrayList<>();
+        final long mask = BlockCreationFlags.mask(flags);
+
+        final List<DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, byte[], Long, Long>>> toInsert = new ArrayList<>();
 
         for (final Transaction<BlockSnapshot> transaction : event.getTransactions()) {
             if (!transaction.isValid()) {
@@ -178,9 +152,8 @@ public final class BlockCreationTracker implements Witness {
             final Vector3i chunkPos = location.getChunkPosition();
             final Vector3i blockPos = location.getBlockPosition();
             final long key = this.getKey(chunkPos.getX(), chunkPos.getZ(), blockPos.getX() & 15, blockPos.getY()&0x00FF, blockPos.getZ() & 15);
-
-            this.cache.computeIfAbsent(location.getExtent().getUniqueId(), (k) -> new Long2ObjectArrayMap<>()).put(key, BlockCreationTypes.SAPLING);
-            toInsert.add(Queries.createInsertBlockCreationQuery(location.getExtent().getUniqueId(), key, BlockCreationTypes.SAPLING.getIndex()));
+            this.cache.computeIfAbsent(location.getExtent().getUniqueId(), (k) -> new Long2LongArrayMap()).put(key, mask);
+            toInsert.add(Queries.createInsertBlockCreationQuery(location.getExtent().getUniqueId(), key, mask));
         }
 
         this.submitQueries(toInsert);
@@ -206,7 +179,7 @@ public final class BlockCreationTracker implements Witness {
                 continue;
             }
 
-            final Long2ObjectArrayMap<BlockCreationType> worldCache = this.cache.get(location.getExtent().getUniqueId());
+            final Long2LongArrayMap worldCache = this.cache.get(location.getExtent().getUniqueId());
             if (worldCache == null) {
                 continue;
             }
@@ -223,13 +196,13 @@ public final class BlockCreationTracker implements Witness {
     }
 
     @Nullable
-    public BlockCreationType getCreationType(final BlockSnapshot snapshot) {
+    public Set<BlockCreationFlags> getCreationFlags(final BlockSnapshot snapshot) {
         final Location<World> location = snapshot.getLocation().orElse(null);
         if (location == null) {
             return null;
         }
 
-        final Long2ObjectArrayMap<BlockCreationType> worldCache = this.cache.get(location.getExtent().getUniqueId());
+        final Long2LongArrayMap worldCache = this.cache.get(location.getExtent().getUniqueId());
         if (worldCache == null) {
             return null;
         }
@@ -237,7 +210,8 @@ public final class BlockCreationTracker implements Witness {
         final Vector3i chunkPos = location.getChunkPosition();
         final Vector3i blockPos = location.getBlockPosition();
         final long key = this.getKey(chunkPos.getX(), chunkPos.getZ(), blockPos.getX() & 15, blockPos.getY()&0x00FF, blockPos.getZ() & 15);
-        return worldCache.get(key);
+        final long mask = worldCache.get(key);
+        return BlockCreationFlags.unmask(mask);
     }
 
     private long getKey(int cx, int cz, int bx, int by, int bz) {

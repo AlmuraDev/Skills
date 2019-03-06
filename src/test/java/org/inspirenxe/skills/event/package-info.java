@@ -22,32 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event;
-
-import org.spongepowered.api.CatalogType;
-
-public final class BlockCreationType implements CatalogType {
-
-    private final String id, name;
-    private final int index;
-
-    public BlockCreationType(final String id, final String name, final int index) {
-        this.id = id;
-        this.name = name;
-        this.index = index;
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    public int getIndex() {
-        return this.index;
-    }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.event;
