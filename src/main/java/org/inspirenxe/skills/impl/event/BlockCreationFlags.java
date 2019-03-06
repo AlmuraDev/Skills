@@ -60,7 +60,7 @@ public enum BlockCreationFlags {
             return false;
         }
         return snapshot.getType() == ItemTypes.DYE && dyeColor.get() == DyeColors.WHITE;
-    }),
+    });
 
     private final BiPredicate<Cause, EventContext> matcher;
 
