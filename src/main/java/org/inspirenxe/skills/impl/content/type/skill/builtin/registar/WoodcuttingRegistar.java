@@ -29,8 +29,8 @@ import org.inspirenxe.skills.api.SkillType;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListener;
 import org.spongepowered.api.GameRegistry;
-public final class WoodcuttingRegistar {
 
+public final class WoodcuttingRegistar {
 
   @Inject
   private static GameRegistry registry;
@@ -43,7 +43,7 @@ public final class WoodcuttingRegistar {
 
   // @formatter:off
   public static void configure() {
-    final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":mining").orElse(null);
+    final SkillType type = registry.getType(SkillType.class, SkillsImpl.ID + ":woodcutting").orElse(null);
 
     if (type == null) {
       return;
