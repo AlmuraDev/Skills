@@ -42,12 +42,9 @@ import org.jooq.InsertValuesStep3;
 import org.jooq.Query;
 import org.jooq.Results;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -162,16 +159,6 @@ public final class BlockCreationTracker implements Witness {
     }
 
     @Listener
-    public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @First Player player) {
-        final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(event.getCause(), event.getContext());
-        if (flags.isEmpty()) {
-            return;
-        }
-
-        //event.getTransactions().forEach(transaction -> transaction.setValid(false));
-    }
-
-    @Listener
     public void onChangeBlockPost(final ChangeBlockEvent.Post event) {
         final ChangeBlockEvent.Break breakEvent = event.getCause().first(ChangeBlockEvent.Break.class).orElse(null);
         final ChangeBlockEvent.Decay decayEvent = event.getCause().first(ChangeBlockEvent.Decay.class).orElse(null);
@@ -213,10 +200,6 @@ public final class BlockCreationTracker implements Witness {
                 final Vector3i chunkPos = location.getChunkPosition();
                 final Vector3i blockPos = location.getBlockPosition();
                 final long key = this.getKey(chunkPos, blockPos);
-
-                if (transaction.getFinal().getState().getType() == BlockTypes.LOG || transaction.getFinal().getState().getType() == BlockTypes.LOG2) {
-                    System.err.println(transaction.getFinal().getLocation().get().getPosition() + " -> " + key);
-                }
 
                 if (this.containerCache.computeIfAbsent(location.getExtent().getUniqueId(), k -> {
                     final Long2LongArrayMap map = new Long2LongArrayMap();
