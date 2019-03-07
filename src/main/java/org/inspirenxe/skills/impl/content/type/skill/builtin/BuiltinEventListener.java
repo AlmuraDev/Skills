@@ -75,7 +75,6 @@ import org.spongepowered.api.event.item.inventory.CraftItemEvent;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.ItemStackComparators;
 import org.spongepowered.api.item.recipe.crafting.CraftingRecipe;
 import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -742,14 +741,7 @@ public final class BuiltinEventListener implements Witness {
 
             final BlockChain chain = chains
                 .stream()
-                .filter(v -> {
-                    if (v.matchOnlyType) {
-                        return v.inverseQuery ? v.toQuery.stream().noneMatch(s -> s.getType() == snapshot.getState().getType()) :
-                            v.toQuery.stream().anyMatch(s -> s.getType() == snapshot.getState().getType());
-                    } else {
-                        return v.inverseQuery != v.toQuery.contains(snapshot.getState());
-                    }
-                })
+                .filter(v -> v.inverseQuery != v.query.match(snapshot.getState()))
                 .findAny()
                 .orElse(null);
 
@@ -811,16 +803,7 @@ public final class BuiltinEventListener implements Witness {
 
             final ItemChain chain = chains
                 .stream()
-                .filter(v -> {
-                    if (v.matchOnlyType) {
-                        return v.inverseQuery ?
-                            v.toQuery.stream().noneMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0) :
-                            v.toQuery.stream().anyMatch(s -> ItemStackComparators.TYPE.compare(s, stack) == 0);
-                    } else {
-                        return v.inverseQuery ? v.toQuery.stream().noneMatch(s -> ItemStackComparators.IGNORE_SIZE.compare(s, stack) == 0) :
-                            v.toQuery.stream().anyMatch(s -> ItemStackComparators.IGNORE_SIZE.compare(s, stack) == 0);
-                    }
-                })
+                .filter(v -> v.inverseQuery != v.query.match(stack))
                 .findAny()
                 .orElse(null);
 

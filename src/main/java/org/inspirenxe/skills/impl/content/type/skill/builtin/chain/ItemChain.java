@@ -27,6 +27,9 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.impl.SkillsImpl;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.query.Query;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.query.item.ItemQueries;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.query.item.ItemQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
@@ -40,11 +43,26 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public final class ItemChain extends Chain<ItemChain> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
-    public List<ItemStack> toQuery = new ArrayList<>();
-    public boolean inverseQuery = false, matchOnlyType = false;
+    public static ItemChain itemChain() {
+        return new ItemChain();
+    }
 
-    private boolean inErrorState;
+    public static ItemChain fromItemChain(ItemChain builder) {
+        final ItemChain newChain = new ItemChain();
+
+        newChain.level = builder.level;
+        newChain.xp = builder.xp;
+        newChain.economy = builder.economy;
+        newChain.denyLevelRequired = builder.denyLevelRequired;
+        newChain.inverseQuery = builder.inverseQuery;
+
+        return newChain;
+    }
+
+    public boolean inverseQuery = false;
+    public ItemQuery query = ItemQueries.DEFAULT;
+
+    private ItemChain() {}
 
     public ItemChain inverseQuery() {
         if (this.inErrorState) {
@@ -54,83 +72,12 @@ public final class ItemChain extends Chain<ItemChain> {
         return this;
     }
 
-    public ItemChain query(final String id) {
+    public ItemChain query(final ItemQuery query) {
         if (this.inErrorState) {
             return this;
         }
-        checkNotNull(id);
-        final ItemType itemType = Sponge.getRegistry().getType(ItemType.class, id).orElse(null);
-        if (itemType == null) {
-            logger.error("Unknown item id '" + id + "' given to item chain!");
-            this.inErrorState = true;
-            return this;
-        }
-        this.toQuery.add(ItemStack.of(itemType, 1));
-        return this;
-    }
-
-    public ItemChain queryDomain(final String domain) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(domain);
-        Sponge.getRegistry().getAllFor(domain, ItemType.class).forEach(type -> this.toQuery.add(ItemStack.of(type, 1)));
-        return this;
-    }
-
-    public ItemChain query(final ItemType value) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(value);
-        this.toQuery.add(ItemStack.of(value, 1));
-        return this;
-    }
-
-    public ItemChain query(final ItemStack value) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(value);
-        this.toQuery.add(value);
-        return this;
-    }
-
-    public ItemChain query(final ItemStack... values) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(values);
-        this.toQuery.addAll(Arrays.asList(values));
-        return this;
-    }
-
-    public ItemChain matchTypeOnly() {
-        if (this.inErrorState) {
-            return this;
-        }
-        this.matchOnlyType = true;
-        return this;
-    }
-
-    public ItemChain fuzzyMatch() {
-        if (this.inErrorState) {
-            return this;
-        }
-        this.matchOnlyType = false;
-        return this;
-    }
-
-    @Override
-    public ItemChain from(final ItemChain builder) {
-        super.from(builder);
-
-        if (this.inErrorState) {
-            return this;
-        }
-
-        this.matchOnlyType = builder.matchOnlyType;
-
+        checkNotNull(query);
+        this.query = query;
         return this;
     }
 }

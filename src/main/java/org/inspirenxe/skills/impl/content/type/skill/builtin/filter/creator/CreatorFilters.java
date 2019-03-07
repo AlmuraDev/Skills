@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin.filter;
+package org.inspirenxe.skills.impl.content.type.skill.builtin.filter.creator;
 
 import org.spongepowered.api.entity.living.player.User;
 

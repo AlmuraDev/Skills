@@ -22,50 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
+package org.inspirenxe.skills.impl.content.type.skill.builtin.query.item;
 
-import static com.google.common.base.Preconditions.checkState;
+import com.google.common.collect.Sets;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.query.item.stack.FuzzyItemStack;
+import org.spongepowered.api.item.inventory.ItemStack;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.util.function.TriConsumer;
-import org.spongepowered.api.event.cause.Cause;
+import java.util.Collection;
 
-import javax.annotation.Nullable;
+public final class FuzzyMatchStackQuery implements ItemQuery {
 
-@SuppressWarnings("unchecked")
-public abstract class Chain<B extends Chain<B>> {
+    private final Collection<FuzzyItemStack> stacks;
 
-    public Integer level;
-    public Double xp;
-    public Double economy;
-    public TriConsumer<Cause, Skill, Integer> denyLevelRequired;
+    FuzzyMatchStackQuery(final FuzzyItemStack... stacks) {
+        this.stacks = Sets.newHashSet(stacks);
+    }
 
-    boolean inErrorState = false;
+    @Override
+    public boolean match(final ItemStack stack) {
+        boolean matches = false;
 
-    public B level(final Integer value) {
-        if (value != null) {
-            checkState(value >= 0);
+        for (FuzzyItemStack fuzzyStack : this.stacks) {
+            if (fuzzyStack.matches(stack)) {
+                matches = true;
+                break;
+            }
         }
 
-        this.level = value;
-        return (B) this;
-    }
-
-    public B xp(final Double value) {
-        this.xp = value;
-        return (B) this;
-    }
-
-    public B economy(final Double value) {
-        this.economy = value;
-        return (B) this;
-    }
-
-    public B denyLevelRequired(@Nullable final TriConsumer<Cause, Skill, Integer> value) {
-        if (this.inErrorState) {
-            return (B) this;
-        }
-        this.denyLevelRequired = value;
-        return (B) this;
+        return matches;
     }
 }

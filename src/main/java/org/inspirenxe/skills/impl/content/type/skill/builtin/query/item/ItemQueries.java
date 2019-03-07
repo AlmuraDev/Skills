@@ -22,50 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
+package org.inspirenxe.skills.impl.content.type.skill.builtin.query.item;
 
-import static com.google.common.base.Preconditions.checkState;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.query.item.stack.FuzzyItemStack;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.item.ItemType;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.util.function.TriConsumer;
-import org.spongepowered.api.event.cause.Cause;
+public final class ItemQueries {
 
-import javax.annotation.Nullable;
+    public static ItemQuery DEFAULT = state -> true;
 
-@SuppressWarnings("unchecked")
-public abstract class Chain<B extends Chain<B>> {
-
-    public Integer level;
-    public Double xp;
-    public Double economy;
-    public TriConsumer<Cause, Skill, Integer> denyLevelRequired;
-
-    boolean inErrorState = false;
-
-    public B level(final Integer value) {
-        if (value != null) {
-            checkState(value >= 0);
-        }
-
-        this.level = value;
-        return (B) this;
+    public static MatchTypeItemQuery itemType(final ItemType... types) {
+        return new MatchTypeItemQuery(types);
     }
 
-    public B xp(final Double value) {
-        this.xp = value;
-        return (B) this;
+    public static MatchTypeItemQuery itemTypesFor(final String id) {
+        return new MatchTypeItemQuery(Sponge.getRegistry().getAllFor(id, ItemType.class));
     }
 
-    public B economy(final Double value) {
-        this.economy = value;
-        return (B) this;
+    public static FuzzyMatchStackQuery fuzzyStack(final FuzzyItemStack... stacks) {
+        return new FuzzyMatchStackQuery(stacks);
     }
 
-    public B denyLevelRequired(@Nullable final TriConsumer<Cause, Skill, Integer> value) {
-        if (this.inErrorState) {
-            return (B) this;
-        }
-        this.denyLevelRequired = value;
-        return (B) this;
-    }
+    private ItemQueries() {}
 }

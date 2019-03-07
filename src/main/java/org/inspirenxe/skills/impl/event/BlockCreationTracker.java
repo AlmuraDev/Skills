@@ -214,7 +214,7 @@ public final class BlockCreationTracker implements Witness {
                 final Vector3i blockPos = location.getBlockPosition();
                 final long key = this.getKey(chunkPos, blockPos);
 
-                if (transaction.getFinal().getState().getType() == BlockTypes.LOG) {
+                if (transaction.getFinal().getState().getType() == BlockTypes.LOG || transaction.getFinal().getState().getType() == BlockTypes.LOG2) {
                     System.err.println(transaction.getFinal().getLocation().get().getPosition() + " -> " + key);
                 }
 

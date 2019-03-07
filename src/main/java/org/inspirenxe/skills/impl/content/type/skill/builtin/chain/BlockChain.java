@@ -26,27 +26,36 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.impl.SkillsImpl;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilter;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.CreatorFilters;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.CommonRegistar;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.creator.CreatorFilter;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.filter.creator.CreatorFilters;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.query.block.BlockQueries;
+import org.inspirenxe.skills.impl.content.type.skill.builtin.query.block.BlockQuery;
 
 @SuppressWarnings("unchecked")
 public final class BlockChain extends Chain<BlockChain> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
-    public List<BlockState> toQuery = new ArrayList<>();
-    public boolean inverseQuery = false, matchOnlyType = false;
+    public static BlockChain blockChain() {
+        return new BlockChain();
+    }
+
+    public static BlockChain fromBlockChain(BlockChain builder) {
+        final BlockChain newChain = new BlockChain();
+
+        newChain.level = builder.level;
+        newChain.xp = builder.xp;
+        newChain.economy = builder.economy;
+        newChain.denyLevelRequired = builder.denyLevelRequired;
+        newChain.inverseQuery = builder.inverseQuery;
+        newChain.creator = builder.creator;
+
+        return newChain;
+    }
+
+    public boolean inverseQuery = false;
+    public BlockQuery query = BlockQueries.DEFAULT;
     public CreatorFilter creator = CreatorFilters.NO_FILTER;
+
+    private BlockChain() {}
 
     public BlockChain inverseQuery() {
         if (this.inErrorState) {
@@ -56,70 +65,12 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
-    public BlockChain query(final String id) {
+    public BlockChain query(final BlockQuery query) {
         if (this.inErrorState) {
             return this;
         }
-        checkNotNull(id);
-        final BlockType blockType = Sponge.getRegistry().getType(BlockType.class, id).orElse(null);
-        if (blockType == null) {
-            logger.error("Unknown block id '" + id + "' given to block chain!");
-            this.inErrorState = true;
-            return this;
-        }
-        this.toQuery.add(blockType.getDefaultState());
-        return this;
-    }
-
-    public BlockChain queryDomain(final String domain) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(domain);
-        Sponge.getRegistry().getAllFor(domain, BlockType.class).forEach(type -> this.toQuery.add(type.getDefaultState()));
-        return this;
-    }
-
-    public BlockChain query(final BlockType value) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(value);
-        this.toQuery.add(value.getDefaultState());
-        return this;
-    }
-
-    public BlockChain query(final BlockState value) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(value);
-        this.toQuery.add(value);
-        return this;
-    }
-
-    public BlockChain query(final BlockState... values) {
-        if (this.inErrorState) {
-            return this;
-        }
-        checkNotNull(values);
-        this.toQuery.addAll(Arrays.asList(values));
-        return this;
-    }
-
-    public BlockChain matchTypeOnly() {
-        if (this.inErrorState) {
-            return this;
-        }
-        this.matchOnlyType = true;
-        return this;
-    }
-
-    public BlockChain fuzzyMatch() {
-        if (this.inErrorState) {
-            return this;
-        }
-        this.matchOnlyType = false;
+        checkNotNull(query);
+        this.query = query;
         return this;
     }
 
@@ -130,19 +81,6 @@ public final class BlockChain extends Chain<BlockChain> {
         checkNotNull(value);
         this.creator = value;
 
-        return this;
-    }
-
-    @Override
-    public BlockChain from(final BlockChain builder) {
-        super.from(builder);
-
-        if (this.inErrorState) {
-            return this;
-        }
-
-        this.matchOnlyType = builder.matchOnlyType;
-        this.creator = builder.creator;
         return this;
     }
 }

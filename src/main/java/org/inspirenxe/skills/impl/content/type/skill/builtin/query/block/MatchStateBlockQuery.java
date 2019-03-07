@@ -22,50 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
+package org.inspirenxe.skills.impl.content.type.skill.builtin.query.block;
 
-import static com.google.common.base.Preconditions.checkState;
+import com.google.common.collect.Sets;
+import org.spongepowered.api.block.BlockState;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.util.function.TriConsumer;
-import org.spongepowered.api.event.cause.Cause;
+import java.util.Collection;
 
-import javax.annotation.Nullable;
+public final class MatchStateBlockQuery implements BlockQuery {
 
-@SuppressWarnings("unchecked")
-public abstract class Chain<B extends Chain<B>> {
+    private final Collection<BlockState> states;
 
-    public Integer level;
-    public Double xp;
-    public Double economy;
-    public TriConsumer<Cause, Skill, Integer> denyLevelRequired;
-
-    boolean inErrorState = false;
-
-    public B level(final Integer value) {
-        if (value != null) {
-            checkState(value >= 0);
-        }
-
-        this.level = value;
-        return (B) this;
+    MatchStateBlockQuery(final BlockState... states) {
+        this.states = Sets.newHashSet(states);
     }
 
-    public B xp(final Double value) {
-        this.xp = value;
-        return (B) this;
-    }
-
-    public B economy(final Double value) {
-        this.economy = value;
-        return (B) this;
-    }
-
-    public B denyLevelRequired(@Nullable final TriConsumer<Cause, Skill, Integer> value) {
-        if (this.inErrorState) {
-            return (B) this;
-        }
-        this.denyLevelRequired = value;
-        return (B) this;
+    @Override
+    public boolean match(final BlockState state) {
+        return this.states.stream().anyMatch(s -> s.equals(state));
     }
 }

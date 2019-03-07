@@ -22,50 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.type.skill.builtin.chain;
+package org.inspirenxe.skills.impl.content.type.skill.builtin.query.block.state;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.impl.util.function.TriConsumer;
-import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-import javax.annotation.Nullable;
+public final class TraitValue {
 
-@SuppressWarnings("unchecked")
-public abstract class Chain<B extends Chain<B>> {
+    public static TraitValue trait(BlockTrait<?> trait, Object value) {
+        checkNotNull(trait);
+        checkNotNull(value);
 
-    public Integer level;
-    public Double xp;
-    public Double economy;
-    public TriConsumer<Cause, Skill, Integer> denyLevelRequired;
-
-    boolean inErrorState = false;
-
-    public B level(final Integer value) {
-        if (value != null) {
-            checkState(value >= 0);
-        }
-
-        this.level = value;
-        return (B) this;
+        return new TraitValue(trait, value);
     }
 
-    public B xp(final Double value) {
-        this.xp = value;
-        return (B) this;
+    private final BlockTrait<?> trait;
+    private final Object value;
+
+    private TraitValue(final BlockTrait<?> trait, final Object value) {
+        this.trait = trait;
+        this.value = value;
     }
 
-    public B economy(final Double value) {
-        this.economy = value;
-        return (B) this;
+    public BlockTrait<?> getTrait() {
+        return this.trait;
     }
 
-    public B denyLevelRequired(@Nullable final TriConsumer<Cause, Skill, Integer> value) {
-        if (this.inErrorState) {
-            return (B) this;
-        }
-        this.denyLevelRequired = value;
-        return (B) this;
+    public Object getValue() {
+        return this.value;
     }
 }
