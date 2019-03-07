@@ -34,7 +34,7 @@ import java.util.Set;
 public final class BlockCreationFlagsTest {
     @Test
     public void testMaskAndUnmask() {
-        final Set<BlockCreationFlags> flags = Sets.newHashSet(BlockCreationFlags.SAPLING, BlockCreationFlags.BONEMEAL);
+        final Set<BlockCreationFlags> flags = Sets.newHashSet(BlockCreationFlags.CREATED_BY_OWNED_SAPLING, BlockCreationFlags.BONEMEAL_USED);
         final long mask = BlockCreationFlags.mask(flags);
         final Set<BlockCreationFlags> flags2 = BlockCreationFlags.unmask(mask);
         Assert.assertEquals(flags, flags2);

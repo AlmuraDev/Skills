@@ -41,8 +41,10 @@ import org.jooq.DeleteConditionStep;
 import org.jooq.InsertValuesStep3;
 import org.jooq.Query;
 import org.jooq.Results;
+import org.jooq.User;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
@@ -173,7 +175,11 @@ public final class BlockCreationTracker implements Witness {
         }
 
         if (placeEvent != null) {
-            final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(event.getCause(), event.getContext());
+            if (!placeEvent.getCause().first(Player.class).isPresent()) {
+                return;
+            }
+
+            final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(placeEvent.getCause(),  placeEvent.getContext());
             if (flags.isEmpty()) {
                 return;
             }

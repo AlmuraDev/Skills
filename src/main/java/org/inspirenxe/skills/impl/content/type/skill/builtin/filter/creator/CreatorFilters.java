@@ -31,34 +31,19 @@ import java.util.UUID;
 public final class CreatorFilters {
 
     public static CreatorFilter CREATOR_ONLY = (cause, skill, snapshot, flags) -> {
-        if (!(cause.root() instanceof User)) {
-            return false;
-        }
-
-        final UUID user = ((User) cause.root()).getUniqueId();
         final UUID creator = snapshot.getCreator().orElse(null);
         if (creator == null) {
             return false;
         }
 
-        return user.equals(creator);
-    };
-
-    public static CreatorFilter NO_CREATOR = (cause, skill, snapshot, flags) -> {
-        if (!(cause.root() instanceof User)) {
+        // Something broke someone's block, don't reward
+        final User user = cause.first(User.class).orElse(null);
+        if (user == null) {
             return false;
         }
 
-        return snapshot.getCreator().orElse(null) == null;
-    };
-
-    public static CreatorFilter ANY_CREATOR = (cause, skill, snapshot, flags) -> {
-        if (!(cause.root() instanceof User)) {
-            return false;
-        }
-
-        final UUID creator = snapshot.getCreator().orElse(null);
-        return creator != null;
+        // Someone is breaking someone else's block, don't reward
+        return user.getUniqueId().equals(creator);
     };
 
     public static CreatorFilter CREATOR_OR_NATURAL = (cause, skill, snapshot, flags) -> {
@@ -67,35 +52,40 @@ public final class CreatorFilters {
             return true;
         }
 
-        if (cause.root() instanceof User) {
-            final UUID user = ((User) cause.root()).getUniqueId();
-
-            return user.equals(creator);
+        // Something broke someone's block, don't reward
+        final User user = cause.first(User.class).orElse(null);
+        if (user == null) {
+            return false;
         }
 
-        return false;
+        // Someone is breaking someone else's block, don't reward
+        return user.getUniqueId().equals(creator);
     };
 
     public static CreatorFilter CREATOR_BUT_TRACKED_OR_NATURAL = (cause, skill, snapshot, flags) -> {
+        // Is it natural?
         final UUID creator = snapshot.getCreator().orElse(null);
         if (creator == null) {
             return true;
         }
 
-        if (cause.root() instanceof User) {
-            final UUID user = ((User) cause.root()).getUniqueId();
-
-            // We only want to return true if the block has an creator and is tracked
-
-            if (!user.equals(creator)) {
-                return false;
-            }
-
-            return !flags.isEmpty();
+        // Something broke someone's block, don't reward
+        final User user = cause.first(User.class).orElse(null);
+        if (user == null) {
+            return false;
         }
 
-        return false;
+        // Someone is breaking someone else's block, don't reward
+        if (!user.getUniqueId().equals(creator)) {
+            return false;
+        }
+
+        return !flags.isEmpty();
     };
+
+    public static CreatorFilter ANY_CREATOR = (cause, skill, snapshot, flags) -> snapshot.getCreator().isPresent();
+
+    public static CreatorFilter NO_CREATOR = (cause, skill, snapshot, flags) -> !snapshot.getCreator().isPresent();
 
     public static CreatorFilter NO_FILTER = (cause, skill, snapshot, flags) -> true;
 }
