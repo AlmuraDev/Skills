@@ -76,7 +76,7 @@ public final class BlockCreationTracker implements Witness {
     private final DatabaseManager databaseManager;
     private final Scheduler scheduler;
 
-    private final BiMap<UUID, Integer> containerPalette = HashBiMap.create();
+    private final BiMap<UUID, Short> containerPalette = HashBiMap.create();
     private final Map<UUID, Long2LongArrayMap> containerCache = new HashMap<>();
     private final Map<UUID, NonDuplicateQueryBatcher> batchers = new HashMap<>();
     private final Map<UUID, Task> batcherTasks = new HashMap<>();
@@ -102,7 +102,7 @@ public final class BlockCreationTracker implements Witness {
                 }
 
                 final UUID containerId = event.getTargetWorld().getUniqueId();
-                Integer container = this.containerPalette.get(containerId);
+                Short container = this.containerPalette.get(containerId);
 
                 Results dbResults = null;
 
@@ -125,7 +125,7 @@ public final class BlockCreationTracker implements Witness {
                             }
                         }
 
-                        container = record.getRecNo();
+                        container = record.getRecNo().shortValue();
                         this.containerPalette.put(containerId, container);
                     }
 
@@ -221,7 +221,7 @@ public final class BlockCreationTracker implements Witness {
 
                 final NonDuplicateQueryBatcher batcher = this.batchers.get(location.getExtent().getUniqueId());
 
-                final Integer container = this.containerPalette.get(location.getExtent().getUniqueId());
+                final Short container = this.containerPalette.get(location.getExtent().getUniqueId());
                 if (container == null) {
                     continue;
                 }
@@ -259,7 +259,7 @@ public final class BlockCreationTracker implements Witness {
 
             final NonDuplicateQueryBatcher batcher = this.batchers.get(location.getExtent().getUniqueId());
 
-            final Integer container = this.containerPalette.get(location.getExtent().getUniqueId());
+            final Short container = this.containerPalette.get(location.getExtent().getUniqueId());
             if (container == null) {
                 continue;
             }

@@ -133,7 +133,7 @@ public final class Queries {
     };
   }
 
-  public static DatabaseQuery<SelectConditionStep<SkillsBlockCreationRecord>> createFetchBlockCreationQuery(final int container) {
+  public static DatabaseQuery<SelectConditionStep<SkillsBlockCreationRecord>> createFetchBlockCreationQuery(final short container) {
     checkState(container >= 0);
 
     return context -> context
@@ -141,7 +141,7 @@ public final class Queries {
         .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(container));
   }
 
-  public static DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, Integer, Long, Long>> createInsertBlockCreationQuery(final int container
+  public static DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, Short, Long, Long>> createInsertBlockCreationQuery(final short container
       , final long pos, final long mask) {
     checkState(container >= 0);
 
@@ -151,7 +151,7 @@ public final class Queries {
         .values(container, pos, mask);
   }
 
-  public static DatabaseQuery<DeleteConditionStep<SkillsBlockCreationRecord>> createDeleteBlockCreationQuery(final int container,
+  public static DatabaseQuery<DeleteConditionStep<SkillsBlockCreationRecord>> createDeleteBlockCreationQuery(final short container,
       final long pos) {
     checkState(container >= 0);
 

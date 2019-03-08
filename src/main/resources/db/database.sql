@@ -19,7 +19,7 @@ create table if not exists "skills_container_palette"
 
 create table if not exists "skills_block_creation"
 (
-  "container"     int        not null,
+  "container"     smallint   not null,
   "pos"           bigint     not null,
   "mask"          bigint     not null,
   constraint "pk_skills_block_creation_container_pos" primary key("container", "pos")
