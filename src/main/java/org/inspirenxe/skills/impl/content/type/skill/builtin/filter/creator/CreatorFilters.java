@@ -36,7 +36,6 @@ public final class CreatorFilters {
             return false;
         }
 
-        // Something broke someone's block, don't reward
         final User user = cause.first(User.class).orElse(null);
         if (user == null) {
             return false;
@@ -52,7 +51,6 @@ public final class CreatorFilters {
             return true;
         }
 
-        // Something broke someone's block, don't reward
         final User user = cause.first(User.class).orElse(null);
         if (user == null) {
             return false;
@@ -83,9 +81,9 @@ public final class CreatorFilters {
         return !flags.isEmpty();
     };
 
-    public static CreatorFilter ANY_CREATOR = (cause, skill, snapshot, flags) -> snapshot.getCreator().isPresent();
+    public static CreatorFilter NATURAL = (cause, skill, snapshot, flags) -> !snapshot.getCreator().isPresent();
 
-    public static CreatorFilter NO_CREATOR = (cause, skill, snapshot, flags) -> !snapshot.getCreator().isPresent();
+    public static CreatorFilter NOT_NATURAL = (cause, skill, snapshot, flags) -> snapshot.getCreator().isPresent();
 
-    public static CreatorFilter NO_FILTER = (cause, skill, snapshot, flags) -> true;
+    public static CreatorFilter ANY = (cause, skill, snapshot, flags) -> true;
 }

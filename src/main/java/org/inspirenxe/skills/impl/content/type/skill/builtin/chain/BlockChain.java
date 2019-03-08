@@ -53,7 +53,7 @@ public final class BlockChain extends Chain<BlockChain> {
 
     public boolean inverseQuery = false;
     public BlockQuery query = BlockQueries.DEFAULT;
-    public CreatorFilter creator = CreatorFilters.NO_FILTER;
+    public CreatorFilter creator = CreatorFilters.ANY;
 
     private BlockChain() {}
 

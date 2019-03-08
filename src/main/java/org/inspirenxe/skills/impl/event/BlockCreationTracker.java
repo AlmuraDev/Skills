@@ -31,38 +31,38 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.longs.Long2LongArrayMap;
 import org.inspirenxe.skills.generated.tables.SkillsBlockCreation;
-import org.inspirenxe.skills.generated.tables.records.SkillsBlockCreationRecord;
 import org.inspirenxe.skills.generated.tables.records.SkillsContainerPaletteRecord;
+import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.database.DatabaseQuery;
 import org.inspirenxe.skills.impl.database.Queries;
 import org.jooq.DSLContext;
-import org.jooq.DeleteConditionStep;
-import org.jooq.InsertValuesStep3;
 import org.jooq.Query;
 import org.jooq.Results;
-import org.jooq.User;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Scheduler;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -72,15 +72,20 @@ import javax.inject.Singleton;
 public final class BlockCreationTracker implements Witness {
 
     private final PluginContainer container;
+    private final PluginConfiguration pluginConfiguration;
     private final DatabaseManager databaseManager;
     private final Scheduler scheduler;
 
     private final BiMap<UUID, Integer> containerPalette = HashBiMap.create();
     private final Map<UUID, Long2LongArrayMap> containerCache = new HashMap<>();
+    private final Map<UUID, NonDuplicateQueryBatcher> batchers = new HashMap<>();
+    private final Map<UUID, Task> batcherTasks = new HashMap<>();
 
     @Inject
-    public BlockCreationTracker(final PluginContainer container, final DatabaseManager databaseManager, final Scheduler scheduler) {
+    public BlockCreationTracker(final PluginContainer container, final PluginConfiguration pluginConfiguration, final DatabaseManager databaseManager,
+        final Scheduler scheduler) {
         this.container = container;
+        this.pluginConfiguration = pluginConfiguration;
         this.databaseManager = databaseManager;
         this.scheduler = scheduler;
     }
@@ -148,6 +153,16 @@ public final class BlockCreationTracker implements Witness {
                             }));
 
                             this.containerCache.put(containerId, worldCache);
+                            final NonDuplicateQueryBatcher batcher = new NonDuplicateQueryBatcher(this.databaseManager);
+                            this.batchers.put(containerId, batcher);
+                            this.batcherTasks.put(containerId, this.scheduler
+                                .createTaskBuilder()
+                                .async()
+                                .execute(batcher)
+                                .interval(this.pluginConfiguration.getSaveInterval(), TimeUnit.SECONDS)
+                                .submit(this.container)
+                            );
+
                         })
                         .submit(this.container);
                 }
@@ -158,6 +173,14 @@ public final class BlockCreationTracker implements Witness {
     @Listener
     public void onUnloadWorld(final UnloadWorldEvent event) {
         this.containerCache.remove(event.getTargetWorld().getUniqueId());
+        final Task remove = this.batcherTasks.remove(event.getTargetWorld().getUniqueId());
+        if (remove != null) {
+            remove.cancel();
+        }
+        final NonDuplicateQueryBatcher batcher = this.batchers.get(event.getTargetWorld().getUniqueId());
+        if (batcher != null) {
+            batcher.run();
+        }
     }
 
     @Listener
@@ -175,7 +198,7 @@ public final class BlockCreationTracker implements Witness {
         }
 
         if (placeEvent != null) {
-            if (!placeEvent.getCause().first(Player.class).isPresent()) {
+            if (!event.getContext().get(EventContextKeys.OWNER).isPresent()) {
                 return;
             }
 
@@ -186,8 +209,6 @@ public final class BlockCreationTracker implements Witness {
 
             final long mask = BlockCreationFlags.mask(flags);
 
-            final List<DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, Integer, Long, Long>>> toInsert = new ArrayList<>();
-
             for (final Transaction<BlockSnapshot> transaction : event.getTransactions()) {
                 if (!transaction.isValid()) {
                     continue;
@@ -197,6 +218,8 @@ public final class BlockCreationTracker implements Witness {
                 if (location == null) {
                     continue;
                 }
+
+                final NonDuplicateQueryBatcher batcher = this.batchers.get(location.getExtent().getUniqueId());
 
                 final Integer container = this.containerPalette.get(location.getExtent().getUniqueId());
                 if (container == null) {
@@ -212,16 +235,13 @@ public final class BlockCreationTracker implements Witness {
                     map.defaultReturnValue(Long.MIN_VALUE);
                     return map;
                 }).put(key, mask) == Long.MIN_VALUE) {
-                    toInsert.add(Queries.createInsertBlockCreationQuery(container, key, mask));
+                    batcher.queueQuery(key, Queries.createInsertBlockCreationQuery(container, key, mask));
                 }
             }
-            this.submitQueries(toInsert);
         }
     }
 
     private void handleDeletions(final ChangeBlockEvent event) {
-        final List<DatabaseQuery<DeleteConditionStep<SkillsBlockCreationRecord>>> toDelete = new ArrayList<>();
-
         for (final Transaction<BlockSnapshot> transaction : event.getTransactions()) {
             if (!transaction.isValid()) {
                 continue;
@@ -237,6 +257,8 @@ public final class BlockCreationTracker implements Witness {
                 continue;
             }
 
+            final NonDuplicateQueryBatcher batcher = this.batchers.get(location.getExtent().getUniqueId());
+
             final Integer container = this.containerPalette.get(location.getExtent().getUniqueId());
             if (container == null) {
                 continue;
@@ -247,12 +269,8 @@ public final class BlockCreationTracker implements Witness {
             final long key = this.getKey(chunkPos, blockPos);
 
             if (worldCache.remove(key) != Long.MIN_VALUE) {
-                toDelete.add(Queries.createDeleteBlockCreationQuery(container, key));
+                batcher.queueQuery(key, Queries.createDeleteBlockCreationQuery(container, key));
             }
-        }
-
-        if (!toDelete.isEmpty()) {
-            this.submitQueries(toDelete);
         }
     }
 
@@ -289,19 +307,43 @@ public final class BlockCreationTracker implements Witness {
         return cx << 42 | cz << 20 | by << 8 | (bx << 4 | bz);
     }
 
-    private void submitQueries(final Collection<? extends DatabaseQuery<?>> builders) {
-        this.scheduler
-            .createTaskBuilder()
-            .async()
-            .execute(() -> {
-                try (final DSLContext context = this.databaseManager.createContext(true)) {
-                    final List<Query> queries = new ArrayList<>();
-                    builders.forEach(builder -> queries.add(builder.build(context).keepStatement(false)));
-                    context.batch(queries).execute();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+    private final class NonDuplicateQueryBatcher implements Runnable {
+
+        private final DatabaseManager databaseManager;
+        private final ConcurrentHashMap<Long, DatabaseQuery<?>> queries = new ConcurrentHashMap<>();
+
+        NonDuplicateQueryBatcher(DatabaseManager databaseManager) {
+            this.databaseManager = databaseManager;
+        }
+
+        @Override
+        public void run() {
+
+            if (this.queries.isEmpty()) {
+                return;
+            }
+
+            final Iterator<Map.Entry<Long, DatabaseQuery<?>>> iter = this.queries.entrySet().iterator();
+            final List<Query> toBatch = new ArrayList<>();
+
+            try (final DSLContext context = this.databaseManager.createContext(true)) {
+                while (iter.hasNext()) {
+                    final Map.Entry<Long, DatabaseQuery<?>> next = iter.next();
+                    toBatch.add(next.getValue().build(context).keepStatement(false));
+                    iter.remove();
                 }
-            })
-            .submit(this.container);
+
+                if (!toBatch.isEmpty()) {
+                    context.batch(toBatch).execute();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        void queueQuery(long pos, DatabaseQuery<?> query) {
+            this.queries.put(pos, query);
+        }
     }
 }

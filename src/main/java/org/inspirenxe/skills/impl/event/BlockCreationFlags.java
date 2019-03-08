@@ -35,6 +35,7 @@ import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.world.LocatableBlock;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,15 +43,17 @@ import java.util.function.BiPredicate;
 
 public enum BlockCreationFlags {
     CREATED_BY_OWNED_SAPLING((cause, context) -> {
-        if (!(cause.root() instanceof BlockSnapshot)) {
-            return false;
-        }
-        if (((BlockSnapshot) cause.root()).getState().getType() != BlockTypes.SAPLING) {
-            return false;
+        if (cause.root() instanceof LocatableBlock) {
+            final LocatableBlock locatableBlock = (LocatableBlock) cause.root();
+
+            return locatableBlock.getBlockState().getType() == BlockTypes.SAPLING;
+        } else if (cause.root() instanceof BlockSnapshot) {
+            final BlockSnapshot snapshot = (BlockSnapshot) cause.root();
+
+            return snapshot.getState().getType() == BlockTypes.SAPLING;
         }
 
-        final BlockSnapshot snapshot = (BlockSnapshot) cause.root();
-        return snapshot.getCreator().isPresent();
+        return false;
     }),
 
     BONEMEAL_USED((cause, context) -> {
