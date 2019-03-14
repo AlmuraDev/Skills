@@ -94,7 +94,7 @@ public final class MiningRegistar {
 
             // Mod Blocks
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).queryDomain("railcraft").level(40).xp(40.0).economy(6.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).queryDomain("ic2").level(50).xp(40.0).economy(8.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).queryDomain("ic2:resource").level(50).xp(40.0).economy(8.0))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("sgcraft:naquadahore").level(60).xp(50.0).economy(8.0))
 
             // Almura
