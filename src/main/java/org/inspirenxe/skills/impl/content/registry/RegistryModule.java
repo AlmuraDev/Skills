@@ -31,17 +31,14 @@ import com.google.inject.binder.LinkedBindingBuilder;
 import net.kyori.violet.AbstractModule;
 import net.kyori.violet.FriendlyTypeLiteral;
 import net.kyori.violet.TypeArgument;
-import org.inspirenxe.skills.api.result.Result;
-import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.skill.SkillType;
 import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
 import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
-import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.sound.SoundEffect;
-import org.inspirenxe.skills.impl.result.ResultBuilder;
 import org.inspirenxe.skills.impl.content.registry.module.ColorTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.EconomyFunctionRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.FireworkEffectTypeRegistryModule;
@@ -49,9 +46,6 @@ import org.inspirenxe.skills.impl.content.registry.module.LevelFunctionRegistryM
 import org.inspirenxe.skills.impl.content.registry.module.PotionEffectTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.SkillTypeRegistryModule;
 import org.inspirenxe.skills.impl.content.registry.module.SoundEffectTypeRegistryModule;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.result.BuiltinResult;
-import org.inspirenxe.skills.impl.content.type.skill.builtin.result.BuiltinResultBuilder;
-import org.inspirenxe.skills.impl.result.experience.ExperienceResultBuilder;
 import org.inspirenxe.skills.impl.sound.SoundEffectBuilderImpl;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Key;
@@ -62,9 +56,6 @@ public final class RegistryModule extends AbstractModule implements ToolboxBinde
   @Override
   protected void configure() {
     this.registry().builder(SoundEffect.Builder.class, SoundEffectBuilderImpl::new);
-    this.registry().builder(Result.Builder.class, ResultBuilder::new);
-    this.registry().builder(ExperienceResult.DirectBuilder.class, ExperienceResultBuilder::new);
-    this.registry().builder(BuiltinResult.Builder.class, BuiltinResultBuilder::new);
 
     // API modules
     this.registry().module(ColorType.class, new ColorTypeRegistryModule());

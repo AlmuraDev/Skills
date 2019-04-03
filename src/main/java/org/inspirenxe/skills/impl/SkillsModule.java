@@ -51,6 +51,9 @@ import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValuePar
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.event.BlockCreationTracker;
+import org.inspirenxe.skills.impl.skill.SkillImpl;
+import org.inspirenxe.skills.impl.skill.holder.SkillHolderContainerImpl;
+import org.inspirenxe.skills.impl.skill.holder.SkillHolderImpl;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jooq.SQLDialect;

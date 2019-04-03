@@ -22,45 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.event;
+package org.inspirenxe.skills.api.skill.holder;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.SkillType;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.inspirenxe.skills.api.Nameable;
+import org.inspirenxe.skills.api.SkillService;
+import org.spongepowered.api.util.Identifiable;
+
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface ExperienceEvent extends Event {
+public interface SkillHolderContainer extends Identifiable, Nameable {
 
-  /**
-   * The {@link UUID} which is unique per container.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(1)
-  UUID getContainerId();
+  Map<UUID, SkillHolder> getHolders();
 
-  /**
-   * The {@link UUID} which is unique per holder.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(2)
-  UUID getHolderId();
+  default Optional<SkillHolder> getHolder(final UUID holderId) {
+    checkNotNull(holderId);
 
-  /**
-   * Gets the {@link SkillType}.
-   *
-   * @return The skill type
-   */
-  @AbsoluteSortPosition(3)
-  SkillType getSkillType();
+    return Optional.ofNullable(this.getHolders().get(holderId));
+  }
 
-  /**
-   * Gets the experience that will be changed on the {@link Skill}.
-   *
-   * @return The experience change
-   */
-  double getExperience();
+  default SkillHolder createHolder(final UUID holderId) {
+    return this.createHolder(holderId, SkillService.UNKNOWN_NAME);
+  }
+
+  SkillHolder createHolder(final UUID holderId, final String name);
+
+  default void saveHolder(final UUID holderId) {
+    this.getHolder(holderId).ifPresent(SkillHolder::save);
+  }
+
+  Optional<SkillHolder> removeHolder(final UUID holderId);
+
+  default void save() {
+    this.getHolders().values().forEach(SkillHolder::save);
+  }
 }

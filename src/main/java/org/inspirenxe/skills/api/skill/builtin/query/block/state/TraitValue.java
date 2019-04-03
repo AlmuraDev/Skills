@@ -22,45 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.event;
+package org.inspirenxe.skills.api.skill.builtin.query.block.state;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.SkillType;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.UUID;
+import org.spongepowered.api.block.trait.BlockTrait;
 
-public interface ExperienceEvent extends Event {
+public final class TraitValue {
 
-  /**
-   * The {@link UUID} which is unique per container.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(1)
-  UUID getContainerId();
+    public static TraitValue trait(BlockTrait<?> trait, Object value) {
+        checkNotNull(trait);
+        checkNotNull(value);
 
-  /**
-   * The {@link UUID} which is unique per holder.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(2)
-  UUID getHolderId();
+        return new TraitValue(trait, value);
+    }
 
-  /**
-   * Gets the {@link SkillType}.
-   *
-   * @return The skill type
-   */
-  @AbsoluteSortPosition(3)
-  SkillType getSkillType();
+    private final BlockTrait<?> trait;
+    private final Object value;
 
-  /**
-   * Gets the experience that will be changed on the {@link Skill}.
-   *
-   * @return The experience change
-   */
-  double getExperience();
+    private TraitValue(final BlockTrait<?> trait, final Object value) {
+        this.trait = trait;
+        this.value = value;
+    }
+
+    public BlockTrait<?> getTrait() {
+        return this.trait;
+    }
+
+    public Object getValue() {
+        return this.value;
+    }
 }

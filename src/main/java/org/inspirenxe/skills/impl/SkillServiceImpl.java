@@ -27,10 +27,11 @@ package org.inspirenxe.skills.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Inject;
-import org.inspirenxe.skills.api.SkillHolder;
-import org.inspirenxe.skills.api.SkillHolderContainer;
+import org.inspirenxe.skills.api.skill.holder.SkillHolder;
+import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
+import org.inspirenxe.skills.impl.skill.holder.SkillHolderContainerImpl;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.scheduler.Task;

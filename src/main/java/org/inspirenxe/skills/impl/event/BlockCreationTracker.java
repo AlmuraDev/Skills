@@ -30,6 +30,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.longs.Long2LongArrayMap;
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
 import org.inspirenxe.skills.generated.tables.SkillsBlockCreation;
 import org.inspirenxe.skills.generated.tables.records.SkillsContainerPaletteRecord;
 import org.inspirenxe.skills.impl.configuration.PluginConfiguration;

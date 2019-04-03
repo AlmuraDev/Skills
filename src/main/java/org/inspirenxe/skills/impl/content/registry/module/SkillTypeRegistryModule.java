@@ -26,7 +26,7 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.skill.SkillType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
 
 import java.util.Collection;

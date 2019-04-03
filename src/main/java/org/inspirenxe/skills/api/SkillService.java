@@ -24,8 +24,9 @@
  */
 package org.inspirenxe.skills.api;
 
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -44,6 +45,7 @@ public interface SkillService {
    * <Note>
    *   It is expected to only return {@link Optional#empty()} if the parent container is not loaded currently.
    * </Note>
+   *
    * @param container The container
    * @return The parent container
    */

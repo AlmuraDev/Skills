@@ -25,7 +25,7 @@
 package org.inspirenxe.skills.event;
 
 import com.google.common.collect.Sets;
-import org.inspirenxe.skills.impl.event.BlockCreationFlags;
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
 import org.junit.Assert;
 import org.junit.Test;
 

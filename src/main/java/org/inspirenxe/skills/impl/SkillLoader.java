@@ -26,9 +26,9 @@ package org.inspirenxe.skills.impl;
 
 import com.almuradev.toolbox.inject.event.Witness;
 import com.google.inject.Inject;
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.SkillHolder;
-import org.inspirenxe.skills.api.SkillHolderContainer;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.holder.SkillHolder;
+import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 import org.inspirenxe.skills.api.SkillService;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;

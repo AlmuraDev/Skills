@@ -24,10 +24,10 @@
  */
 package org.inspirenxe.skills.api.event;
 
-import org.inspirenxe.skills.api.Skill;
-import org.inspirenxe.skills.api.SkillHolder;
-import org.inspirenxe.skills.api.SkillHolderContainer;
-import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.holder.SkillHolder;
+import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
+import org.inspirenxe.skills.api.skill.SkillType;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
 import org.spongepowered.api.util.annotation.eventgen.PropertySettings;

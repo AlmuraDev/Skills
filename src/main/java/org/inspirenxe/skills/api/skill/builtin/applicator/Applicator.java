@@ -22,45 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.event;
+package org.inspirenxe.skills.api.skill.builtin.applicator;
 
 import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.SkillType;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
+import org.inspirenxe.skills.api.skill.builtin.query.Query;
+import org.spongepowered.api.event.cause.Cause;
 
-import java.util.UUID;
+public interface Applicator<T, Q extends Query<T>> {
 
-public interface ExperienceEvent extends Event {
+    Q getQuery();
 
-  /**
-   * The {@link UUID} which is unique per container.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(1)
-  UUID getContainerId();
-
-  /**
-   * The {@link UUID} which is unique per holder.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(2)
-  UUID getHolderId();
-
-  /**
-   * Gets the {@link SkillType}.
-   *
-   * @return The skill type
-   */
-  @AbsoluteSortPosition(3)
-  SkillType getSkillType();
-
-  /**
-   * Gets the experience that will be changed on the {@link Skill}.
-   *
-   * @return The experience change
-   */
-  double getExperience();
+    void apply(Cause cause, Skill skill, T value);
 }

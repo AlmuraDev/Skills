@@ -28,7 +28,6 @@ import net.kyori.violet.AbstractModule;
 import org.inspirenxe.skills.impl.content.type.color.ColorTypeModule;
 import org.inspirenxe.skills.impl.content.type.effect.EffectTypeModule;
 import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
-import org.inspirenxe.skills.impl.content.type.skill.SkillTypeModule;
 
 public final class ContentTypeModule extends AbstractModule {
 
@@ -37,6 +36,5 @@ public final class ContentTypeModule extends AbstractModule {
     this.install(new ColorTypeModule());
     this.install(new EffectTypeModule());
     this.install(new FunctionModule());
-    this.install(new SkillTypeModule());
   }
 }
