@@ -22,11 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.query;
 
 import net.kyori.filter.FilterQuery;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.element.EventElement;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 
-public interface Applicator {
+public abstract class AbstractEventQuery implements FilterQuery, EventElement {
 
-    void apply(FilterQuery query);
+    private final Cause cause;
+    private final EventContext context;
+    private final Skill skill;
+
+    public AbstractEventQuery(final Cause cause, final EventContext context, final Skill skill) {
+        this.cause = cause;
+        this.context = context;
+        this.skill = skill;
+    }
+
+    @Override
+    public final Cause getCause() {
+        return this.cause;
+    }
+
+    @Override
+    public final EventContext getContext() {
+        return this.context;
+    }
+
+    @Override
+    public final Skill getSkill() {
+        return this.skill;
+    }
+
+    public static final class Basic extends AbstractEventQuery {
+
+        public Basic(final Cause cause, final EventContext context, final Skill skill) {
+            super(cause, context, skill);
+        }
+    }
 }

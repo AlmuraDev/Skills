@@ -22,11 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.query.element;
 
-import net.kyori.filter.FilterQuery;
+import org.spongepowered.api.data.DataSerializable;
+import org.spongepowered.api.data.Transaction;
 
-public interface Applicator {
+public interface TransactionElement<T extends DataSerializable> {
 
-    void apply(FilterQuery query);
+    Transaction<T> getTransaction();
 }

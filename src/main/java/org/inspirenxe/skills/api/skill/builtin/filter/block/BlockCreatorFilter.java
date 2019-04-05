@@ -22,11 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter.block;
 
 import net.kyori.filter.FilterQuery;
+import net.kyori.filter.TypedFilter;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.inspirenxe.skills.api.skill.builtin.query.transaction.BlockSnapshotTransactionQuery;
 
-public interface Applicator {
+public abstract class BlockCreatorFilter implements TypedFilter.Strong<BlockSnapshotTransactionQuery> {
 
-    void apply(FilterQuery query);
+    @Override
+    public final boolean queryable(@NonNull FilterQuery query) {
+        return query instanceof BlockSnapshotTransactionQuery;
+    }
 }

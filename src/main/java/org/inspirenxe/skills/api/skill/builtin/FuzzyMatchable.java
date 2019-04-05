@@ -22,11 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin;
 
-import net.kyori.filter.FilterQuery;
+public interface FuzzyMatchable<O> {
 
-public interface Applicator {
-
-    void apply(FilterQuery query);
+    boolean matches(O actual);
 }

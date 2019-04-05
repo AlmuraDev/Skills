@@ -22,11 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.query.transaction;
 
-import net.kyori.filter.FilterQuery;
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.element.BlockCreationElement;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 
-public interface Applicator {
+import java.util.Set;
 
-    void apply(FilterQuery query);
+public class BlockSnapshotTransactionQuery extends AbstractTransactionQuery<BlockSnapshot> implements BlockCreationElement {
+
+    private final Set<BlockCreationFlags> creationFlags;
+
+    public BlockSnapshotTransactionQuery(final Cause cause, final EventContext context, final Skill skill, final Transaction<BlockSnapshot> transaction,
+        final Set<BlockCreationFlags> creationFlags) {
+        super(cause, context, skill, transaction);
+        this.creationFlags = creationFlags;
+    }
+
+    @Override
+    public final Set<BlockCreationFlags> getCreationFlags() {
+        return this.creationFlags;
+    }
 }

@@ -22,11 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.query.transaction;
 
-import net.kyori.filter.FilterQuery;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.element.TransactionElement;
+import org.spongepowered.api.data.DataSerializable;
+import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 
-public interface Applicator {
+public abstract class AbstractTransactionQuery<T extends DataSerializable> extends AbstractEventQuery implements TransactionElement<T> {
 
-    void apply(FilterQuery query);
+    private final Transaction<T> transaction;
+
+    public AbstractTransactionQuery(final Cause cause, final EventContext context, final Skill skill, final Transaction<T> transaction) {
+        super(cause, context, skill);
+
+        this.transaction = transaction;
+    }
+
+    @Override
+    public final Transaction<T> getTransaction() {
+        return this.transaction;
+    }
 }

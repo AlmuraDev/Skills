@@ -26,14 +26,13 @@ package org.inspirenxe.skills.api.skill.builtin;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import net.kyori.filter.Filter;
 import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.inspirenxe.skills.api.skill.SkillType;
-import org.inspirenxe.skills.api.skill.builtin.filter.deny.DenyFilter;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.ApplicatorFilter;
-import org.inspirenxe.skills.api.skill.builtin.query.Query;
+import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.spongepowered.api.Sponge;
@@ -91,25 +90,30 @@ public abstract class BasicSkillType implements SkillType {
 
     @Override
     public LevelFunctionType getLevelFunction() {
-        return levelFunction;
+        return this.levelFunction;
     }
 
     @Override
     public Text getFormattedName() {
-        return formattedName;
+        return this.formattedName;
     }
 
-    public abstract void onRegister(final List<SkillHolderContainer> containers);
-
-    public final <T, Q extends Query<T>, F extends DenyFilter<T, Q>> BasicSkillType registerFilters(final SkillHolderContainer container,
-        final Class<? extends Event> eventClass, final F... filters) {
+    public final <F extends Filter> BasicSkillType registerCancelEventFilter(final SkillHolderContainer container,
+        final Class<? extends Event> eventClass, final F filter) {
         return this;
     }
 
-    public final <T, Q extends Query<T>, F extends ApplicatorFilter<T, Q, F>> BasicSkillType registerApplicators(final SkillHolderContainer container,
-        final Class<? extends Event> eventClass, final F... filters) {
+    public final <F extends Filter> BasicSkillType registerCancelTransactionFilter(final SkillHolderContainer container,
+        final Class<? extends Event> eventClass, final F filter) {
         return this;
     }
+
+    public final BasicSkillType registerTransactionTrigger(final SkillHolderContainer container,
+        final Class<? extends Event> eventClass, final TriggerFilter filter) {
+        return this;
+    }
+
+    public abstract void configure(final List<SkillHolderContainer> containers);
 
     public void onActionDenied(final Cause cause, final Skill skill, final int levelRequired, final EventAction action) {
     }

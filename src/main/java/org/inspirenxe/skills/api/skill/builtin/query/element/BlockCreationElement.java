@@ -22,11 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.query.element;
 
-import net.kyori.filter.FilterQuery;
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
 
-public interface Applicator {
+import java.util.Set;
 
-    void apply(FilterQuery query);
+public interface BlockCreationElement {
+
+    Set<BlockCreationFlags> getCreationFlags();
 }

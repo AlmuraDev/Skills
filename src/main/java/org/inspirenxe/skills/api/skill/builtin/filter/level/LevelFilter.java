@@ -22,11 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter.level;
 
-import net.kyori.filter.FilterQuery;
+import net.kyori.filter.TypedFilter;
+import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
 
-public interface Applicator {
+public interface LevelFilter extends TypedFilter.Strong<AbstractEventQuery> {
 
-    void apply(FilterQuery query);
+    int getLevel();
 }

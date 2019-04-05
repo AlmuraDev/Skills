@@ -61,6 +61,7 @@ dependencies {
     compile "org.jooq:jooq:${project.jooqVersion}"
     compile "org.jooq:jooq-meta:${project.jooqVersion}"
     compile "org.jooq:jooq-codegen:${project.jooqVersion}"
+    compile "net.kyori:filter:${project.filterVersion}"
     compile "net.kyori:lunar:${project.lunarVersion}"
     compile "net.kyori:membrane:${project.membraneVersion}"
     compile "org.spongepowered:spongeapi:${project.spongeAPIVersion}"

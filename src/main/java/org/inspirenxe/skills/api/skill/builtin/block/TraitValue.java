@@ -22,11 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.block;
 
-import net.kyori.filter.FilterQuery;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-public interface Applicator {
+import org.spongepowered.api.block.trait.BlockTrait;
 
-    void apply(FilterQuery query);
+public final class TraitValue {
+
+    public static TraitValue trait(final BlockTrait<?> trait, final Object value) {
+        checkNotNull(trait);
+        checkNotNull(value);
+
+        return new TraitValue(trait, value);
+    }
+
+    private final BlockTrait<?> trait;
+    private final Object value;
+
+    private TraitValue(final BlockTrait<?> trait, final Object value) {
+        this.trait = trait;
+        this.value = value;
+    }
+
+    public BlockTrait<?> getTrait() {
+        return this.trait;
+    }
+
+    public Object getValue() {
+        return this.value;
+    }
 }

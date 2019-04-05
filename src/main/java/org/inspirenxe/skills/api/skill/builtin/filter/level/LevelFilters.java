@@ -22,11 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter.level;
 
 import net.kyori.filter.FilterQuery;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
 
-public interface Applicator {
+public final class LevelFilters {
 
-    void apply(FilterQuery query);
+    public static LevelFilter level(final int level) {
+        return new LevelFilter() {
+            @Override
+            public int getLevel() {
+                return level;
+            }
+
+            @Override
+            public boolean queryResponse(final @NonNull AbstractEventQuery query) {
+                return level <= query.getSkill().getCurrentLevel();
+            }
+
+            @Override
+            public boolean queryable(final @NonNull FilterQuery query) {
+                return query instanceof AbstractEventQuery;
+            }
+        };
+    }
+
+    private LevelFilters() {}
 }

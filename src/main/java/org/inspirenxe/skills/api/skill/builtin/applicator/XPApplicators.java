@@ -24,9 +24,28 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.applicator;
 
-import net.kyori.filter.FilterQuery;
+import com.almuradev.toolbox.util.math.DoubleRange;
+import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
 
-public interface Applicator {
+import java.util.Random;
 
-    void apply(FilterQuery query);
+public final class XPApplicators {
+
+    public static Applicator xp(final double amount) {
+        return query -> {
+            if (query instanceof AbstractEventQuery) {
+                ((AbstractEventQuery) query).getSkill().addExperience(amount);
+            }
+        };
+    }
+
+    public static Applicator variableXP(final DoubleRange range, final Random random) {
+        return query -> {
+            if (query instanceof AbstractEventQuery) {
+                ((AbstractEventQuery) query).getSkill().addExperience(range.random(random));
+            }
+        };
+    }
+    private XPApplicators() {
+    }
 }

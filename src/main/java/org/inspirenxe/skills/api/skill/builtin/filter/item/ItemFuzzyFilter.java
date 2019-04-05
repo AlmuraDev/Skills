@@ -22,11 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter.item;
 
-import net.kyori.filter.FilterQuery;
+import org.inspirenxe.skills.api.skill.builtin.filter.FuzzyMatchableFilter;
+import org.inspirenxe.skills.api.skill.builtin.inventory.FuzzyItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public interface Applicator {
+import java.util.Collection;
 
-    void apply(FilterQuery query);
+class ItemFuzzyFilter extends FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemStack> {
+
+    ItemFuzzyFilter(final Collection<FuzzyItemStack> value) {
+        super(value);
+    }
 }

@@ -22,11 +22,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter;
 
 import net.kyori.filter.FilterQuery;
+import net.kyori.filter.TypedFilter;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.inspirenxe.skills.api.skill.builtin.FuzzyMatchable;
+import org.inspirenxe.skills.api.skill.builtin.query.TypedQuery;
 
-public interface Applicator {
+import java.util.Collection;
 
-    void apply(FilterQuery query);
+public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements TypedFilter.Strong<TypedQuery<O>> {
+
+    private final Collection<T> value;
+
+    public FuzzyMatchableFilter(final Collection<T> value) {
+        this.value = value;
+    }
+
+    public Collection<T> getValue() {
+        return this.value;
+    }
+
+    @Override
+    public final boolean queryResponse(@NonNull final TypedQuery<O> query) {
+        return this.value.stream().anyMatch(v -> v.matches(query.getValue()));
+    }
+
+    @Override
+    public final boolean queryable(@NonNull final FilterQuery query) {
+        return query instanceof TypedQuery;
+    }
 }
