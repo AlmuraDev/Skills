@@ -35,12 +35,12 @@ import javax.inject.Singleton;
 @Singleton
 public final class RegistryKeyParser implements PrimitiveParser<RegistryKey> {
 
-  @Override
-  public RegistryKey throwingParse(final Node node, final String string) {
-    if (string.indexOf(':') != -1) {
-      return new CatalogKey(string);
-    } else {
-      return new IdioticCatalogKey(string);
+    @Override
+    public RegistryKey throwingParse(final Node node, final String string) {
+        if (string.indexOf(':') != -1) {
+            return new CatalogKey(string);
+        } else {
+            return new IdioticCatalogKey(string);
+        }
     }
-  }
 }

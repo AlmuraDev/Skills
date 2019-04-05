@@ -29,11 +29,11 @@ import org.inspirenxe.skills.impl.color.ColorTypeImpl;
 
 public interface ContentColorTypeBuilder extends ContentBuilder<ColorTypeImpl> {
 
-  void r(final int r);
+    void r(final int r);
 
-  void g(final int g);
+    void g(final int g);
 
-  void b(final int b);
+    void b(final int b);
 
-  void hex(final int hex);
+    void hex(final int hex);
 }

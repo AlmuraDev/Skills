@@ -28,11 +28,11 @@ import org.inspirenxe.skills.api.skill.Skill;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 
-public class TypedQuery<T> extends AbstractEventQuery {
+public class TypedEventQuery<T> extends AbstractEventQuery {
 
     private final T value;
 
-    public TypedQuery(final Cause cause, final EventContext context, final Skill skill, final T value) {
+    public TypedEventQuery(final Cause cause, final EventContext context, final Skill skill, final T value) {
         super(cause, context, skill);
         this.value = value;
     }

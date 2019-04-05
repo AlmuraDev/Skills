@@ -33,14 +33,14 @@ import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 public final class ContentLevelFunctionBuilderImpl extends AbstractContentFunctionBuilder<SkillsLevelFunctionType>
     implements ContentLevelFunctionBuilder {
 
-  @Inject
-  private SkillsLevelFunctionType.Factory factory;
+    @Inject
+    private SkillsLevelFunctionType.Factory factory;
 
-  @Override
-  public SkillsLevelFunctionType build() {
-    checkNotNull(this.key());
-    checkNotNull(this.formula);
+    @Override
+    public SkillsLevelFunctionType build() {
+        checkNotNull(this.key());
+        checkNotNull(this.formula);
 
-    return this.factory.create(this.key(), this.formula);
-  }
+        return this.factory.create(this.key(), this.formula);
+    }
 }

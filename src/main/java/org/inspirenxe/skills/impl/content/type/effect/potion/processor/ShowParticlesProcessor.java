@@ -33,16 +33,16 @@ import org.inspirenxe.skills.impl.content.type.effect.potion.ContentPotionEffect
 
 public final class ShowParticlesProcessor implements Processor<ContentPotionEffectTypeBuilder> {
 
-  private final Parser<Boolean> booleanParser;
+    private final Parser<Boolean> booleanParser;
 
-  @Inject
-  public ShowParticlesProcessor(final Parser<Boolean> booleanParser) {
-    this.booleanParser = booleanParser;
-  }
+    @Inject
+    public ShowParticlesProcessor(final Parser<Boolean> booleanParser) {
+        this.booleanParser = booleanParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
-    node.nodes("show-particles").collect(MoreCollectors.toOptional()).ifPresent(showParticles -> builder.showParticles(this.booleanParser.parse
-        (showParticles)));
-  }
+    @Override
+    public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
+        node.nodes("show-particles").collect(MoreCollectors.toOptional()).ifPresent(showParticles -> builder.showParticles(this.booleanParser.parse
+            (showParticles)));
+    }
 }

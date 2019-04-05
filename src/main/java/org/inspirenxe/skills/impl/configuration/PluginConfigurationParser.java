@@ -35,34 +35,34 @@ import java.util.HashMap;
 
 public final class PluginConfigurationParser implements Parser<PluginConfiguration> {
 
-  private final Parser<DatabaseConfiguration> databaseConfigurationParser;
-  private final Parser<ContainerShareConfiguration> containerShareConfigurationParser;
-  private final Parser<Integer> intParser;
+    private final Parser<DatabaseConfiguration> databaseConfigurationParser;
+    private final Parser<ContainerShareConfiguration> containerShareConfigurationParser;
+    private final Parser<Integer> intParser;
 
-  @Inject
-  public PluginConfigurationParser(final Parser<DatabaseConfiguration> databaseConfigurationParser, final Parser<ContainerShareConfiguration>
-    containerShareConfigurationParser, final Parser<Integer> intParser) {
-    this.databaseConfigurationParser = databaseConfigurationParser;
-    this.containerShareConfigurationParser = containerShareConfigurationParser;
-    this.intParser = intParser;
-  }
-
-  @NonNull
-  @Override
-  public PluginConfiguration throwingParse(@NonNull final Node node) {
-    final DatabaseConfiguration databaseConfiguration = this.databaseConfigurationParser.parse(node.element("database").required());
-
-    ContainerShareConfiguration containerShareConfiguration;
-    final Node containerNode = node.element("container-share").optional().orElse(null);
-
-    if (containerNode == null) {
-      containerShareConfiguration = new ContainerShareConfiguration(new HashMap<>());
-    } else {
-      containerShareConfiguration = this.containerShareConfigurationParser.parse(containerNode);
+    @Inject
+    public PluginConfigurationParser(final Parser<DatabaseConfiguration> databaseConfigurationParser, final Parser<ContainerShareConfiguration>
+        containerShareConfigurationParser, final Parser<Integer> intParser) {
+        this.databaseConfigurationParser = databaseConfigurationParser;
+        this.containerShareConfigurationParser = containerShareConfigurationParser;
+        this.intParser = intParser;
     }
 
-    final Integer saveInterval = this.intParser.parse(node.element("save-interval").required());
+    @NonNull
+    @Override
+    public PluginConfiguration throwingParse(@NonNull final Node node) {
+        final DatabaseConfiguration databaseConfiguration = this.databaseConfigurationParser.parse(node.element("database").required());
 
-    return new PluginConfiguration(databaseConfiguration, containerShareConfiguration, saveInterval);
-  }
+        ContainerShareConfiguration containerShareConfiguration;
+        final Node containerNode = node.element("container-share").optional().orElse(null);
+
+        if (containerNode == null) {
+            containerShareConfiguration = new ContainerShareConfiguration(new HashMap<>());
+        } else {
+            containerShareConfiguration = this.containerShareConfigurationParser.parse(containerNode);
+        }
+
+        final Integer saveInterval = this.intParser.parse(node.element("save-interval").required());
+
+        return new PluginConfiguration(databaseConfiguration, containerShareConfiguration, saveInterval);
+    }
 }

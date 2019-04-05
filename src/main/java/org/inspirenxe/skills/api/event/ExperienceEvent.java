@@ -33,34 +33,34 @@ import java.util.UUID;
 
 public interface ExperienceEvent extends Event {
 
-  /**
-   * The {@link UUID} which is unique per container.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(1)
-  UUID getContainerId();
+    /**
+     * The {@link UUID} which is unique per container.
+     *
+     * @return The unique id
+     */
+    @AbsoluteSortPosition(1)
+    UUID getContainerId();
 
-  /**
-   * The {@link UUID} which is unique per holder.
-   *
-   * @return The unique id
-   */
-  @AbsoluteSortPosition(2)
-  UUID getHolderId();
+    /**
+     * The {@link UUID} which is unique per holder.
+     *
+     * @return The unique id
+     */
+    @AbsoluteSortPosition(2)
+    UUID getHolderId();
 
-  /**
-   * Gets the {@link SkillType}.
-   *
-   * @return The skill type
-   */
-  @AbsoluteSortPosition(3)
-  SkillType getSkillType();
+    /**
+     * Gets the {@link SkillType}.
+     *
+     * @return The skill type
+     */
+    @AbsoluteSortPosition(3)
+    SkillType getSkillType();
 
-  /**
-   * Gets the experience that will be changed on the {@link Skill}.
-   *
-   * @return The experience change
-   */
-  double getExperience();
+    /**
+     * Gets the experience that will be changed on the {@link Skill}.
+     *
+     * @return The experience change
+     */
+    double getExperience();
 }

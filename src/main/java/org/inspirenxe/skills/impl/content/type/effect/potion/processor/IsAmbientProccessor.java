@@ -33,15 +33,15 @@ import org.inspirenxe.skills.impl.content.type.effect.potion.ContentPotionEffect
 
 public final class IsAmbientProccessor implements Processor<ContentPotionEffectTypeBuilder> {
 
-  private final Parser<Boolean> booleanParser;
+    private final Parser<Boolean> booleanParser;
 
-  @Inject
-  public IsAmbientProccessor(final Parser<Boolean> booleanParser) {
-    this.booleanParser = booleanParser;
-  }
+    @Inject
+    public IsAmbientProccessor(final Parser<Boolean> booleanParser) {
+        this.booleanParser = booleanParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
-    node.nodes("is-ambient").collect(MoreCollectors.toOptional()).ifPresent(isAmbient -> builder.isAmbient(this.booleanParser.parse(isAmbient)));
-  }
+    @Override
+    public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
+        node.nodes("is-ambient").collect(MoreCollectors.toOptional()).ifPresent(isAmbient -> builder.isAmbient(this.booleanParser.parse(isAmbient)));
+    }
 }

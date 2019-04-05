@@ -39,35 +39,35 @@ import javax.annotation.Nullable;
 
 public final class CatalogTypeRegistry<C extends CatalogType> implements Registry<C> {
 
-  private final GameRegistry registry;
-  private final TypeLiteral<C> type;
+    private final GameRegistry registry;
+    private final TypeLiteral<C> type;
 
-  @Inject
-  public CatalogTypeRegistry(final GameRegistry registry, final TypeLiteral<C> type) {
-    this.registry = registry;
-    this.type = type;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public @NonNull Collection<C> all() {
-    return Collections.unmodifiableCollection(this.registry.getAllOf((Class<C>) this.type.getRawType()));
-  }
-
-  @SuppressWarnings("unchecked")
-  @Nullable
-  @Override
-  public C get(final RegistryKey key) {
-    if (key instanceof IdioticCatalogKey) {
-      return this.registry.getType((Class<C>) this.type.getRawType(), key.value()).orElse(null);
+    @Inject
+    public CatalogTypeRegistry(final GameRegistry registry, final TypeLiteral<C> type) {
+        this.registry = registry;
+        this.type = type;
     }
 
-    return this.registry.getType((Class<C>) this.type.getRawType(), key.namespace() + ":" + key.value()).orElse(null);
-  }
+    @SuppressWarnings("unchecked")
+    @Override
+    public @NonNull Collection<C> all() {
+        return Collections.unmodifiableCollection(this.registry.getAllOf((Class<C>) this.type.getRawType()));
+    }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void put(final RegistryKey key, final C value) {
-    this.registry.register((Class<C>) this.type.getRawType(), value);
-  }
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public C get(final RegistryKey key) {
+        if (key instanceof IdioticCatalogKey) {
+            return this.registry.getType((Class<C>) this.type.getRawType(), key.value()).orElse(null);
+        }
+
+        return this.registry.getType((Class<C>) this.type.getRawType(), key.namespace() + ":" + key.value()).orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void put(final RegistryKey key, final C value) {
+        this.registry.register((Class<C>) this.type.getRawType(), value);
+    }
 }

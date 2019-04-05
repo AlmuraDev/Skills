@@ -33,54 +33,54 @@ import java.util.function.IntToDoubleFunction;
  */
 public interface LevelFunctionType extends FunctionType, IntToDoubleFunction {
 
-  double UNKNOWN_EXP = -1;
+    double UNKNOWN_EXP = -1;
 
-  int UNKNOWN_LEVEL = -1;
+    int UNKNOWN_LEVEL = -1;
 
-  /**
-   * Gets the experience for the level provided or {@link LevelFunctionType#UNKNOWN_EXP} if no experience amount reaches the level.
-   *
-   * <Note>
-   *   Implementors should make every effort to ensure that the experience returned is at the start of the level
-   *   or document otherwise.
-   * </Note>
-   *
-   * @param level The level
-   * @return The experience
-   */
-  double getXPFor(final int level);
+    /**
+     * Gets the experience for the level provided or {@link LevelFunctionType#UNKNOWN_EXP} if no experience amount reaches the level.
+     *
+     * <Note>
+     *   Implementors should make every effort to ensure that the experience returned is at the start of the level
+     *   or document otherwise.
+     * </Note>
+     *
+     * @param level The level
+     * @return The experience
+     */
+    double getXPFor(int level);
 
-  /**
-   * Gets the level for the experience provided or {@link LevelFunctionType#UNKNOWN_LEVEL} if unknown.
-   *
-   * @param xp The experience
-   * @return The level
-   */
-  int getLevelFor(final double xp);
+    /**
+     * Gets the level for the experience provided or {@link LevelFunctionType#UNKNOWN_LEVEL} if unknown.
+     *
+     * @param xp The experience
+     * @return The level
+     */
+    int getLevelFor(double xp);
 
-  /**
-   * Gets the experience between a lower and upper level or {@link LevelFunctionType#UNKNOWN_EXP} if unknown.
-   *
-   * @param lower The lower level
-   * @param upper The upper level
-   * @return The experience
-   */
-  default double getXPBetween(final int lower, final int upper) {
-    final double xpDiff = this.applyAsDouble(upper) - this.applyAsDouble(lower);
-    return xpDiff < 0 ? UNKNOWN_EXP : xpDiff;
-  }
+    /**
+     * Gets the experience between a lower and upper level or {@link LevelFunctionType#UNKNOWN_EXP} if unknown.
+     *
+     * @param lower The lower level
+     * @param upper The upper level
+     * @return The experience
+     */
+    default double getXPBetween(int lower, int upper) {
+        final double xpDiff = this.applyAsDouble(upper) - this.applyAsDouble(lower);
+        return xpDiff < 0 ? UNKNOWN_EXP : xpDiff;
+    }
 
-  @Override
-  default double applyAsDouble(final int value) {
-    return this.getXPFor(value);
-  }
+    @Override
+    default double applyAsDouble(int value) {
+        return this.getXPFor(value);
+    }
 
-  /**
-   * Instructs the function to build an internal cache of the level table. It is up to the implementation to determine what
-   * this method does, if anything. Even if the implementation should make use of a cache, the suggested max is not guaranteed
-   * to be honored.
-   *
-   * @param suggestedMax A suggested maximum level to cache to
-   */
-  void buildLevelTable(final int suggestedMax);
+    /**
+     * Instructs the function to build an internal cache of the level table. It is up to the implementation to determine what
+     * this method does, if anything. Even if the implementation should make use of a cache, the suggested max is not guaranteed
+     * to be honored.
+     *
+     * @param suggestedMax A suggested maximum level to cache to
+     */
+    void buildLevelTable(int suggestedMax);
 }

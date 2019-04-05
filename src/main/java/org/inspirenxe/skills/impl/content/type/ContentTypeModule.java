@@ -31,10 +31,10 @@ import org.inspirenxe.skills.impl.content.type.function.FunctionModule;
 
 public final class ContentTypeModule extends AbstractModule {
 
-  @Override
-  protected void configure() {
-    this.install(new ColorTypeModule());
-    this.install(new EffectTypeModule());
-    this.install(new FunctionModule());
-  }
+    @Override
+    protected void configure() {
+        this.install(new ColorTypeModule());
+        this.install(new EffectTypeModule());
+        this.install(new FunctionModule());
+    }
 }

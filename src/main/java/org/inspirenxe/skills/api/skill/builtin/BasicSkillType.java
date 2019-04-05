@@ -57,7 +57,8 @@ public abstract class BasicSkillType implements SkillType {
     private final Text formattedName;
     private final int maxLevel;
 
-    protected BasicSkillType(final PluginContainer container, final String id, final String name, final Text formattedName, final LevelFunctionType levelFunction,
+    protected BasicSkillType(final PluginContainer container, final String id, final String name, final Text formattedName,
+        final LevelFunctionType levelFunction,
         final int maxLevel) {
         this.service = Sponge.getServiceManager().provideUnchecked(SkillService.class);
         this.container = checkNotNull(container);

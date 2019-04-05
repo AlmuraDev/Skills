@@ -34,111 +34,109 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.function.SkillsFunctionType;
-import org.slf4j.Logger;
-import org.spongepowered.api.Sponge;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelFunctionType {
 
-  private final RegistryKey registryKey;
-  private final Expression expression;
+    private final RegistryKey registryKey;
+    private final Expression expression;
 
-  private double[] xpTable = new double[100];
+    private double[] xpTable = new double[100];
 
-  @Inject
-  public SkillsLevelFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
-    this.registryKey = registryKey;
-    this.expression = new ExpressionBuilder(formula).variable("L").build();
-    Arrays.fill(this.xpTable, UNKNOWN_EXP);
-  }
-
-  @Override
-  public String getId() {
-    return this.registryKey.toString();
-  }
-
-  @Override
-  public String getName() {
-    return this.registryKey.value();
-  }
-
-  @Override
-  public double getXPFor(final int level) {
-    checkState(level > 0, "Level must be positive and higher than zero!");
-
-    if (this.xpTable.length < level) {
-      return UNKNOWN_EXP;
+    @Inject
+    public SkillsLevelFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
+        this.registryKey = registryKey;
+        this.expression = new ExpressionBuilder(formula).variable("L").build();
+        Arrays.fill(this.xpTable, UNKNOWN_EXP);
     }
 
-    final double cache = this.xpTable[level - 1];
-
-    return cache == UNKNOWN_EXP ? 0 : cache;
-  }
-
-  @Override
-  public int getLevelFor(final double xp) {
-    checkState(xp > UNKNOWN_EXP, "XP must be positive!");
-
-    for (int i = this.xpTable.length; i > 0; i--) {
-      final double cache = this.xpTable[i - 1];
-
-      if (cache == UNKNOWN_EXP) {
-        continue;
-      }
-
-      if (xp >= cache) {
-        return i;
-      }
+    @Override
+    public String getId() {
+        return this.registryKey.toString();
     }
 
-    return UNKNOWN_LEVEL;
-  }
-
-  @Override
-  public void buildLevelTable(final int suggestedMax) {
-    if (suggestedMax > this.xpTable.length) {
-      final int length = this.xpTable.length;
-      this.xpTable = Arrays.copyOf(this.xpTable, this.xpTable.length * 2);
-      Arrays.fill(this.xpTable, length, this.xpTable.length - 1, UNKNOWN_EXP);
+    @Override
+    public String getName() {
+        return this.registryKey.value();
     }
 
-    if (this.xpTable[suggestedMax] == UNKNOWN_EXP) {
-      for (int lvl = 1; lvl <= suggestedMax; lvl++) {
-        this.expression.setVariable("L", lvl);
-        this.xpTable[lvl - 1] = this.expression.evaluate();
-      }
+    @Override
+    public double getXPFor(final int level) {
+        checkState(level > 0, "Level must be positive and higher than zero!");
+
+        if (this.xpTable.length < level) {
+            return UNKNOWN_EXP;
+        }
+
+        final double cache = this.xpTable[level - 1];
+
+        return cache == UNKNOWN_EXP ? 0 : cache;
     }
-  }
 
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) {
-      return true;
+    @Override
+    public int getLevelFor(final double xp) {
+        checkState(xp > UNKNOWN_EXP, "XP must be positive!");
+
+        for (int i = this.xpTable.length; i > 0; i--) {
+            final double cache = this.xpTable[i - 1];
+
+            if (cache == UNKNOWN_EXP) {
+                continue;
+            }
+
+            if (xp >= cache) {
+                return i;
+            }
+        }
+
+        return UNKNOWN_LEVEL;
     }
-    if (o == null || this.getClass() != o.getClass()) {
-      return false;
+
+    @Override
+    public void buildLevelTable(final int suggestedMax) {
+        if (suggestedMax > this.xpTable.length) {
+            final int length = this.xpTable.length;
+            this.xpTable = Arrays.copyOf(this.xpTable, this.xpTable.length * 2);
+            Arrays.fill(this.xpTable, length, this.xpTable.length - 1, UNKNOWN_EXP);
+        }
+
+        if (this.xpTable[suggestedMax] == UNKNOWN_EXP) {
+            for (int lvl = 1; lvl <= suggestedMax; lvl++) {
+                this.expression.setVariable("L", lvl);
+                this.xpTable[lvl - 1] = this.expression.evaluate();
+            }
+        }
     }
-    final SkillsLevelFunctionType other = (SkillsLevelFunctionType) o;
-    return Objects.equals(this.registryKey, other.registryKey);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.registryKey);
-  }
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
+        }
+        final SkillsLevelFunctionType other = (SkillsLevelFunctionType) o;
+        return Objects.equals(this.registryKey, other.registryKey);
+    }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("id", this.registryKey)
-        .add("formula", this.expression)
-        .toString();
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.registryKey);
+    }
 
-  public interface Factory {
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("id", this.registryKey)
+            .add("formula", this.expression)
+            .toString();
+    }
 
-    SkillsLevelFunctionType create(final RegistryKey registryKey, final String formula);
-  }
+    public interface Factory {
+
+        SkillsLevelFunctionType create(final RegistryKey registryKey, final String formula);
+    }
 }

@@ -33,15 +33,15 @@ import org.inspirenxe.skills.impl.content.type.effect.sound.ContentSoundEffectTy
 
 public final class PitchProcessor implements Processor<ContentSoundEffectTypeBuilder> {
 
-  private final Parser<Double> doubleParser;
+    private final Parser<Double> doubleParser;
 
-  @Inject
-  public PitchProcessor(final Parser<Double> doubleParser) {
-    this.doubleParser = doubleParser;
-  }
+    @Inject
+    public PitchProcessor(final Parser<Double> doubleParser) {
+        this.doubleParser = doubleParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) {
-    node.nodes("pitch").collect(MoreCollectors.toOptional()).ifPresent(pitch -> builder.pitch(this.doubleParser.parse(pitch)));
-  }
+    @Override
+    public void process(final Node node, final ContentSoundEffectTypeBuilder builder) {
+        node.nodes("pitch").collect(MoreCollectors.toOptional()).ifPresent(pitch -> builder.pitch(this.doubleParser.parse(pitch)));
+    }
 }

@@ -29,5 +29,5 @@ import org.spongepowered.api.util.Color;
 
 public interface ColorType extends CatalogType {
 
-  Color getColor();
+    Color getColor();
 }

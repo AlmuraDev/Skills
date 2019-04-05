@@ -37,16 +37,16 @@ import org.spongepowered.api.event.game.state.GameConstructionEvent;
 @WitnessScope.Sponge
 public final class ContentInstaller implements Witness {
 
-  private final ContentManager contentManager;
+    private final ContentManager contentManager;
 
-  @Inject
-  public ContentInstaller(final ContentManager contentManager) {
-    this.contentManager = contentManager;
-  }
+    @Inject
+    public ContentInstaller(final ContentManager contentManager) {
+        this.contentManager = contentManager;
+    }
 
-  @Listener(order = Order.PRE)
-  public void onGameConstruction(final GameConstructionEvent event) {
-    this.contentManager.discover();
-    this.contentManager.parse();
-  }
+    @Listener(order = Order.PRE)
+    public void onGameConstruction(final GameConstructionEvent event) {
+        this.contentManager.discover();
+        this.contentManager.parse();
+    }
 }

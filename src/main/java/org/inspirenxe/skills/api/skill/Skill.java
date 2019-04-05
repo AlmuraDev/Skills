@@ -29,21 +29,21 @@ import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 
 public interface Skill extends Nameable {
 
-  SkillType getSkillType();
+    SkillType getSkillType();
 
-  SkillHolder getHolder();
+    SkillHolder getHolder();
 
-  double getCurrentExperience();
+    double getCurrentExperience();
 
-  void setExperience(final double experience);
+    void setExperience(double experience);
 
-  void addExperience(final double experience);
+    void addExperience(double experience);
 
-  default int getCurrentLevel() {
-    return this.getSkillType().getLevelFunction().getLevelFor(this.getCurrentExperience());
-  }
+    default int getCurrentLevel() {
+        return this.getSkillType().getLevelFunction().getLevelFor(this.getCurrentExperience());
+    }
 
-  void load();
+    void load();
 
-  void save();
+    void save();
 }

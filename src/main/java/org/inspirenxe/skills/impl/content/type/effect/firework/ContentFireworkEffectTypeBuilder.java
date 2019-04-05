@@ -34,13 +34,13 @@ import java.util.List;
 
 public interface ContentFireworkEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsFireworkEffectType, ContentFireworkEffectTypeBuilder> {
 
-  void shape(final FireworkShape shape);
+    void shape(final FireworkShape shape);
 
-  void colors(final List<RegistryReference<ColorType>> colors);
+    void colors(final List<RegistryReference<ColorType>> colors);
 
-  void fadeColors(final List<RegistryReference<ColorType>> fadeColors);
+    void fadeColors(final List<RegistryReference<ColorType>> fadeColors);
 
-  void flickers(final boolean flickers);
+    void flickers(final boolean flickers);
 
-  void trails(final boolean trails);
+    void trails(final boolean trails);
 }

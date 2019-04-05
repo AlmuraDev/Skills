@@ -33,15 +33,15 @@ import org.inspirenxe.skills.impl.content.type.effect.potion.ContentPotionEffect
 
 public final class DurationProcessor implements Processor<ContentPotionEffectTypeBuilder> {
 
-  private final Parser<Integer> intParser;
+    private final Parser<Integer> intParser;
 
-  @Inject
-  public DurationProcessor(final Parser<Integer> intParser) {
-    this.intParser = intParser;
-  }
+    @Inject
+    public DurationProcessor(final Parser<Integer> intParser) {
+        this.intParser = intParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
-    node.nodes("duration").collect(MoreCollectors.toOptional()).ifPresent(duration -> builder.duration(this.intParser.parse(duration)));
-  }
+    @Override
+    public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
+        node.nodes("duration").collect(MoreCollectors.toOptional()).ifPresent(duration -> builder.duration(this.intParser.parse(duration)));
+    }
 }

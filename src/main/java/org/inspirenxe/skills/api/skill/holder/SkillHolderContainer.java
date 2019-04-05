@@ -36,27 +36,27 @@ import java.util.UUID;
 
 public interface SkillHolderContainer extends Identifiable, Nameable {
 
-  Map<UUID, SkillHolder> getHolders();
+    Map<UUID, SkillHolder> getHolders();
 
-  default Optional<SkillHolder> getHolder(final UUID holderId) {
-    checkNotNull(holderId);
+    default Optional<SkillHolder> getHolder(UUID holderId) {
+        checkNotNull(holderId);
 
-    return Optional.ofNullable(this.getHolders().get(holderId));
-  }
+        return Optional.ofNullable(this.getHolders().get(holderId));
+    }
 
-  default SkillHolder createHolder(final UUID holderId) {
-    return this.createHolder(holderId, SkillService.UNKNOWN_NAME);
-  }
+    default SkillHolder createHolder(UUID holderId) {
+        return this.createHolder(holderId, SkillService.UNKNOWN_NAME);
+    }
 
-  SkillHolder createHolder(final UUID holderId, final String name);
+    SkillHolder createHolder(UUID holderId, String name);
 
-  default void saveHolder(final UUID holderId) {
-    this.getHolder(holderId).ifPresent(SkillHolder::save);
-  }
+    default void saveHolder(UUID holderId) {
+        this.getHolder(holderId).ifPresent(SkillHolder::save);
+    }
 
-  Optional<SkillHolder> removeHolder(final UUID holderId);
+    Optional<SkillHolder> removeHolder(UUID holderId);
 
-  default void save() {
-    this.getHolders().values().forEach(SkillHolder::save);
-  }
+    default void save() {
+        this.getHolders().values().forEach(SkillHolder::save);
+    }
 }

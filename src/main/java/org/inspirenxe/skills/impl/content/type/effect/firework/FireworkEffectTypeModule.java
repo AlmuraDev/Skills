@@ -33,25 +33,22 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.processor.Flicker
 import org.inspirenxe.skills.impl.content.type.effect.firework.processor.ShapeProcessor;
 import org.inspirenxe.skills.impl.content.type.effect.firework.processor.TrailsProcessor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentEffectType.Child("firework"));
-    this.bindChildLoader(new TypeLiteral<FireworkEffectTypeRootLoader>() {
-    });
+    @Override
+    protected void configure0() {
+        this.bindChildType(new ContentEffectType.Child("firework"));
+        this.bindChildLoader(new TypeLiteral<FireworkEffectTypeRootLoader>() {
+        });
 
-    this.bindBuilder(ContentFireworkEffectTypeBuilder.class).to(ContentFireworkEffectTypeBuilderImpl.class);
+        this.bindBuilder(ContentFireworkEffectTypeBuilder.class).to(ContentFireworkEffectTypeBuilderImpl.class);
 
-    this.bindProcessor(ShapeProcessor.class);
-    this.bindProcessor(ColorsProcessor.class);
-    this.bindProcessor(FadeColorsProcessor.class);
-    this.bindProcessor(FlickersProcessor.class);
-    this.bindProcessor(TrailsProcessor.class);
+        this.bindProcessor(ShapeProcessor.class);
+        this.bindProcessor(ColorsProcessor.class);
+        this.bindProcessor(FadeColorsProcessor.class);
+        this.bindProcessor(FlickersProcessor.class);
+        this.bindProcessor(TrailsProcessor.class);
 
-    this.bindFacet().toProvider(this.getProvider(FireworkEffectTypeRootLoader.class));
-  }
+        this.bindFacet().toProvider(this.getProvider(FireworkEffectTypeRootLoader.class));
+    }
 }

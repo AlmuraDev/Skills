@@ -30,12 +30,19 @@ import com.google.common.collect.Sets;
 import org.inspirenxe.skills.api.skill.builtin.FuzzyMatchable;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 import java.util.Collection;
 
 public final class FuzzyItemStack implements FuzzyMatchable<ItemStackSnapshot> {
+
+    private final ItemType type;
+    private final Collection<ImmutableValue<?>> values;
+
+    private FuzzyItemStack(final ItemType type, final ImmutableValue<?>... values) {
+        this.type = type;
+        this.values = Sets.newHashSet(checkNotNull(values));
+    }
 
     public static FuzzyItemStack type(final ItemType type) {
         checkNotNull(type);
@@ -48,14 +55,6 @@ public final class FuzzyItemStack implements FuzzyMatchable<ItemStackSnapshot> {
         checkNotNull(values);
 
         return new FuzzyItemStack(type, values);
-    }
-
-    private final ItemType type;
-    private final Collection<ImmutableValue<?>> values;
-
-    private FuzzyItemStack(final ItemType type, final ImmutableValue<?>... values) {
-        this.type = type;
-        this.values = Sets.newHashSet(checkNotNull(values));
     }
 
     @Override

@@ -28,35 +28,35 @@ import com.almuradev.droplet.registry.RegistryKey;
 
 public class CatalogKey implements RegistryKey {
 
-  private final String namespace;
-  private final String value;
+    private final String namespace;
+    private final String value;
 
-  public CatalogKey(final String combined) {
-    if (!combined.contains(":")) {
-      throw new RuntimeException("Expected namespaced string");
+    public CatalogKey(final String combined) {
+        if (!combined.contains(":")) {
+            throw new RuntimeException("Expected namespaced string");
+        }
+
+        this.namespace = combined.substring(0, combined.indexOf(':'));
+        this.value = combined.substring(combined.indexOf(':') + 1);
     }
 
-    this.namespace = combined.substring(0, combined.indexOf(':'));
-    this.value = combined.substring(combined.indexOf(':') + 1);
-  }
+    public CatalogKey(final String namespace, final String value) {
+        this.namespace = namespace;
+        this.value = value;
+    }
 
-  public CatalogKey(final String namespace, final String value) {
-    this.namespace = namespace;
-    this.value = value;
-  }
+    @Override
+    public String namespace() {
+        return this.namespace;
+    }
 
-  @Override
-  public String namespace() {
-    return this.namespace;
-  }
+    @Override
+    public String value() {
+        return this.value;
+    }
 
-  @Override
-  public String value() {
-    return this.value;
-  }
-
-  @Override
-  public String toString() {
-    return this.namespace + ":" + this.value;
-  }
+    @Override
+    public String toString() {
+        return this.namespace + ":" + this.value;
+    }
 }

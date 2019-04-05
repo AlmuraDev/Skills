@@ -33,15 +33,15 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEf
 
 public final class TrailsProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
 
-  private final Parser<Boolean> booleanParser;
+    private final Parser<Boolean> booleanParser;
 
-  @Inject
-  public TrailsProcessor(final Parser<Boolean> booleanParser) {
-    this.booleanParser = booleanParser;
-  }
+    @Inject
+    public TrailsProcessor(final Parser<Boolean> booleanParser) {
+        this.booleanParser = booleanParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
-    node.nodes("trails").collect(MoreCollectors.toOptional()).ifPresent(trails -> builder.trails(this.booleanParser.parse(trails)));
-  }
+    @Override
+    public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
+        node.nodes("trails").collect(MoreCollectors.toOptional()).ifPresent(trails -> builder.trails(this.booleanParser.parse(trails)));
+    }
 }

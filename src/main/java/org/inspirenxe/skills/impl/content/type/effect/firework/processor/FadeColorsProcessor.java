@@ -38,22 +38,22 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEf
 
 public final class FadeColorsProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
 
-  private final Registry<ColorType> registry;
-  private final Parser<RegistryKey> registryKeyParser;
+    private final Registry<ColorType> registry;
+    private final Parser<RegistryKey> registryKeyParser;
 
-  @Inject
-  public FadeColorsProcessor(final Registry<ColorType> registry, final Parser<RegistryKey> registryKeyParser) {
-    this.registry = registry;
-    this.registryKeyParser = registryKeyParser;
-  }
+    @Inject
+    public FadeColorsProcessor(final Registry<ColorType> registry, final Parser<RegistryKey> registryKeyParser) {
+        this.registry = registry;
+        this.registryKeyParser = registryKeyParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
-    node.nodes("fade-colors").collect(MoreCollectors.toOptional()).ifPresent(fadeColors -> {
-      final ImmutableList.Builder<RegistryReference<ColorType>> fadeColorsList = ImmutableList.builder();
+    @Override
+    public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
+        node.nodes("fade-colors").collect(MoreCollectors.toOptional()).ifPresent(fadeColors -> {
+            final ImmutableList.Builder<RegistryReference<ColorType>> fadeColorsList = ImmutableList.builder();
 
-      node.nodes("color").forEach(color -> fadeColorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
-      builder.fadeColors(fadeColorsList.build());
-    });
-  }
+            node.nodes("color").forEach(color -> fadeColorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
+            builder.fadeColors(fadeColorsList.build());
+        });
+    }
 }

@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.api.event;
 
 import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.SkillType;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
-import org.inspirenxe.skills.api.skill.SkillType;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
 import org.spongepowered.api.util.annotation.eventgen.PropertySettings;
@@ -36,96 +36,96 @@ import java.util.UUID;
 
 public interface SaveExperienceEvent extends ExperienceEvent {
 
-  /**
-   * Gets the original experience change that would occur barring no other changes.
-   *
-   * @return The original experience change
-   */
-  double getOriginalExperience();
-
-  /**
-   * Helper method that returns the difference in experience from the original amount passed to the event
-   * from what it'll be when the event is resolved.
-   *
-   * @return The difference in experience
-   */
-  @PropertySettings(requiredParameter = false, generateMethods = false)
-  default double getExperienceDifference() {
-    final double xp = this.getExperience();
-    final double oldXp = this.getOriginalExperience();
-    return xp - oldXp;
-  }
-
-  /**
-   * Called before saving experience.
-   *
-   * <Note>
-   *   May be called asynchronously.
-   * </Note>
-   */
-  interface Pre extends SaveExperienceEvent, Cancellable {
+    /**
+     * Gets the original experience change that would occur barring no other changes.
+     *
+     * @return The original experience change
+     */
+    double getOriginalExperience();
 
     /**
-     * Sets the experience that will be changed.
+     * Helper method that returns the difference in experience from the original amount passed to the event
+     * from what it'll be when the event is resolved.
      *
-     * @param experience The new experience change
+     * @return The difference in experience
      */
-    void setExperience(final double experience);
-  }
-
-  /**
-   * Called after experience is saved.
-   *
-   * <Note>
-   *   This will always be called on the main thread.
-   * </Note>
-   */
-  interface Post extends SaveExperienceEvent {
-
     @PropertySettings(requiredParameter = false, generateMethods = false)
-    @Override
-    default UUID getContainerId() {
-      return this.getContainer().getUniqueId();
-    }
-
-    @PropertySettings(requiredParameter = false, generateMethods = false)
-    @Override
-    default UUID getHolderId() {
-      return this.getHolder().getUniqueId();
-    }
-
-    @PropertySettings(requiredParameter = false, generateMethods = false)
-    @Override
-    default SkillType getSkillType() {
-      return this.getSkill().getSkillType();
+    default double getExperienceDifference() {
+        final double xp = this.getExperience();
+        final double oldXp = this.getOriginalExperience();
+        return xp - oldXp;
     }
 
     /**
-     * Gets the {@link SkillHolderContainer}.
+     * Called before saving experience.
      *
-     * @return The container
+     * <Note>
+     *   May be called asynchronously.
+     * </Note>
      */
-    @PropertySettings(requiredParameter = false, generateMethods = false)
-    default SkillHolderContainer getContainer() {
-      return this.getHolder().getContainer();
+    interface Pre extends SaveExperienceEvent, Cancellable {
+
+        /**
+         * Sets the experience that will be changed.
+         *
+         * @param experience The new experience change
+         */
+        void setExperience(final double experience);
     }
 
     /**
-     * Gets the {@link SkillHolder}.
+     * Called after experience is saved.
      *
-     * @return The holder
+     * <Note>
+     *   This will always be called on the main thread.
+     * </Note>
      */
-    @PropertySettings(requiredParameter = false, generateMethods = false)
-    default SkillHolder getHolder() {
-      return this.getSkill().getHolder();
-    }
+    interface Post extends SaveExperienceEvent {
 
-    /**
-     * Gets the {@link Skill}.
-     *
-     * @return The skill
-     */
-    @AbsoluteSortPosition(1)
-    Skill getSkill();
-  }
+        @PropertySettings(requiredParameter = false, generateMethods = false)
+        @Override
+        default UUID getContainerId() {
+            return this.getContainer().getUniqueId();
+        }
+
+        @PropertySettings(requiredParameter = false, generateMethods = false)
+        @Override
+        default UUID getHolderId() {
+            return this.getHolder().getUniqueId();
+        }
+
+        @PropertySettings(requiredParameter = false, generateMethods = false)
+        @Override
+        default SkillType getSkillType() {
+            return this.getSkill().getSkillType();
+        }
+
+        /**
+         * Gets the {@link SkillHolderContainer}.
+         *
+         * @return The container
+         */
+        @PropertySettings(requiredParameter = false, generateMethods = false)
+        default SkillHolderContainer getContainer() {
+            return this.getHolder().getContainer();
+        }
+
+        /**
+         * Gets the {@link SkillHolder}.
+         *
+         * @return The holder
+         */
+        @PropertySettings(requiredParameter = false, generateMethods = false)
+        default SkillHolder getHolder() {
+            return this.getSkill().getHolder();
+        }
+
+        /**
+         * Gets the {@link Skill}.
+         *
+         * @return The skill
+         */
+        @AbsoluteSortPosition(1)
+        Skill getSkill();
+    }
 }

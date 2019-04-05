@@ -32,10 +32,10 @@ import javax.annotation.Nullable;
 public abstract class AbstractContentFunctionBuilder<R extends SkillsFunctionType> extends AbstractContentBuilder<R> implements
     ContentFunctionBuilder<R> {
 
-  @Nullable protected String formula;
+    @Nullable protected String formula;
 
-  @Override
-  public void formula(final String formula) {
-    this.formula = formula;
-  }
+    @Override
+    public void formula(final String formula) {
+        this.formula = formula;
+    }
 }

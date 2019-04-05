@@ -38,15 +38,15 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 @Singleton
 public final class PotionEffectTypeRootLoader extends ChildContentLoaderImpl<ContentEffectType.Child> implements Witness {
 
-  private final Registry<PotionEffectType> registry;
+    private final Registry<PotionEffectType> registry;
 
-  @Inject
-  public PotionEffectTypeRootLoader(final Registry<PotionEffectType> registry) {
-    this.registry = registry;
-  }
+    @Inject
+    public PotionEffectTypeRootLoader(final Registry<PotionEffectType> registry) {
+        this.registry = registry;
+    }
 
-  @Listener(order = Order.AFTER_PRE)
-  public void onGameStartingServer(final GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(PotionEffectType.class)));
-  }
+    @Listener(order = Order.AFTER_PRE)
+    public void onGameStartingServer(final GameStartingServerEvent event) {
+        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(PotionEffectType.class)));
+    }
 }

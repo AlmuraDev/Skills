@@ -34,17 +34,17 @@ import java.util.function.BiFunction;
  */
 public interface EconomyFunctionType extends FunctionType, BiFunction<Integer, Double, BigDecimal> {
 
-  /**
-   * Gets the money value calculated by the passed in level and modifier.
-   *
-   * @param level The level
-   * @param modifier The modifier
-   * @return The money value
-   */
-  BigDecimal getMoneyFor(final int level, final double modifier);
+    /**
+     * Gets the money value calculated by the passed in level and modifier.
+     *
+     * @param level The level
+     * @param modifier The modifier
+     * @return The money value
+     */
+    BigDecimal getMoneyFor(int level, double modifier);
 
-  @Override
-  default BigDecimal apply(final Integer level, final Double modifier) {
-    return this.getMoneyFor(level, modifier);
-  }
+    @Override
+    default BigDecimal apply(Integer level, Double modifier) {
+        return this.getMoneyFor(level, modifier);
+    }
 }

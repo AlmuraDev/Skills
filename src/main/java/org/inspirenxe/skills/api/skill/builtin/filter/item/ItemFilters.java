@@ -48,6 +48,9 @@ public final class ItemFilters {
         ALL_TYPES = new ItemFuzzyFilter(stacks);
     }
 
+    private ItemFilters() {
+    }
+
     public static ItemFuzzyFilter item(final String... value) {
         checkNotNull(value);
 
@@ -97,6 +100,4 @@ public final class ItemFilters {
     public static ItemFuzzyFilter itemStacks(final FuzzyItemStack... stacks) {
         return new ItemFuzzyFilter(Sets.newHashSet(checkNotNull(stacks)));
     }
-
-    private ItemFilters() {}
 }

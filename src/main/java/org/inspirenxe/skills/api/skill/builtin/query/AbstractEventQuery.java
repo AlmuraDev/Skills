@@ -56,11 +56,4 @@ public abstract class AbstractEventQuery implements FilterQuery, EventElement {
     public final Skill getSkill() {
         return this.skill;
     }
-
-    public static final class Basic extends AbstractEventQuery {
-
-        public Basic(final Cause cause, final EventContext context, final Skill skill) {
-            super(cause, context, skill);
-        }
-    }
 }

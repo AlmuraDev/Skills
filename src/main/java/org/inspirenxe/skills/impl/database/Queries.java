@@ -49,114 +49,115 @@ import java.util.UUID;
 
 public final class Queries {
 
-  public static DatabaseQuery<SelectConditionStep<SkillsExperienceRecord>> createFetchExperienceQuery(final UUID container, final UUID holder,
-    final String skillType) {
+    public static DatabaseQuery<SelectConditionStep<SkillsExperienceRecord>> createFetchExperienceQuery(final UUID container, final UUID holder,
+        final String skillType) {
 
-    checkNotNull(container);
-    checkNotNull(holder);
-    checkNotNull(skillType);
+        checkNotNull(container);
+        checkNotNull(holder);
+        checkNotNull(skillType);
 
-    final byte[] containerData = DatabaseUtils.toBytes(container);
-    final byte[] holderData = DatabaseUtils.toBytes(holder);
+        final byte[] containerData = DatabaseUtils.toBytes(container);
+        final byte[] holderData = DatabaseUtils.toBytes(holder);
 
-    return context -> context
-      .selectFrom(SKILLS_EXPERIENCE)
-      .where(SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq(holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType)
-      )));
-  }
+        return context -> context
+            .selectFrom(SKILLS_EXPERIENCE)
+            .where(SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq(holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType)
+            )));
+    }
 
-  public static DatabaseQuery<InsertValuesStep4<SkillsExperienceRecord, byte[], byte[], String, BigDecimal>> createInsertSkillExperienceQuery(final
+    public static DatabaseQuery<InsertValuesStep4<SkillsExperienceRecord, byte[], byte[], String, BigDecimal>> createInsertSkillExperienceQuery(final
     UUID container, final UUID holder, final String skillType, final double experience) {
 
-    checkNotNull(container);
-    checkNotNull(holder);
-    checkNotNull(skillType);
+        checkNotNull(container);
+        checkNotNull(holder);
+        checkNotNull(skillType);
 
-    final BigDecimal dbXp = BigDecimal.valueOf(experience);
-    final byte[] containerData = DatabaseUtils.toBytes(container);
-    final byte[] holderData = DatabaseUtils.toBytes(holder);
-    return context -> context
-      .insertInto(SKILLS_EXPERIENCE, SKILLS_EXPERIENCE.CONTAINER, SKILLS_EXPERIENCE.HOLDER, SKILLS_EXPERIENCE.SKILL, SKILLS_EXPERIENCE
-          .EXPERIENCE)
-      .values(containerData, holderData, skillType, dbXp);
-  }
+        final BigDecimal dbXp = BigDecimal.valueOf(experience);
+        final byte[] containerData = DatabaseUtils.toBytes(container);
+        final byte[] holderData = DatabaseUtils.toBytes(holder);
+        return context -> context
+            .insertInto(SKILLS_EXPERIENCE, SKILLS_EXPERIENCE.CONTAINER, SKILLS_EXPERIENCE.HOLDER, SKILLS_EXPERIENCE.SKILL, SKILLS_EXPERIENCE
+                .EXPERIENCE)
+            .values(containerData, holderData, skillType, dbXp);
+    }
 
-  public static DatabaseQuery<UpdateConditionStep<SkillsExperienceRecord>> createUpdateSkillExperienceQuery(final UUID container, final UUID holder,
-    final String skillType, final double experience, final Timestamp modified) {
+    public static DatabaseQuery<UpdateConditionStep<SkillsExperienceRecord>> createUpdateSkillExperienceQuery(final UUID container, final UUID holder,
+        final String skillType, final double experience, final Timestamp modified) {
 
-    checkNotNull(container);
-    checkNotNull(holder);
-    checkNotNull(skillType);
-    checkNotNull(modified);
+        checkNotNull(container);
+        checkNotNull(holder);
+        checkNotNull(skillType);
+        checkNotNull(modified);
 
-    final BigDecimal dbXp = BigDecimal.valueOf(experience);
-    final byte[] containerData = DatabaseUtils.toBytes(container);
-    final byte[] holderData = DatabaseUtils.toBytes(holder);
+        final BigDecimal dbXp = BigDecimal.valueOf(experience);
+        final byte[] containerData = DatabaseUtils.toBytes(container);
+        final byte[] holderData = DatabaseUtils.toBytes(holder);
 
-    return context -> context.update(SKILLS_EXPERIENCE).set(SKILLS_EXPERIENCE.EXPERIENCE, dbXp).set(SKILLS_EXPERIENCE.MODIFIED, modified).where
-      (SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq(holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType))));
-  }
+        return context -> context.update(SKILLS_EXPERIENCE).set(SKILLS_EXPERIENCE.EXPERIENCE, dbXp).set(SKILLS_EXPERIENCE.MODIFIED, modified).where
+            (SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq(holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType))));
+    }
 
-  public static DatabaseQuery<SelectConditionStep<Record1<Integer>>> createHasExperienceInSkillQuery(final UUID container, final UUID holder, final
-  String skillType) {
+    public static DatabaseQuery<SelectConditionStep<Record1<Integer>>> createHasExperienceInSkillQuery(final UUID container, final UUID holder, final
+    String skillType) {
 
-    checkNotNull(container);
-    checkNotNull(holder);
-    checkNotNull(skillType);
+        checkNotNull(container);
+        checkNotNull(holder);
+        checkNotNull(skillType);
 
-    final byte[] containerData = DatabaseUtils.toBytes(container);
-    final byte[] holderData = DatabaseUtils.toBytes(holder);
+        final byte[] containerData = DatabaseUtils.toBytes(container);
+        final byte[] holderData = DatabaseUtils.toBytes(holder);
 
-    return context -> context.selectOne().from(SKILLS_EXPERIENCE).where(SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq
-      (holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType))));
-  }
+        return context -> context.selectOne().from(SKILLS_EXPERIENCE)
+            .where(SKILLS_EXPERIENCE.CONTAINER.eq(containerData).and(SKILLS_EXPERIENCE.HOLDER.eq
+                (holderData).and(SKILLS_EXPERIENCE.SKILL.eq(skillType))));
+    }
 
-  public static DatabaseQuery<SelectConditionStep<SkillsContainerPaletteRecord>> createFetchContainerPaletteQuery(final UUID container) {
-    checkNotNull(container);
+    public static DatabaseQuery<SelectConditionStep<SkillsContainerPaletteRecord>> createFetchContainerPaletteQuery(final UUID container) {
+        checkNotNull(container);
 
-    final byte[] containerData = DatabaseUtils.toBytes(container);
-    return context -> context
-        .selectFrom(SKILLS_CONTAINER_PALETTE)
-        .where(SKILLS_CONTAINER_PALETTE.CONTAINER.eq(containerData));
-  }
+        final byte[] containerData = DatabaseUtils.toBytes(container);
+        return context -> context
+            .selectFrom(SKILLS_CONTAINER_PALETTE)
+            .where(SKILLS_CONTAINER_PALETTE.CONTAINER.eq(containerData));
+    }
 
-  public static DatabaseQuery<InsertResultStep<SkillsContainerPaletteRecord>> createInsertContainerPaletteQuery(final UUID container) {
-    checkNotNull(container);
+    public static DatabaseQuery<InsertResultStep<SkillsContainerPaletteRecord>> createInsertContainerPaletteQuery(final UUID container) {
+        checkNotNull(container);
 
-    final byte[] containerData = DatabaseUtils.toBytes(container);
-    return context -> {
-      final InsertValuesStep1<SkillsContainerPaletteRecord, byte[]> insertionStep = context
-          .insertInto(SkillsContainerPalette.SKILLS_CONTAINER_PALETTE)
-          .columns(SkillsContainerPalette.SKILLS_CONTAINER_PALETTE.CONTAINER);
-      insertionStep.values(containerData);
-      return insertionStep.returning();
-    };
-  }
+        final byte[] containerData = DatabaseUtils.toBytes(container);
+        return context -> {
+            final InsertValuesStep1<SkillsContainerPaletteRecord, byte[]> insertionStep = context
+                .insertInto(SkillsContainerPalette.SKILLS_CONTAINER_PALETTE)
+                .columns(SkillsContainerPalette.SKILLS_CONTAINER_PALETTE.CONTAINER);
+            insertionStep.values(containerData);
+            return insertionStep.returning();
+        };
+    }
 
-  public static DatabaseQuery<SelectConditionStep<SkillsBlockCreationRecord>> createFetchBlockCreationQuery(final short container) {
-    checkState(container >= 0);
+    public static DatabaseQuery<SelectConditionStep<SkillsBlockCreationRecord>> createFetchBlockCreationQuery(final short container) {
+        checkState(container >= 0);
 
-    return context -> context
-        .selectFrom(SKILLS_BLOCK_CREATION)
-        .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(container));
-  }
+        return context -> context
+            .selectFrom(SKILLS_BLOCK_CREATION)
+            .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(container));
+    }
 
-  public static DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, Short, Long, Long>> createInsertBlockCreationQuery(final short container
-      , final long pos, final long mask) {
-    checkState(container >= 0);
+    public static DatabaseQuery<InsertValuesStep3<SkillsBlockCreationRecord, Short, Long, Long>> createInsertBlockCreationQuery(final short container
+        , final long pos, final long mask) {
+        checkState(container >= 0);
 
-    return context -> context
-        .insertInto(SKILLS_BLOCK_CREATION, SKILLS_BLOCK_CREATION.CONTAINER, SKILLS_BLOCK_CREATION.POS,
-            SKILLS_BLOCK_CREATION.MASK)
-        .values(container, pos, mask);
-  }
+        return context -> context
+            .insertInto(SKILLS_BLOCK_CREATION, SKILLS_BLOCK_CREATION.CONTAINER, SKILLS_BLOCK_CREATION.POS,
+                SKILLS_BLOCK_CREATION.MASK)
+            .values(container, pos, mask);
+    }
 
-  public static DatabaseQuery<DeleteConditionStep<SkillsBlockCreationRecord>> createDeleteBlockCreationQuery(final short container,
-      final long pos) {
-    checkState(container >= 0);
+    public static DatabaseQuery<DeleteConditionStep<SkillsBlockCreationRecord>> createDeleteBlockCreationQuery(final short container,
+        final long pos) {
+        checkState(container >= 0);
 
-    return context -> context
-        .deleteFrom(SKILLS_BLOCK_CREATION)
-        .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(container).and(SKILLS_BLOCK_CREATION.POS.eq(pos)));
-  }
+        return context -> context
+            .deleteFrom(SKILLS_BLOCK_CREATION)
+            .where(SKILLS_BLOCK_CREATION.CONTAINER.eq(container).and(SKILLS_BLOCK_CREATION.POS.eq(pos)));
+    }
 }

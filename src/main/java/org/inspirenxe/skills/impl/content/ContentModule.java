@@ -52,50 +52,53 @@ import java.util.List;
 
 public final class ContentModule extends AbstractModule implements ToolboxBinder, GlobalBinder {
 
-  @Override
-  protected void configure() {
-    this.bindGlobalProcessor(DummyGlobalProcessor.class);
-
-    this.bind(ContentManager.class).to(ContentManagerImpl.class);
-    this.bind(net.kyori.feature.FeatureDefinitionContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {});
-    this.bind(FeatureContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {});
-    this.bind(new TypeLiteral<DynamicProvider<FeatureContext>>() {}).toInstance(new DynamicProvider<>());
-    this.bind(ContentFinder.class).to(ContentFinderImpl.class);
-
-    this.install(new ParserModule());
-    this.install(new RangeModule());
-    this.install(new ContentTypeModule());
-    this.install(new ContentParserModule());
-    this.install(new RegistryModule());
-
-    this.facet().add(ContentInstaller.class);
-  }
-
-  @Provides
-  @Singleton
-  ContentConfiguration configuration(@ConfigDir(sharedRoot = false) final Path configDir) {
-    final List<Path> searchPaths = Collections.singletonList(configDir);
-    return new ContentConfiguration() {
-      private final int maxDepth = 10;
-
-      @Override
-      public List<Path> searchPaths() {
-        return searchPaths;
-      }
-
-      @Override
-      public int maxDepth() {
-        return this.maxDepth;
-      }
-    };
-  }
-
-  @Singleton
-  private static class DummyGlobalProcessor implements GlobalProcessor {
-
     @Override
-    public void process(final Node node) {
+    protected void configure() {
+        this.bindGlobalProcessor(DummyGlobalProcessor.class);
 
+        this.bind(ContentManager.class).to(ContentManagerImpl.class);
+        this.bind(net.kyori.feature.FeatureDefinitionContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {
+        });
+        this.bind(FeatureContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {
+        });
+        this.bind(new TypeLiteral<DynamicProvider<FeatureContext>>() {
+        }).toInstance(new DynamicProvider<>());
+        this.bind(ContentFinder.class).to(ContentFinderImpl.class);
+
+        this.install(new ParserModule());
+        this.install(new RangeModule());
+        this.install(new ContentTypeModule());
+        this.install(new ContentParserModule());
+        this.install(new RegistryModule());
+
+        this.facet().add(ContentInstaller.class);
     }
-  }
+
+    @Provides
+    @Singleton
+    ContentConfiguration configuration(@ConfigDir(sharedRoot = false) final Path configDir) {
+        final List<Path> searchPaths = Collections.singletonList(configDir);
+        return new ContentConfiguration() {
+            private final int maxDepth = 10;
+
+            @Override
+            public List<Path> searchPaths() {
+                return searchPaths;
+            }
+
+            @Override
+            public int maxDepth() {
+                return this.maxDepth;
+            }
+        };
+    }
+
+    @Singleton
+    private static class DummyGlobalProcessor implements GlobalProcessor {
+
+        @Override
+        public void process(final Node node) {
+
+        }
+    }
 }

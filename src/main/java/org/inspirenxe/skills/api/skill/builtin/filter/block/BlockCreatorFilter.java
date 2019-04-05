@@ -32,7 +32,7 @@ import org.inspirenxe.skills.api.skill.builtin.query.transaction.BlockSnapshotTr
 public abstract class BlockCreatorFilter implements TypedFilter.Strong<BlockSnapshotTransactionQuery> {
 
     @Override
-    public final boolean queryable(@NonNull FilterQuery query) {
+    public final boolean queryable(@NonNull final FilterQuery query) {
         return query instanceof BlockSnapshotTransactionQuery;
     }
 }

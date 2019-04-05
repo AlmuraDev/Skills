@@ -36,23 +36,23 @@ import org.inspirenxe.skills.impl.content.type.function.processor.FormulaProcess
 
 public final class FunctionModule extends RootModule.Impl<ContentFunction.Child, ContentFunctionBuilder<?>> {
 
-  @Override
-  protected void configure0() {
-    this.bindRootType(new ContentFunction.Root());
-    this.bindRootLoader(new TypeLiteral<FunctionRootLoader>() {
-    });
-
-    this.installChild(new EconomyFunctionModule(), new BaseChildModule());
-    this.installChild(new LevelFunctionModule(), new BaseChildModule());
-
-    this.bindProcessor(FormulaProcessor.class);
-  }
-
-  private static class BaseChildModule extends ChildModule.Impl<ContentFunction.Child> {
-
     @Override
     protected void configure0() {
-      this.inSet(Key.get(Processor.class, ForChild.class));
+        this.bindRootType(new ContentFunction.Root());
+        this.bindRootLoader(new TypeLiteral<FunctionRootLoader>() {
+        });
+
+        this.installChild(new EconomyFunctionModule(), new BaseChildModule());
+        this.installChild(new LevelFunctionModule(), new BaseChildModule());
+
+        this.bindProcessor(FormulaProcessor.class);
     }
-  }
+
+    private static class BaseChildModule extends ChildModule.Impl<ContentFunction.Child> {
+
+        @Override
+        protected void configure0() {
+            this.inSet(Key.get(Processor.class, ForChild.class));
+        }
+    }
 }

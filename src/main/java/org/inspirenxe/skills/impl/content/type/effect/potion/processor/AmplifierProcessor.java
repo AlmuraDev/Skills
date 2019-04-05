@@ -33,15 +33,15 @@ import org.inspirenxe.skills.impl.content.type.effect.potion.ContentPotionEffect
 
 public final class AmplifierProcessor implements Processor<ContentPotionEffectTypeBuilder> {
 
-  private final Parser<Integer> intParser;
+    private final Parser<Integer> intParser;
 
-  @Inject
-  public AmplifierProcessor(final Parser<Integer> intParser) {
-    this.intParser = intParser;
-  }
+    @Inject
+    public AmplifierProcessor(final Parser<Integer> intParser) {
+        this.intParser = intParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
-    node.nodes("amplifier").collect(MoreCollectors.toOptional()).ifPresent(amplifier -> builder.amplifier(this.intParser.parse(amplifier)));
-  }
+    @Override
+    public void process(final Node node, final ContentPotionEffectTypeBuilder builder) {
+        node.nodes("amplifier").collect(MoreCollectors.toOptional()).ifPresent(amplifier -> builder.amplifier(this.intParser.parse(amplifier)));
+    }
 }

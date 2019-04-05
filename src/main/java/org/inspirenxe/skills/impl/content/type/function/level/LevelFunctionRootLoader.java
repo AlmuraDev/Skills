@@ -38,15 +38,15 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 @Singleton
 public final class LevelFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
 
-  private final Registry<LevelFunctionType> registry;
+    private final Registry<LevelFunctionType> registry;
 
-  @Inject
-  public LevelFunctionRootLoader(final Registry<LevelFunctionType> registry) {
-    this.registry = registry;
-  }
+    @Inject
+    public LevelFunctionRootLoader(final Registry<LevelFunctionType> registry) {
+        this.registry = registry;
+    }
 
-  @Listener(order = Order.PRE)
-  public void onInit(final GameInitializationEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunctionType.class)));
-  }
+    @Listener(order = Order.PRE)
+    public void onInit(final GameInitializationEvent event) {
+        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(LevelFunctionType.class)));
+    }
 }

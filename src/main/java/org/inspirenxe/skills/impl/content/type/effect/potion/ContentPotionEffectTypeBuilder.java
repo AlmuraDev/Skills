@@ -30,13 +30,13 @@ import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public interface ContentPotionEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsPotionEffectType, ContentPotionEffectTypeBuilder> {
 
-  void potion(final PotionEffectType potion);
+    void potion(final PotionEffectType potion);
 
-  void duration(final int duration);
+    void duration(final int duration);
 
-  void amplifier(final int amplifier);
+    void amplifier(final int amplifier);
 
-  void isAmbient(final boolean isAmbient);
+    void isAmbient(final boolean isAmbient);
 
-  void showParticles(final boolean showParticles);
+    void showParticles(final boolean showParticles);
 }

@@ -30,19 +30,18 @@ import org.spongepowered.api.block.trait.BlockTrait;
 
 public final class TraitValue {
 
+    private final BlockTrait<?> trait;
+    private final Object value;
+    private TraitValue(final BlockTrait<?> trait, final Object value) {
+        this.trait = trait;
+        this.value = value;
+    }
+
     public static TraitValue trait(final BlockTrait<?> trait, final Object value) {
         checkNotNull(trait);
         checkNotNull(value);
 
         return new TraitValue(trait, value);
-    }
-
-    private final BlockTrait<?> trait;
-    private final Object value;
-
-    private TraitValue(final BlockTrait<?> trait, final Object value) {
-        this.trait = trait;
-        this.value = value;
     }
 
     public BlockTrait<?> getTrait() {

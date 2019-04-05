@@ -32,15 +32,15 @@ import org.inspirenxe.skills.impl.content.type.color.ContentColorTypeBuilder;
 
 public final class BProcessor implements Processor<ContentColorTypeBuilder> {
 
-  private final Parser<Integer> intParser;
+    private final Parser<Integer> intParser;
 
-  @Inject
-  public BProcessor(final Parser<Integer> intParser) {
-    this.intParser = intParser;
-  }
+    @Inject
+    public BProcessor(final Parser<Integer> intParser) {
+        this.intParser = intParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentColorTypeBuilder builder) {
-    node.attribute("b").ifPresent(b -> builder.b(this.intParser.parse(b)));
-  }
+    @Override
+    public void process(final Node node, final ContentColorTypeBuilder builder) {
+        node.attribute("b").ifPresent(b -> builder.b(this.intParser.parse(b)));
+    }
 }

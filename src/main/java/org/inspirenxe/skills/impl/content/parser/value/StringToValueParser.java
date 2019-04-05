@@ -30,5 +30,5 @@ import java.util.Optional;
 
 public interface StringToValueParser<V> {
 
-  Optional<V> parse(final TypeToken<?> token, final String value);
+    Optional<V> parse(final TypeToken<?> token, final String value);
 }

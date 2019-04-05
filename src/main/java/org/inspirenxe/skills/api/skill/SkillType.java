@@ -31,11 +31,11 @@ import org.spongepowered.api.text.Text;
 
 public interface SkillType extends CatalogType {
 
-  PluginContainer getPlugin();
+    PluginContainer getPlugin();
 
-  LevelFunctionType getLevelFunction();
+    LevelFunctionType getLevelFunction();
 
-  int getMaxLevel();
+    int getMaxLevel();
 
-  Text getFormattedName();
+    Text getFormattedName();
 }

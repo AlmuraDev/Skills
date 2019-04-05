@@ -35,20 +35,20 @@ import org.inspirenxe.skills.impl.content.type.effect.sound.processor.VolumeProc
 
 public final class SoundEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentEffectType.Child("sound"));
-    this.bindChildLoader(new TypeLiteral<SoundEffectTypeRootLoader>() {
-    });
+    @Override
+    protected void configure0() {
+        this.bindChildType(new ContentEffectType.Child("sound"));
+        this.bindChildLoader(new TypeLiteral<SoundEffectTypeRootLoader>() {
+        });
 
-    this.bindBuilder(ContentSoundEffectTypeBuilder.class).to(ContentSoundEffectTypeBuilderImpl.class);
+        this.bindBuilder(ContentSoundEffectTypeBuilder.class).to(ContentSoundEffectTypeBuilderImpl.class);
 
-    this.bindProcessor(CategoryProcessor.class);
-    this.bindProcessor(MinVolumeProcessor.class);
-    this.bindProcessor(PitchProcessor.class);
-    this.bindProcessor(SoundProcessor.class);
-    this.bindProcessor(VolumeProcessor.class);
+        this.bindProcessor(CategoryProcessor.class);
+        this.bindProcessor(MinVolumeProcessor.class);
+        this.bindProcessor(PitchProcessor.class);
+        this.bindProcessor(SoundProcessor.class);
+        this.bindProcessor(VolumeProcessor.class);
 
-    this.bindFacet().toProvider(this.getProvider(SoundEffectTypeRootLoader.class));
-  }
+        this.bindFacet().toProvider(this.getProvider(SoundEffectTypeRootLoader.class));
+    }
 }

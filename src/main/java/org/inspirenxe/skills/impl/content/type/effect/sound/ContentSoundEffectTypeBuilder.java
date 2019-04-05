@@ -31,13 +31,13 @@ import org.spongepowered.api.effect.sound.SoundType;
 
 public interface ContentSoundEffectTypeBuilder extends ContentEffectTypeBuilder<SkillsSoundEffectType, ContentSoundEffectTypeBuilder> {
 
-  void sound(final SoundType sound);
+    void sound(final SoundType sound);
 
-  void category(final SoundCategory category);
+    void category(final SoundCategory category);
 
-  void minVolume(final double minVolume);
+    void minVolume(final double minVolume);
 
-  void volume(final double volume);
+    void volume(final double volume);
 
-  void pitch(final double pitch);
+    void pitch(final double pitch);
 }

@@ -36,25 +36,25 @@ import java.util.Optional;
 
 public interface SkillHolder extends Identifiable, Nameable {
 
-  SkillHolderContainer getContainer();
+    SkillHolderContainer getContainer();
 
-  Map<SkillType, Skill> getSkills();
+    Map<SkillType, Skill> getSkills();
 
-  default Optional<Skill> getSkill(final SkillType type) {
-    checkNotNull(type);
+    default Optional<Skill> getSkill(SkillType type) {
+        checkNotNull(type);
 
-    return Optional.ofNullable(this.getSkills().get(type));
-  }
+        return Optional.ofNullable(this.getSkills().get(type));
+    }
 
-  Skill createSkill(final SkillType type);
+    Skill createSkill(SkillType type);
 
-  default void saveSkill(final SkillType type) {
-    this.getSkill(type).ifPresent(Skill::save);
-  }
+    default void saveSkill(SkillType type) {
+        this.getSkill(type).ifPresent(Skill::save);
+    }
 
-  Optional<Skill> removeSkill(final SkillType skillType);
+    Optional<Skill> removeSkill(SkillType skillType);
 
-  default void save() {
-    this.getSkills().values().forEach(Skill::save);
-  }
+    default void save() {
+        this.getSkills().values().forEach(Skill::save);
+    }
 }

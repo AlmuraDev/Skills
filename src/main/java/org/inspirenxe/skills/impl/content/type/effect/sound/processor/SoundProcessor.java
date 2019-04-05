@@ -34,15 +34,15 @@ import org.spongepowered.api.effect.sound.SoundType;
 
 public final class SoundProcessor implements Processor<ContentSoundEffectTypeBuilder> {
 
-  private final Parser<SoundType> soundParser;
+    private final Parser<SoundType> soundParser;
 
-  @Inject
-  public SoundProcessor(final Parser<SoundType> soundParser) {
-    this.soundParser = soundParser;
-  }
+    @Inject
+    public SoundProcessor(final Parser<SoundType> soundParser) {
+        this.soundParser = soundParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) throws XMLException {
-    builder.sound(this.soundParser.parse(node.requireAttribute("sound")));
-  }
+    @Override
+    public void process(final Node node, final ContentSoundEffectTypeBuilder builder) throws XMLException {
+        builder.sound(this.soundParser.parse(node.requireAttribute("sound")));
+    }
 }

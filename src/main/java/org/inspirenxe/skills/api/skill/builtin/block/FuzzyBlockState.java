@@ -37,6 +37,14 @@ import java.util.List;
 
 public final class FuzzyBlockState implements FuzzyMatchable<BlockSnapshot> {
 
+    private final BlockType type;
+    private final TraitValue[] traits;
+
+    private FuzzyBlockState(final BlockType type, final TraitValue... traits) {
+        this.type = type;
+        this.traits = traits;
+    }
+
     public static FuzzyBlockState type(final BlockType type) {
         checkNotNull(type);
 
@@ -54,7 +62,7 @@ public final class FuzzyBlockState implements FuzzyMatchable<BlockSnapshot> {
             traits.add(TraitValue.trait(trait, value));
         }
 
-        return new FuzzyBlockState(state.getType(), traits.toArray(new TraitValue[] {}));
+        return new FuzzyBlockState(state.getType(), traits.toArray(new TraitValue[]{}));
     }
 
     public static FuzzyBlockState state(final BlockType type, final TraitValue... traits) {
@@ -62,14 +70,6 @@ public final class FuzzyBlockState implements FuzzyMatchable<BlockSnapshot> {
         checkNotNull(traits);
 
         return new FuzzyBlockState(type, traits);
-    }
-
-    private final BlockType type;
-    private final TraitValue[] traits;
-
-    private FuzzyBlockState(final BlockType type, final TraitValue... traits) {
-        this.type = type;
-        this.traits = traits;
     }
 
     @Override

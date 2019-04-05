@@ -34,16 +34,15 @@ import java.util.Arrays;
 
 public final class ApplicatorEntry {
 
-    public static ApplicatorEntry.Builder applyIf() {
-        return new Builder();
-    }
-
     private final Iterable<Filter> filters;
     private final Iterable<Applicator> applicators;
-
     private ApplicatorEntry(@NonNull final Iterable<Filter> filters, @NonNull final Iterable<Applicator> applicators) {
         this.filters = filters;
         this.applicators = applicators;
+    }
+
+    public static ApplicatorEntry.Builder applyIf() {
+        return new Builder();
     }
 
     Iterable<Filter> getFilters() {

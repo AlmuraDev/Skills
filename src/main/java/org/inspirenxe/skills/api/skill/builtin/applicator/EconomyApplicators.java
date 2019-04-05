@@ -36,6 +36,9 @@ import java.util.Random;
 
 public final class EconomyApplicators {
 
+    private EconomyApplicators() {
+    }
+
     public static Applicator money(final EconomyService service, final Currency currency, final double amount) {
         return query -> {
             if (!(query instanceof AbstractEventQuery)) {
@@ -51,7 +54,8 @@ public final class EconomyApplicators {
         };
     }
 
-    public static Applicator scaledMoney(final EconomyService service, final EconomyFunctionType function, final Currency currency, final double base) {
+    public static Applicator scaledMoney(final EconomyService service, final EconomyFunctionType function, final Currency currency,
+        final double base) {
         return query -> {
             if (!(query instanceof AbstractEventQuery)) {
                 return;
@@ -60,14 +64,15 @@ public final class EconomyApplicators {
             final AbstractEventQuery eventQuery = (AbstractEventQuery) query;
             eventQuery.getCause().first(User.class).ifPresent(user -> {
                 if (service.hasAccount(user.getUniqueId())) {
-                    service.getOrCreateAccount(user.getUniqueId()).get().deposit(currency, function.getMoneyFor(eventQuery.getSkill().getCurrentLevel(), base), eventQuery.getCause());
+                    service.getOrCreateAccount(user.getUniqueId()).get()
+                        .deposit(currency, function.getMoneyFor(eventQuery.getSkill().getCurrentLevel(), base), eventQuery.getCause());
                 }
             });
         };
     }
 
-    public static Applicator variableScaledMoney(final EconomyService service,
-        final EconomyFunctionType function, final Currency currency, final DoubleRange range, final Random random) {
+    public static Applicator variableScaledMoney(final EconomyService service, final EconomyFunctionType function, final Currency currency,
+        final DoubleRange range, final Random random) {
         return query -> {
             if (!(query instanceof AbstractEventQuery)) {
                 return;
@@ -76,12 +81,11 @@ public final class EconomyApplicators {
             final AbstractEventQuery eventQuery = (AbstractEventQuery) query;
             eventQuery.getCause().first(User.class).ifPresent(user -> {
                 if (service.hasAccount(user.getUniqueId())) {
-                    service.getOrCreateAccount(user.getUniqueId()).get().deposit(currency, function.getMoneyFor(eventQuery.getSkill().getCurrentLevel(), range.random(random)), eventQuery.getCause());
+                    service.getOrCreateAccount(user.getUniqueId()).get()
+                        .deposit(currency, function.getMoneyFor(eventQuery.getSkill().getCurrentLevel(), range.random(random)),
+                            eventQuery.getCause());
                 }
             });
         };
-    }
-
-    private EconomyApplicators() {
     }
 }

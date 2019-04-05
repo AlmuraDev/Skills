@@ -31,15 +31,15 @@ import org.inspirenxe.skills.impl.function.level.SkillsLevelFunctionType;
 
 public final class LevelFunctionModule extends ChildModule.Impl<ContentFunction.Child> {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("level"));
-    this.bindChildLoader(new TypeLiteral<LevelFunctionRootLoader>() {
-    });
+    @Override
+    protected void configure0() {
+        this.bindChildType(new ContentFunction.Child("level"));
+        this.bindChildLoader(new TypeLiteral<LevelFunctionRootLoader>() {
+        });
 
-    this.bindBuilder(ContentLevelFunctionBuilder.class).to(ContentLevelFunctionBuilderImpl.class);
-    this.installFactory(SkillsLevelFunctionType.Factory.class);
+        this.bindBuilder(ContentLevelFunctionBuilder.class).to(ContentLevelFunctionBuilderImpl.class);
+        this.installFactory(SkillsLevelFunctionType.Factory.class);
 
-    this.bindFacet().toProvider(this.getProvider(LevelFunctionRootLoader.class));
-  }
+        this.bindFacet().toProvider(this.getProvider(LevelFunctionRootLoader.class));
+    }
 }

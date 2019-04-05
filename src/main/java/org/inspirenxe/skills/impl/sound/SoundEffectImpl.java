@@ -31,51 +31,51 @@ import org.spongepowered.api.effect.sound.SoundType;
 
 public final class SoundEffectImpl implements SoundEffect {
 
-  private final SoundType type;
-  private final SoundCategory category;
-  private final double minVolume, volume, pitch;
+    private final SoundType type;
+    private final SoundCategory category;
+    private final double minVolume, volume, pitch;
 
-  SoundEffectImpl(final SoundType type, final SoundCategory category, final double minVolume, final double volume, final double pitch) {
-    this.type = type;
-    this.category = category;
-    this.minVolume = minVolume;
-    this.volume = volume;
-    this.pitch = pitch;
-  }
+    SoundEffectImpl(final SoundType type, final SoundCategory category, final double minVolume, final double volume, final double pitch) {
+        this.type = type;
+        this.category = category;
+        this.minVolume = minVolume;
+        this.volume = volume;
+        this.pitch = pitch;
+    }
 
-  @Override
-  public SoundType getType() {
-    return this.type;
-  }
+    @Override
+    public SoundType getType() {
+        return this.type;
+    }
 
-  @Override
-  public SoundCategory getCategory() {
-    return this.category;
-  }
+    @Override
+    public SoundCategory getCategory() {
+        return this.category;
+    }
 
-  @Override
-  public double getMinVolume() {
-    return this.minVolume;
-  }
+    @Override
+    public double getMinVolume() {
+        return this.minVolume;
+    }
 
-  @Override
-  public double getVolume() {
-    return this.volume;
-  }
+    @Override
+    public double getVolume() {
+        return this.volume;
+    }
 
-  @Override
-  public double getPitch() {
-    return this.pitch;
-  }
+    @Override
+    public double getPitch() {
+        return this.pitch;
+    }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("type", this.type)
-        .add("category", this.category)
-        .add("minVolume", this.minVolume)
-        .add("volume", this.volume)
-        .add("pitch", this.pitch)
-        .toString();
-  }
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("type", this.type)
+            .add("category", this.category)
+            .add("minVolume", this.minVolume)
+            .add("volume", this.volume)
+            .add("pitch", this.pitch)
+            .toString();
+    }
 }

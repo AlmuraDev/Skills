@@ -34,15 +34,15 @@ import org.spongepowered.api.effect.sound.SoundCategory;
 
 public final class CategoryProcessor implements Processor<ContentSoundEffectTypeBuilder> {
 
-  private final Parser<SoundCategory> categoryParser;
+    private final Parser<SoundCategory> categoryParser;
 
-  @Inject
-  public CategoryProcessor(final Parser<SoundCategory> categoryParser) {
-    this.categoryParser = categoryParser;
-  }
+    @Inject
+    public CategoryProcessor(final Parser<SoundCategory> categoryParser) {
+        this.categoryParser = categoryParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) throws XMLException {
-    builder.category(this.categoryParser.parse(node.requireAttribute("category")));
-  }
+    @Override
+    public void process(final Node node, final ContentSoundEffectTypeBuilder builder) throws XMLException {
+        builder.category(this.categoryParser.parse(node.requireAttribute("category")));
+    }
 }

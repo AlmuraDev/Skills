@@ -38,58 +38,58 @@ import java.util.Objects;
 
 public final class SkillsEconomyFunctionType implements SkillsFunctionType, EconomyFunctionType {
 
-  private final RegistryKey registryKey;
-  private final Expression expression;
+    private final RegistryKey registryKey;
+    private final Expression expression;
 
-  @Inject
-  public SkillsEconomyFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
-    this.registryKey = registryKey;
-    this.expression = new ExpressionBuilder(formula).variables("L", "M").build();
-  }
-
-  @Override
-  public String getId() {
-    return this.registryKey.toString();
-  }
-
-  @Override
-  public String getName() {
-    return this.registryKey.value();
-  }
-
-  @Override
-  public BigDecimal getMoneyFor(final int level, final double modifier) {
-    return BigDecimal.valueOf(this.expression.setVariable("L", level).setVariable("M", modifier).evaluate());
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) {
-      return true;
+    @Inject
+    public SkillsEconomyFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
+        this.registryKey = registryKey;
+        this.expression = new ExpressionBuilder(formula).variables("L", "M").build();
     }
-    if (o == null || this.getClass() != o.getClass()) {
-      return false;
+
+    @Override
+    public String getId() {
+        return this.registryKey.toString();
     }
-    final SkillsEconomyFunctionType other = (SkillsEconomyFunctionType) o;
-    return Objects.equals(this.registryKey, other.registryKey);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.registryKey);
-  }
+    @Override
+    public String getName() {
+        return this.registryKey.value();
+    }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("id", this.registryKey)
-        .add("formula", this.expression)
-        .toString();
-  }
+    @Override
+    public BigDecimal getMoneyFor(final int level, final double modifier) {
+        return BigDecimal.valueOf(this.expression.setVariable("L", level).setVariable("M", modifier).evaluate());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
+        }
+        final SkillsEconomyFunctionType other = (SkillsEconomyFunctionType) o;
+        return Objects.equals(this.registryKey, other.registryKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.registryKey);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("id", this.registryKey)
+            .add("formula", this.expression)
+            .toString();
+    }
 
 
-  public interface Factory {
+    public interface Factory {
 
-    SkillsEconomyFunctionType create(final RegistryKey registryKey, final String formula);
-  }
+        SkillsEconomyFunctionType create(final RegistryKey registryKey, final String formula);
+    }
 }

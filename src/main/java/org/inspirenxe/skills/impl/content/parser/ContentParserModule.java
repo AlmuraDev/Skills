@@ -26,20 +26,9 @@ package org.inspirenxe.skills.impl.content.parser;
 
 import com.almuradev.droplet.registry.RegistryKey;
 import com.google.inject.TypeLiteral;
-import com.google.inject.binder.LinkedBindingBuilder;
 import net.kyori.violet.AbstractModule;
-import net.kyori.violet.FriendlyTypeLiteral;
-import net.kyori.violet.TypeArgument;
-import net.kyori.xml.node.parser.EnumParser;
 import net.kyori.xml.node.parser.ParserBinder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfiguration;
-import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfigurationParser;
-import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
-import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
-import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
-import org.inspirenxe.skills.impl.configuration.database.DatabaseConfigurationParser;
-import org.jooq.SQLDialect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
@@ -47,15 +36,20 @@ import org.spongepowered.api.item.FireworkShape;
 
 public final class ContentParserModule extends AbstractModule {
 
-  @Override
-  protected void configure() {
+    @Override
+    protected void configure() {
 
-    final ParserBinder parsers = new ParserBinder(this.binder());
-    parsers.bindParser(RegistryKey.class).to(RegistryKeyParser.class);
-    parsers.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {});
-    parsers.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {});
-    parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {});
-    parsers.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {});
-    parsers.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {});
-  }
+        final ParserBinder parsers = new ParserBinder(this.binder());
+        parsers.bindParser(RegistryKey.class).to(RegistryKeyParser.class);
+        parsers.bindParser(LevelFunctionType.class).to(new TypeLiteral<CatalogTypeParser<LevelFunctionType>>() {
+        });
+        parsers.bindParser(SoundCategory.class).to(new TypeLiteral<CatalogTypeParser<SoundCategory>>() {
+        });
+        parsers.bindParser(SoundType.class).to(new TypeLiteral<CatalogTypeParser<SoundType>>() {
+        });
+        parsers.bindParser(PotionEffectType.class).to(new TypeLiteral<CatalogTypeParser<PotionEffectType>>() {
+        });
+        parsers.bindParser(FireworkShape.class).to(new TypeLiteral<CatalogTypeParser<FireworkShape>>() {
+        });
+    }
 }

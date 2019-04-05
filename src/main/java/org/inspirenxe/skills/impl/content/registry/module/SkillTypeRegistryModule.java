@@ -37,22 +37,22 @@ import java.util.Optional;
 
 public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<SkillType> {
 
-  private final Map<String, SkillType> map = new HashMap<>();
+    private final Map<String, SkillType> map = new HashMap<>();
 
-  @Override
-  public void registerAdditionalCatalog(final SkillType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-    catalogType.getLevelFunction().buildLevelTable(catalogType.getMaxLevel());
-  }
+    @Override
+    public void registerAdditionalCatalog(final SkillType catalogType) {
+        checkNotNull(catalogType);
+        this.map.put(catalogType.getId(), catalogType);
+        catalogType.getLevelFunction().buildLevelTable(catalogType.getMaxLevel());
+    }
 
-  @Override
-  public Optional<SkillType> getById(final String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
+    @Override
+    public Optional<SkillType> getById(final String id) {
+        return Optional.ofNullable(this.map.get(id));
+    }
 
-  @Override
-  public Collection<SkillType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+    @Override
+    public Collection<SkillType> getAll() {
+        return Collections.unmodifiableCollection(this.map.values());
+    }
 }

@@ -39,57 +39,58 @@ import java.util.function.Supplier;
 
 public final class FoundContentEntryImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractFoundContentEntry<R, C> {
 
-  private final String namespace;
-  private final RegistryKey key;
-  private final Path absolutePath;
-  private final Supplier<Element> rootElement;
-  private final ContentBuilder builder;
+    private final String namespace;
+    private final RegistryKey key;
+    private final Path absolutePath;
+    private final Supplier<Element> rootElement;
+    private final ContentBuilder builder;
 
-  FoundContentEntryImpl(final String namespace, final R rootType, final Path rootPath, final C childType, final Path absolutePath,
-      final DocumentFactory documentFactory, final ContentBuilder builder) {
-    super(rootType, childType);
+    FoundContentEntryImpl(final String namespace, final R rootType, final Path rootPath, final C childType, final Path absolutePath,
+        final DocumentFactory documentFactory, final ContentBuilder builder) {
+        super(rootType, childType);
 
-    this.namespace = namespace;
+        this.namespace = namespace;
 
-    if (absolutePath.getFileName().toString().replace(".xml", "").equalsIgnoreCase(absolutePath.getParent().getFileName().toString())) {
-      this.key = new CatalogKey(namespace + ':' + rootPath.relativize(absolutePath.getParent()).toString().replace(".xml", "").replace('\\', '/'));
-    } else {
-      String value = rootPath.relativize(absolutePath).toString();
-      final int index = value.indexOf("\\");
-      if (index != -1) {
-        value = value.substring(index + 1);
-      }
-      this.key = new CatalogKey(namespace + ':' + value.replace(".xml", "").replace('\\', '/'));
+        if (absolutePath.getFileName().toString().replace(".xml", "").equalsIgnoreCase(absolutePath.getParent().getFileName().toString())) {
+            this.key =
+                new CatalogKey(namespace + ':' + rootPath.relativize(absolutePath.getParent()).toString().replace(".xml", "").replace('\\', '/'));
+        } else {
+            String value = rootPath.relativize(absolutePath).toString();
+            final int index = value.indexOf("\\");
+            if (index != -1) {
+                value = value.substring(index + 1);
+            }
+            this.key = new CatalogKey(namespace + ':' + value.replace(".xml", "").replace('\\', '/'));
+        }
+
+        this.absolutePath = absolutePath;
+        this.rootElement = Suppliers.memoize(Exceptions.rethrowSupplier(() -> documentFactory.read(this.absolutePath).getRootElement())::get);
+        this.builder = builder;
+        this.builder.key(this.key);
     }
 
-    this.absolutePath = absolutePath;
-    this.rootElement = Suppliers.memoize(Exceptions.rethrowSupplier(() -> documentFactory.read(this.absolutePath).getRootElement())::get);
-    this.builder = builder;
-    this.builder.key(this.key);
-  }
+    @Override
+    public String namespace() {
+        return this.namespace;
+    }
 
-  @Override
-  public String namespace() {
-    return this.namespace;
-  }
+    @Override
+    public RegistryKey key() {
+        return this.key;
+    }
 
-  @Override
-  public RegistryKey key() {
-    return this.key;
-  }
+    @Override
+    public Path absolutePath() {
+        return this.absolutePath;
+    }
 
-  @Override
-  public Path absolutePath() {
-    return this.absolutePath;
-  }
+    @Override
+    public Element rootElement() {
+        return this.rootElement.get();
+    }
 
-  @Override
-  public Element rootElement() {
-    return this.rootElement.get();
-  }
-
-  @Override
-  public ContentBuilder builder() {
-    return this.builder;
-  }
+    @Override
+    public ContentBuilder builder() {
+        return this.builder;
+    }
 }

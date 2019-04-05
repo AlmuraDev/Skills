@@ -38,15 +38,15 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 @Singleton
 public final class EconomyFunctionRootLoader extends ChildContentLoaderImpl<ContentFunction.Child> implements Witness {
 
-  private final Registry<EconomyFunctionType> registry;
+    private final Registry<EconomyFunctionType> registry;
 
-  @Inject
-  public EconomyFunctionRootLoader(final Registry<EconomyFunctionType> registry) {
-    this.registry = registry;
-  }
+    @Inject
+    public EconomyFunctionRootLoader(final Registry<EconomyFunctionType> registry) {
+        this.registry = registry;
+    }
 
-  @Listener(order = Order.PRE)
-  public void onGameStartingServer(final GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(EconomyFunctionType.class)));
-  }
+    @Listener(order = Order.PRE)
+    public void onGameStartingServer(final GameStartingServerEvent event) {
+        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(EconomyFunctionType.class)));
+    }
 }

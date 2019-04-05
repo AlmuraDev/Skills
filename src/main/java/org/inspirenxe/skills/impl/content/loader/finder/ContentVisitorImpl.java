@@ -36,20 +36,20 @@ import javax.inject.Provider;
 
 public final class ContentVisitorImpl<R extends ContentType.Root<C>, C extends ContentType.Child> extends AbstractContentVisitor<R, C> {
 
-  ContentVisitorImpl(final FoundContent<R, C> foundContent) {
-    super(foundContent);
-  }
+    ContentVisitorImpl(final FoundContent<R, C> foundContent) {
+        super(foundContent);
+    }
 
-  @Override
-  protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
-    return new FoundContentEntryImpl<>(
-      this.namespace,
-      this.type,
-      this.typePath,
-      this.child,
-      path.toAbsolutePath(),
-      this.documentFactory(),
-      builder.get()
-    );
-  }
+    @Override
+    protected FoundContentEntry<R, C> createEntry(final Path path, final Provider<ContentBuilder> builder) {
+        return new FoundContentEntryImpl<>(
+            this.namespace,
+            this.type,
+            this.typePath,
+            this.child,
+            path.toAbsolutePath(),
+            this.documentFactory(),
+            builder.get()
+        );
+    }
 }

@@ -35,20 +35,20 @@ import org.inspirenxe.skills.impl.content.type.effect.potion.processor.ShowParti
 
 public final class PotionEffectTypeModule extends ChildModule.Impl<ContentEffectType.Child> {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentEffectType.Child("potion"));
-    this.bindChildLoader(new TypeLiteral<PotionEffectTypeRootLoader>() {
-    });
+    @Override
+    protected void configure0() {
+        this.bindChildType(new ContentEffectType.Child("potion"));
+        this.bindChildLoader(new TypeLiteral<PotionEffectTypeRootLoader>() {
+        });
 
-    this.bindBuilder(ContentPotionEffectTypeBuilder.class).to(ContentPotionEffectTypeBuilderImpl.class);
+        this.bindBuilder(ContentPotionEffectTypeBuilder.class).to(ContentPotionEffectTypeBuilderImpl.class);
 
-    this.bindProcessor(AmplifierProcessor.class);
-    this.bindProcessor(DurationProcessor.class);
-    this.bindProcessor(IsAmbientProccessor.class);
-    this.bindProcessor(PotionProcessor.class);
-    this.bindProcessor(ShowParticlesProcessor.class);
+        this.bindProcessor(AmplifierProcessor.class);
+        this.bindProcessor(DurationProcessor.class);
+        this.bindProcessor(IsAmbientProccessor.class);
+        this.bindProcessor(PotionProcessor.class);
+        this.bindProcessor(ShowParticlesProcessor.class);
 
-    this.bindFacet().toProvider(this.getProvider(PotionEffectTypeRootLoader.class));
-  }
+        this.bindFacet().toProvider(this.getProvider(PotionEffectTypeRootLoader.class));
+    }
 }

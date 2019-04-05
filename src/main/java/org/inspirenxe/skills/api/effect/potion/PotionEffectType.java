@@ -29,5 +29,5 @@ import org.spongepowered.api.effect.potion.PotionEffect;
 
 public interface PotionEffectType extends EffectType {
 
-  PotionEffect getEffect();
+    PotionEffect getEffect();
 }

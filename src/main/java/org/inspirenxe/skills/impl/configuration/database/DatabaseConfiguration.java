@@ -32,54 +32,54 @@ import javax.annotation.Nullable;
 
 public final class DatabaseConfiguration {
 
-  private final SQLDialect dialect;
-  private final String initialCatalog;
-  @Nullable private final Path path;
-  @Nullable private final String server;
-  @Nullable private final Integer port;
+    private final SQLDialect dialect;
+    private final String initialCatalog;
+    @Nullable private final Path path;
+    @Nullable private final String server;
+    @Nullable private final Integer port;
 
-  private final String connectionStringNoSchema;
-  private final String connectionString;
+    private final String connectionStringNoSchema;
+    private final String connectionString;
 
-  DatabaseConfiguration(final SQLDialect dialect, final String initialCatalog, @Nullable final Path path, @Nullable final String server, @Nullable
-  final Integer port, final String connectionStringNoSchema, final String connectionString) {
-    this.dialect = dialect;
-    this.initialCatalog = initialCatalog;
-    this.path = path;
-    this.server = server;
-    this.port = port;
-    this.connectionStringNoSchema = connectionStringNoSchema;
-    this.connectionString = connectionString;
-  }
+    DatabaseConfiguration(final SQLDialect dialect, final String initialCatalog, @Nullable final Path path, @Nullable final String server,
+        @Nullable final Integer port, final String connectionStringNoSchema, final String connectionString) {
+        this.dialect = dialect;
+        this.initialCatalog = initialCatalog;
+        this.path = path;
+        this.server = server;
+        this.port = port;
+        this.connectionStringNoSchema = connectionStringNoSchema;
+        this.connectionString = connectionString;
+    }
 
-  public SQLDialect getDialect() {
-    return this.dialect;
-  }
+    public SQLDialect getDialect() {
+        return this.dialect;
+    }
 
-  public String getInitialCatalog() {
-    return this.initialCatalog;
-  }
+    public String getInitialCatalog() {
+        return this.initialCatalog;
+    }
 
-  @Nullable
-  public Path getPath() {
-    return this.path;
-  }
+    @Nullable
+    public Path getPath() {
+        return this.path;
+    }
 
-  @Nullable
-  public String getServer() {
-    return this.server;
-  }
+    @Nullable
+    public String getServer() {
+        return this.server;
+    }
 
-  @Nullable
-  public Integer getPort() {
-    return this.port;
-  }
+    @Nullable
+    public Integer getPort() {
+        return this.port;
+    }
 
-  public String getConnectionStringWithoutSchema() {
-    return this.connectionStringNoSchema;
-  }
+    public String getConnectionStringWithoutSchema() {
+        return this.connectionStringNoSchema;
+    }
 
-  public String getConnectionString() {
-    return this.connectionString;
-  }
+    public String getConnectionString() {
+        return this.connectionString;
+    }
 }

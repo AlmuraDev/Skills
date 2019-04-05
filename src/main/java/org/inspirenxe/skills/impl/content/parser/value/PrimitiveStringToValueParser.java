@@ -34,15 +34,15 @@ import java.util.Optional;
 
 public final class PrimitiveStringToValueParser<V> implements StringToValueParser<V> {
 
-  private final Parser<V> parser;
+    private final Parser<V> parser;
 
-  @Inject
-  public PrimitiveStringToValueParser(final Parser<V> parser) {
-    this.parser = parser;
-  }
+    @Inject
+    public PrimitiveStringToValueParser(final Parser<V> parser) {
+        this.parser = parser;
+    }
 
-  @Override
-  public Optional<V> parse(final TypeToken<?> token, final String value) {
-    return Optional.of(this.parser.parse(Node.of(new Element("hack").setText(value))));
-  }
+    @Override
+    public Optional<V> parse(final TypeToken<?> token, final String value) {
+        return Optional.of(this.parser.parse(Node.of(new Element("hack").setText(value))));
+    }
 }

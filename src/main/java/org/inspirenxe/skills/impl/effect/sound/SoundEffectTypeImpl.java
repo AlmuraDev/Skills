@@ -26,37 +26,36 @@ package org.inspirenxe.skills.impl.effect.sound;
 
 import com.almuradev.droplet.registry.RegistryKey;
 import org.inspirenxe.skills.api.sound.SoundEffect;
-import org.spongepowered.api.effect.Viewer;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public final class SoundEffectTypeImpl implements SkillsSoundEffectType {
 
-  private final RegistryKey registryKey;
-  private final SoundEffect effect;
+    private final RegistryKey registryKey;
+    private final SoundEffect effect;
 
-  public SoundEffectTypeImpl(final RegistryKey registryKey, final SoundEffect effect) {
-    this.registryKey = registryKey;
-    this.effect = effect;
-  }
+    public SoundEffectTypeImpl(final RegistryKey registryKey, final SoundEffect effect) {
+        this.registryKey = registryKey;
+        this.effect = effect;
+    }
 
-  @Override
-  public String getId() {
-    return this.registryKey.toString();
-  }
+    @Override
+    public String getId() {
+        return this.registryKey.toString();
+    }
 
-  @Override
-  public String getName() {
-    return this.registryKey.value();
-  }
+    @Override
+    public String getName() {
+        return this.registryKey.value();
+    }
 
-  @Override
-  public SoundEffect getEffect() {
-    return this.effect;
-  }
+    @Override
+    public SoundEffect getEffect() {
+        return this.effect;
+    }
 
-  @Override
-  public void play(final Location<World> location) {
-    // TODO Need a way to play a sound to only one person..
-  }
+    @Override
+    public void play(final Location<World> location) {
+        // TODO Need a way to play a sound to only one person..
+    }
 }

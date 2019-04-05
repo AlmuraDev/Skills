@@ -31,22 +31,22 @@ import java.util.List;
 
 public interface ContentEffectType extends ContentType.Child {
 
-  final class Root extends ContentType.Root.Impl<Child> implements ContentEffectType {
+    final class Root extends ContentType.Root.Impl<Child> implements ContentEffectType {
 
-    Root() {
-      super("effect", "effect", new TypeToken<ContentEffectType.Child>() {
-      });
-    }
-  }
-
-  final class Child extends Impl implements ContentEffectType {
-
-    public Child(final String id) {
-      super(id);
+        Root() {
+            super("effect", "effect", new TypeToken<ContentEffectType.Child>() {
+            });
+        }
     }
 
-    public Child(final String id, final List<String> path) {
-      super(id, path);
+    final class Child extends Impl implements ContentEffectType {
+
+        public Child(final String id) {
+            super(id);
+        }
+
+        public Child(final String id, final List<String> path) {
+            super(id, path);
+        }
     }
-  }
 }

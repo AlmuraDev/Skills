@@ -37,21 +37,21 @@ import java.util.Optional;
 
 public final class SoundEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<SoundEffectType> {
 
-  private final Map<String, SoundEffectType> map = new HashMap<>();
+    private final Map<String, SoundEffectType> map = new HashMap<>();
 
-  @Override
-  public void registerAdditionalCatalog(final SoundEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
+    @Override
+    public void registerAdditionalCatalog(final SoundEffectType catalogType) {
+        checkNotNull(catalogType);
+        this.map.put(catalogType.getId(), catalogType);
+    }
 
-  @Override
-  public Optional<SoundEffectType> getById(final String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
+    @Override
+    public Optional<SoundEffectType> getById(final String id) {
+        return Optional.ofNullable(this.map.get(id));
+    }
 
-  @Override
-  public Collection<SoundEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+    @Override
+    public Collection<SoundEffectType> getAll() {
+        return Collections.unmodifiableCollection(this.map.values());
+    }
 }

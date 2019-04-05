@@ -48,46 +48,47 @@ import javax.inject.Singleton;
 @Singleton
 public final class ContentFinderImpl implements ContentFinder {
 
-  private final Logger logger;
-  private final ContentConfiguration configuration;
+    private final Logger logger;
+    private final ContentConfiguration configuration;
 
-  @Inject
-  private ContentFinderImpl(final Logger logger, final ContentConfiguration configuration) {
-    this.logger = logger;
-    this.configuration = configuration;
-  }
+    @Inject
+    private ContentFinderImpl(final Logger logger, final ContentConfiguration configuration) {
+        this.logger = logger;
+        this.configuration = configuration;
+    }
 
-  @Override
-  public <C extends ContentType.Child, R extends ContentType.Root<C>> void find(final FoundContent<R, C> foundContent, final R rootType, final Set<ChildContentLoader<C>> childrenTypes) {
-    final IndentingLogger logger = new IndentingLogger(this.logger);
-    final ContentVisitor<R, C> visitor = new ContentVisitorImpl<>(foundContent);
-    this.configuration.searchPaths().forEach(Exceptions.rethrowConsumer(path -> {
-      visitor.visitRoot(path);
-      visitor.visitNamespace(path);
-      visitor.visitContent(path);
+    @Override
+    public <C extends ContentType.Child, R extends ContentType.Root<C>> void find(final FoundContent<R, C> foundContent, final R rootType,
+        final Set<ChildContentLoader<C>> childrenTypes) {
+        final IndentingLogger logger = new IndentingLogger(this.logger);
+        final ContentVisitor<R, C> visitor = new ContentVisitorImpl<>(foundContent);
+        this.configuration.searchPaths().forEach(Exceptions.rethrowConsumer(path -> {
+            visitor.visitRoot(path);
+            visitor.visitNamespace(path);
+            visitor.visitContent(path);
 
-      final Path root = rootType.path(path).toAbsolutePath();
-      visitor.visitType(rootType, root);
+            final Path root = rootType.path(path).toAbsolutePath();
+            visitor.visitType(rootType, root);
 
-      try (final IndentingLogger $ = logger.push()) {
-        childrenTypes.forEach(Exceptions.rethrowConsumer(child -> {
-          logger.debug("Discovering {} content...", child.type().id());
-          try (final IndentingLogger $$ = logger.push()) {
-            final Path childPath = child.type().path(root).toAbsolutePath();
-            visitor.visitChild(child, child.type(), childPath);
-            Files.walkFileTree(childPath, Collections.emptySet(), this.configuration.maxDepth(), new PathVisitor() {
-              @Override
-              public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
-                if (ContentFinder.XML_MATCHER.matches(file)) {
-                  logger.debug("Found {}", childPath.relativize(file));
-                  visitor.visitEntry(file, child.builder());
-                }
-                return FileVisitResult.CONTINUE;
-              }
-            });
-          }
+            try (final IndentingLogger $ = logger.push()) {
+                childrenTypes.forEach(Exceptions.rethrowConsumer(child -> {
+                    logger.debug("Discovering {} content...", child.type().id());
+                    try (final IndentingLogger $$ = logger.push()) {
+                        final Path childPath = child.type().path(root).toAbsolutePath();
+                        visitor.visitChild(child, child.type(), childPath);
+                        Files.walkFileTree(childPath, Collections.emptySet(), this.configuration.maxDepth(), new PathVisitor() {
+                            @Override
+                            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) {
+                                if (ContentFinder.XML_MATCHER.matches(file)) {
+                                    logger.debug("Found {}", childPath.relativize(file));
+                                    visitor.visitEntry(file, child.builder());
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+                    }
+                }));
+            }
         }));
-      }
-    }));
-  }
+    }
 }

@@ -29,5 +29,5 @@ import org.spongepowered.api.item.FireworkEffect;
 
 public interface FireworkEffectType extends EffectType {
 
-  FireworkEffect getEffect();
+    FireworkEffect getEffect();
 }

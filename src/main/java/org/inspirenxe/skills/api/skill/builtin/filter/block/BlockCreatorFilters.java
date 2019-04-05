@@ -99,6 +99,9 @@ public final class BlockCreatorFilters {
         };
     }
 
+    private BlockCreatorFilters() {
+    }
+
     public static BlockCreatorFilter creatorOnly() {
         return CREATOR_ONLY;
     }
@@ -114,6 +117,4 @@ public final class BlockCreatorFilters {
     public static BlockCreatorFilter natural() {
         return NATURAL;
     }
-
-    private BlockCreatorFilters() {}
 }

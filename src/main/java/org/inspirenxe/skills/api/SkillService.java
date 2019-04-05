@@ -35,37 +35,37 @@ import java.util.UUID;
 
 public interface SkillService {
 
-  String UNKNOWN_NAME = "Unknown";
+    String UNKNOWN_NAME = "Unknown";
 
-  DecimalFormat getXPFormat();
+    DecimalFormat getXPFormat();
 
-  /**
-   * Returns the passed in {@link SkillHolderContainer} or the container this skill states it inherits from.
-   *
-   * <Note>
-   *   It is expected to only return {@link Optional#empty()} if the parent container is not loaded currently.
-   * </Note>
-   *
-   * @param container The container
-   * @return The parent container
-   */
-  Optional<SkillHolderContainer> getParentContainer(final SkillHolderContainer container);
+    /**
+     * Returns the passed in {@link SkillHolderContainer} or the container this skill states it inherits from.
+     *
+     * <Note>
+     *   It is expected to only return {@link Optional#empty()} if the parent container is not loaded currently.
+     * </Note>
+     *
+     * @param container The container
+     * @return The parent container
+     */
+    Optional<SkillHolderContainer> getParentContainer(SkillHolderContainer container);
 
-  Map<UUID, SkillHolderContainer> getContainers();
+    Map<UUID, SkillHolderContainer> getContainers();
 
-  default Optional<SkillHolderContainer> getContainer(final UUID containerId) {
-    checkNotNull(containerId);
+    default Optional<SkillHolderContainer> getContainer(UUID containerId) {
+        checkNotNull(containerId);
 
-    return Optional.ofNullable(this.getContainers().get(containerId));
-  }
+        return Optional.ofNullable(this.getContainers().get(containerId));
+    }
 
-  default SkillHolderContainer createContainer(final UUID containerId) {
-    return this.createContainer(containerId, UNKNOWN_NAME);
-  }
+    default SkillHolderContainer createContainer(UUID containerId) {
+        return this.createContainer(containerId, UNKNOWN_NAME);
+    }
 
-  SkillHolderContainer createContainer(final UUID containerId, final String name);
+    SkillHolderContainer createContainer(UUID containerId, String name);
 
-  void saveContainer(final UUID containerId);
+    void saveContainer(UUID containerId);
 
-  Optional<SkillHolderContainer> removeContainer(final UUID containerId);
+    Optional<SkillHolderContainer> removeContainer(UUID containerId);
 }

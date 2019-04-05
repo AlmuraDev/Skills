@@ -38,15 +38,15 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 @Singleton
 public final class ColorTypeRootLoader extends RootContentLoaderImpl<ContentColorType.Child, ContentColorTypeBuilder> implements Witness {
 
-  private final Registry<ColorType> registry;
+    private final Registry<ColorType> registry;
 
-  @Inject
-  public ColorTypeRootLoader(final Registry<ColorType> registry) {
-    this.registry = registry;
-  }
+    @Inject
+    public ColorTypeRootLoader(final Registry<ColorType> registry) {
+        this.registry = registry;
+    }
 
-  @Listener(order = Order.PRE)
-  public void onGameStartingServer(final GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(ColorTypeImpl.class)));
-  }
+    @Listener(order = Order.PRE)
+    public void onGameStartingServer(final GameStartingServerEvent event) {
+        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(ColorTypeImpl.class)));
+    }
 }

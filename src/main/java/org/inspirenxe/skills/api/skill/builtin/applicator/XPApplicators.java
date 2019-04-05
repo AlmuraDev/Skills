@@ -31,6 +31,9 @@ import java.util.Random;
 
 public final class XPApplicators {
 
+    private XPApplicators() {
+    }
+
     public static Applicator xp(final double amount) {
         return query -> {
             if (query instanceof AbstractEventQuery) {
@@ -45,7 +48,5 @@ public final class XPApplicators {
                 ((AbstractEventQuery) query).getSkill().addExperience(range.random(random));
             }
         };
-    }
-    private XPApplicators() {
     }
 }

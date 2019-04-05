@@ -29,26 +29,26 @@ import org.spongepowered.api.util.Color;
 
 public final class ColorTypeImpl implements SkillsColorType {
 
-  private final RegistryKey registryKey;
-  private final Color color;
+    private final RegistryKey registryKey;
+    private final Color color;
 
-  public ColorTypeImpl(final RegistryKey registryKey, final Color color) {
-    this.registryKey = registryKey;
-    this.color = color;
-  }
+    public ColorTypeImpl(final RegistryKey registryKey, final Color color) {
+        this.registryKey = registryKey;
+        this.color = color;
+    }
 
-  @Override
-  public String getId() {
-    return this.registryKey.toString();
-  }
+    @Override
+    public String getId() {
+        return this.registryKey.toString();
+    }
 
-  @Override
-  public String getName() {
-    return this.registryKey.value();
-  }
+    @Override
+    public String getName() {
+        return this.registryKey.value();
+    }
 
-  @Override
-  public Color getColor() {
-    return this.color;
-  }
+    @Override
+    public Color getColor() {
+        return this.color;
+    }
 }

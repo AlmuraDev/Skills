@@ -49,6 +49,9 @@ public final class BlockFilters {
         ALL_TYPES = new BlockFuzzyFilter(states);
     }
 
+    private BlockFilters() {
+    }
+
     public static BlockFuzzyFilter block(final BlockType... value) {
         checkNotNull(value);
 
@@ -129,6 +132,4 @@ public final class BlockFilters {
 
         return new BlockFuzzyFilter(states);
     }
-
-    private BlockFilters() {}
 }

@@ -31,19 +31,19 @@ import java.util.Optional;
 
 public class ContainerShareConfiguration {
 
-  private final Map<String, String> containerShares;
+    private final Map<String, String> containerShares;
 
-  public ContainerShareConfiguration(final Map<String, String> containerShares) {
-    this.containerShares = containerShares;
-  }
+    public ContainerShareConfiguration(final Map<String, String> containerShares) {
+        this.containerShares = containerShares;
+    }
 
-  public Optional<String> getShare(final String name) {
-    checkNotNull(name);
+    public Optional<String> getShare(final String name) {
+        checkNotNull(name);
 
-    return this.containerShares.entrySet()
-      .stream()
-      .filter(kv -> kv.getKey().equalsIgnoreCase(name))
-      .map(Map.Entry::getValue)
-      .findAny();
-  }
+        return this.containerShares.entrySet()
+            .stream()
+            .filter(kv -> kv.getKey().equalsIgnoreCase(name))
+            .map(Map.Entry::getValue)
+            .findAny();
+    }
 }

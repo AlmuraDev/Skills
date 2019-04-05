@@ -25,39 +25,38 @@
 package org.inspirenxe.skills.api.sound;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.util.ResettableBuilder;
 
 public interface SoundEffect {
 
-  static Builder builder() {
-    return Sponge.getRegistry().createBuilder(Builder.class);
-  }
+    static Builder builder() {
+        return Sponge.getRegistry().createBuilder(Builder.class);
+    }
 
-  SoundType getType();
+    SoundType getType();
 
-  SoundCategory getCategory();
+    SoundCategory getCategory();
 
-  double getMinVolume();
+    double getMinVolume();
 
-  double getVolume();
+    double getVolume();
 
-  double getPitch();
+    double getPitch();
 
-  interface Builder extends ResettableBuilder<SoundEffect, Builder> {
+    interface Builder extends ResettableBuilder<SoundEffect, Builder> {
 
-    Builder soundType(SoundType soundType);
+        Builder soundType(SoundType soundType);
 
-    Builder soundCategory(SoundCategory soundCategory);
+        Builder soundCategory(SoundCategory soundCategory);
 
-    Builder minVolume(double minVolume);
+        Builder minVolume(double minVolume);
 
-    Builder volume(double volume);
+        Builder volume(double volume);
 
-    Builder pitch(double pitch);
+        Builder pitch(double pitch);
 
-    SoundEffect build();
-  }
+        SoundEffect build();
+    }
 }

@@ -35,65 +35,65 @@ import javax.annotation.Nullable;
 
 public final class SoundEffectBuilderImpl implements SoundEffect.Builder {
 
-  @Nullable private SoundType soundType;
-  @Nullable private SoundCategory soundCategory;
-  private double minVolume, volume, pitch;
+    @Nullable private SoundType soundType;
+    @Nullable private SoundCategory soundCategory;
+    private double minVolume, volume, pitch;
 
-  @Override
-  public SoundEffect.Builder soundType(final SoundType soundType) {
-    this.soundType = soundType;
-    return this;
-  }
+    @Override
+    public SoundEffect.Builder soundType(final SoundType soundType) {
+        this.soundType = soundType;
+        return this;
+    }
 
-  @Override
-  public SoundEffect.Builder soundCategory(final SoundCategory soundCategory) {
-    this.soundCategory = soundCategory;
-    return this;
-  }
+    @Override
+    public SoundEffect.Builder soundCategory(final SoundCategory soundCategory) {
+        this.soundCategory = soundCategory;
+        return this;
+    }
 
-  @Override
-  public SoundEffect.Builder minVolume(final double minVolume) {
-    this.minVolume = minVolume;
-    return this;
-  }
+    @Override
+    public SoundEffect.Builder minVolume(final double minVolume) {
+        this.minVolume = minVolume;
+        return this;
+    }
 
-  @Override
-  public SoundEffect.Builder volume(final double volume) {
-    this.volume = volume;
-    return this;
-  }
+    @Override
+    public SoundEffect.Builder volume(final double volume) {
+        this.volume = volume;
+        return this;
+    }
 
-  @Override
-  public SoundEffect.Builder pitch(final double pitch) {
-    this.pitch = pitch;
-    return this;
-  }
+    @Override
+    public SoundEffect.Builder pitch(final double pitch) {
+        this.pitch = pitch;
+        return this;
+    }
 
-  @Override
-  public SoundEffect.Builder from(final SoundEffect value) {
-    this.soundType = value.getType();
-    this.soundCategory = value.getCategory();
-    this.minVolume = value.getMinVolume();
-    this.volume = value.getVolume();
-    this.pitch = value.getPitch();
-    return this;
-  }
+    @Override
+    public SoundEffect.Builder from(final SoundEffect value) {
+        this.soundType = value.getType();
+        this.soundCategory = value.getCategory();
+        this.minVolume = value.getMinVolume();
+        this.volume = value.getVolume();
+        this.pitch = value.getPitch();
+        return this;
+    }
 
-  @Override
-  public SoundEffect.Builder reset() {
-    this.soundType = null;
-    this.soundCategory = SoundCategories.MASTER;
-    this.minVolume = 0;
-    this.volume = 1;
-    this.pitch = 0;
-    return this;
-  }
+    @Override
+    public SoundEffect.Builder reset() {
+        this.soundType = null;
+        this.soundCategory = SoundCategories.MASTER;
+        this.minVolume = 0;
+        this.volume = 1;
+        this.pitch = 0;
+        return this;
+    }
 
-  @Override
-  public SoundEffect build() {
-    checkNotNull(this.soundType);
-    checkNotNull(this.soundCategory);
+    @Override
+    public SoundEffect build() {
+        checkNotNull(this.soundType);
+        checkNotNull(this.soundCategory);
 
-    return new SoundEffectImpl(this.soundType, this.soundCategory, this.minVolume, this.volume, this.pitch);
-  }
+        return new SoundEffectImpl(this.soundType, this.soundCategory, this.minVolume, this.volume, this.pitch);
+    }
 }

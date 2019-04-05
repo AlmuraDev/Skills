@@ -34,15 +34,15 @@ import org.spongepowered.api.effect.potion.PotionEffectType;
 
 public final class PotionProcessor implements Processor<ContentPotionEffectTypeBuilder> {
 
-  private final Parser<PotionEffectType> potionParser;
+    private final Parser<PotionEffectType> potionParser;
 
-  @Inject
-  public PotionProcessor(final Parser<PotionEffectType> potionParser) {
-    this.potionParser = potionParser;
-  }
+    @Inject
+    public PotionProcessor(final Parser<PotionEffectType> potionParser) {
+        this.potionParser = potionParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentPotionEffectTypeBuilder builder) throws XMLException {
-    builder.potion(this.potionParser.parse(node.requireAttribute("potion")));
-  }
+    @Override
+    public void process(final Node node, final ContentPotionEffectTypeBuilder builder) throws XMLException {
+        builder.potion(this.potionParser.parse(node.requireAttribute("potion")));
+    }
 }

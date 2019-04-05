@@ -30,9 +30,9 @@ import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.SkillType;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
-import org.inspirenxe.skills.api.skill.SkillType;
 import org.inspirenxe.skills.impl.skill.SkillImpl;
 
 import java.util.Collections;
@@ -44,86 +44,87 @@ import java.util.UUID;
 
 public final class SkillHolderImpl implements SkillHolder {
 
-  private final SkillImpl.Factory factory;
-  private final SkillHolderContainer container;
-  private final UUID uniqueId;
-  private final String name;
+    private final SkillImpl.Factory factory;
+    private final SkillHolderContainer container;
+    private final UUID uniqueId;
+    private final String name;
 
-  private final Map<SkillType, Skill> skills = new HashMap<>();
+    private final Map<SkillType, Skill> skills = new HashMap<>();
 
-  @Inject
-  private SkillHolderImpl(final SkillImpl.Factory factory, @Assisted final SkillHolderContainer container, @Assisted final UUID uniqueId,
-    @Assisted final String name) {
-    this.factory = factory;
-    this.container = checkNotNull(container);
-    this.uniqueId = checkNotNull(uniqueId);
-    this.name = checkNotNull(name);
-  }
-
-  @Override
-  public SkillHolderContainer getContainer() {
-    return this.container;
-  }
-
-  @Override
-  public UUID getUniqueId() {
-    return this.uniqueId;
-  }
-
-  @Override
-  public String getName() {
-    return this.name;
-  }
-
-  @Override
-  public Map<SkillType, Skill> getSkills() {
-    return Collections.unmodifiableMap(this.skills);
-  }
-
-  @Override
-  public Skill createSkill(final SkillType type) {
-    checkNotNull(type);
-
-    final SkillImpl skill = this.factory.create(this, type);
-    this.skills.put(type, skill);
-    return skill;
-  }
-
-  @Override
-  public Optional<Skill> removeSkill(final SkillType type) {
-    checkNotNull(type);
-
-    return Optional.ofNullable(this.skills.remove(type));
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) {
-      return true;
+    @Inject
+    private SkillHolderImpl(final SkillImpl.Factory factory, @Assisted final SkillHolderContainer container, @Assisted final UUID uniqueId,
+        @Assisted final String name) {
+        this.factory = factory;
+        this.container = checkNotNull(container);
+        this.uniqueId = checkNotNull(uniqueId);
+        this.name = checkNotNull(name);
     }
-    if (!(o instanceof SkillHolderImpl)) {
-      return false;
+
+    @Override
+    public SkillHolderContainer getContainer() {
+        return this.container;
     }
-    final SkillHolderImpl other = (SkillHolderImpl) o;
-    return Objects.equals(this.uniqueId, other.uniqueId);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.uniqueId);
-  }
+    @Override
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-      .add("container", this.container.getUniqueId())
-      .add("id", this.uniqueId)
-      .add("name", this.name)
-      .add("skills", this.skills)
-      .toString();
-  }
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-  public interface Factory {
-    SkillHolderImpl create(final SkillHolderContainer container, final UUID uniqueId, final String name);
-  }
+    @Override
+    public Map<SkillType, Skill> getSkills() {
+        return Collections.unmodifiableMap(this.skills);
+    }
+
+    @Override
+    public Skill createSkill(final SkillType type) {
+        checkNotNull(type);
+
+        final SkillImpl skill = this.factory.create(this, type);
+        this.skills.put(type, skill);
+        return skill;
+    }
+
+    @Override
+    public Optional<Skill> removeSkill(final SkillType type) {
+        checkNotNull(type);
+
+        return Optional.ofNullable(this.skills.remove(type));
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SkillHolderImpl)) {
+            return false;
+        }
+        final SkillHolderImpl other = (SkillHolderImpl) o;
+        return Objects.equals(this.uniqueId, other.uniqueId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.uniqueId);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("container", this.container.getUniqueId())
+            .add("id", this.uniqueId)
+            .add("name", this.name)
+            .add("skills", this.skills)
+            .toString();
+    }
+
+    public interface Factory {
+
+        SkillHolderImpl create(final SkillHolderContainer container, final UUID uniqueId, final String name);
+    }
 }

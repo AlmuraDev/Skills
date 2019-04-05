@@ -42,63 +42,63 @@ import javax.annotation.Nullable;
 public final class ContentFireworkEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsFireworkEffectType,
     ContentFireworkEffectTypeBuilder> implements ContentFireworkEffectTypeBuilder {
 
-  @Nullable private FireworkShape shape;
-  @Nullable private List<RegistryReference<ColorType>> colors;
-  @Nullable private List<RegistryReference<ColorType>> fadeColors;
-  private boolean flickers;
-  private boolean trails;
-  @Nullable private FireworkEffect fireworkEffect;
+    @Nullable private FireworkShape shape;
+    @Nullable private List<RegistryReference<ColorType>> colors;
+    @Nullable private List<RegistryReference<ColorType>> fadeColors;
+    private boolean flickers;
+    private boolean trails;
+    @Nullable private FireworkEffect fireworkEffect;
 
-  @Override
-  public void shape(final FireworkShape shape) {
-    this.shape = shape;
-  }
-
-  @Override
-  public void colors(final List<RegistryReference<ColorType>> colors) {
-    this.colors = colors;
-  }
-
-  @Override
-  public void fadeColors(final List<RegistryReference<ColorType>> fadeColors) {
-    this.fadeColors = fadeColors;
-  }
-
-  @Override
-  public void flickers(final boolean flickers) {
-    this.flickers = flickers;
-  }
-
-  @Override
-  public void trails(final boolean trails) {
-    this.trails = trails;
-  }
-
-  @Override
-  public ContentFireworkEffectTypeBuilder from(final SkillsFireworkEffectType value) {
-    this.fireworkEffect = value.getEffect();
-    return this;
-  }
-
-  @Override
-  public SkillsFireworkEffectType build() {
-    if (this.fireworkEffect != null) {
-      return new FireworkEffectTypeImpl(this.key(), this.fireworkEffect);
+    @Override
+    public void shape(final FireworkShape shape) {
+        this.shape = shape;
     }
 
-    checkNotNull(this.shape);
-    checkNotNull(this.colors);
-
-    final FireworkEffect.Builder builder = FireworkEffect.builder()
-        .shape(this.shape)
-        .colors(this.colors.stream().map(RegistryReference::require).map(ColorType::getColor).collect(Collectors.toList()));
-    if (this.fadeColors != null) {
-      builder.fades(this.fadeColors.stream().map(RegistryReference::require).map(ColorType::getColor).collect(Collectors.toList()));
+    @Override
+    public void colors(final List<RegistryReference<ColorType>> colors) {
+        this.colors = colors;
     }
-    builder
-        .flicker(this.flickers)
-        .trail(this.trails);
 
-    return new FireworkEffectTypeImpl(this.key(), builder.build());
-  }
+    @Override
+    public void fadeColors(final List<RegistryReference<ColorType>> fadeColors) {
+        this.fadeColors = fadeColors;
+    }
+
+    @Override
+    public void flickers(final boolean flickers) {
+        this.flickers = flickers;
+    }
+
+    @Override
+    public void trails(final boolean trails) {
+        this.trails = trails;
+    }
+
+    @Override
+    public ContentFireworkEffectTypeBuilder from(final SkillsFireworkEffectType value) {
+        this.fireworkEffect = value.getEffect();
+        return this;
+    }
+
+    @Override
+    public SkillsFireworkEffectType build() {
+        if (this.fireworkEffect != null) {
+            return new FireworkEffectTypeImpl(this.key(), this.fireworkEffect);
+        }
+
+        checkNotNull(this.shape);
+        checkNotNull(this.colors);
+
+        final FireworkEffect.Builder builder = FireworkEffect.builder()
+            .shape(this.shape)
+            .colors(this.colors.stream().map(RegistryReference::require).map(ColorType::getColor).collect(Collectors.toList()));
+        if (this.fadeColors != null) {
+            builder.fades(this.fadeColors.stream().map(RegistryReference::require).map(ColorType::getColor).collect(Collectors.toList()));
+        }
+        builder
+            .flicker(this.flickers)
+            .trail(this.trails);
+
+        return new FireworkEffectTypeImpl(this.key(), builder.build());
+    }
 }

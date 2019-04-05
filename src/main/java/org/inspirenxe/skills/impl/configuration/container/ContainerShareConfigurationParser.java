@@ -34,24 +34,25 @@ import java.util.Map;
 
 public final class ContainerShareConfigurationParser implements Parser<ContainerShareConfiguration> {
 
-  private final Parser<String> stringParser;
-  @Inject
-  public ContainerShareConfigurationParser(final Parser<String> stringParser) {
-    this.stringParser = stringParser;
-  }
+    private final Parser<String> stringParser;
 
-  @NonNull
-  @Override
-  public ContainerShareConfiguration throwingParse(@NonNull final Node node) {
-    final Map<String, String> containerShares = new HashMap<>();
+    @Inject
+    public ContainerShareConfigurationParser(final Parser<String> stringParser) {
+        this.stringParser = stringParser;
+    }
 
-    node.elements("container").forEach(shareNode -> {
-      final String name = this.stringParser.parse(shareNode.attribute("name").required());
-      final String from = this.stringParser.parse(shareNode.attribute("from").required());
+    @NonNull
+    @Override
+    public ContainerShareConfiguration throwingParse(@NonNull final Node node) {
+        final Map<String, String> containerShares = new HashMap<>();
 
-      containerShares.put(name, from);
-    });
+        node.elements("container").forEach(shareNode -> {
+            final String name = this.stringParser.parse(shareNode.attribute("name").required());
+            final String from = this.stringParser.parse(shareNode.attribute("from").required());
 
-    return new ContainerShareConfiguration(containerShares);
-  }
+            containerShares.put(name, from);
+        });
+
+        return new ContainerShareConfiguration(containerShares);
+    }
 }

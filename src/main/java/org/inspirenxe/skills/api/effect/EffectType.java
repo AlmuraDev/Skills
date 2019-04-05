@@ -25,11 +25,10 @@
 package org.inspirenxe.skills.api.effect;
 
 import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.effect.Viewer;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public interface EffectType extends CatalogType {
 
-    void play(final Location<World> location);
+    void play(Location<World> location);
 }

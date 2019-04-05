@@ -33,15 +33,15 @@ import org.inspirenxe.skills.impl.content.type.effect.sound.ContentSoundEffectTy
 
 public final class MinVolumeProcessor implements Processor<ContentSoundEffectTypeBuilder> {
 
-  private final Parser<Double> doubleParser;
+    private final Parser<Double> doubleParser;
 
-  @Inject
-  public MinVolumeProcessor(final Parser<Double> doubleParser) {
-    this.doubleParser = doubleParser;
-  }
+    @Inject
+    public MinVolumeProcessor(final Parser<Double> doubleParser) {
+        this.doubleParser = doubleParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentSoundEffectTypeBuilder builder) {
-    node.nodes("min-volume").collect(MoreCollectors.toOptional()).ifPresent(minVolume -> builder.minVolume(this.doubleParser.parse(minVolume)));
-  }
+    @Override
+    public void process(final Node node, final ContentSoundEffectTypeBuilder builder) {
+        node.nodes("min-volume").collect(MoreCollectors.toOptional()).ifPresent(minVolume -> builder.minVolume(this.doubleParser.parse(minVolume)));
+    }
 }

@@ -32,15 +32,15 @@ import org.inspirenxe.skills.impl.content.type.color.ContentColorTypeBuilder;
 
 public final class HexProcessor implements Processor<ContentColorTypeBuilder> {
 
-  private final Parser<String> stringParser;
+    private final Parser<String> stringParser;
 
-  @Inject
-  public HexProcessor(final Parser<String> stringParser) {
-    this.stringParser = stringParser;
-  }
+    @Inject
+    public HexProcessor(final Parser<String> stringParser) {
+        this.stringParser = stringParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentColorTypeBuilder builder) {
-    node.attribute("hex").ifPresent(hex -> builder.hex(Integer.decode(this.stringParser.parse(hex))));
-  }
+    @Override
+    public void process(final Node node, final ContentColorTypeBuilder builder) {
+        node.attribute("hex").ifPresent(hex -> builder.hex(Integer.decode(this.stringParser.parse(hex))));
+    }
 }

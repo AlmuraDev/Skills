@@ -31,22 +31,22 @@ import java.util.List;
 
 public interface ContentColorType extends ContentType.Child {
 
-  final class Root extends ContentType.Root.Impl<Child> implements ContentColorType {
+    final class Root extends ContentType.Root.Impl<Child> implements ContentColorType {
 
-    Root() {
-      super("color", "color", new TypeToken<ContentColorType.Child>() {
-      });
-    }
-  }
-
-  final class Child extends Impl implements ContentColorType {
-
-    public Child(final String id) {
-      super(id);
+        Root() {
+            super("color", "color", new TypeToken<ContentColorType.Child>() {
+            });
+        }
     }
 
-    public Child(final String id, final List<String> path) {
-      super(id, path);
+    final class Child extends Impl implements ContentColorType {
+
+        public Child(final String id) {
+            super(id);
+        }
+
+        public Child(final String id, final List<String> path) {
+            super(id, path);
+        }
     }
-  }
 }

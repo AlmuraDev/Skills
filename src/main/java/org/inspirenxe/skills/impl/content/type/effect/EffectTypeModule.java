@@ -37,25 +37,25 @@ import org.inspirenxe.skills.impl.content.type.effect.sound.SoundEffectTypeModul
 
 public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Child, ContentEffectTypeBuilder<?, ?>> {
 
-  @Override
-  protected void configure0() {
-    this.bindRootType(new ContentEffectType.Root());
-    this.bindRootLoader(new TypeLiteral<EffectTypeRootLoader>() {
-    });
-
-    this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?, ?>>>() {
-    }, ForRoot.class));
-
-    this.installChild(new FireworkEffectTypeModule(), new BaseChildModule());
-    this.installChild(new PotionEffectTypeModule(), new BaseChildModule());
-    this.installChild(new SoundEffectTypeModule(), new BaseChildModule());
-  }
-
-  private static class BaseChildModule extends ChildModule.Impl<ContentEffectType.Child> {
-
     @Override
     protected void configure0() {
-      this.inSet(Key.get(Processor.class, ForChild.class));
+        this.bindRootType(new ContentEffectType.Root());
+        this.bindRootLoader(new TypeLiteral<EffectTypeRootLoader>() {
+        });
+
+        this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?, ?>>>() {
+        }, ForRoot.class));
+
+        this.installChild(new FireworkEffectTypeModule(), new BaseChildModule());
+        this.installChild(new PotionEffectTypeModule(), new BaseChildModule());
+        this.installChild(new SoundEffectTypeModule(), new BaseChildModule());
     }
-  }
+
+    private static class BaseChildModule extends ChildModule.Impl<ContentEffectType.Child> {
+
+        @Override
+        protected void configure0() {
+            this.inSet(Key.get(Processor.class, ForChild.class));
+        }
+    }
 }

@@ -40,32 +40,32 @@ import java.util.Collections;
 
 public final class ColorTypeModule extends RootModule.Impl<ContentColorType.Child, ContentColorTypeBuilder> {
 
-  @Override
-  protected void configure0() {
-    this.bindRootType(new ContentColorType.Root());
-    this.bindRootLoader(new TypeLiteral<ColorTypeRootLoader>() {
-    });
-    this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentColorTypeBuilder>>() {
-    }, ForRoot.class));
-
-    this.installChild(new Module());
-  }
-
-  private static class Module extends ChildModule.Impl<ContentColorType.Child> {
-
     @Override
     protected void configure0() {
-      this.bindChildType(new ContentColorType.Child("color", Collections.emptyList()));
-      this.bindChildLoader(new TypeLiteral<ChildContentLoaderImpl<ContentColorType.Child>>() {
-      });
-      this.bindBuilder(ContentColorTypeBuilder.class).to(ContentColorTypeBuilderImpl.class);
+        this.bindRootType(new ContentColorType.Root());
+        this.bindRootLoader(new TypeLiteral<ColorTypeRootLoader>() {
+        });
+        this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentColorTypeBuilder>>() {
+        }, ForRoot.class));
 
-      this.bindProcessor(BProcessor.class);
-      this.bindProcessor(GProcessor.class);
-      this.bindProcessor(RProcessor.class);
-      this.bindProcessor(HexProcessor.class);
-
-      this.bindFacet().toProvider(this.getProvider(ColorTypeRootLoader.class));
+        this.installChild(new Module());
     }
-  }
+
+    private static class Module extends ChildModule.Impl<ContentColorType.Child> {
+
+        @Override
+        protected void configure0() {
+            this.bindChildType(new ContentColorType.Child("color", Collections.emptyList()));
+            this.bindChildLoader(new TypeLiteral<ChildContentLoaderImpl<ContentColorType.Child>>() {
+            });
+            this.bindBuilder(ContentColorTypeBuilder.class).to(ContentColorTypeBuilderImpl.class);
+
+            this.bindProcessor(BProcessor.class);
+            this.bindProcessor(GProcessor.class);
+            this.bindProcessor(RProcessor.class);
+            this.bindProcessor(HexProcessor.class);
+
+            this.bindFacet().toProvider(this.getProvider(ColorTypeRootLoader.class));
+        }
+    }
 }

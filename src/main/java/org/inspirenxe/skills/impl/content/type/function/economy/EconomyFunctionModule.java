@@ -31,15 +31,15 @@ import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunctionType;
 
 public final class EconomyFunctionModule extends ChildModule.Impl<ContentFunction.Child> {
 
-  @Override
-  protected void configure0() {
-    this.bindChildType(new ContentFunction.Child("economy"));
-    this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
-    });
+    @Override
+    protected void configure0() {
+        this.bindChildType(new ContentFunction.Child("economy"));
+        this.bindChildLoader(new TypeLiteral<EconomyFunctionRootLoader>() {
+        });
 
-    this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
-    this.installFactory(SkillsEconomyFunctionType.Factory.class);
+        this.bindBuilder(ContentEconomyFunctionBuilder.class).to(ContentEconomyFunctionBuilderImpl.class);
+        this.installFactory(SkillsEconomyFunctionType.Factory.class);
 
-    this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
-  }
+        this.bindFacet().toProvider(this.getProvider(EconomyFunctionRootLoader.class));
+    }
 }

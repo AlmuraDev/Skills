@@ -33,18 +33,18 @@ import org.inspirenxe.skills.impl.function.economy.SkillsEconomyFunctionType;
 public final class ContentEconomyFunctionBuilderImpl extends AbstractContentFunctionBuilder<SkillsEconomyFunctionType>
     implements ContentEconomyFunctionBuilder {
 
-  private final SkillsEconomyFunctionType.Factory factory;
+    private final SkillsEconomyFunctionType.Factory factory;
 
-  @Inject
-  public ContentEconomyFunctionBuilderImpl(final SkillsEconomyFunctionType.Factory factory) {
-    this.factory = factory;
-  }
+    @Inject
+    public ContentEconomyFunctionBuilderImpl(final SkillsEconomyFunctionType.Factory factory) {
+        this.factory = factory;
+    }
 
-  @Override
-  public SkillsEconomyFunctionType build() {
-    checkNotNull(this.key());
-    checkNotNull(this.formula);
+    @Override
+    public SkillsEconomyFunctionType build() {
+        checkNotNull(this.key());
+        checkNotNull(this.formula);
 
-    return this.factory.create(this.key(), this.formula);
-  }
+        return this.factory.create(this.key(), this.formula);
+    }
 }

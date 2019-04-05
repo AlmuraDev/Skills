@@ -38,15 +38,15 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 @Singleton
 public final class FireworkEffectTypeRootLoader extends ChildContentLoaderImpl<ContentEffectType.Child> implements Witness {
 
-  private final Registry<FireworkEffectType> registry;
+    private final Registry<FireworkEffectType> registry;
 
-  @Inject
-  public FireworkEffectTypeRootLoader(final Registry<FireworkEffectType> registry) {
-    this.registry = registry;
-  }
+    @Inject
+    public FireworkEffectTypeRootLoader(final Registry<FireworkEffectType> registry) {
+        this.registry = registry;
+    }
 
-  @Listener(order = Order.AFTER_PRE)
-  public void onGameStartingServer(final GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(FireworkEffectType.class)));
-  }
+    @Listener(order = Order.AFTER_PRE)
+    public void onGameStartingServer(final GameStartingServerEvent event) {
+        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(FireworkEffectType.class)));
+    }
 }

@@ -37,19 +37,19 @@ import javax.inject.Inject;
 @Singleton
 public final class CatalogTypeParser<C extends CatalogType> implements Parser<C> {
 
-  private final GameRegistry registry;
-  private final TypeLiteral<C> type;
+    private final GameRegistry registry;
+    private final TypeLiteral<C> type;
 
-  @Inject
-  private CatalogTypeParser(final GameRegistry registry, final TypeLiteral<C> type) {
-    this.registry = registry;
-    this.type = type;
-  }
+    @Inject
+    private CatalogTypeParser(final GameRegistry registry, final TypeLiteral<C> type) {
+        this.registry = registry;
+        this.type = type;
+    }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public C throwingParse(final Node node) throws XMLException {
-    return this.registry.getType((Class<C>) this.type.getRawType(), node.value())
-        .orElseThrow(() -> new XMLException("Could not parse " + this.type.getRawType()));
-  }
+    @SuppressWarnings("unchecked")
+    @Override
+    public C throwingParse(final Node node) throws XMLException {
+        return this.registry.getType((Class<C>) this.type.getRawType(), node.value())
+            .orElseThrow(() -> new XMLException("Could not parse " + this.type.getRawType()));
+    }
 }

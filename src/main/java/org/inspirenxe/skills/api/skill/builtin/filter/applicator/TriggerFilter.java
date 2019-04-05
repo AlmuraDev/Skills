@@ -39,18 +39,17 @@ import java.util.List;
 
 public final class TriggerFilter extends MultiFilter {
 
-    public static Builder triggerIf() {
-        return new Builder();
-    }
-
     private final Iterable<ApplicatorEntry> applicatorEntries;
     private final Iterable<Applicator> elseApplicators;
-
     private TriggerFilter(@NonNull final Iterable<? extends Filter> filters, @NonNull final Iterable<ApplicatorEntry> applicatorEntries,
         final Iterable<Applicator> elseApplicators) {
         super(filters);
         this.applicatorEntries = applicatorEntries;
         this.elseApplicators = elseApplicators;
+    }
+
+    public static Builder triggerIf() {
+        return new Builder();
     }
 
     @Override

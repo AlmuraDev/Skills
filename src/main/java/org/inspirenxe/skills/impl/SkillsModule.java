@@ -44,9 +44,9 @@ import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
 import org.inspirenxe.skills.impl.configuration.PluginConfigurationParser;
 import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfiguration;
 import org.inspirenxe.skills.impl.configuration.container.ContainerShareConfigurationParser;
+import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.configuration.database.DatabaseConfigurationParser;
 import org.inspirenxe.skills.impl.content.ContentModule;
-import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
 import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
@@ -68,59 +68,65 @@ import javax.inject.Singleton;
 
 public final class SkillsModule extends AbstractModule implements ToolboxBinder {
 
-  @Override
-  protected void configure() {
+    @Override
+    protected void configure() {
 
-    this.install(new WitnessModule());
-    this.install(new ContentModule());
+        this.install(new WitnessModule());
+        this.install(new ContentModule());
 
-    // Register factories (for assisted injections)
-    this.installFactory(SkillServiceImpl.Factory.class);
-    this.installFactory(SkillHolderContainerImpl.Factory.class);
-    this.installFactory(SkillHolderImpl.Factory.class);
-    this.installFactory(SkillImpl.Factory.class);
+        // Register factories (for assisted injections)
+        this.installFactory(SkillServiceImpl.Factory.class);
+        this.installFactory(SkillHolderContainerImpl.Factory.class);
+        this.installFactory(SkillHolderImpl.Factory.class);
+        this.installFactory(SkillImpl.Factory.class);
 
-    final ParserBinder parsers = new ParserBinder(this.binder());
-    parsers.bindParser(PluginConfiguration.class).to(PluginConfigurationParser.class);
-    parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
-    parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
-    parsers.bindParser(ContainerShareConfiguration.class).to(ContainerShareConfigurationParser.class);
-    this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {});
-    this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {});
-    this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {});
+        final ParserBinder parsers = new ParserBinder(this.binder());
+        parsers.bindParser(PluginConfiguration.class).to(PluginConfigurationParser.class);
+        parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {
+        });
+        parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
+        parsers.bindParser(ContainerShareConfiguration.class).to(ContainerShareConfigurationParser.class);
+        this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {
+        });
+        this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {
+        });
+        this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {
+        });
 
-    // Register command tree
-    this.command().rootProvider(SkillsCommandProvider.class, SkillsImpl.ID);
+        // Register command tree
+        this.command().rootProvider(SkillsCommandProvider.class, SkillsImpl.ID);
 
-    this.facet()
-      .add(CommandInstaller.class)
-      .add(RegistryInstaller.class)
-      .add(DatabaseManager.class)
-      .add(SkillLoader.class)
-      .add(BlockCreationTracker.class);
-  }
+        this.facet()
+            .add(CommandInstaller.class)
+            .add(RegistryInstaller.class)
+            .add(DatabaseManager.class)
+            .add(SkillLoader.class)
+            .add(BlockCreationTracker.class);
+    }
 
-  private <T> LinkedBindingBuilder<StringToValueParser<T>> bindRawParser(final Class<T> type) {
-    return this.bind(new FriendlyTypeLiteral<StringToValueParser<T>>() {}.where(new TypeArgument<T>(type) {}));
-  }
+    private <T> LinkedBindingBuilder<StringToValueParser<T>> bindRawParser(final Class<T> type) {
+        return this.bind(new FriendlyTypeLiteral<StringToValueParser<T>>() {
+        }.where(new TypeArgument<T>(type) {
+        }));
+    }
 
-  @ForConfiguration
-  @Provides
-  @Singleton
-  Node configuration(@ConfigDir(sharedRoot = false) final Path configDir) throws IOException, JDOMException {
-    final SAXBuilder sb = new SAXBuilder();
-    return Node.of(sb.build(configDir.resolve(SkillsImpl.ID + ".xml").toFile()).getRootElement());
-  }
+    @ForConfiguration
+    @Provides
+    @Singleton
+    Node configuration(@ConfigDir(sharedRoot = false) final Path configDir) throws IOException, JDOMException {
+        final SAXBuilder sb = new SAXBuilder();
+        return Node.of(sb.build(configDir.resolve(SkillsImpl.ID + ".xml").toFile()).getRootElement());
+    }
 
-  @Provides
-  @Singleton
-  PluginConfiguration pluginConfiguration(@ForConfiguration final Node node, final Parser<PluginConfiguration> parser) {
-    return parser.parse(node);
-  }
+    @Provides
+    @Singleton
+    PluginConfiguration pluginConfiguration(@ForConfiguration final Node node, final Parser<PluginConfiguration> parser) {
+        return parser.parse(node);
+    }
 
-  @Provides
-  @Singleton
-  DatabaseManager database(final PluginContainer container, final ServiceManager serviceManager, final PluginConfiguration pluginConfiguration) {
-    return new DatabaseManager(container, serviceManager, pluginConfiguration.getDatabaseConfiguration());
-  }
+    @Provides
+    @Singleton
+    DatabaseManager database(final PluginContainer container, final ServiceManager serviceManager, final PluginConfiguration pluginConfiguration) {
+        return new DatabaseManager(container, serviceManager, pluginConfiguration.getDatabaseConfiguration());
+    }
 }

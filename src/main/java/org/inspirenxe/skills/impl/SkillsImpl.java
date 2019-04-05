@@ -27,21 +27,13 @@ package org.inspirenxe.skills.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.membrane.facet.internal.Facets;
-import org.inspirenxe.skills.api.SkillService;
-import org.inspirenxe.skills.impl.content.ContentModule;
 import org.slf4j.Logger;
-import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Scheduler;
-import org.spongepowered.api.service.ServiceManager;
 
 import java.io.IOException;
 import java.net.URI;
@@ -61,117 +53,117 @@ import javax.annotation.Nullable;
 @Plugin(id = SkillsImpl.ID)
 public final class SkillsImpl {
 
-  public static final String ID = "skills";
+    public static final String ID = "skills";
 
-  private final Logger logger;
-  private final Path configDir;
-  @Nullable private final Facets facets;
+    private final Logger logger;
+    private final Path configDir;
+    @Nullable private final Facets facets;
 
-  @Inject
-  public SkillsImpl(final Injector baseInjector, final Logger logger, @ConfigDir(sharedRoot = false) final Path configDir)
-    throws IOException, URISyntaxException {
+    @Inject
+    public SkillsImpl(final Injector baseInjector, final Logger logger, @ConfigDir(sharedRoot = false) final Path configDir)
+        throws IOException, URISyntaxException {
 
-    this.logger = logger;
-    this.configDir = configDir;
-    this.writeDefaultAssets();
+        this.logger = logger;
+        this.configDir = configDir;
+        this.writeDefaultAssets();
 
-    this.facets = baseInjector.createChildInjector(new SkillsModule()).getInstance(Facets.class);
-  }
-
-  @Listener(order = Order.PRE)
-  public void onGameConstruction(final GameConstructionEvent event) {
-    if (this.facets != null) {
-      this.facets.enable();
+        this.facets = baseInjector.createChildInjector(new SkillsModule()).getInstance(Facets.class);
     }
-  }
 
-  @Listener
-  public void onGameStopping(final GameStoppingEvent event) {
-    if (this.facets != null) {
-      this.facets.disable();
-    }
-  }
-
-  private void writeDefaultAssets() throws IOException, URISyntaxException {
-    this.logger.info("Writing missing assets to '" + this.configDir + "'");
-    final URI uri = SkillsImpl.class.getResource("/assets/" + SkillsImpl.ID).toURI();
-
-    FileSystem fileSystem = null;
-    final Path path;
-
-    try {
-      if (uri.getScheme().equals("jar")) {
-        fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-        path = fileSystem.getPath("/assets/" + SkillsImpl.ID);
-      } else {
-        path = Paths.get(uri);
-      }
-
-      Files.walkFileTree(path.normalize(), new DefaultFileVisitor());
-
-    } finally {
-      if (fileSystem != null) {
-        fileSystem.close();
-      }
-    }
-  }
-
-  public Logger getLogger() {
-    return this.logger;
-  }
-
-  private final class DefaultFileVisitor extends SimpleFileVisitor<Path> {
-
-    @Override
-    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
-      final int index = this.startIndex(dir);
-      final Path actual;
-
-      if (index == dir.getNameCount()) {
-        return FileVisitResult.CONTINUE;
-      } else {
-        actual = SkillsImpl.this.configDir.resolve(dir.subpath(index, dir.getNameCount()).toString());
-
-        if (Files.exists(actual)) {
-          return FileVisitResult.SKIP_SUBTREE;
+    @Listener(order = Order.PRE)
+    public void onGameConstruction(final GameConstructionEvent event) {
+        if (this.facets != null) {
+            this.facets.enable();
         }
-      }
-
-      return FileVisitResult.CONTINUE;
     }
 
-    @Override
-    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-      final int index = this.startIndex(file);
-      final Path actual;
-
-      if (index == file.getNameCount()) {
-        actual = SkillsImpl.this.configDir;
-      } else {
-        actual = SkillsImpl.this.configDir.resolve(file.subpath(index, file.getNameCount()).toString());
-      }
-
-      if (Files.notExists(actual)) {
-        Files.createDirectories(actual.getParent());
-        Files.copy(file, actual);
-      }
-
-      return super.visitFile(file, attrs);
+    @Listener
+    public void onGameStopping(final GameStoppingEvent event) {
+        if (this.facets != null) {
+            this.facets.disable();
+        }
     }
 
-    private int startIndex(Path path) {
-      int nameCount = path.getNameCount();
+    private void writeDefaultAssets() throws IOException, URISyntaxException {
+        this.logger.info("Writing missing assets to '" + this.configDir + "'");
+        final URI uri = SkillsImpl.class.getResource("/assets/" + SkillsImpl.ID).toURI();
 
-      while (nameCount > 0) {
-        if (path.getFileName().toString().equalsIgnoreCase(SkillsImpl.ID)) {
-          return nameCount;
+        FileSystem fileSystem = null;
+        final Path path;
+
+        try {
+            if (uri.getScheme().equals("jar")) {
+                fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+                path = fileSystem.getPath("/assets/" + SkillsImpl.ID);
+            } else {
+                path = Paths.get(uri);
+            }
+
+            Files.walkFileTree(path.normalize(), new DefaultFileVisitor());
+
+        } finally {
+            if (fileSystem != null) {
+                fileSystem.close();
+            }
+        }
+    }
+
+    public Logger getLogger() {
+        return this.logger;
+    }
+
+    private final class DefaultFileVisitor extends SimpleFileVisitor<Path> {
+
+        @Override
+        public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
+            final int index = this.startIndex(dir);
+            final Path actual;
+
+            if (index == dir.getNameCount()) {
+                return FileVisitResult.CONTINUE;
+            } else {
+                actual = SkillsImpl.this.configDir.resolve(dir.subpath(index, dir.getNameCount()).toString());
+
+                if (Files.exists(actual)) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+            }
+
+            return FileVisitResult.CONTINUE;
         }
 
-        nameCount--;
-        path = path.subpath(0, nameCount);
-      }
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+            final int index = this.startIndex(file);
+            final Path actual;
 
-      return -1;
+            if (index == file.getNameCount()) {
+                actual = SkillsImpl.this.configDir;
+            } else {
+                actual = SkillsImpl.this.configDir.resolve(file.subpath(index, file.getNameCount()).toString());
+            }
+
+            if (Files.notExists(actual)) {
+                Files.createDirectories(actual.getParent());
+                Files.copy(file, actual);
+            }
+
+            return super.visitFile(file, attrs);
+        }
+
+        private int startIndex(Path path) {
+            int nameCount = path.getNameCount();
+
+            while (nameCount > 0) {
+                if (path.getFileName().toString().equalsIgnoreCase(SkillsImpl.ID)) {
+                    return nameCount;
+                }
+
+                nameCount--;
+                path = path.subpath(0, nameCount);
+            }
+
+            return -1;
+        }
     }
-  }
 }

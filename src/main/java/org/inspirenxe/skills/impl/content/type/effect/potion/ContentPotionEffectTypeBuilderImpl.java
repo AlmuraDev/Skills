@@ -37,58 +37,58 @@ import javax.annotation.Nullable;
 public final class ContentPotionEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsPotionEffectType, ContentPotionEffectTypeBuilder>
     implements ContentPotionEffectTypeBuilder {
 
-  @Nullable private PotionEffectType potion;
-  private int duration, amplifier;
-  private boolean isAmbient, showParticles;
-  @Nullable private PotionEffect effect;
+    @Nullable private PotionEffectType potion;
+    private int duration, amplifier;
+    private boolean isAmbient, showParticles;
+    @Nullable private PotionEffect effect;
 
-  @Override
-  public void potion(final PotionEffectType potion) {
-    this.potion = potion;
-  }
-
-  @Override
-  public void duration(final int duration) {
-    this.duration = duration;
-  }
-
-  @Override
-  public void amplifier(final int amplifier) {
-    this.amplifier = amplifier;
-  }
-
-  @Override
-  public void isAmbient(final boolean isAmbient) {
-    this.isAmbient = isAmbient;
-  }
-
-  @Override
-  public void showParticles(final boolean showParticles) {
-    this.showParticles = showParticles;
-  }
-
-  @Override
-  public SkillsPotionEffectType build() {
-    if (this.effect != null) {
-      return new PotionEffectTypeImpl(this.key(), this.effect);
+    @Override
+    public void potion(final PotionEffectType potion) {
+        this.potion = potion;
     }
 
-    checkNotNull(this.potion);
+    @Override
+    public void duration(final int duration) {
+        this.duration = duration;
+    }
 
-    final PotionEffect effect = PotionEffect.builder()
-        .potionType(this.potion)
-        .duration(this.duration)
-        .amplifier(this.amplifier)
-        .ambience(this.isAmbient)
-        .particles(this.showParticles)
-        .build();
+    @Override
+    public void amplifier(final int amplifier) {
+        this.amplifier = amplifier;
+    }
 
-    return new PotionEffectTypeImpl(this.key(), effect);
-  }
+    @Override
+    public void isAmbient(final boolean isAmbient) {
+        this.isAmbient = isAmbient;
+    }
 
-  @Override
-  public ContentPotionEffectTypeBuilder from(final SkillsPotionEffectType value) {
-    this.effect = value.getEffect();
-    return this;
-  }
+    @Override
+    public void showParticles(final boolean showParticles) {
+        this.showParticles = showParticles;
+    }
+
+    @Override
+    public SkillsPotionEffectType build() {
+        if (this.effect != null) {
+            return new PotionEffectTypeImpl(this.key(), this.effect);
+        }
+
+        checkNotNull(this.potion);
+
+        final PotionEffect effect = PotionEffect.builder()
+            .potionType(this.potion)
+            .duration(this.duration)
+            .amplifier(this.amplifier)
+            .ambience(this.isAmbient)
+            .particles(this.showParticles)
+            .build();
+
+        return new PotionEffectTypeImpl(this.key(), effect);
+    }
+
+    @Override
+    public ContentPotionEffectTypeBuilder from(final SkillsPotionEffectType value) {
+        this.effect = value.getEffect();
+        return this;
+    }
 }

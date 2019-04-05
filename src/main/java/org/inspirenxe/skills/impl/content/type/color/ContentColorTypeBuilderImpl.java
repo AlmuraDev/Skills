@@ -30,47 +30,47 @@ import org.spongepowered.api.util.Color;
 
 public final class ContentColorTypeBuilderImpl extends AbstractContentBuilder<ColorTypeImpl> implements ContentColorTypeBuilder {
 
-  private static final int NOT_SET = -1;
+    private static final int NOT_SET = -1;
 
-  private int b = NOT_SET;
-  private int g = NOT_SET;
-  private int hex = NOT_SET;
-  private int r = NOT_SET;
+    private int b = NOT_SET;
+    private int g = NOT_SET;
+    private int hex = NOT_SET;
+    private int r = NOT_SET;
 
-  @Override
-  public void b(final int b) {
-    this.b = b;
-  }
-
-  @Override
-  public void g(final int g) {
-    this.g = g;
-  }
-
-  @Override
-  public void hex(final int hex) {
-    this.hex = hex;
-  }
-
-  @Override
-  public void r(final int r) {
-    this.r = r;
-  }
-
-  @Override
-  public ColorTypeImpl build() {
-    final Color color;
-
-    if (this.hex > NOT_SET) {
-      color = Color.ofRgb(this.hex);
-    } else {
-      if (this.b <= NOT_SET || this.g <= NOT_SET || this.r <= NOT_SET) {
-        throw new IllegalStateException("Must provide a value for each component of a color!");
-      }
-
-      color = Color.ofRgb(this.r, this.g, this.b);
+    @Override
+    public void b(final int b) {
+        this.b = b;
     }
 
-    return new ColorTypeImpl(this.key(), color);
-  }
+    @Override
+    public void g(final int g) {
+        this.g = g;
+    }
+
+    @Override
+    public void hex(final int hex) {
+        this.hex = hex;
+    }
+
+    @Override
+    public void r(final int r) {
+        this.r = r;
+    }
+
+    @Override
+    public ColorTypeImpl build() {
+        final Color color;
+
+        if (this.hex > NOT_SET) {
+            color = Color.ofRgb(this.hex);
+        } else {
+            if (this.b <= NOT_SET || this.g <= NOT_SET || this.r <= NOT_SET) {
+                throw new IllegalStateException("Must provide a value for each component of a color!");
+            }
+
+            color = Color.ofRgb(this.r, this.g, this.b);
+        }
+
+        return new ColorTypeImpl(this.key(), color);
+    }
 }

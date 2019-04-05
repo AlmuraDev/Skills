@@ -37,23 +37,23 @@ import java.util.Optional;
 
 public final class EconomyFunctionRegistryModule implements AdditionalCatalogRegistryModule<EconomyFunctionType> {
 
-  private final Map<String, EconomyFunctionType> map = new HashMap<>();
+    private final Map<String, EconomyFunctionType> map = new HashMap<>();
 
-  @Override
-  public void registerAdditionalCatalog(final EconomyFunctionType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
+    @Override
+    public void registerAdditionalCatalog(final EconomyFunctionType catalogType) {
+        checkNotNull(catalogType);
+        this.map.put(catalogType.getId(), catalogType);
+    }
 
-  @Override
-  public Optional<EconomyFunctionType> getById(final String id) {
-    checkNotNull(id);
-    return Optional.ofNullable(this.map.get(id));
-  }
+    @Override
+    public Optional<EconomyFunctionType> getById(final String id) {
+        checkNotNull(id);
+        return Optional.ofNullable(this.map.get(id));
+    }
 
-  @Override
-  public Collection<EconomyFunctionType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+    @Override
+    public Collection<EconomyFunctionType> getAll() {
+        return Collections.unmodifiableCollection(this.map.values());
+    }
 }
 

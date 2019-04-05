@@ -26,5 +26,5 @@ package org.inspirenxe.skills.api;
 
 public interface Nameable {
 
-  String getName();
+    String getName();
 }

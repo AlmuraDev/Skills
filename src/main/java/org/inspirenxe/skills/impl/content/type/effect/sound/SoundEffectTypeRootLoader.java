@@ -38,15 +38,15 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 @Singleton
 public final class SoundEffectTypeRootLoader extends ChildContentLoaderImpl<ContentEffectType.Child> implements Witness {
 
-  private final Registry<SoundEffectType> registry;
+    private final Registry<SoundEffectType> registry;
 
-  @Inject
-  public SoundEffectTypeRootLoader(final Registry<SoundEffectType> registry) {
-    this.registry = registry;
-  }
+    @Inject
+    public SoundEffectTypeRootLoader(final Registry<SoundEffectType> registry) {
+        this.registry = registry;
+    }
 
-  @Listener(order = Order.AFTER_PRE)
-  public void onGameStartingServer(final GameStartingServerEvent event) {
-    this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SoundEffectType.class)));
-  }
+    @Listener(order = Order.AFTER_PRE)
+    public void onGameStartingServer(final GameStartingServerEvent event) {
+        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SoundEffectType.class)));
+    }
 }

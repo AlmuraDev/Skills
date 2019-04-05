@@ -29,5 +29,5 @@ import org.inspirenxe.skills.api.sound.SoundEffect;
 
 public interface SoundEffectType extends EffectType {
 
-  SoundEffect getEffect();
+    SoundEffect getEffect();
 }

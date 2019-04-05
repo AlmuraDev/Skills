@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.api.event;
 
 import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.SkillType;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
-import org.inspirenxe.skills.api.skill.SkillType;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
 import org.spongepowered.api.util.annotation.eventgen.GenerateFactoryMethod;
@@ -37,121 +37,121 @@ import java.util.UUID;
 
 public interface ChangeExperienceEvent extends ExperienceEvent {
 
-  @PropertySettings(requiredParameter = false, generateMethods = false)
-  @Override
-  default UUID getContainerId() {
-    return this.getContainer().getUniqueId();
-  }
+    @PropertySettings(requiredParameter = false, generateMethods = false)
+    @Override
+    default UUID getContainerId() {
+        return this.getContainer().getUniqueId();
+    }
 
-  @PropertySettings(requiredParameter = false, generateMethods = false)
-  @Override
-  default UUID getHolderId() {
-    return this.getHolder().getUniqueId();
-  }
+    @PropertySettings(requiredParameter = false, generateMethods = false)
+    @Override
+    default UUID getHolderId() {
+        return this.getHolder().getUniqueId();
+    }
 
-  @PropertySettings(requiredParameter = false, generateMethods = false)
-  @Override
-  default SkillType getSkillType() {
-    return this.getSkill().getSkillType();
-  }
-
-  /**
-   * Gets the {@link SkillHolderContainer}.
-   *
-   * @return The container
-   */
-  @PropertySettings(requiredParameter = false, generateMethods = false)
-  default SkillHolderContainer getContainer() {
-    return this.getHolder().getContainer();
-  }
-
-  /**
-   * Gets the {@link SkillHolder}.
-   *
-   * @return The holder
-   */
-  @PropertySettings(requiredParameter = false, generateMethods = false)
-  default SkillHolder getHolder() {
-    return this.getSkill().getHolder();
-  }
-
-  /**
-   * Gets the {@link Skill}.
-   *
-   * @return The skill
-   */
-  @AbsoluteSortPosition(1)
-  Skill getSkill();
-
-  /**
-   * Gets the original experience change that would occur barring no other changes.
-   *
-   * @return The original experience change
-   */
-  double getOriginalExperience();
-
-  /**
-   * Helper method that returns the difference in experience from the original amount passed to the event
-   * from what it'll be when the event is resolved.
-   *
-   * @return The difference in experience
-   */
-  @PropertySettings(requiredParameter = false, generateMethods = false)
-  default double getExperienceDifference() {
-    final double xp = this.getExperience();
-    final double oldXp = this.getOriginalExperience();
-    return xp - oldXp;
-  }
-
-  /**
-   * Called before the change in experience occurs.
-   *
-   * <Note>
-   *   May be called asynchronously.
-   * </Note>
-   */
-  interface Pre extends ChangeExperienceEvent, Cancellable {
+    @PropertySettings(requiredParameter = false, generateMethods = false)
+    @Override
+    default SkillType getSkillType() {
+        return this.getSkill().getSkillType();
+    }
 
     /**
-     * Sets the experience that will be changed on the {@link Skill}.
+     * Gets the {@link SkillHolderContainer}.
      *
-     * @param experience The new experience change
+     * @return The container
      */
-    void setExperience(final double experience);
-  }
-
-  /**
-   * Called after the change in experience occurs.
-   *
-   * <Note>
-   *   This will always be called on the main thread.
-   * </Note>
-   */
-  @GenerateFactoryMethod
-  interface Post extends ChangeExperienceEvent {
+    @PropertySettings(requiredParameter = false, generateMethods = false)
+    default SkillHolderContainer getContainer() {
+        return this.getHolder().getContainer();
+    }
 
     /**
-     * Called after the change in experience occurs and the level changed.
+     * Gets the {@link SkillHolder}.
+     *
+     * @return The holder
+     */
+    @PropertySettings(requiredParameter = false, generateMethods = false)
+    default SkillHolder getHolder() {
+        return this.getSkill().getHolder();
+    }
+
+    /**
+     * Gets the {@link Skill}.
+     *
+     * @return The skill
+     */
+    @AbsoluteSortPosition(1)
+    Skill getSkill();
+
+    /**
+     * Gets the original experience change that would occur barring no other changes.
+     *
+     * @return The original experience change
+     */
+    double getOriginalExperience();
+
+    /**
+     * Helper method that returns the difference in experience from the original amount passed to the event
+     * from what it'll be when the event is resolved.
+     *
+     * @return The difference in experience
+     */
+    @PropertySettings(requiredParameter = false, generateMethods = false)
+    default double getExperienceDifference() {
+        final double xp = this.getExperience();
+        final double oldXp = this.getOriginalExperience();
+        return xp - oldXp;
+    }
+
+    /**
+     * Called before the change in experience occurs.
+     *
+     * <Note>
+     *   May be called asynchronously.
+     * </Note>
+     */
+    interface Pre extends ChangeExperienceEvent, Cancellable {
+
+        /**
+         * Sets the experience that will be changed on the {@link Skill}.
+         *
+         * @param experience The new experience change
+         */
+        void setExperience(double experience);
+    }
+
+    /**
+     * Called after the change in experience occurs.
      *
      * <Note>
      *   This will always be called on the main thread.
      * </Note>
      */
-    interface Level extends Post {
+    @GenerateFactoryMethod
+    interface Post extends ChangeExperienceEvent {
 
-      /**
-       * Gets the original level.
-       *
-       * @return The original level
-       */
-      int getOriginalLevel();
+        /**
+         * Called after the change in experience occurs and the level changed.
+         *
+         * <Note>
+         *   This will always be called on the main thread.
+         * </Note>
+         */
+        interface Level extends Post {
 
-      /**
-       * Gets the new level.
-       *
-       * @return The new level
-       */
-      int getLevel();
+            /**
+             * Gets the original level.
+             *
+             * @return The original level
+             */
+            int getOriginalLevel();
+
+            /**
+             * Gets the new level.
+             *
+             * @return The new level
+             */
+            int getLevel();
+        }
     }
-  }
 }

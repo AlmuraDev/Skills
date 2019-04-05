@@ -32,29 +32,29 @@ import org.inspirenxe.skills.impl.configuration.database.DatabaseConfiguration;
 
 public final class PluginConfiguration {
 
-  private final DatabaseConfiguration databaseConfiguration;
-  private final ContainerShareConfiguration containerShareConfiguration;
-  private final int saveInterval;
+    private final DatabaseConfiguration databaseConfiguration;
+    private final ContainerShareConfiguration containerShareConfiguration;
+    private final int saveInterval;
 
-  PluginConfiguration(final DatabaseConfiguration databaseConfiguration, final ContainerShareConfiguration containerShareConfiguration,
-    final int saveInterval) {
-    this.databaseConfiguration = checkNotNull(databaseConfiguration);
-    this.containerShareConfiguration = checkNotNull(containerShareConfiguration);
+    PluginConfiguration(final DatabaseConfiguration databaseConfiguration, final ContainerShareConfiguration containerShareConfiguration,
+        final int saveInterval) {
+        this.databaseConfiguration = checkNotNull(databaseConfiguration);
+        this.containerShareConfiguration = checkNotNull(containerShareConfiguration);
 
-    checkState(saveInterval > 0);
+        checkState(saveInterval > 0);
 
-    this.saveInterval = saveInterval;
-  }
+        this.saveInterval = saveInterval;
+    }
 
-  public DatabaseConfiguration getDatabaseConfiguration() {
-    return this.databaseConfiguration;
-  }
+    public DatabaseConfiguration getDatabaseConfiguration() {
+        return this.databaseConfiguration;
+    }
 
-  public ContainerShareConfiguration getContainerShareConfiguration() {
-    return this.containerShareConfiguration;
-  }
+    public ContainerShareConfiguration getContainerShareConfiguration() {
+        return this.containerShareConfiguration;
+    }
 
-  public int getSaveInterval() {
-    return this.saveInterval;
-  }
+    public int getSaveInterval() {
+        return this.saveInterval;
+    }
 }

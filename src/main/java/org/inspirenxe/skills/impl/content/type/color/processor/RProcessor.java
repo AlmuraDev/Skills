@@ -32,15 +32,15 @@ import org.inspirenxe.skills.impl.content.type.color.ContentColorTypeBuilder;
 
 public final class RProcessor implements Processor<ContentColorTypeBuilder> {
 
-  private final Parser<Integer> intParser;
+    private final Parser<Integer> intParser;
 
-  @Inject
-  public RProcessor(final Parser<Integer> intParser) {
-    this.intParser = intParser;
-  }
+    @Inject
+    public RProcessor(final Parser<Integer> intParser) {
+        this.intParser = intParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentColorTypeBuilder builder) {
-    node.attribute("r").ifPresent(r -> builder.r(this.intParser.parse(r)));
-  }
+    @Override
+    public void process(final Node node, final ContentColorTypeBuilder builder) {
+        node.attribute("r").ifPresent(r -> builder.r(this.intParser.parse(r)));
+    }
 }

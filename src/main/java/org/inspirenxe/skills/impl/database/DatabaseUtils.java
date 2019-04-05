@@ -30,20 +30,21 @@ import java.util.UUID;
 
 public final class DatabaseUtils {
 
-  public static byte[] toBytes(final UUID uuid) {
-    final byte[] bytes = new byte[16];
-    ByteBuffer.wrap(bytes)
-      .order(ByteOrder.BIG_ENDIAN)
-      .putLong(uuid.getMostSignificantBits())
-      .putLong(uuid.getLeastSignificantBits());
-    return bytes;
-  }
+    private DatabaseUtils() {
+    }
 
-  public static UUID fromBytes(final byte[] bytes) {
-    final ByteBuffer buf = ByteBuffer.wrap(bytes)
-      .order(ByteOrder.BIG_ENDIAN);
-    return new UUID(buf.getLong(), buf.getLong());
-  }
+    public static byte[] toBytes(final UUID uuid) {
+        final byte[] bytes = new byte[16];
+        ByteBuffer.wrap(bytes)
+            .order(ByteOrder.BIG_ENDIAN)
+            .putLong(uuid.getMostSignificantBits())
+            .putLong(uuid.getLeastSignificantBits());
+        return bytes;
+    }
 
-  private DatabaseUtils() {}
+    public static UUID fromBytes(final byte[] bytes) {
+        final ByteBuffer buf = ByteBuffer.wrap(bytes)
+            .order(ByteOrder.BIG_ENDIAN);
+        return new UUID(buf.getLong(), buf.getLong());
+    }
 }

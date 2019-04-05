@@ -25,8 +25,6 @@
 package org.inspirenxe.skills.impl.effect.firework;
 
 import com.almuradev.droplet.registry.RegistryKey;
-import org.spongepowered.api.effect.Viewer;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.projectile.Firework;
 import org.spongepowered.api.item.FireworkEffect;
@@ -35,34 +33,34 @@ import org.spongepowered.api.world.World;
 
 public final class FireworkEffectTypeImpl implements SkillsFireworkEffectType {
 
-  private final RegistryKey registryKey;
-  private final FireworkEffect effect;
+    private final RegistryKey registryKey;
+    private final FireworkEffect effect;
 
-  public FireworkEffectTypeImpl(final RegistryKey registryKey, final FireworkEffect effect) {
-    this.registryKey = registryKey;
-    this.effect = effect;
-  }
+    public FireworkEffectTypeImpl(final RegistryKey registryKey, final FireworkEffect effect) {
+        this.registryKey = registryKey;
+        this.effect = effect;
+    }
 
-  @Override
-  public String getId() {
-    return this.registryKey.toString();
-  }
+    @Override
+    public String getId() {
+        return this.registryKey.toString();
+    }
 
-  @Override
-  public String getName() {
-    return this.registryKey.value();
-  }
+    @Override
+    public String getName() {
+        return this.registryKey.value();
+    }
 
-  @Override
-  public FireworkEffect getEffect() {
-    return this.effect;
-  }
+    @Override
+    public FireworkEffect getEffect() {
+        return this.effect;
+    }
 
-  @Override
-  public void play(final Location<World> location) {
-    final Firework firework = (Firework) location.getExtent().createEntity(EntityTypes.FIREWORK, location.getPosition().add(0, 2, 0));
-    firework.offer(firework.getFireworkData().addElement(this.effect));
-    location.getExtent().spawnEntity(firework);
-    firework.detonate();
-  }
+    @Override
+    public void play(final Location<World> location) {
+        final Firework firework = (Firework) location.getExtent().createEntity(EntityTypes.FIREWORK, location.getPosition().add(0, 2, 0));
+        firework.offer(firework.getFireworkData().addElement(this.effect));
+        location.getExtent().spawnEntity(firework);
+        firework.detonate();
+    }
 }

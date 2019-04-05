@@ -28,11 +28,11 @@ import net.kyori.filter.FilterQuery;
 import net.kyori.filter.TypedFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.inspirenxe.skills.api.skill.builtin.FuzzyMatchable;
-import org.inspirenxe.skills.api.skill.builtin.query.TypedQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.TypedEventQuery;
 
 import java.util.Collection;
 
-public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements TypedFilter.Strong<TypedQuery<O>> {
+public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements TypedFilter.Strong<TypedEventQuery<O>> {
 
     private final Collection<T> value;
 
@@ -45,12 +45,12 @@ public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements Typ
     }
 
     @Override
-    public final boolean queryResponse(@NonNull final TypedQuery<O> query) {
+    public final boolean queryResponse(@NonNull final TypedEventQuery<O> query) {
         return this.value.stream().anyMatch(v -> v.matches(query.getValue()));
     }
 
     @Override
     public final boolean queryable(@NonNull final FilterQuery query) {
-        return query instanceof TypedQuery;
+        return query instanceof TypedEventQuery;
     }
 }

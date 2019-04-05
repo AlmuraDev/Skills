@@ -37,22 +37,22 @@ import java.util.Optional;
 
 public final class LevelFunctionRegistryModule implements AdditionalCatalogRegistryModule<LevelFunctionType> {
 
-  private final Map<String, LevelFunctionType> map = new HashMap<>();
+    private final Map<String, LevelFunctionType> map = new HashMap<>();
 
-  @Override
-  public void registerAdditionalCatalog(final LevelFunctionType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
+    @Override
+    public void registerAdditionalCatalog(final LevelFunctionType catalogType) {
+        checkNotNull(catalogType);
+        this.map.put(catalogType.getId(), catalogType);
+    }
 
-  @Override
-  public Optional<LevelFunctionType> getById(final String id) {
-    checkNotNull(id);
-    return Optional.ofNullable(this.map.get(id));
-  }
+    @Override
+    public Optional<LevelFunctionType> getById(final String id) {
+        checkNotNull(id);
+        return Optional.ofNullable(this.map.get(id));
+    }
 
-  @Override
-  public Collection<LevelFunctionType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+    @Override
+    public Collection<LevelFunctionType> getAll() {
+        return Collections.unmodifiableCollection(this.map.values());
+    }
 }

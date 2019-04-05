@@ -25,38 +25,37 @@
 package org.inspirenxe.skills.impl.effect.potion;
 
 import com.almuradev.droplet.registry.RegistryKey;
-import org.spongepowered.api.effect.Viewer;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public final class PotionEffectTypeImpl implements SkillsPotionEffectType {
 
-  private final RegistryKey registryKey;
-  private final PotionEffect effect;
+    private final RegistryKey registryKey;
+    private final PotionEffect effect;
 
-  public PotionEffectTypeImpl(final RegistryKey registryKey, final PotionEffect effect) {
-    this.registryKey = registryKey;
-    this.effect = effect;
-  }
+    public PotionEffectTypeImpl(final RegistryKey registryKey, final PotionEffect effect) {
+        this.registryKey = registryKey;
+        this.effect = effect;
+    }
 
-  @Override
-  public String getId() {
-    return this.registryKey.toString();
-  }
+    @Override
+    public String getId() {
+        return this.registryKey.toString();
+    }
 
-  @Override
-  public String getName() {
-    return this.registryKey.value();
-  }
+    @Override
+    public String getName() {
+        return this.registryKey.value();
+    }
 
-  @Override
-  public PotionEffect getEffect() {
-    return this.effect;
-  }
+    @Override
+    public PotionEffect getEffect() {
+        return this.effect;
+    }
 
-  @Override
-  public void play(final Location<World> location) {
-    // TODO
-  }
+    @Override
+    public void play(final Location<World> location) {
+        // TODO
+    }
 }

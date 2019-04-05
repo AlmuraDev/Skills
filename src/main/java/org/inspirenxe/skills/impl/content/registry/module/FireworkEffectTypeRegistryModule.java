@@ -37,21 +37,21 @@ import java.util.Optional;
 
 public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
 
-  private final Map<String, FireworkEffectType> map = new HashMap<>();
+    private final Map<String, FireworkEffectType> map = new HashMap<>();
 
-  @Override
-  public void registerAdditionalCatalog(final FireworkEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
+    @Override
+    public void registerAdditionalCatalog(final FireworkEffectType catalogType) {
+        checkNotNull(catalogType);
+        this.map.put(catalogType.getId(), catalogType);
+    }
 
-  @Override
-  public Optional<FireworkEffectType> getById(final String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
+    @Override
+    public Optional<FireworkEffectType> getById(final String id) {
+        return Optional.ofNullable(this.map.get(id));
+    }
 
-  @Override
-  public Collection<FireworkEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+    @Override
+    public Collection<FireworkEffectType> getAll() {
+        return Collections.unmodifiableCollection(this.map.values());
+    }
 }

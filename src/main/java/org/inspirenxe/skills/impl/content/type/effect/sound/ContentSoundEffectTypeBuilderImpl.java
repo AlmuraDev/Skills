@@ -39,59 +39,59 @@ import javax.annotation.Nullable;
 public final class ContentSoundEffectTypeBuilderImpl extends AbstractContentEffectTypeBuilder<SkillsSoundEffectType, ContentSoundEffectTypeBuilder>
     implements ContentSoundEffectTypeBuilder {
 
-  @Nullable private SoundType sound;
-  @Nullable private SoundCategory category;
-  private double minVolume, volume, pitch;
-  @Nullable private SoundEffect effect;
+    @Nullable private SoundType sound;
+    @Nullable private SoundCategory category;
+    private double minVolume, volume, pitch;
+    @Nullable private SoundEffect effect;
 
-  @Override
-  public void sound(final SoundType sound) {
-    this.sound = sound;
-  }
-
-  @Override
-  public void category(final SoundCategory category) {
-    this.category = category;
-  }
-
-  @Override
-  public void minVolume(final double minVolume) {
-    this.minVolume = minVolume;
-  }
-
-  @Override
-  public void volume(final double volume) {
-    this.volume = volume;
-  }
-
-  @Override
-  public void pitch(final double pitch) {
-    this.pitch = pitch;
-  }
-
-  @Override
-  public SkillsSoundEffectType build() {
-    if (this.effect != null) {
-      return new SoundEffectTypeImpl(this.key(), this.effect);
+    @Override
+    public void sound(final SoundType sound) {
+        this.sound = sound;
     }
 
-    checkNotNull(this.sound);
-    checkNotNull(this.category);
+    @Override
+    public void category(final SoundCategory category) {
+        this.category = category;
+    }
 
-    final SoundEffect effect = SoundEffect.builder()
-        .soundType(this.sound)
-        .soundCategory(this.category)
-        .minVolume(this.minVolume)
-        .volume(this.volume)
-        .pitch(this.pitch)
-        .build();
+    @Override
+    public void minVolume(final double minVolume) {
+        this.minVolume = minVolume;
+    }
 
-    return new SoundEffectTypeImpl(this.key(), effect);
-  }
+    @Override
+    public void volume(final double volume) {
+        this.volume = volume;
+    }
 
-  @Override
-  public ContentSoundEffectTypeBuilder from(final SkillsSoundEffectType value) {
-    this.effect = value.getEffect();
-    return this;
-  }
+    @Override
+    public void pitch(final double pitch) {
+        this.pitch = pitch;
+    }
+
+    @Override
+    public SkillsSoundEffectType build() {
+        if (this.effect != null) {
+            return new SoundEffectTypeImpl(this.key(), this.effect);
+        }
+
+        checkNotNull(this.sound);
+        checkNotNull(this.category);
+
+        final SoundEffect effect = SoundEffect.builder()
+            .soundType(this.sound)
+            .soundCategory(this.category)
+            .minVolume(this.minVolume)
+            .volume(this.volume)
+            .pitch(this.pitch)
+            .build();
+
+        return new SoundEffectTypeImpl(this.key(), effect);
+    }
+
+    @Override
+    public ContentSoundEffectTypeBuilder from(final SkillsSoundEffectType value) {
+        this.effect = value.getEffect();
+        return this;
+    }
 }

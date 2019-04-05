@@ -30,6 +30,9 @@ import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
 
 public final class LevelFilters {
 
+    private LevelFilters() {
+    }
+
     public static LevelFilter level(final int level) {
         return new LevelFilter() {
             @Override
@@ -38,16 +41,14 @@ public final class LevelFilters {
             }
 
             @Override
-            public boolean queryResponse(final @NonNull AbstractEventQuery query) {
+            public boolean queryResponse(@NonNull final AbstractEventQuery query) {
                 return level <= query.getSkill().getCurrentLevel();
             }
 
             @Override
-            public boolean queryable(final @NonNull FilterQuery query) {
+            public boolean queryable(@NonNull final FilterQuery query) {
                 return query instanceof AbstractEventQuery;
             }
         };
     }
-
-    private LevelFilters() {}
 }

@@ -42,43 +42,43 @@ import java.util.Optional;
 
 public final class ColorTypeRegistryModule implements AdditionalCatalogRegistryModule<ColorType> {
 
-  private final Map<String, ColorType> map = new HashMap<>();
+    private final Map<String, ColorType> map = new HashMap<>();
 
-  @DelayedRegistration(RegistrationPhase.PRE_INIT)
-  @Override
-  public void registerDefaults() {
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:black"), Color.BLACK));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:blue"), Color.BLUE));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:cyan"), Color.CYAN));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:dark_cyan"), Color.DARK_CYAN));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:dark_green"), Color.DARK_GREEN));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:dark_magenta"), Color.DARK_MAGENTA));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:gray"), Color.GRAY));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:green"), Color.GREEN));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:lime"), Color.LIME));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:magenta"), Color.MAGENTA));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:navy"), Color.NAVY));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:pink"), Color.PINK));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:purple"), Color.PURPLE));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:red"), Color.RED));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:white"), Color.WHITE));
-    this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:yellow"), Color.YELLOW));
-  }
+    @DelayedRegistration(RegistrationPhase.PRE_INIT)
+    @Override
+    public void registerDefaults() {
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:black"), Color.BLACK));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:blue"), Color.BLUE));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:cyan"), Color.CYAN));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:dark_cyan"), Color.DARK_CYAN));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:dark_green"), Color.DARK_GREEN));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:dark_magenta"), Color.DARK_MAGENTA));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:gray"), Color.GRAY));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:green"), Color.GREEN));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:lime"), Color.LIME));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:magenta"), Color.MAGENTA));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:navy"), Color.NAVY));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:pink"), Color.PINK));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:purple"), Color.PURPLE));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:red"), Color.RED));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:white"), Color.WHITE));
+        this.registerAdditionalCatalog(new ColorTypeImpl(new CatalogKey("minecraft:yellow"), Color.YELLOW));
+    }
 
-  @Override
-  public void registerAdditionalCatalog(final ColorType extraCatalog) {
-    checkNotNull(extraCatalog);
-    this.map.put(extraCatalog.getId(), extraCatalog);
-  }
+    @Override
+    public void registerAdditionalCatalog(final ColorType extraCatalog) {
+        checkNotNull(extraCatalog);
+        this.map.put(extraCatalog.getId(), extraCatalog);
+    }
 
-  @Override
-  public Optional<ColorType> getById(final String id) {
-    checkNotNull(id);
-    return Optional.ofNullable(this.map.get(id));
-  }
+    @Override
+    public Optional<ColorType> getById(final String id) {
+        checkNotNull(id);
+        return Optional.ofNullable(this.map.get(id));
+    }
 
-  @Override
-  public Collection<ColorType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+    @Override
+    public Collection<ColorType> getAll() {
+        return Collections.unmodifiableCollection(this.map.values());
+    }
 }

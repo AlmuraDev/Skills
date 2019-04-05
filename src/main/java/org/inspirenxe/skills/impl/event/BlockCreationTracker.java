@@ -203,7 +203,7 @@ public final class BlockCreationTracker implements Witness {
                 return;
             }
 
-            final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(placeEvent.getCause(),  placeEvent.getContext());
+            final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(placeEvent.getCause(), placeEvent.getContext());
             if (flags.isEmpty()) {
                 return;
             }

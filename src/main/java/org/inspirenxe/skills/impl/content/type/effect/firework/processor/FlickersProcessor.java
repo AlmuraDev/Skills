@@ -33,15 +33,15 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEf
 
 public final class FlickersProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
 
-  private final Parser<Boolean> booleanParser;
+    private final Parser<Boolean> booleanParser;
 
-  @Inject
-  public FlickersProcessor(final Parser<Boolean> booleanParser) {
-    this.booleanParser = booleanParser;
-  }
+    @Inject
+    public FlickersProcessor(final Parser<Boolean> booleanParser) {
+        this.booleanParser = booleanParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
-    node.nodes("flickers").collect(MoreCollectors.toOptional()).ifPresent(flickers -> builder.flickers(this.booleanParser.parse(flickers)));
-  }
+    @Override
+    public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
+        node.nodes("flickers").collect(MoreCollectors.toOptional()).ifPresent(flickers -> builder.flickers(this.booleanParser.parse(flickers)));
+    }
 }

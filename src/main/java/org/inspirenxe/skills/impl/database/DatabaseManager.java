@@ -36,7 +36,6 @@ import org.jooq.impl.DSL;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.service.sql.SqlService;

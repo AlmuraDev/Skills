@@ -34,15 +34,15 @@ import org.spongepowered.api.item.FireworkShape;
 
 public final class ShapeProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
 
-  private final Parser<FireworkShape> shapeParser;
+    private final Parser<FireworkShape> shapeParser;
 
-  @Inject
-  public ShapeProcessor(final Parser<FireworkShape> shapeParser) {
-    this.shapeParser = shapeParser;
-  }
+    @Inject
+    public ShapeProcessor(final Parser<FireworkShape> shapeParser) {
+        this.shapeParser = shapeParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) throws XMLException {
-    builder.shape(this.shapeParser.parse(node.requireAttribute("shape")));
-  }
+    @Override
+    public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) throws XMLException {
+        builder.shape(this.shapeParser.parse(node.requireAttribute("shape")));
+    }
 }

@@ -38,22 +38,22 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEf
 
 public final class ColorsProcessor implements Processor<ContentFireworkEffectTypeBuilder> {
 
-  private final Registry<ColorType> registry;
-  private final Parser<RegistryKey> registryKeyParser;
+    private final Registry<ColorType> registry;
+    private final Parser<RegistryKey> registryKeyParser;
 
-  @Inject
-  public ColorsProcessor(final Registry<ColorType> registry, final Parser<RegistryKey> registryKeyParser) {
-    this.registry = registry;
-    this.registryKeyParser = registryKeyParser;
-  }
+    @Inject
+    public ColorsProcessor(final Registry<ColorType> registry, final Parser<RegistryKey> registryKeyParser) {
+        this.registry = registry;
+        this.registryKeyParser = registryKeyParser;
+    }
 
-  @Override
-  public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
-    final ImmutableList.Builder<RegistryReference<ColorType>> colorsList = ImmutableList.builder();
+    @Override
+    public void process(final Node node, final ContentFireworkEffectTypeBuilder builder) {
+        final ImmutableList.Builder<RegistryReference<ColorType>> colorsList = ImmutableList.builder();
 
-    node.nodes("colors").collect(MoreCollectors.onlyElement()).nodes("color").forEach(color ->
-      colorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
+        node.nodes("colors").collect(MoreCollectors.onlyElement()).nodes("color").forEach(color ->
+            colorsList.add(this.registry.ref(this.registryKeyParser.parse(color))));
 
-    builder.colors(colorsList.build());
-  }
+        builder.colors(colorsList.build());
+    }
 }

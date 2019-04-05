@@ -37,21 +37,21 @@ import java.util.Optional;
 
 public final class PotionEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<PotionEffectType> {
 
-  private final Map<String, PotionEffectType> map = new HashMap<>();
+    private final Map<String, PotionEffectType> map = new HashMap<>();
 
-  @Override
-  public void registerAdditionalCatalog(final PotionEffectType catalogType) {
-    checkNotNull(catalogType);
-    this.map.put(catalogType.getId(), catalogType);
-  }
+    @Override
+    public void registerAdditionalCatalog(final PotionEffectType catalogType) {
+        checkNotNull(catalogType);
+        this.map.put(catalogType.getId(), catalogType);
+    }
 
-  @Override
-  public Optional<PotionEffectType> getById(final String id) {
-    return Optional.ofNullable(this.map.get(id));
-  }
+    @Override
+    public Optional<PotionEffectType> getById(final String id) {
+        return Optional.ofNullable(this.map.get(id));
+    }
 
-  @Override
-  public Collection<PotionEffectType> getAll() {
-    return Collections.unmodifiableCollection(this.map.values());
-  }
+    @Override
+    public Collection<PotionEffectType> getAll() {
+        return Collections.unmodifiableCollection(this.map.values());
+    }
 }

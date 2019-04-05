@@ -29,5 +29,5 @@ import org.inspirenxe.skills.impl.function.SkillsFunctionType;
 
 public interface ContentFunctionBuilder<R extends SkillsFunctionType> extends ContentBuilder<R> {
 
-  void formula(final String formula);
+    void formula(final String formula);
 }

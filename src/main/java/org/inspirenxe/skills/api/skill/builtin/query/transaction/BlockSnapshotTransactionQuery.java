@@ -38,7 +38,8 @@ public class BlockSnapshotTransactionQuery extends AbstractTransactionQuery<Bloc
 
     private final Set<BlockCreationFlags> creationFlags;
 
-    public BlockSnapshotTransactionQuery(final Cause cause, final EventContext context, final Skill skill, final Transaction<BlockSnapshot> transaction,
+    public BlockSnapshotTransactionQuery(final Cause cause, final EventContext context, final Skill skill,
+        final Transaction<BlockSnapshot> transaction,
         final Set<BlockCreationFlags> creationFlags) {
         super(cause, context, skill, transaction);
         this.creationFlags = creationFlags;
