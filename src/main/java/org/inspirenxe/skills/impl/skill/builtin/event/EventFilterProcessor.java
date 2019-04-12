@@ -72,9 +72,8 @@ public final class EventFilterProcessor implements Witness {
     @Listener(order = Order.EARLY)
     public void onEvent(final Event event) {
 
-        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
-
-        if (event instanceof ChangeExperienceEvent) {
+        final SkillService service = this.serviceManager.provide(SkillService.class).orElse(null);
+        if (service == null) {
             return;
         }
 

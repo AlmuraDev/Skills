@@ -27,6 +27,8 @@ package org.inspirenxe.skills.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.kyori.membrane.facet.internal.Facets;
+import org.inspirenxe.skills.api.event.DiscoverContentEvent;
+import org.inspirenxe.skills.api.plugin.SkillsPlugin;
 import org.slf4j.Logger;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
@@ -36,34 +38,22 @@ import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collections;
 
 import javax.annotation.Nullable;
 
 @Plugin(id = SkillsImpl.ID)
-public final class SkillsImpl {
+public final class SkillsImpl extends SkillsPlugin {
 
     public static final String ID = "skills";
 
-    private final Logger logger;
     private final Path configDir;
     @Nullable private final Facets facets;
 
     @Inject
-    public SkillsImpl(final Injector baseInjector, final Logger logger, @ConfigDir(sharedRoot = false) final Path configDir)
-        throws IOException, URISyntaxException {
-
-        this.logger = logger;
+    public SkillsImpl(final Injector baseInjector, final Logger logger, @ConfigDir(sharedRoot = false) final Path configDir) throws IOException, URISyntaxException {
+        super(SkillsImpl.ID, logger, configDir);
         this.configDir = configDir;
         this.writeDefaultAssets();
 
@@ -84,86 +74,8 @@ public final class SkillsImpl {
         }
     }
 
-    private void writeDefaultAssets() throws IOException, URISyntaxException {
-        this.logger.info("Writing missing assets to '" + this.configDir + "'");
-        final URI uri = SkillsImpl.class.getResource("/assets/" + SkillsImpl.ID).toURI();
-
-        FileSystem fileSystem = null;
-        final Path path;
-
-        try {
-            if (uri.getScheme().equals("jar")) {
-                fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
-                path = fileSystem.getPath("/assets/" + SkillsImpl.ID);
-            } else {
-                path = Paths.get(uri);
-            }
-
-            Files.walkFileTree(path.normalize(), new DefaultFileVisitor());
-
-        } finally {
-            if (fileSystem != null) {
-                fileSystem.close();
-            }
-        }
-    }
-
-    public Logger getLogger() {
-        return this.logger;
-    }
-
-    private final class DefaultFileVisitor extends SimpleFileVisitor<Path> {
-
-        @Override
-        public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
-            final int index = this.startIndex(dir);
-            final Path actual;
-
-            if (index == dir.getNameCount()) {
-                return FileVisitResult.CONTINUE;
-            } else {
-                actual = SkillsImpl.this.configDir.resolve(dir.subpath(index, dir.getNameCount()).toString());
-
-                if (Files.exists(actual)) {
-                    return FileVisitResult.SKIP_SUBTREE;
-                }
-            }
-
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-            final int index = this.startIndex(file);
-            final Path actual;
-
-            if (index == file.getNameCount()) {
-                actual = SkillsImpl.this.configDir;
-            } else {
-                actual = SkillsImpl.this.configDir.resolve(file.subpath(index, file.getNameCount()).toString());
-            }
-
-            if (Files.notExists(actual)) {
-                Files.createDirectories(actual.getParent());
-                Files.copy(file, actual);
-            }
-
-            return super.visitFile(file, attrs);
-        }
-
-        private int startIndex(Path path) {
-            int nameCount = path.getNameCount();
-
-            while (nameCount > 0) {
-                if (path.getFileName().toString().equalsIgnoreCase(SkillsImpl.ID)) {
-                    return nameCount;
-                }
-
-                nameCount--;
-                path = path.subpath(0, nameCount);
-            }
-
-            return -1;
-        }
+    @Listener
+    public void onDiscoverContent(final DiscoverContentEvent event) {
+        event.addSearchPath(this.configDir);
     }
 }

@@ -24,11 +24,15 @@
  */
 package org.inspirenxe.skills.impl.content;
 
+import com.almuradev.droplet.content.configuration.ContentConfiguration;
 import com.almuradev.droplet.content.loader.ContentManager;
 import com.almuradev.toolbox.inject.event.Witness;
 import com.almuradev.toolbox.inject.event.WitnessScope;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.inspirenxe.skills.api.event.DiscoverContentEvent;
+import org.inspirenxe.skills.api.event.SkillsEventFactory;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
@@ -38,14 +42,17 @@ import org.spongepowered.api.event.game.state.GameConstructionEvent;
 public final class ContentInstaller implements Witness {
 
     private final ContentManager contentManager;
+    private final ContentConfiguration configuration;
 
     @Inject
-    public ContentInstaller(final ContentManager contentManager) {
+    public ContentInstaller(final ContentManager contentManager, final ContentConfiguration configuration) {
         this.contentManager = contentManager;
+        this.configuration = configuration;
     }
 
     @Listener(order = Order.PRE)
     public void onGameConstruction(final GameConstructionEvent event) {
+        Sponge.getEventManager().post(SkillsEventFactory.createDiscoverContentEvent(event.getCause(), configuration.searchPaths()));
         this.contentManager.discover();
         this.contentManager.parse();
     }

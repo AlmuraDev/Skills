@@ -47,6 +47,7 @@ import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
 import org.spongepowered.api.config.ConfigDir;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,14 +75,14 @@ public final class ContentModule extends AbstractModule implements ToolboxBinder
 
     @Provides
     @Singleton
-    ContentConfiguration configuration(@ConfigDir(sharedRoot = false) final Path configDir) {
-        final List<Path> searchPaths = Collections.singletonList(configDir);
+    ContentConfiguration configuration() {
         return new ContentConfiguration() {
+            private final List<Path> searchPaths = new ArrayList<>();
             private final int maxDepth = 10;
 
             @Override
             public List<Path> searchPaths() {
-                return searchPaths;
+                return this.searchPaths;
             }
 
             @Override

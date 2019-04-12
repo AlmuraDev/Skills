@@ -22,45 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.event;
+package org.inspirenxe.skills.api.event.impl;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.SkillType;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.UUID;
+import org.inspirenxe.skills.api.event.DiscoverContentEvent;
+import org.spongepowered.api.event.impl.AbstractEvent;
+import org.spongepowered.api.util.annotation.eventgen.UseField;
 
-public interface ExperienceEvent extends Event {
+import java.nio.file.Path;
+import java.util.List;
 
-    /**
-     * The {@link UUID} which is unique per container.
-     *
-     * @return The unique id
-     */
-    @AbsoluteSortPosition(1)
-    UUID getContainerId();
+public abstract class AbstractDiscoverContentEvent extends AbstractEvent implements DiscoverContentEvent {
 
-    /**
-     * The {@link UUID} which is unique per holder.
-     *
-     * @return The unique id
-     */
-    @AbsoluteSortPosition(2)
-    UUID getHolderId();
+    @UseField protected List<Path> searchPaths;
 
-    /**
-     * Gets the {@link SkillType}.
-     *
-     * @return The skill skill
-     */
-    @AbsoluteSortPosition(3)
-    SkillType getSkillType();
-
-    /**
-     * Gets the experience that will be changed on the {@link Skill}.
-     *
-     * @return The experience change
-     */
-    double getExperience();
+    @Override
+    public final void addSearchPath(Path path) {
+        checkNotNull(path);
+        this.searchPaths.add(path);
+    }
 }

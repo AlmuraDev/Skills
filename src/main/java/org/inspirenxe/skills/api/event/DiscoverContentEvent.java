@@ -24,43 +24,17 @@
  */
 package org.inspirenxe.skills.api.event;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.SkillType;
+import org.inspirenxe.skills.api.event.impl.AbstractDiscoverContentEvent;
 import org.spongepowered.api.event.Event;
-import org.spongepowered.api.util.annotation.eventgen.AbsoluteSortPosition;
+import org.spongepowered.api.util.annotation.eventgen.ImplementedBy;
 
-import java.util.UUID;
+import java.nio.file.Path;
+import java.util.List;
 
-public interface ExperienceEvent extends Event {
+@ImplementedBy(AbstractDiscoverContentEvent.class)
+public interface DiscoverContentEvent extends Event {
 
-    /**
-     * The {@link UUID} which is unique per container.
-     *
-     * @return The unique id
-     */
-    @AbsoluteSortPosition(1)
-    UUID getContainerId();
+    List<String> getSearchPaths();
 
-    /**
-     * The {@link UUID} which is unique per holder.
-     *
-     * @return The unique id
-     */
-    @AbsoluteSortPosition(2)
-    UUID getHolderId();
-
-    /**
-     * Gets the {@link SkillType}.
-     *
-     * @return The skill skill
-     */
-    @AbsoluteSortPosition(3)
-    SkillType getSkillType();
-
-    /**
-     * Gets the experience that will be changed on the {@link Skill}.
-     *
-     * @return The experience change
-     */
-    double getExperience();
+    void addSearchPath(final Path path);
 }
