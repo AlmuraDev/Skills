@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.Sets;
 import org.inspirenxe.skills.api.skill.builtin.FuzzyMatchable;
+import org.inspirenxe.skills.api.skill.builtin.util.ObjectUtil;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -63,35 +64,19 @@ public final class FuzzyItemStack implements FuzzyMatchable<ItemStackSnapshot> {
             return false;
         }
 
-        boolean matches = false;
+        boolean matches = true;
         for (ImmutableValue<?> value : this.values) {
             final Object actualValue = snapshot.get(value.getKey()).orElse(null);
             if (actualValue == null) {
                 continue;
             }
 
-            if (this.hackyEqualsCheck(actualValue, value.get())) {
-                matches = true;
+            if (!ObjectUtil.dynamicEqualsCheck(actualValue, value.get())) {
+                matches = false;
                 break;
             }
         }
 
         return matches;
-    }
-
-    private boolean hackyEqualsCheck(final Object a, final Object b) {
-        if (a instanceof String) {
-            return a.toString().equalsIgnoreCase(b.toString());
-        }
-
-        if (a instanceof Enum) {
-            return ((Enum) a).name().equalsIgnoreCase(b.toString());
-        }
-
-        if (a instanceof Number) {
-            return a == b;
-        }
-
-        return a.equals(b);
     }
 }

@@ -33,7 +33,7 @@ import org.spongepowered.api.util.annotation.CatalogedBy;
 @CatalogedBy(EventProcessors.class)
 public interface EventProcessor extends CatalogType {
 
-    boolean shouldProcess(final Event event);
+    boolean shouldProcess(Event event);
 
-    void process(final Event event, final SkillService service, final Skill skill);
+    void process(Event event, SkillService service, Skill skill);
 }

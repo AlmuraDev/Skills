@@ -30,15 +30,12 @@ import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
 import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.EventFilterProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.BlockCreationTrackerImpl;
-import org.inspirenxe.skills.impl.skill.builtin.event.EventProcessorModule;
 import org.inspirenxe.skills.impl.skill.builtin.registry.module.EventProcessorRegistryModule;
 
 public final class BuiltinModule extends AbstractModule implements ToolboxBinder {
 
     @Override
     protected void configure() {
-        this.install(new EventProcessorModule());
-
         this.bind(BlockCreationTracker.class).to(BlockCreationTrackerImpl.class);
 
         this.registry()

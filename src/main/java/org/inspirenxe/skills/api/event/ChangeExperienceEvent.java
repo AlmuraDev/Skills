@@ -91,8 +91,8 @@ public interface ChangeExperienceEvent extends ExperienceEvent {
     double getOriginalExperience();
 
     /**
-     * Helper method that returns the difference in experience from the original amount passed to the event
-     * from what it'll be when the event is resolved.
+     * Helper method that returns the difference in experience from the original amount passed to the registrar
+     * from what it'll be when the registrar is resolved.
      *
      * @return The difference in experience
      */

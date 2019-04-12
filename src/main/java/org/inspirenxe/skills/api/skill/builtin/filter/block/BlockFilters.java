@@ -52,7 +52,7 @@ public final class BlockFilters {
     private BlockFilters() {
     }
 
-    public static BlockFuzzyFilter block(final BlockType... value) {
+    public static BlockFuzzyFilter blocks(final BlockType... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -63,7 +63,7 @@ public final class BlockFilters {
         return new BlockFuzzyFilter(states);
     }
 
-    public static BlockFuzzyFilter block(final String... value) {
+    public static BlockFuzzyFilter blocks(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -78,7 +78,7 @@ public final class BlockFilters {
         return new BlockFuzzyFilter(states);
     }
 
-    public static BlockFuzzyFilter blockTypesFor(final String... value) {
+    public static BlockFuzzyFilter blocksFor(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -94,15 +94,15 @@ public final class BlockFilters {
         return new BlockFuzzyFilter(states);
     }
 
-    public static BlockFuzzyFilter block() {
+    public static BlockFuzzyFilter blocks() {
         return ALL_TYPES;
     }
 
-    public static BlockFuzzyFilter state(final FuzzyBlockState... value) {
+    public static BlockFuzzyFilter states(final FuzzyBlockState... value) {
         return new BlockFuzzyFilter(Sets.newHashSet(checkNotNull(value)));
     }
 
-    public static BlockFuzzyFilter state(final String... value) {
+    public static BlockFuzzyFilter states(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -117,7 +117,7 @@ public final class BlockFilters {
         return new BlockFuzzyFilter(states);
     }
 
-    public static BlockFuzzyFilter stateFor(final String... value) {
+    public static BlockFuzzyFilter statesFor(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();

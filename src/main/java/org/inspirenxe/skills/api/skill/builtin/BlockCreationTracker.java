@@ -31,5 +31,5 @@ import java.util.Set;
 
 public interface BlockCreationTracker {
 
-    Set<BlockCreationFlags> getCreationFlags(final BlockSnapshot snapshot);
+    Set<BlockCreationFlags> getCreationFlags(BlockSnapshot snapshot);
 }

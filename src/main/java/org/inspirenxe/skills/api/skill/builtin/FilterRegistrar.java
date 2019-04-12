@@ -35,7 +35,7 @@ import java.util.List;
 
 public final class FilterRegistrar {
 
-    public static FilterRegistrar.Builder event() {
+    public static FilterRegistrar.Builder registrar() {
         return new Builder();
     }
 

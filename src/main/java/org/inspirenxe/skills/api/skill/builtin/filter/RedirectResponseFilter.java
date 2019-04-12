@@ -30,17 +30,20 @@ import net.kyori.filter.FilterQuery;
 import net.kyori.filter.FilterResponse;
 import net.kyori.filter.MultiFilter;
 
-public final class WhenThenFilter extends MultiFilter {
+/**
+ * A {@link MultiFilter} whose {@link FilterResponse} can be configured to redirect to another response.
+ */
+public final class RedirectResponseFilter extends MultiFilter {
 
-    public static WhenThenFilter whenThen(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when,
+    public static RedirectResponseFilter whenThen(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when,
         final @NonNull FilterResponse then) {
-        return new WhenThenFilter(filters, when, then);
+        return new RedirectResponseFilter(filters, when, then);
     }
 
     private final FilterResponse when;
     private final FilterResponse then;
 
-    private WhenThenFilter(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when, final @NonNull FilterResponse then) {
+    private RedirectResponseFilter(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when, final @NonNull FilterResponse then) {
         super(filters);
         this.when = when;
         this.then = then;

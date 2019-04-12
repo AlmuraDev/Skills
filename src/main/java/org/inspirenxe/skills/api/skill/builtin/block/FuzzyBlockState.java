@@ -27,6 +27,7 @@ package org.inspirenxe.skills.api.skill.builtin.block;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.skill.builtin.FuzzyMatchable;
+import org.inspirenxe.skills.api.skill.builtin.util.ObjectUtil;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -85,28 +86,12 @@ public final class FuzzyBlockState implements FuzzyMatchable<BlockSnapshot> {
                 continue;
             }
 
-            if (!hackyEqualsCheck(actualValue, value.getValue())) {
+            if (!ObjectUtil.dynamicEqualsCheck(actualValue, value.getValue())) {
                 matches = false;
                 break;
             }
         }
 
         return matches;
-    }
-
-    private boolean hackyEqualsCheck(final Object a, final Object b) {
-        if (a instanceof String) {
-            return a.toString().equalsIgnoreCase(b.toString());
-        }
-
-        if (a instanceof Enum) {
-            return ((Enum) a).name().equalsIgnoreCase(b.toString());
-        }
-
-        if (a instanceof Number) {
-            return a == b;
-        }
-
-        return a.equals(b);
     }
 }
