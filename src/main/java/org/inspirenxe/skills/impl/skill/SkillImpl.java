@@ -313,7 +313,7 @@ public final class SkillImpl implements Skill {
         return MoreObjects.toStringHelper(this)
             .add("container", this.holder.getContainer().getUniqueId())
             .add("holder", this.holder.getUniqueId())
-            .add("skill", this.type)
+            .add("type", this.type)
             .toString();
     }
 

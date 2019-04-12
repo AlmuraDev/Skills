@@ -71,7 +71,7 @@ public final class SoundEffectImpl implements SoundEffect {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("skill", this.type)
+            .add("type", this.type)
             .add("category", this.category)
             .add("minVolume", this.minVolume)
             .add("volume", this.volume)

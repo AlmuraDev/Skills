@@ -52,7 +52,7 @@ public interface ExperienceEvent extends Event {
     /**
      * Gets the {@link SkillType}.
      *
-     * @return The skill skill
+     * @return The skill type
      */
     @AbsoluteSortPosition(3)
     SkillType getSkillType();
