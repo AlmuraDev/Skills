@@ -26,41 +26,34 @@ package org.inspirenxe.skills.api.skill.builtin;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import net.kyori.filter.Filter;
-import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.inspirenxe.skills.api.skill.SkillType;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
-import org.inspirenxe.skills.impl.SkillsImpl;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandCallable;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.chat.ChatTypes;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class BasicSkillType implements SkillType {
 
-    private final SkillService service;
     private final PluginContainer container;
     private final String id, name;
     private final LevelFunctionType levelFunction;
     private final Text formattedName;
     private final int maxLevel;
+    private final Map<SkillHolderContainer, Map<EventProcessor, List<FilterRegistrar>>> eventRegistrations = new HashMap<>();
 
     protected BasicSkillType(final PluginContainer container, final String id, final String name, final Text formattedName,
-        final LevelFunctionType levelFunction,
-        final int maxLevel) {
-        this.service = Sponge.getServiceManager().provideUnchecked(SkillService.class);
+        final LevelFunctionType levelFunction, final int maxLevel) {
         this.container = checkNotNull(container);
         this.id = container.getId() + ":" + id;
         this.name = checkNotNull(name);
@@ -90,105 +83,45 @@ public abstract class BasicSkillType implements SkillType {
     }
 
     @Override
-    public LevelFunctionType getLevelFunction() {
+    public final LevelFunctionType getLevelFunction() {
         return this.levelFunction;
     }
 
     @Override
-    public Text getFormattedName() {
+    public final Text getFormattedName() {
         return this.formattedName;
     }
 
-    public final <F extends Filter> BasicSkillType registerCancelEventFilter(final SkillHolderContainer container,
-        final Class<? extends Event> eventClass, final F filter) {
+    public final BasicSkillType register(final SkillHolderContainer container, final EventProcessor processor,
+        final FilterRegistrar registrar) {
+        this.eventRegistrations
+            .computeIfAbsent(checkNotNull(container, "SkillHolderContainer cannot be null!"), k -> new HashMap<>())
+            .computeIfAbsent(checkNotNull(processor, "EventFilterProcessor cannot be null!"), k -> new ArrayList<>())
+            .add(checkNotNull(registrar, "FilterRegistrar cannot be null!"));
         return this;
     }
 
-    public final <F extends Filter> BasicSkillType registerCancelTransactionFilter(final SkillHolderContainer container,
-        final Class<? extends Event> eventClass, final F filter) {
-        return this;
+    public final void configure(final Collection<SkillHolderContainer> containers) {
+        this.eventRegistrations.clear();
+        this.onConfigure(containers);
     }
 
-    public final BasicSkillType registerTransactionTrigger(final SkillHolderContainer container,
-        final Class<? extends Event> eventClass, final TriggerFilter filter) {
-        return this;
+    public List<FilterRegistrar> getFilterRegistrations(final SkillHolderContainer container, final EventProcessor processor) {
+        checkNotNull(container);
+        checkNotNull(processor);
+
+        return this.eventRegistrations
+            .getOrDefault(container, Collections.emptyMap())
+            .getOrDefault(processor, Collections.emptyList());
     }
 
-    public abstract void configure(final List<SkillHolderContainer> containers);
+    protected abstract void onConfigure(final Collection<SkillHolderContainer> containers);
 
-    public void onActionDenied(final Cause cause, final Skill skill, final int levelRequired, final EventAction action) {
-    }
+    public void onXPChanged(final Cause cause, final Skill skill, final double amount) {}
 
-    public void onXPChanged(final Cause cause, final Skill skill, final double amount) {
-    }
-
-    public void onLevelChanged(final Cause cause, final Skill skill, final int newLevel) {
-    }
+    public void onLevelChanged(final Cause cause, final Skill skill, final int newLevel) {}
 
     public Optional<FireworkEffectType> getFireworkEffectFor(final int level) {
         return Optional.empty();
-    }
-
-    private void denyAction(final Cause cause, final Skill skill, final int levelRequired, final EventAction action) {
-        final Player player = cause.first(Player.class).orElse(null);
-        if (player != null) {
-
-            if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName()
-                .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                player.sendMessage(Text.of("You require ", this.formattedName, " level ", levelRequired, " to " + action + " this."));
-            }
-        }
-
-        this.onActionDenied(cause, skill, levelRequired, action);
-    }
-
-    private void xpChange(final Cause cause, final Skill skill, final double amount) {
-        final Player player = cause.first(Player.class).orElse(null);
-        if (player != null) {
-            if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
-                .getConsole().getLocale()))) {
-
-                final char mod = amount >= 0 ? '+' : '-';
-
-                player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", this.service.getXPFormat().format(Math.abs(amount)), "xp ",
-                    this.formattedName));
-            }
-        }
-
-        this.onXPChanged(cause, skill, amount);
-    }
-
-    private void levelChange(final Cause cause, final Skill skill, final int newLevel) {
-        final Player player = cause.first(Player.class).orElse(null);
-        if (player != null) {
-            if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
-                .getConsole().getLocale()))) {
-                player.sendMessage(Text.of("Congratulations, you just advanced a new ", this.formattedName, " level! You are now"
-                    + " level ", newLevel, "."));
-            }
-
-            if (!cause.containsType(CommandCallable.class)) {
-                Sponge.getServer().getOnlinePlayers().forEach(p -> {
-                    if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(
-                        Sponge.getServer().getConsole().getLocale()) + ".other")) {
-                        p.sendMessage(ChatTypes.CHAT, Text.of(player.getName(), " has advanced to ", this.formattedName, " level ", newLevel, "."));
-                    }
-                });
-            } else {
-                final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
-                if (!sneaking) {
-                    if (player.hasPermission(SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName()
-                        .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                        this.getFireworkEffectFor(newLevel).ifPresent(fireworkEffect -> {
-                            for (int i = 0; i < (newLevel == maxLevel ? 3 : 1); i++) {
-                                fireworkEffect.play(player.getLocation());
-                            }
-                        });
-                    }
-                }
-            }
-        }
-
-        this.onLevelChanged(cause, skill, newLevel);
     }
 }

@@ -57,12 +57,9 @@ public final class ContentModule extends AbstractModule implements ToolboxBinder
         this.bindGlobalProcessor(DummyGlobalProcessor.class);
 
         this.bind(ContentManager.class).to(ContentManagerImpl.class);
-        this.bind(net.kyori.feature.FeatureDefinitionContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {
-        });
-        this.bind(FeatureContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {
-        });
-        this.bind(new TypeLiteral<DynamicProvider<FeatureContext>>() {
-        }).toInstance(new DynamicProvider<>());
+        this.bind(net.kyori.feature.FeatureDefinitionContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {});
+        this.bind(FeatureContext.class).toProvider(new TypeLiteral<DynamicProvider<FeatureContext>>() {});
+        this.bind(new TypeLiteral<DynamicProvider<FeatureContext>>() {}).toInstance(new DynamicProvider<>());
         this.bind(ContentFinder.class).to(ContentFinderImpl.class);
 
         this.install(new ParserModule());
@@ -71,7 +68,8 @@ public final class ContentModule extends AbstractModule implements ToolboxBinder
         this.install(new ContentParserModule());
         this.install(new RegistryModule());
 
-        this.facet().add(ContentInstaller.class);
+        this.facet()
+            .add(ContentInstaller.class);
     }
 
     @Provides

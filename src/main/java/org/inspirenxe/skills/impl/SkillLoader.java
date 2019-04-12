@@ -25,11 +25,16 @@
 package org.inspirenxe.skills.impl;
 
 import com.almuradev.toolbox.inject.event.Witness;
+import com.almuradev.toolbox.inject.event.WitnessScope;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
+import org.inspirenxe.skills.impl.content.registry.module.SkillTypeRegistryModule;
+import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.CauseStackManager;
@@ -38,7 +43,10 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
+import org.spongepowered.api.event.game.state.GameLoadCompleteEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
@@ -49,20 +57,40 @@ import org.spongepowered.api.service.ServiceManager;
 import java.util.Optional;
 import java.util.UUID;
 
+@Singleton
+@WitnessScope.Sponge
 public final class SkillLoader implements Witness {
 
     private final PluginContainer container;
+    private final Logger logger;
     private final Scheduler scheduler;
     private final ServiceManager serviceManager;
     private final SkillServiceImpl.Factory factory;
+    private final SkillTypeRegistryModule skillModule;
 
     @Inject
-    public SkillLoader(final PluginContainer container, final Scheduler scheduler, final ServiceManager serviceManager,
-        final SkillServiceImpl.Factory factory) {
+    public SkillLoader(final PluginContainer container, final Logger logger, final Scheduler scheduler, final ServiceManager serviceManager,
+        final SkillServiceImpl.Factory factory, final SkillTypeRegistryModule skillModule) {
         this.container = container;
+        this.logger = logger;
         this.scheduler = scheduler;
         this.serviceManager = serviceManager;
         this.factory = factory;
+        this.skillModule = skillModule;
+    }
+
+    @Listener
+    public void onGameStartedServer(final GameStartedServerEvent event) {
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
+        this.handleReload(service);
+    }
+
+    @Listener
+    public void onGameReload(final GameReloadEvent event) {
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
+        this.handleReload(service);
     }
 
     @Listener(order = Order.AFTER_PRE)
@@ -150,6 +178,18 @@ public final class SkillLoader implements Witness {
         }
 
         return Optional.ofNullable(container);
+    }
+
+    private void handleReload(final SkillService service) {
+        this.logger.info("Configuring basic skills...");
+
+        this.skillModule.getAll()
+            .stream()
+            .filter(v -> v instanceof BasicSkillType)
+            .map(v -> (BasicSkillType) v)
+            .forEach(v -> {
+                this.logger.info("Configuring '{}'", v.getId());
+                v.configure(service.getContainers().values());});
     }
 
     private void handleContainerChange(final UUID fromContainerId, final UUID toContainerId, final UUID holderId, final String holderName) {

@@ -22,14 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.registry.module;
+package org.inspirenxe.skills.impl.skill.builtin.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.skill.SkillType;
+import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
+import org.inspirenxe.skills.api.skill.builtin.EventProcessors;
+import org.inspirenxe.skills.impl.skill.builtin.event.processor.UserChangeBlockBreakEventProcessor;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-import org.spongepowered.api.registry.util.RegistrationDependency;
+import org.spongepowered.api.registry.AlternateCatalogRegistryModule;
+import org.spongepowered.api.registry.RegistrationPhase;
+import org.spongepowered.api.registry.util.DelayedRegistration;
+import org.spongepowered.api.registry.util.RegisterCatalog;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -37,31 +41,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.inject.Singleton;
+
 @Singleton
-@RegistrationDependency(value = {
-    EconomyFunctionRegistryModule.class,
-    FireworkEffectTypeRegistryModule.class,
-    LevelFunctionRegistryModule.class,
-    PotionEffectTypeRegistryModule.class,
-    SoundEffectTypeRegistryModule.class
-})
-public final class SkillTypeRegistryModule implements AdditionalCatalogRegistryModule<SkillType> {
+public final class EventProcessorRegistryModule implements AdditionalCatalogRegistryModule<EventProcessor>, AlternateCatalogRegistryModule<EventProcessor> {
 
-    private final Map<String, SkillType> map = new HashMap<>();
+    @RegisterCatalog(EventProcessors.class)
+    private final Map<String, EventProcessor> map = new HashMap<>();
 
     @Override
-    public void registerAdditionalCatalog(final SkillType catalogType) {
-        this.map.put(checkNotNull(catalogType).getId(), catalogType);
-        catalogType.getLevelFunction().buildLevelTable(catalogType.getMaxLevel());
-    }
-
-    @Override
-    public Optional<SkillType> getById(final String id) {
+    public Optional<EventProcessor> getById(final String id) {
         return Optional.ofNullable(this.map.get(checkNotNull(id)));
     }
 
     @Override
-    public Collection<SkillType> getAll() {
+    public Collection<EventProcessor> getAll() {
         return Collections.unmodifiableCollection(this.map.values());
+    }
+
+    @Override
+    public void registerAdditionalCatalog(final EventProcessor catalogType) {
+        this.map.put(catalogType.getId(), catalogType);
+    }
+
+    @DelayedRegistration(RegistrationPhase.PRE_INIT)
+    @Override
+    public void registerDefaults() {
+        this.registerAdditionalCatalog(new UserChangeBlockBreakEventProcessor());
+    }
+
+    @Override
+    public Map<String, EventProcessor> provideCatalogMap() {
+        final Map<String, EventProcessor> fixedMap = new HashMap<>();
+
+        for (Map.Entry<String, EventProcessor> entry : this.map.entrySet()) {
+            fixedMap.put(entry.getKey().replace("skills:", ""), entry.getValue());
+        }
+
+        return fixedMap;
     }
 }

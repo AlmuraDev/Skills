@@ -22,37 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.registry.module;
+package org.inspirenxe.skills.api.skill.builtin.query;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import net.kyori.filter.FilterQuery;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+public interface EventQuery extends FilterQuery {
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+    Cause getCause();
 
-@Singleton
-public final class PotionEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<PotionEffectType> {
+    EventContext getContext();
 
-    private final Map<String, PotionEffectType> map = new HashMap<>();
-
-    @Override
-    public void registerAdditionalCatalog(final PotionEffectType catalogType) {
-        this.map.put(checkNotNull(catalogType).getId(), catalogType);
-    }
-
-    @Override
-    public Optional<PotionEffectType> getById(final String id) {
-        return Optional.ofNullable(this.map.get(checkNotNull(id)));
-    }
-
-    @Override
-    public Collection<PotionEffectType> getAll() {
-        return Collections.unmodifiableCollection(this.map.values());
-    }
+    Skill getSkill();
 }

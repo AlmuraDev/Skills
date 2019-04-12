@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.color.ColorType;
 import org.inspirenxe.skills.impl.color.ColorTypeImpl;
 import org.inspirenxe.skills.impl.content.registry.CatalogKey;
@@ -40,6 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Singleton
 public final class ColorTypeRegistryModule implements AdditionalCatalogRegistryModule<ColorType> {
 
     private final Map<String, ColorType> map = new HashMap<>();
@@ -66,15 +68,13 @@ public final class ColorTypeRegistryModule implements AdditionalCatalogRegistryM
     }
 
     @Override
-    public void registerAdditionalCatalog(final ColorType extraCatalog) {
-        checkNotNull(extraCatalog);
-        this.map.put(extraCatalog.getId(), extraCatalog);
+    public void registerAdditionalCatalog(final ColorType catalogType) {
+        this.map.put(checkNotNull(catalogType).getId(), catalogType);
     }
 
     @Override
     public Optional<ColorType> getById(final String id) {
-        checkNotNull(id);
-        return Optional.ofNullable(this.map.get(id));
+        return Optional.ofNullable(this.map.get(checkNotNull(id)));
     }
 
     @Override

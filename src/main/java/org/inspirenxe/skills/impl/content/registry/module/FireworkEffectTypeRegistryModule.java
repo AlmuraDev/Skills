@@ -26,8 +26,10 @@ package org.inspirenxe.skills.impl.content.registry.module;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.effect.firework.FireworkEffectType;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+import org.spongepowered.api.registry.util.RegistrationDependency;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,19 +37,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Singleton
+@RegistrationDependency(value = {ColorTypeRegistryModule.class})
 public final class FireworkEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<FireworkEffectType> {
 
     private final Map<String, FireworkEffectType> map = new HashMap<>();
 
     @Override
     public void registerAdditionalCatalog(final FireworkEffectType catalogType) {
-        checkNotNull(catalogType);
-        this.map.put(catalogType.getId(), catalogType);
+        this.map.put(checkNotNull(catalogType).getId(), catalogType);
     }
 
     @Override
     public Optional<FireworkEffectType> getById(final String id) {
-        return Optional.ofNullable(this.map.get(id));
+        return Optional.ofNullable(this.map.get(checkNotNull(id)));
     }
 
     @Override

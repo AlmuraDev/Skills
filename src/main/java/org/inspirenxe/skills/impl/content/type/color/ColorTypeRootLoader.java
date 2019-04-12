@@ -25,28 +25,20 @@
 package org.inspirenxe.skills.impl.content.type.color;
 
 import com.almuradev.droplet.content.loader.RootContentLoaderImpl;
-import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
-import com.google.inject.Inject;
+import com.almuradev.toolbox.inject.event.WitnessScope;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.color.ColorType;
-import org.inspirenxe.skills.impl.color.ColorTypeImpl;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.GameRegistryEvent;
 
 @Singleton
+@WitnessScope.Sponge
 public final class ColorTypeRootLoader extends RootContentLoaderImpl<ContentColorType.Child, ContentColorTypeBuilder> implements Witness {
 
-    private final Registry<ColorType> registry;
-
-    @Inject
-    public ColorTypeRootLoader(final Registry<ColorType> registry) {
-        this.registry = registry;
-    }
-
-    @Listener(order = Order.PRE)
-    public void onGameStartingServer(final GameStartingServerEvent event) {
-        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(ColorTypeImpl.class)));
+    @Listener(order = Order.FIRST)
+    public void onGameRegistryRegister(final GameRegistryEvent.Register<ColorType> event) {
+        this.foundContent().entries().forEach(entry -> event.register(entry.result(ColorType.class)));
     }
 }

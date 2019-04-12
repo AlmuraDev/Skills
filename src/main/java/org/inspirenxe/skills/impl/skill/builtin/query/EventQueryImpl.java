@@ -22,12 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query.element;
+package org.inspirenxe.skills.impl.skill.builtin.query;
 
-import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.Transaction;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 
-public interface TransactionElement<T extends DataSerializable> {
+public final class EventQueryImpl implements EventQuery {
 
-    Transaction<T> getTransaction();
+    private final Cause cause;
+    private final EventContext context;
+    private final Skill skill;
+
+    public EventQueryImpl(final Cause cause, final EventContext context, final Skill skill) {
+        this.cause = cause;
+        this.context = context;
+        this.skill = skill;
+    }
+
+    @Override
+    public Cause getCause() {
+        return this.cause;
+    }
+
+    @Override
+    public EventContext getContext() {
+        return this.context;
+    }
+
+    @Override
+    public Skill getSkill() {
+        return this.skill;
+    }
 }

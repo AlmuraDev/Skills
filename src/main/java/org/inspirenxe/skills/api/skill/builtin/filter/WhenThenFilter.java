@@ -22,37 +22,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.registry.module;
+package org.inspirenxe.skills.api.skill.builtin.filter;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import net.kyori.blizzard.NonNull;
+import net.kyori.filter.Filter;
+import net.kyori.filter.FilterQuery;
+import net.kyori.filter.FilterResponse;
+import net.kyori.filter.MultiFilter;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+public final class WhenThenFilter extends MultiFilter {
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+    public static WhenThenFilter whenThen(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when,
+        final @NonNull FilterResponse then) {
+        return new WhenThenFilter(filters, when, then);
+    }
 
-@Singleton
-public final class PotionEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<PotionEffectType> {
+    private final FilterResponse when;
+    private final FilterResponse then;
 
-    private final Map<String, PotionEffectType> map = new HashMap<>();
-
-    @Override
-    public void registerAdditionalCatalog(final PotionEffectType catalogType) {
-        this.map.put(checkNotNull(catalogType).getId(), catalogType);
+    private WhenThenFilter(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when, final @NonNull FilterResponse then) {
+        super(filters);
+        this.when = when;
+        this.then = then;
     }
 
     @Override
-    public Optional<PotionEffectType> getById(final String id) {
-        return Optional.ofNullable(this.map.get(checkNotNull(id)));
-    }
-
-    @Override
-    public Collection<PotionEffectType> getAll() {
-        return Collections.unmodifiableCollection(this.map.values());
+    public @NonNull FilterResponse query(final @NonNull FilterQuery query) {
+        for (final Filter filter : this.filters) {
+            final FilterResponse response = filter.query(query);
+            if (response == this.when) {
+                return this.then;
+            }
+        }
+        return FilterResponse.ABSTAIN;
     }
 }

@@ -24,20 +24,7 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.query;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
+public interface TypedEventQuery<T> extends EventQuery {
 
-public class TypedEventQuery<T> extends AbstractEventQuery {
-
-    private final T value;
-
-    public TypedEventQuery(final Cause cause, final EventContext context, final Skill skill, final T value) {
-        super(cause, context, skill);
-        this.value = value;
-    }
-
-    public final T getValue() {
-        return this.value;
-    }
+    T getValue();
 }

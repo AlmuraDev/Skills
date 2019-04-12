@@ -22,28 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query.transaction;
+package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
-import org.inspirenxe.skills.api.skill.builtin.query.element.TransactionElement;
-import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
+import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
+import org.spongepowered.api.event.Event;
 
-public abstract class AbstractTransactionQuery<T extends DataSerializable> extends AbstractEventQuery implements TransactionElement<T> {
+import java.util.function.Predicate;
 
-    private final Transaction<T> transaction;
+public abstract class AbstractEventProcessor implements EventProcessor {
 
-    public AbstractTransactionQuery(final Cause cause, final EventContext context, final Skill skill, final Transaction<T> transaction) {
-        super(cause, context, skill);
+    private final String id, name;
+    private final Predicate<Event> shouldProcess;
 
-        this.transaction = transaction;
+    AbstractEventProcessor(final String id, final String name,
+        final Predicate<Event> shouldProcess) {
+        this.id = id;
+        this.name = name;
+        this.shouldProcess = shouldProcess;
     }
 
     @Override
-    public final Transaction<T> getTransaction() {
-        return this.transaction;
+    public final String getId() {
+        return this.id;
+    }
+
+    @Override
+    public final String getName() {
+        return this.name;
+    }
+
+    @Override
+    public final boolean shouldProcess(final Event event) {
+        return this.shouldProcess.test(event);
     }
 }

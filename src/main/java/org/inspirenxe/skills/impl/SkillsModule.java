@@ -27,7 +27,6 @@ package org.inspirenxe.skills.impl;
 import com.almuradev.toolbox.inject.ToolboxBinder;
 import com.almuradev.toolbox.inject.command.CommandInstaller;
 import com.almuradev.toolbox.inject.event.WitnessModule;
-import com.almuradev.toolbox.inject.registry.RegistryInstaller;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import com.google.inject.binder.LinkedBindingBuilder;
@@ -38,6 +37,7 @@ import net.kyori.xml.node.Node;
 import net.kyori.xml.node.parser.EnumParser;
 import net.kyori.xml.node.parser.Parser;
 import net.kyori.xml.node.parser.ParserBinder;
+import org.inspirenxe.skills.impl.skill.builtin.BuiltinModule;
 import org.inspirenxe.skills.impl.command.SkillsCommandProvider;
 import org.inspirenxe.skills.impl.configuration.ForConfiguration;
 import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
@@ -50,7 +50,6 @@ import org.inspirenxe.skills.impl.content.ContentModule;
 import org.inspirenxe.skills.impl.content.parser.value.PrimitiveStringToValueParser;
 import org.inspirenxe.skills.impl.content.parser.value.StringToValueParser;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
-import org.inspirenxe.skills.impl.event.BlockCreationTracker;
 import org.inspirenxe.skills.impl.skill.SkillImpl;
 import org.inspirenxe.skills.impl.skill.holder.SkillHolderContainerImpl;
 import org.inspirenxe.skills.impl.skill.holder.SkillHolderImpl;
@@ -73,6 +72,7 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
         this.install(new WitnessModule());
         this.install(new ContentModule());
+        this.install(new BuiltinModule());
 
         // Register factories (for assisted injections)
         this.installFactory(SkillServiceImpl.Factory.class);
@@ -82,32 +82,24 @@ public final class SkillsModule extends AbstractModule implements ToolboxBinder 
 
         final ParserBinder parsers = new ParserBinder(this.binder());
         parsers.bindParser(PluginConfiguration.class).to(PluginConfigurationParser.class);
-        parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {
-        });
+        parsers.bindParser(SQLDialect.class).to(new TypeLiteral<EnumParser<SQLDialect>>() {});
         parsers.bindParser(DatabaseConfiguration.class).to(DatabaseConfigurationParser.class);
         parsers.bindParser(ContainerShareConfiguration.class).to(ContainerShareConfigurationParser.class);
-        this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {
-        });
-        this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {
-        });
-        this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {
-        });
+        this.bindRawParser(Boolean.class).to(new TypeLiteral<PrimitiveStringToValueParser<Boolean>>() {});
+        this.bindRawParser(String.class).to(new TypeLiteral<PrimitiveStringToValueParser<String>>() {});
+        this.bindRawParser(Integer.class).to(new TypeLiteral<PrimitiveStringToValueParser<Integer>>() {});
 
         // Register command tree
         this.command().rootProvider(SkillsCommandProvider.class, SkillsImpl.ID);
 
         this.facet()
             .add(CommandInstaller.class)
-            .add(RegistryInstaller.class)
             .add(DatabaseManager.class)
-            .add(SkillLoader.class)
-            .add(BlockCreationTracker.class);
+            .add(SkillLoader.class);
     }
 
     private <T> LinkedBindingBuilder<StringToValueParser<T>> bindRawParser(final Class<T> type) {
-        return this.bind(new FriendlyTypeLiteral<StringToValueParser<T>>() {
-        }.where(new TypeArgument<T>(type) {
-        }));
+        return this.bind(new FriendlyTypeLiteral<StringToValueParser<T>>() {}.where(new TypeArgument<T>(type) {}));
     }
 
     @ForConfiguration

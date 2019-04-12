@@ -26,6 +26,7 @@ package org.inspirenxe.skills.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 
 import java.text.DecimalFormat;
@@ -68,4 +69,6 @@ public interface SkillService {
     void saveContainer(UUID containerId);
 
     Optional<SkillHolderContainer> removeContainer(UUID containerId);
+
+    BlockCreationTracker getBlockCreationTracker();
 }

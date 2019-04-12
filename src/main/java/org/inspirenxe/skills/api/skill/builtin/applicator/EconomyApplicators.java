@@ -26,7 +26,7 @@ package org.inspirenxe.skills.api.skill.builtin.applicator;
 
 import com.almuradev.toolbox.util.math.DoubleRange;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
-import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.economy.Currency;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -36,16 +36,13 @@ import java.util.Random;
 
 public final class EconomyApplicators {
 
-    private EconomyApplicators() {
-    }
-
     public static Applicator money(final EconomyService service, final Currency currency, final double amount) {
         return query -> {
-            if (!(query instanceof AbstractEventQuery)) {
+            if (!(query instanceof EventQuery)) {
                 return;
             }
 
-            final AbstractEventQuery eventQuery = (AbstractEventQuery) query;
+            final EventQuery eventQuery = (EventQuery) query;
             eventQuery.getCause().first(User.class).ifPresent(user -> {
                 if (service.hasAccount(user.getUniqueId())) {
                     service.getOrCreateAccount(user.getUniqueId()).get().deposit(currency, BigDecimal.valueOf(amount), eventQuery.getCause());
@@ -57,11 +54,11 @@ public final class EconomyApplicators {
     public static Applicator scaledMoney(final EconomyService service, final EconomyFunctionType function, final Currency currency,
         final double base) {
         return query -> {
-            if (!(query instanceof AbstractEventQuery)) {
+            if (!(query instanceof EventQuery)) {
                 return;
             }
 
-            final AbstractEventQuery eventQuery = (AbstractEventQuery) query;
+            final EventQuery eventQuery = (EventQuery) query;
             eventQuery.getCause().first(User.class).ifPresent(user -> {
                 if (service.hasAccount(user.getUniqueId())) {
                     service.getOrCreateAccount(user.getUniqueId()).get()
@@ -74,11 +71,11 @@ public final class EconomyApplicators {
     public static Applicator variableScaledMoney(final EconomyService service, final EconomyFunctionType function, final Currency currency,
         final DoubleRange range, final Random random) {
         return query -> {
-            if (!(query instanceof AbstractEventQuery)) {
+            if (!(query instanceof EventQuery)) {
                 return;
             }
 
-            final AbstractEventQuery eventQuery = (AbstractEventQuery) query;
+            final EventQuery eventQuery = (EventQuery) query;
             eventQuery.getCause().first(User.class).ifPresent(user -> {
                 if (service.hasAccount(user.getUniqueId())) {
                     service.getOrCreateAccount(user.getUniqueId()).get()
@@ -87,5 +84,8 @@ public final class EconomyApplicators {
                 }
             });
         };
+    }
+
+    private EconomyApplicators() {
     }
 }

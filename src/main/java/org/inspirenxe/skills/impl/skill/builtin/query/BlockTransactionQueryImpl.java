@@ -22,18 +22,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query.transaction;
+package org.inspirenxe.skills.impl.skill.builtin.query;
 
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
 import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.BlockTransactionEventQuery;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public class ItemStackSnapshotTransactionQuery extends AbstractTransactionQuery<ItemStackSnapshot> {
+import java.util.Set;
 
-    public ItemStackSnapshotTransactionQuery(final Cause cause, final EventContext context, final Skill skill,
-        final Transaction<ItemStackSnapshot> transaction) {
-        super(cause, context, skill, transaction);
+public final class BlockTransactionQueryImpl implements BlockTransactionEventQuery {
+
+    private final Cause cause;
+    private final EventContext context;
+    private final Skill skill;
+    private final Transaction<BlockSnapshot> transaction;
+    private final Set<BlockCreationFlags> creationFlags;
+
+    public BlockTransactionQueryImpl(final Cause cause, final EventContext context, final Skill skill, final Transaction<BlockSnapshot> transaction,
+        final Set<BlockCreationFlags> creationFlags) {
+        this.cause = cause;
+        this.context = context;
+        this.skill = skill;
+        this.transaction = transaction;
+        this.creationFlags = creationFlags;
+    }
+
+    @Override
+    public Cause getCause() {
+        return this.cause;
+    }
+
+    @Override
+    public EventContext getContext() {
+        return this.context;
+    }
+
+    @Override
+    public Skill getSkill() {
+        return this.skill;
+    }
+
+    @Override
+    public Transaction<BlockSnapshot> getTransaction() {
+        return this.transaction;
+    }
+
+    @Override
+    public Set<BlockCreationFlags> getCreationFlags() {
+        return this.creationFlags;
     }
 }

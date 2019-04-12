@@ -26,12 +26,9 @@ package org.inspirenxe.skills.api.skill.builtin.filter.level;
 
 import net.kyori.filter.FilterQuery;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 
 public final class LevelFilters {
-
-    private LevelFilters() {
-    }
 
     public static LevelFilter level(final int level) {
         return new LevelFilter() {
@@ -41,14 +38,17 @@ public final class LevelFilters {
             }
 
             @Override
-            public boolean queryResponse(@NonNull final AbstractEventQuery query) {
+            public boolean queryResponse(@NonNull final EventQuery query) {
                 return level <= query.getSkill().getCurrentLevel();
             }
 
             @Override
             public boolean queryable(@NonNull final FilterQuery query) {
-                return query instanceof AbstractEventQuery;
+                return query instanceof EventQuery;
             }
         };
+    }
+
+    private LevelFilters() {
     }
 }

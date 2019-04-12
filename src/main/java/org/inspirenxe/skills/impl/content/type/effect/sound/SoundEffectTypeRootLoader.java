@@ -25,28 +25,21 @@
 package org.inspirenxe.skills.impl.content.type.effect.sound;
 
 import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
-import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
-import com.google.inject.Inject;
+import com.almuradev.toolbox.inject.event.WitnessScope;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.effect.sound.SoundEffectType;
 import org.inspirenxe.skills.impl.content.type.effect.ContentEffectType;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.GameRegistryEvent;
 
 @Singleton
+@WitnessScope.Sponge
 public final class SoundEffectTypeRootLoader extends ChildContentLoaderImpl<ContentEffectType.Child> implements Witness {
 
-    private final Registry<SoundEffectType> registry;
-
-    @Inject
-    public SoundEffectTypeRootLoader(final Registry<SoundEffectType> registry) {
-        this.registry = registry;
-    }
-
-    @Listener(order = Order.AFTER_PRE)
-    public void onGameStartingServer(final GameStartingServerEvent event) {
-        this.foundContent().entries().forEach(entry -> this.registry.put(entry.key(), entry.result(SoundEffectType.class)));
+    @Listener(order = Order.FIRST)
+    public void onGameRegistryRegister(final GameRegistryEvent.Register<SoundEffectType> event) {
+        this.foundContent().entries().forEach(entry -> event.register(entry.result(SoundEffectType.class)));
     }
 }

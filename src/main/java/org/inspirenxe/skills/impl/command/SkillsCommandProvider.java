@@ -511,8 +511,7 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
     }
 
     private CommandResult handleSkillsXP(final CommandSource source, final User target, final SkillHolderContainer container,
-        final SkillHolder holder,
-        final SkillType skillType, final String mode, final double xp) {
+        final SkillHolder holder, final SkillType skillType, final String mode, final double xp) {
 
         final boolean feedback = source instanceof ConsoleSource || (source instanceof Player && ((Player) source).isOnline());
 

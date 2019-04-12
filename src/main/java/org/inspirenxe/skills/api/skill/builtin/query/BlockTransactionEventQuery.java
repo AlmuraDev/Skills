@@ -22,13 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query.element;
+package org.inspirenxe.skills.api.skill.builtin.query;
 
 import org.inspirenxe.skills.api.event.BlockCreationFlags;
+import org.spongepowered.api.block.BlockSnapshot;
 
 import java.util.Set;
 
-public interface BlockCreationElement {
+public interface BlockTransactionEventQuery extends TransactionEventQuery<BlockSnapshot>, TypedEventQuery<BlockSnapshot> {
 
     Set<BlockCreationFlags> getCreationFlags();
+
+    default BlockSnapshot getValue() {
+        return this.getTransaction().getOriginal();
+    }
 }

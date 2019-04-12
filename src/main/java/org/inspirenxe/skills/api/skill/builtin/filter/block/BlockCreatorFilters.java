@@ -24,8 +24,6 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.filter.block;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.inspirenxe.skills.api.skill.builtin.query.transaction.BlockSnapshotTransactionQuery;
 import org.spongepowered.api.entity.living.player.User;
 
 import java.util.UUID;
@@ -35,67 +33,55 @@ public final class BlockCreatorFilters {
     private static final BlockCreatorFilter CREATOR_ONLY, CREATOR_OR_NATURAL, CREATOR_TRACKED_OR_NATURAL, NATURAL;
 
     static {
-        CREATOR_ONLY = new BlockCreatorFilter() {
-            @Override
-            public boolean queryResponse(@NonNull final BlockSnapshotTransactionQuery query) {
-                final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
-                if (creator == null) {
-                    return false;
-                }
-
-                final User user = query.getCause().first(User.class).orElse(null);
-                if (user == null) {
-                    return false;
-                }
-
-                return user.getUniqueId().equals(creator);
+        CREATOR_ONLY = query -> {
+            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            if (creator == null) {
+                return false;
             }
+
+            final User user = query.getCause().first(User.class).orElse(null);
+            if (user == null) {
+                return false;
+            }
+
+            return user.getUniqueId().equals(creator);
         };
 
-        CREATOR_OR_NATURAL = new BlockCreatorFilter() {
-            @Override
-            public boolean queryResponse(@NonNull final BlockSnapshotTransactionQuery query) {
-                final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
-                if (creator == null) {
-                    return true;
-                }
-
-                final User user = query.getCause().first(User.class).orElse(null);
-                if (user == null) {
-                    return false;
-                }
-
-                return user.getUniqueId().equals(creator);
+        CREATOR_OR_NATURAL = query -> {
+            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            if (creator == null) {
+                return true;
             }
+
+            final User user = query.getCause().first(User.class).orElse(null);
+            if (user == null) {
+                return false;
+            }
+
+            return user.getUniqueId().equals(creator);
         };
 
-        CREATOR_TRACKED_OR_NATURAL = new BlockCreatorFilter() {
-            @Override
-            public boolean queryResponse(@NonNull final BlockSnapshotTransactionQuery query) {
-                final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
-                if (creator == null) {
-                    return true;
-                }
-
-                final User user = query.getCause().first(User.class).orElse(null);
-                if (user == null) {
-                    return false;
-                }
-
-                if (!user.getUniqueId().equals(creator)) {
-                    return false;
-                }
-
-                return !query.getCreationFlags().isEmpty();
+        CREATOR_TRACKED_OR_NATURAL = query -> {
+            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            if (creator == null) {
+                return true;
             }
+
+            final User user = query.getCause().first(User.class).orElse(null);
+            if (user == null) {
+                return false;
+            }
+
+            if (!user.getUniqueId().equals(creator)) {
+                return false;
+            }
+
+            return !query.getCreationFlags().isEmpty();
         };
 
-        NATURAL = new BlockCreatorFilter() {
-            @Override
-            public boolean queryResponse(@NonNull final BlockSnapshotTransactionQuery query) {
-                final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
-                return creator == null;
-            }
+        NATURAL = query -> {
+            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            return creator == null;
         };
     }
 

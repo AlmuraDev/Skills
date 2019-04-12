@@ -25,28 +25,28 @@
 package org.inspirenxe.skills.api.skill.builtin.applicator;
 
 import com.almuradev.toolbox.util.math.DoubleRange;
-import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 
 import java.util.Random;
 
 public final class XPApplicators {
 
-    private XPApplicators() {
-    }
-
     public static Applicator xp(final double amount) {
         return query -> {
-            if (query instanceof AbstractEventQuery) {
-                ((AbstractEventQuery) query).getSkill().addExperience(amount);
+            if (query instanceof EventQuery) {
+                ((EventQuery) query).getSkill().addExperience(amount);
             }
         };
     }
 
     public static Applicator variableXP(final DoubleRange range, final Random random) {
         return query -> {
-            if (query instanceof AbstractEventQuery) {
-                ((AbstractEventQuery) query).getSkill().addExperience(range.random(random));
+            if (query instanceof EventQuery) {
+                ((EventQuery) query).getSkill().addExperience(range.random(random));
             }
         };
+    }
+
+    private XPApplicators() {
     }
 }

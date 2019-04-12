@@ -27,12 +27,12 @@ package org.inspirenxe.skills.api.skill.builtin.filter.block;
 import net.kyori.filter.FilterQuery;
 import net.kyori.filter.TypedFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.inspirenxe.skills.api.skill.builtin.query.transaction.BlockSnapshotTransactionQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.BlockTransactionEventQuery;
 
-public abstract class BlockCreatorFilter implements TypedFilter.Strong<BlockSnapshotTransactionQuery> {
+public interface BlockCreatorFilter extends TypedFilter.Strong<BlockTransactionEventQuery> {
 
     @Override
-    public final boolean queryable(@NonNull final FilterQuery query) {
-        return query instanceof BlockSnapshotTransactionQuery;
+    default boolean queryable(@NonNull final FilterQuery query) {
+        return query instanceof BlockTransactionEventQuery;
     }
 }

@@ -78,15 +78,15 @@ public final class FuzzyBlockState implements FuzzyMatchable<BlockSnapshot> {
             return false;
         }
 
-        boolean matches = false;
+        boolean matches = true;
         for (TraitValue value : this.traits) {
             final Comparable<?> actualValue = snapshot.getState().getTraitValue(value.getTrait()).orElse(null);
             if (actualValue == null) {
                 continue;
             }
 
-            if (hackyEqualsCheck(actualValue, value.getValue())) {
-                matches = true;
+            if (!hackyEqualsCheck(actualValue, value.getValue())) {
+                matches = false;
                 break;
             }
         }

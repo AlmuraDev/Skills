@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.event;
+package org.inspirenxe.skills.impl.skill.builtin.event;
 
 import com.almuradev.toolbox.inject.event.Witness;
 import com.almuradev.toolbox.inject.event.WitnessScope;
@@ -31,6 +31,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.longs.Long2LongArrayMap;
 import org.inspirenxe.skills.api.event.BlockCreationFlags;
+import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
 import org.inspirenxe.skills.generated.tables.SkillsBlockCreation;
 import org.inspirenxe.skills.generated.tables.records.SkillsContainerPaletteRecord;
 import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
@@ -70,7 +71,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @WitnessScope.Sponge
-public final class BlockCreationTracker implements Witness {
+public final class BlockCreationTrackerImpl implements Witness, BlockCreationTracker {
 
     private final PluginContainer container;
     private final PluginConfiguration pluginConfiguration;
@@ -83,7 +84,7 @@ public final class BlockCreationTracker implements Witness {
     private final Map<UUID, Task> batcherTasks = new HashMap<>();
 
     @Inject
-    public BlockCreationTracker(final PluginContainer container, final PluginConfiguration pluginConfiguration, final DatabaseManager databaseManager,
+    public BlockCreationTrackerImpl(final PluginContainer container, final PluginConfiguration pluginConfiguration, final DatabaseManager databaseManager,
         final Scheduler scheduler) {
         this.container = container;
         this.pluginConfiguration = pluginConfiguration;
@@ -275,6 +276,7 @@ public final class BlockCreationTracker implements Witness {
         }
     }
 
+    @Override
     public Set<BlockCreationFlags> getCreationFlags(final BlockSnapshot snapshot) {
         final Location<World> location = snapshot.getLocation().orElse(null);
         if (location == null) {

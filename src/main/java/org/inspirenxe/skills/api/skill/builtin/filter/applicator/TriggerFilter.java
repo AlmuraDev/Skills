@@ -70,16 +70,16 @@ public final class TriggerFilter extends MultiFilter {
         final List<ApplicatorEntry> matched = new ArrayList<>();
 
         for (final ApplicatorEntry entry : this.applicatorEntries) {
-            FilterResponse response = FilterResponse.ALLOW;
+            boolean passed = true;
 
             for (final Filter filter : entry.getFilters()) {
-                if (filter.query(query) == FilterResponse.DENY) {
-                    response = FilterResponse.DENY;
+                if (filter.query(query) != FilterResponse.ALLOW) {
+                    passed = false;
                     break;
                 }
             }
 
-            if (response == FilterResponse.ALLOW) {
+            if (passed) {
                 matched.add(entry);
             }
         }

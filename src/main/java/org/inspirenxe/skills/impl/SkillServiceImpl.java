@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Inject;
 import org.inspirenxe.skills.api.SkillService;
+import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
@@ -50,18 +51,19 @@ public final class SkillServiceImpl implements SkillService {
     private final Scheduler scheduler;
     private final PluginConfiguration pluginConfiguration;
     private final SkillHolderContainerImpl.Factory factory;
-
+    private final BlockCreationTracker tracker;
     private final Map<UUID, SkillHolderContainer> containers = new HashMap<>();
     private final Map<UUID, Task> tasks = new HashMap<>();
     private final Map<UUID, SaveContainerToDatabase> runnables = new HashMap<>();
 
     @Inject
-    public SkillServiceImpl(final PluginContainer container, final Scheduler scheduler,
-        final PluginConfiguration pluginConfiguration, final SkillHolderContainerImpl.Factory factory) {
+    public SkillServiceImpl(final PluginContainer container, final Scheduler scheduler, final PluginConfiguration pluginConfiguration,
+        final SkillHolderContainerImpl.Factory factory, final BlockCreationTracker tracker) {
         this.container = container;
         this.scheduler = scheduler;
         this.pluginConfiguration = pluginConfiguration;
         this.factory = factory;
+        this.tracker = tracker;
     }
 
     @Override
@@ -154,6 +156,11 @@ public final class SkillServiceImpl implements SkillService {
         }
 
         return Optional.of(container);
+    }
+
+    @Override
+    public BlockCreationTracker getBlockCreationTracker() {
+        return this.tracker;
     }
 
     public interface Factory {

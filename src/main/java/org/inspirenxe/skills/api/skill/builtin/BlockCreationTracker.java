@@ -22,37 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.registry.module;
+package org.inspirenxe.skills.api.skill.builtin;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
+import org.spongepowered.api.block.BlockSnapshot;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
+import java.util.Set;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+public interface BlockCreationTracker {
 
-@Singleton
-public final class PotionEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<PotionEffectType> {
-
-    private final Map<String, PotionEffectType> map = new HashMap<>();
-
-    @Override
-    public void registerAdditionalCatalog(final PotionEffectType catalogType) {
-        this.map.put(checkNotNull(catalogType).getId(), catalogType);
-    }
-
-    @Override
-    public Optional<PotionEffectType> getById(final String id) {
-        return Optional.ofNullable(this.map.get(checkNotNull(id)));
-    }
-
-    @Override
-    public Collection<PotionEffectType> getAll() {
-        return Collections.unmodifiableCollection(this.map.values());
-    }
+    Set<BlockCreationFlags> getCreationFlags(final BlockSnapshot snapshot);
 }

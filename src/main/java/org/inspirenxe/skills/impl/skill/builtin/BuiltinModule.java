@@ -22,37 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.content.registry.module;
+package org.inspirenxe.skills.impl.skill.builtin;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.almuradev.toolbox.inject.ToolboxBinder;
+import net.kyori.violet.AbstractModule;
+import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
+import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.EventFilterProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.BlockCreationTrackerImpl;
+import org.inspirenxe.skills.impl.skill.builtin.event.EventProcessorModule;
+import org.inspirenxe.skills.impl.skill.builtin.registry.module.EventProcessorRegistryModule;
 
-import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.effect.potion.PotionEffectType;
-import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-@Singleton
-public final class PotionEffectTypeRegistryModule implements AdditionalCatalogRegistryModule<PotionEffectType> {
-
-    private final Map<String, PotionEffectType> map = new HashMap<>();
+public final class BuiltinModule extends AbstractModule implements ToolboxBinder {
 
     @Override
-    public void registerAdditionalCatalog(final PotionEffectType catalogType) {
-        this.map.put(checkNotNull(catalogType).getId(), catalogType);
-    }
+    protected void configure() {
+        this.install(new EventProcessorModule());
 
-    @Override
-    public Optional<PotionEffectType> getById(final String id) {
-        return Optional.ofNullable(this.map.get(checkNotNull(id)));
-    }
+        this.bind(BlockCreationTracker.class).to(BlockCreationTrackerImpl.class);
 
-    @Override
-    public Collection<PotionEffectType> getAll() {
-        return Collections.unmodifiableCollection(this.map.values());
+        this.registry()
+            .module(EventProcessor.class, EventProcessorRegistryModule.class);
+
+        this.facet()
+            .add(BlockCreationTrackerImpl.class)
+            .add(EventFilterProcessor.class);
     }
 }

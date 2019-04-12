@@ -25,9 +25,9 @@
 package org.inspirenxe.skills.api.skill.builtin.filter.level;
 
 import net.kyori.filter.TypedFilter;
-import org.inspirenxe.skills.api.skill.builtin.query.AbstractEventQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 
-public interface LevelFilter extends TypedFilter.Strong<AbstractEventQuery> {
+public interface LevelFilter extends TypedFilter.Strong<EventQuery> {
 
     int getLevel();
 }

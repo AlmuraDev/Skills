@@ -22,31 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query.transaction;
+package org.inspirenxe.skills.impl.skill.builtin.event;
 
-import org.inspirenxe.skills.api.event.BlockCreationFlags;
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.builtin.query.element.BlockCreationElement;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
+import com.google.inject.Inject;
+import net.kyori.violet.AbstractModule;
+import org.inspirenxe.skills.impl.skill.builtin.registry.module.EventProcessorRegistryModule;
 
-import java.util.Set;
+public final class EventProcessorModule extends AbstractModule {
 
-public class BlockSnapshotTransactionQuery extends AbstractTransactionQuery<BlockSnapshot> implements BlockCreationElement {
-
-    private final Set<BlockCreationFlags> creationFlags;
-
-    public BlockSnapshotTransactionQuery(final Cause cause, final EventContext context, final Skill skill,
-        final Transaction<BlockSnapshot> transaction,
-        final Set<BlockCreationFlags> creationFlags) {
-        super(cause, context, skill, transaction);
-        this.creationFlags = creationFlags;
-    }
+    @Inject
+    private EventProcessorRegistryModule processorModule;
 
     @Override
-    public final Set<BlockCreationFlags> getCreationFlags() {
-        return this.creationFlags;
+    protected void configure() {
+        this.requestInjection(this);
+    }
+
+    @Inject
+    public void earlyConfigure() {
+        // This needs to happen super early
+        //this.processorModule.registerAdditionalCatalog(new UserChangeBlockBreakEventProcessor());
     }
 }

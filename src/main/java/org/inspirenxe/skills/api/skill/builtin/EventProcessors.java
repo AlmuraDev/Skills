@@ -22,17 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query.element;
+package org.inspirenxe.skills.api.skill.builtin;
+import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
+public final class EventProcessors {
 
-public interface EventElement {
+    public static EventProcessor USER_INTERACT_ITEM = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_ITEM");
 
-    Cause getCause();
+    public static EventProcessor USER_CHANGE_BLOCK_BREAK = DummyObjectProvider.createFor(EventProcessor.class, "USER_CHANGE_BLOCK_BREAK");
 
-    EventContext getContext();
-
-    Skill getSkill();
+    private EventProcessors() {}
 }

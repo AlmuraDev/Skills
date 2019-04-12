@@ -45,7 +45,7 @@ public final class ApplicatorEntry {
         return new Builder();
     }
 
-    Iterable<Filter> getFilters() {
+    public Iterable<Filter> getFilters() {
         return this.filters;
     }
 
