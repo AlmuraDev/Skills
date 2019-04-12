@@ -36,8 +36,11 @@ import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 import org.inspirenxe.skills.impl.skill.builtin.query.BlockTransactionQueryImpl;
 import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
+import org.inspirenxe.skills.impl.skill.builtin.query.PlayerBlockTransactionQueryImpl;
+import org.inspirenxe.skills.impl.skill.builtin.query.PlayerEventQueryImpl;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
@@ -52,6 +55,11 @@ public final class UserChangeBlockBreakEventProcessor extends AbstractEventProce
 
     @Override
     public void process(final Event event, final SkillService service, final Skill skill) {
+        final User user = event.getCause().first(User.class).orElse(null);
+        if (user == null) {
+            return;
+        }
+
         final ChangeBlockEvent.Break breakEvent = (ChangeBlockEvent.Break) event;
 
         final BasicSkillType skillType = (BasicSkillType) skill.getSkillType();
@@ -63,7 +71,13 @@ public final class UserChangeBlockBreakEventProcessor extends AbstractEventProce
         for (final FilterRegistrar registration : filterRegistrations) {
             // TODO Event Triggers
             if (registration.getCancelEvent() != null) {
-                query = new EventQueryImpl(event.getCause(), event.getContext(), skill);
+
+                if (user.getPlayer().isPresent()) {
+                    query = new PlayerEventQueryImpl(event.getCause(), event.getContext(), skill, user.getPlayer().get());
+                } else {
+                    query = new EventQueryImpl(event.getCause(), event.getContext(), skill);
+                }
+
                 if (registration.getCancelEvent().query(query) == FilterResponse.DENY) {
                     breakEvent.setCancelled(true);
                     break;
@@ -74,7 +88,12 @@ public final class UserChangeBlockBreakEventProcessor extends AbstractEventProce
                 for (final Transaction<BlockSnapshot> transaction : breakEvent.getTransactions()) {
                     final Set<BlockCreationFlags> flags = service.getBlockCreationTracker().getCreationFlags(transaction.getOriginal());
 
-                    query = new BlockTransactionQueryImpl(event.getCause(), event.getContext(), skill, transaction, flags);
+                    if (user.getPlayer().isPresent()) {
+                        query = new PlayerBlockTransactionQueryImpl(event.getCause(), event.getContext(), user.getPlayer().get(), skill, transaction,
+                            flags);
+                    } else {
+                        query = new BlockTransactionQueryImpl(event.getCause(), event.getContext(), skill, transaction, flags);
+                    }
 
                     if (registration.getCancelTransaction() != null) {
                         if (registration.getCancelTransaction().query(query) == FilterResponse.DENY) {

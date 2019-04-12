@@ -22,25 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.util;
+package org.inspirenxe.skills.impl.skill.builtin.query;
 
-public class ObjectUtil {
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.PlayerQuery;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 
-    public static boolean dynamicEqualsCheck(final Object a, final Object b) {
-        if (a instanceof String) {
-            return a.toString().equalsIgnoreCase(b.toString());
-        }
+public final class PlayerEventQueryImpl implements PlayerQuery {
 
-        if (a instanceof Enum) {
-            return ((Enum) a).name().equalsIgnoreCase(b.toString());
-        }
+    private final Cause cause;
+    private final EventContext context;
+    private final Skill skill;
+    private final Player player;
 
-        if (a instanceof Number) {
-            return a == b;
-        }
-
-        return a.equals(b);
+    public PlayerEventQueryImpl(final Cause cause, final EventContext context, final Skill skill, final Player player) {
+        this.cause = cause;
+        this.context = context;
+        this.skill = skill;
+        this.player = player;
     }
 
-    private ObjectUtil() {}
+    @Override
+    public Cause getCause() {
+        return this.cause;
+    }
+
+    @Override
+    public EventContext getContext() {
+        return this.context;
+    }
+
+    @Override
+    public Skill getSkill() {
+        return this.skill;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
 }

@@ -22,25 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.util;
+package org.inspirenxe.skills.api.skill.builtin.filter.gamemode;
 
-public class ObjectUtil {
+import net.kyori.filter.TypedFilter;
+import org.inspirenxe.skills.api.skill.builtin.query.PlayerQuery;
+import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 
-    public static boolean dynamicEqualsCheck(final Object a, final Object b) {
-        if (a instanceof String) {
-            return a.toString().equalsIgnoreCase(b.toString());
-        }
+public interface GameModeFilter extends TypedFilter.Strong<PlayerQuery> {
 
-        if (a instanceof Enum) {
-            return ((Enum) a).name().equalsIgnoreCase(b.toString());
-        }
-
-        if (a instanceof Number) {
-            return a == b;
-        }
-
-        return a.equals(b);
-    }
-
-    private ObjectUtil() {}
+    GameMode getGameMode();
 }

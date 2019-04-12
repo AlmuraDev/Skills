@@ -22,25 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.util;
+package org.inspirenxe.skills.impl.skill.builtin.query;
 
-public class ObjectUtil {
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.PlayerQuery;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
 
-    public static boolean dynamicEqualsCheck(final Object a, final Object b) {
-        if (a instanceof String) {
-            return a.toString().equalsIgnoreCase(b.toString());
-        }
+import java.util.Set;
 
-        if (a instanceof Enum) {
-            return ((Enum) a).name().equalsIgnoreCase(b.toString());
-        }
+public final class PlayerBlockTransactionQueryImpl extends BlockTransactionQueryImpl implements PlayerQuery {
 
-        if (a instanceof Number) {
-            return a == b;
-        }
+    private final Player player;
 
-        return a.equals(b);
+    public PlayerBlockTransactionQueryImpl(final Cause cause, final EventContext context, final Player player, final Skill skill,
+        final Transaction<BlockSnapshot> transaction, final Set<BlockCreationFlags> creationFlags) {
+        super(cause, context, skill, transaction, creationFlags);
+        this.player = player;
     }
 
-    private ObjectUtil() {}
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
 }

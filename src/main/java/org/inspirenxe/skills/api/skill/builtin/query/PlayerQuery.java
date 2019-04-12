@@ -22,25 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.util;
+package org.inspirenxe.skills.api.skill.builtin.query;
 
-public class ObjectUtil {
+import org.spongepowered.api.entity.living.player.Player;
 
-    public static boolean dynamicEqualsCheck(final Object a, final Object b) {
-        if (a instanceof String) {
-            return a.toString().equalsIgnoreCase(b.toString());
-        }
+public interface PlayerQuery extends EventQuery {
 
-        if (a instanceof Enum) {
-            return ((Enum) a).name().equalsIgnoreCase(b.toString());
-        }
-
-        if (a instanceof Number) {
-            return a == b;
-        }
-
-        return a.equals(b);
-    }
-
-    private ObjectUtil() {}
+    Player getPlayer();
 }

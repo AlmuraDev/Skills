@@ -34,7 +34,7 @@ import org.spongepowered.api.event.cause.EventContext;
 
 import java.util.Set;
 
-public final class BlockTransactionQueryImpl implements BlockTransactionEventQuery {
+public class BlockTransactionQueryImpl implements BlockTransactionEventQuery {
 
     private final Cause cause;
     private final EventContext context;
