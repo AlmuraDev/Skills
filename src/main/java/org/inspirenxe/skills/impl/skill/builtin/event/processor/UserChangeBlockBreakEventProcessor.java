@@ -96,7 +96,8 @@ public final class UserChangeBlockBreakEventProcessor extends AbstractEventProce
                     }
 
                     if (registration.getCancelTransaction() != null) {
-                        if (registration.getCancelTransaction().query(query) == FilterResponse.DENY) {
+                        FilterResponse response = registration.getCancelTransaction().query(query);
+                        if (response == FilterResponse.DENY) {
                             transaction.setValid(false);
                             continue;
                         }

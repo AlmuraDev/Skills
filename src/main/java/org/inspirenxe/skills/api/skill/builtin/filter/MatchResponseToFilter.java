@@ -22,34 +22,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.filter.level;
+package org.inspirenxe.skills.api.skill.builtin.filter;
 
+import net.kyori.filter.Filter;
 import net.kyori.filter.FilterQuery;
+import net.kyori.filter.FilterResponse;
+import net.kyori.filter.MultiFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 
-public final class LevelFilters {
+public final class MatchResponseToFilter extends MultiFilter {
 
-    public static LevelFilter level(final int level) {
-        return new LevelFilter() {
-            @Override
-            public int getLevel() {
-                return level;
-            }
-
-            @Override
-            public boolean queryResponse(@NonNull final EventQuery query) {
-                final int currentLevel = query.getSkill().getCurrentLevel();
-                return level <= currentLevel;
-            }
-
-            @Override
-            public boolean queryable(@NonNull final FilterQuery query) {
-                return query instanceof EventQuery;
-            }
-        };
+    public static MatchResponseToFilter matchTo(@NonNull Iterable<? extends Filter> filters, final FilterResponse response) {
+        return new MatchResponseToFilter(filters, response);
     }
 
-    private LevelFilters() {
+    private final FilterResponse response;
+
+    private MatchResponseToFilter(@NonNull final Iterable<? extends Filter> filters, final FilterResponse response) {
+        super(filters);
+        this.response = response;
+    }
+
+    @Override
+    public @NonNull FilterResponse query(@NonNull final FilterQuery query) {
+        for (final Filter filter : this.filters) {
+            FilterResponse fResponse = filter.query(query);
+            if (fResponse != this.response) {
+                return FilterResponse.ABSTAIN;
+            }
+        }
+        return this.response;
     }
 }

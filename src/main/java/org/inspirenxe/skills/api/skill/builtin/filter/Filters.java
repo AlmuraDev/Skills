@@ -22,34 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.filter.level;
+package org.inspirenxe.skills.api.skill.builtin.filter;
 
-import net.kyori.filter.FilterQuery;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
+import com.google.common.collect.Lists;
+import net.kyori.filter.Filter;
 
-public final class LevelFilters {
+public final class Filters {
 
-    public static LevelFilter level(final int level) {
-        return new LevelFilter() {
-            @Override
-            public int getLevel() {
-                return level;
-            }
-
-            @Override
-            public boolean queryResponse(@NonNull final EventQuery query) {
-                final int currentLevel = query.getSkill().getCurrentLevel();
-                return level <= currentLevel;
-            }
-
-            @Override
-            public boolean queryable(@NonNull final FilterQuery query) {
-                return query instanceof EventQuery;
-            }
-        };
-    }
-
-    private LevelFilters() {
+    public static Iterable<? extends Filter> filters(final Filter... filters) {
+        return Lists.newArrayList(filters);
     }
 }
