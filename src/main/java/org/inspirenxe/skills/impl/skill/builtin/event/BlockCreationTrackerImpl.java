@@ -189,7 +189,7 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
         final ChangeBlockEvent.Break breakEvent = event.getCause().first(ChangeBlockEvent.Break.class).orElse(null);
         final ChangeBlockEvent.Decay decayEvent = event.getCause().first(ChangeBlockEvent.Decay.class).orElse(null);
         final ChangeBlockEvent.Place placeEvent = event.getCause().first(ChangeBlockEvent.Place.class).orElse(null);
-
+        final ChangeBlockEvent.Grow growEvent = event.getCause().first(ChangeBlockEvent.Grow.class).orElse(null);
         if (breakEvent != null) {
             this.handleDeletions(breakEvent);
         }
@@ -198,7 +198,7 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
             this.handleDeletions(decayEvent);
         }
 
-        if (placeEvent != null) {
+        if (placeEvent != null || growEvent != null) {
             if (!event.getContext().get(EventContextKeys.OWNER).isPresent()) {
                 return;
             }
