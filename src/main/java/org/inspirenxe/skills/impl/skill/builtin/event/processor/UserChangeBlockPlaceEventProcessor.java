@@ -34,26 +34,27 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
-public final class UserChangeBlockBreakEventProcessor extends AbstractBlockTransactionEventProcessor {
+public final class UserChangeBlockPlaceEventProcessor extends AbstractBlockTransactionEventProcessor {
 
-    public UserChangeBlockBreakEventProcessor() {
-        super("skills:user_change_block_break", "User Change Block Break", event -> event instanceof ChangeBlockEvent.Break);
+    public UserChangeBlockPlaceEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
+        super(id, name, shouldProcess);
     }
 
     @Override
     public EventQuery getCancelTransactionQuery(final Event event, final User user, final SkillService service, final Skill skill,
         final Transaction<BlockSnapshot> transaction) {
-        final Set<BlockCreationFlags> flags = service.getBlockCreationTracker().getCreationFlags(transaction.getOriginal());
+
+        final Set<BlockCreationFlags> flags = service.getBlockCreationTracker().getCreationFlags(transaction.getFinal());
 
         if (user.getPlayer().isPresent()) {
             return new PlayerBlockTransactionQueryImpl(event.getCause(), event.getContext(), user.getPlayer().get(), skill, transaction,
-                flags, true);
+                flags, false);
         }
 
-        return new BlockTransactionQueryImpl(event.getCause(), event.getContext(), skill, transaction, flags, true);
+        return new BlockTransactionQueryImpl(event.getCause(), event.getContext(), skill, transaction, flags, false);
     }
 }

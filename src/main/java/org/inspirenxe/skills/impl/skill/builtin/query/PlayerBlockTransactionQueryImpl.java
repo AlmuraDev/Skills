@@ -40,8 +40,8 @@ public final class PlayerBlockTransactionQueryImpl extends BlockTransactionQuery
     private final Player player;
 
     public PlayerBlockTransactionQueryImpl(final Cause cause, final EventContext context, final Player player, final Skill skill,
-        final Transaction<BlockSnapshot> transaction, final Set<BlockCreationFlags> creationFlags) {
-        super(cause, context, skill, transaction, creationFlags);
+        final Transaction<BlockSnapshot> transaction, final Set<BlockCreationFlags> creationFlags, final boolean original) {
+        super(cause, context, skill, transaction, creationFlags, original);
         this.player = player;
     }
 

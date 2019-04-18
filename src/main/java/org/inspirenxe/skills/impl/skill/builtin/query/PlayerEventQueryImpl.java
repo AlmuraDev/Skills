@@ -30,33 +30,13 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 
-public final class PlayerEventQueryImpl implements PlayerQuery {
+public class PlayerEventQueryImpl extends EventQueryImpl implements PlayerQuery {
 
-    private final Cause cause;
-    private final EventContext context;
-    private final Skill skill;
     private final Player player;
 
     public PlayerEventQueryImpl(final Cause cause, final EventContext context, final Skill skill, final Player player) {
-        this.cause = cause;
-        this.context = context;
-        this.skill = skill;
+        super(cause, context, skill);
         this.player = player;
-    }
-
-    @Override
-    public Cause getCause() {
-        return this.cause;
-    }
-
-    @Override
-    public EventContext getContext() {
-        return this.context;
-    }
-
-    @Override
-    public Skill getSkill() {
-        return this.skill;
     }
 
     @Override

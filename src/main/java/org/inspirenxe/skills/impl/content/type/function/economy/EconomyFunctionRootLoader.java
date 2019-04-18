@@ -25,17 +25,14 @@
 package org.inspirenxe.skills.impl.content.type.function.economy;
 
 import com.almuradev.droplet.content.loader.ChildContentLoaderImpl;
-import com.almuradev.droplet.registry.Registry;
 import com.almuradev.toolbox.inject.event.Witness;
 import com.almuradev.toolbox.inject.event.WitnessScope;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
 import org.inspirenxe.skills.impl.content.type.function.ContentFunction;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.GameRegistryEvent;
-import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 
 @Singleton
 @WitnessScope.Sponge

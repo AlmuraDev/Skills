@@ -22,14 +22,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query;
+package org.inspirenxe.skills.impl.skill.builtin.query;
 
-import org.inspirenxe.skills.api.event.BlockCreationFlags;
-import org.spongepowered.api.block.BlockSnapshot;
+import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.query.PlayerQuery;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-import java.util.Set;
+public final class PlayerItemStackQuery extends ItemStackQuery implements PlayerQuery {
 
-public interface BlockTransactionEventQuery extends TransactionEventQuery<BlockSnapshot>, TypedEventQuery<BlockSnapshot> {
+    private final Player player;
 
-    Set<BlockCreationFlags> getCreationFlags();
+    public PlayerItemStackQuery(final Cause cause, final EventContext context, final Skill skill,
+        final Player player, final ItemStackSnapshot snapshot) {
+        super(cause, context, skill, snapshot);
+        this.player = player;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
 }

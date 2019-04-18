@@ -42,7 +42,13 @@ public final class GameModeFilters {
 
             @Override
             public boolean queryResponse(@NonNull final PlayerQuery query) {
-                return query.getPlayer().gameMode().get() == this.getGameMode();
+                final boolean matched = query.getPlayer().gameMode().get() == this.getGameMode();
+                if (!matched) {
+                    query.denied(this);
+                    return false;
+                }
+
+                return true;
             }
 
             @Override
@@ -62,7 +68,13 @@ public final class GameModeFilters {
 
             @Override
             public boolean queryResponse(@NonNull final PlayerQuery query) {
-                return query.getPlayer().gameMode().get() == this.getGameMode();
+                final boolean matched = query.getPlayer().gameMode().get() == this.getGameMode();
+                if (!matched) {
+                    query.denied(this);
+                    return false;
+                }
+
+                return true;
             }
 
             @Override
@@ -82,7 +94,13 @@ public final class GameModeFilters {
 
             @Override
             public boolean queryResponse(@NonNull final PlayerQuery query) {
-                return query.getPlayer().gameMode().get() == this.getGameMode();
+                final boolean matched = query.getPlayer().gameMode().get() == this.getGameMode();
+                if (!matched) {
+                    query.denied(this);
+                    return false;
+                }
+
+                return true;
             }
 
             @Override

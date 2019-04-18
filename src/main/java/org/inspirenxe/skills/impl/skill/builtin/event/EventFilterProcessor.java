@@ -42,10 +42,18 @@ import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.entity.projectile.Firework;
+import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
+import org.spongepowered.api.event.entity.DamageEntityEvent;
+import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
@@ -77,7 +85,6 @@ public final class EventFilterProcessor implements Witness {
             return;
         }
 
-        // TODO Need to get SkillHolder into the context somehow
         final User user = event.getCause().first(User.class).orElse(null);
         if (user == null) {
             return;
@@ -104,9 +111,13 @@ public final class EventFilterProcessor implements Witness {
         }
 
         for (final Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
-            for (final EventProcessor processor : this.processorModule.getAll()) {
-                if (processor.shouldProcess(event)) {
-                    processor.process(event, service, skillEntry.getValue());
+            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                frame.pushCause(skillEntry.getValue());
+
+                for (final EventProcessor processor : this.processorModule.getAll()) {
+                    if (processor.shouldProcess(event)) {
+                        processor.process(event, service, skillEntry.getValue());
+                    }
                 }
             }
         }
@@ -123,18 +134,10 @@ public final class EventFilterProcessor implements Witness {
         }
     }
 
-    private void denyAction(final Cause cause, final Skill skill, final int levelRequired, final EventAction action) {
-        if (!(skill.getSkillType() instanceof BasicSkillType)) {
-            return;
-        }
-        final BasicSkillType skillType = (BasicSkillType) skill.getSkillType();
-        final Player player = cause.first(Player.class).orElse(null);
-        if (player != null) {
-
-            if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + action + "." + skill.getSkillType().getName()
-                .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                player.sendMessage(Text.of("You require ", skillType.getFormattedName(), " level ", levelRequired, " to " + action + " this."));
-            }
+    @Listener(order = Order.PRE)
+    public void onDamageEntity(final DamageEntityEvent event, @Root final EntityDamageSource source, @First final Skill skill) {
+        if (source.getSource() instanceof Firework) {
+            event.setCancelled(true);
         }
     }
 
@@ -177,20 +180,22 @@ public final class EventFilterProcessor implements Witness {
                 Sponge.getServer().getOnlinePlayers().forEach(p -> {
                     if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(
                         Sponge.getServer().getConsole().getLocale()) + ".other")) {
-                        p.sendMessage(ChatTypes.CHAT, Text.of(player.getName(), " has advanced to ", skillType.getFormattedName(), " level ", newLevel, "."));
+                        p.sendMessage(ChatTypes.CHAT,
+                            Text.of(player.getName(), " has advanced to ", skillType.getFormattedName(), " level ", newLevel, "."));
                     }
                 });
-            } else {
-                final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
-                if (!sneaking) {
-                    if (player.hasPermission(SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName()
-                        .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                        skillType.getFireworkEffectFor(newLevel).ifPresent(fireworkEffect -> {
-                            for (int i = 0; i < (newLevel == skillType.getMaxLevel() ? 3 : 1); i++) {
-                                fireworkEffect.play(player.getLocation());
-                            }
-                        });
-                    }
+            }
+
+            final Boolean sneaking = player.get(Keys.IS_SNEAKING).orElse(false);
+            if (!sneaking) {
+                if (player.hasPermission(SkillsImpl.ID + ".effect.firework." + skill.getSkillType().getName()
+                    .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+
+                    skillType.getFireworkEffectFor(newLevel).ifPresent(fireworkEffect -> {
+                        for (int i = 0; i < (newLevel == skillType.getMaxLevel() ? 3 : 1); i++) {
+                            fireworkEffect.play(player.getLocation());
+                        }
+                    });
                 }
             }
         }

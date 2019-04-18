@@ -22,36 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.util.block;
-
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.trait.BlockTrait;
-
-import java.util.Map;
-
-public final class BlockStateUtils {
-
-    public static boolean propertiesMatch(BlockState a, BlockState b) {
-        boolean propertiesMatch = true;
-
-        final Map<BlockTrait<?>, ?> bTraits = b.getTraitMap();
-        for (final Map.Entry<BlockTrait<?>, ?> entry : a.getTraitMap().entrySet()) {
-            final BlockTrait<?> trait = entry.getKey();
-            final Object aValue = entry.getValue();
-
-            final Object bValue = bTraits.get(trait);
-
-            if (bValue == null) {
-                propertiesMatch = false;
-                break;
-            }
-
-            if (!aValue.equals(bValue)) {
-                propertiesMatch = false;
-                break;
-            }
-        }
-
-        return propertiesMatch;
-    }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.impl.skill;

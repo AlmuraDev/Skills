@@ -43,10 +43,8 @@ public final class ColorTypeModule extends RootModule.Impl<ContentColorType.Chil
     @Override
     protected void configure0() {
         this.bindRootType(new ContentColorType.Root());
-        this.bindRootLoader(new TypeLiteral<ColorTypeRootLoader>() {
-        });
-        this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentColorTypeBuilder>>() {
-        }, ForRoot.class));
+        this.bindRootLoader(new TypeLiteral<ColorTypeRootLoader>() {});
+        this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentColorTypeBuilder>>() {}, ForRoot.class));
 
         this.installChild(new Module());
     }

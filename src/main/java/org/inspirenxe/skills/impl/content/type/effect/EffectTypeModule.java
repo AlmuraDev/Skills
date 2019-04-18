@@ -40,11 +40,9 @@ public final class EffectTypeModule extends RootModule.Impl<ContentEffectType.Ch
     @Override
     protected void configure0() {
         this.bindRootType(new ContentEffectType.Root());
-        this.bindRootLoader(new TypeLiteral<EffectTypeRootLoader>() {
-        });
+        this.bindRootLoader(new TypeLiteral<EffectTypeRootLoader>() {});
 
-        this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?, ?>>>() {
-        }, ForRoot.class));
+        this.inSet(Key.get(new TypeLiteral<Processor<? extends ContentEffectTypeBuilder<?, ?>>>() {}, ForRoot.class));
 
         this.installChild(new FireworkEffectTypeModule(), new BaseChildModule());
         this.installChild(new PotionEffectTypeModule(), new BaseChildModule());

@@ -34,36 +34,17 @@ import org.spongepowered.api.event.cause.EventContext;
 
 import java.util.Set;
 
-public class BlockTransactionQueryImpl implements BlockTransactionEventQuery {
-
-    private final Cause cause;
-    private final EventContext context;
-    private final Skill skill;
+public class BlockTransactionQueryImpl extends EventQueryImpl implements BlockTransactionEventQuery {
     private final Transaction<BlockSnapshot> transaction;
     private final Set<BlockCreationFlags> creationFlags;
+    private final boolean original;
 
     public BlockTransactionQueryImpl(final Cause cause, final EventContext context, final Skill skill, final Transaction<BlockSnapshot> transaction,
-        final Set<BlockCreationFlags> creationFlags) {
-        this.cause = cause;
-        this.context = context;
-        this.skill = skill;
+        final Set<BlockCreationFlags> creationFlags, final boolean original) {
+        super(cause, context, skill);
         this.transaction = transaction;
         this.creationFlags = creationFlags;
-    }
-
-    @Override
-    public Cause getCause() {
-        return this.cause;
-    }
-
-    @Override
-    public EventContext getContext() {
-        return this.context;
-    }
-
-    @Override
-    public Skill getSkill() {
-        return this.skill;
+        this.original = original;
     }
 
     @Override
@@ -74,5 +55,10 @@ public class BlockTransactionQueryImpl implements BlockTransactionEventQuery {
     @Override
     public Set<BlockCreationFlags> getCreationFlags() {
         return this.creationFlags;
+    }
+
+    @Override
+    public BlockSnapshot getValue() {
+        return this.original ? this.transaction.getOriginal() : this.transaction.getFinal();
     }
 }

@@ -24,36 +24,40 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.SkillService;
-import org.inspirenxe.skills.api.event.BlockCreationFlags;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
-import org.inspirenxe.skills.impl.skill.builtin.query.BlockTransactionQueryImpl;
-import org.inspirenxe.skills.impl.skill.builtin.query.PlayerBlockTransactionQueryImpl;
+import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
+import org.inspirenxe.skills.impl.skill.builtin.query.PlayerEventQueryImpl;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
-public final class UserChangeBlockBreakEventProcessor extends AbstractBlockTransactionEventProcessor {
+public abstract class AbstractBlockTransactionEventProcessor extends AbstractTransactionEventProcessor<BlockSnapshot> {
 
-    public UserChangeBlockBreakEventProcessor() {
-        super("skills:user_change_block_break", "User Change Block Break", event -> event instanceof ChangeBlockEvent.Break);
+    AbstractBlockTransactionEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
+        super(id, name, shouldProcess);
     }
 
     @Override
-    public EventQuery getCancelTransactionQuery(final Event event, final User user, final SkillService service, final Skill skill,
-        final Transaction<BlockSnapshot> transaction) {
-        final Set<BlockCreationFlags> flags = service.getBlockCreationTracker().getCreationFlags(transaction.getOriginal());
-
+    public EventQuery getCancelEventQuery(final Event event, final User user, final Skill skill) {
         if (user.getPlayer().isPresent()) {
-            return new PlayerBlockTransactionQueryImpl(event.getCause(), event.getContext(), user.getPlayer().get(), skill, transaction,
-                flags, true);
+            return new PlayerEventQueryImpl(event.getCause(), event.getContext(), skill, user.getPlayer().get());
         }
 
-        return new BlockTransactionQueryImpl(event.getCause(), event.getContext(), skill, transaction, flags, true);
+        return new EventQueryImpl(event.getCause(), event.getContext(), skill);
+    }
+
+    @Override
+    public List<Transaction<BlockSnapshot>> getTransactions(final Event event) {
+        if (event instanceof ChangeBlockEvent) {
+            return ((ChangeBlockEvent) event).getTransactions();
+        }
+        return Collections.emptyList();
     }
 }

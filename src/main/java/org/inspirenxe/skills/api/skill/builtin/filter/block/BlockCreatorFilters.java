@@ -34,7 +34,7 @@ public final class BlockCreatorFilters {
 
     static {
         CREATOR_ONLY = query -> {
-            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            final UUID creator = query.getValue().getCreator().orElse(null);
             if (creator == null) {
                 return false;
             }
@@ -48,7 +48,7 @@ public final class BlockCreatorFilters {
         };
 
         CREATOR_OR_NATURAL = query -> {
-            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            final UUID creator = query.getValue().getCreator().orElse(null);
             if (creator == null) {
                 return true;
             }
@@ -62,7 +62,7 @@ public final class BlockCreatorFilters {
         };
 
         CREATOR_TRACKED_OR_NATURAL = query -> {
-            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            final UUID creator = query.getValue().getCreator().orElse(null);
             if (creator == null) {
                 return true;
             }
@@ -80,7 +80,7 @@ public final class BlockCreatorFilters {
         };
 
         NATURAL = query -> {
-            final UUID creator = query.getTransaction().getOriginal().getCreator().orElse(null);
+            final UUID creator = query.getValue().getCreator().orElse(null);
             return creator == null;
         };
     }

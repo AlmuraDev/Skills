@@ -38,8 +38,7 @@ public final class SoundEffectTypeModule extends ChildModule.Impl<ContentEffectT
     @Override
     protected void configure0() {
         this.bindChildType(new ContentEffectType.Child("sound"));
-        this.bindChildLoader(new TypeLiteral<SoundEffectTypeRootLoader>() {
-        });
+        this.bindChildLoader(new TypeLiteral<SoundEffectTypeRootLoader>() {});
 
         this.bindBuilder(ContentSoundEffectTypeBuilder.class).to(ContentSoundEffectTypeBuilderImpl.class);
 

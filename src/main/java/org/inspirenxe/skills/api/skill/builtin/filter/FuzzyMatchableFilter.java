@@ -46,7 +46,13 @@ public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements Typ
 
     @Override
     public final boolean queryResponse(@NonNull final TypedEventQuery<O> query) {
-        return this.value.stream().anyMatch(v -> v.matches(query.getValue()));
+        final boolean matched = this.value.stream().anyMatch(v -> v.matches(query.getValue()));
+        if (!matched) {
+            query.denied(this);
+            return false;
+        }
+
+        return true;
     }
 
     @Override

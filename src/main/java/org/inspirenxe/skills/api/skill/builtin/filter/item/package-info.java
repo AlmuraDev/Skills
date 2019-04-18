@@ -22,18 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.util.function;
-
-@FunctionalInterface
-public interface TriFunction<T, U, V, R> {
-
-    /**
-     * Applies this function to the given arguments.
-     *
-     * @param t the first function argument
-     * @param u the second function argument
-     * @param v the third function argument
-     * @return the function result
-     */
-    R apply(T t, U u, V v);
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.api.skill.builtin.filter.item;

@@ -22,18 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.util.function;
-
-@FunctionalInterface
-public interface TriConsumer<T, U, V> {
-
-    /**
-     * Performs this operation on the given arguments.
-     *
-     * @param t the first input argument
-     * @param u the second input argument
-     * @param v the third input argument
-     */
-    void accept(T t, U u, V v);
-
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.api.skill.builtin.filter.applicator;

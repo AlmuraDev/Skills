@@ -24,12 +24,19 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.query;
 
+import net.kyori.filter.Filter;
 import org.inspirenxe.skills.api.skill.Skill;
+import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
+import org.inspirenxe.skills.api.skill.builtin.filter.level.LevelFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
+import org.inspirenxe.skills.impl.SkillsImpl;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.text.Text;
 
-public final class EventQueryImpl implements EventQuery {
+public class EventQueryImpl implements EventQuery {
 
     private final Cause cause;
     private final EventContext context;
@@ -42,17 +49,36 @@ public final class EventQueryImpl implements EventQuery {
     }
 
     @Override
-    public Cause getCause() {
+    public final Cause getCause() {
         return this.cause;
     }
 
     @Override
-    public EventContext getContext() {
+    public final EventContext getContext() {
         return this.context;
     }
 
     @Override
-    public Skill getSkill() {
+    public final Skill getSkill() {
         return this.skill;
+    }
+
+    @Override
+    public void denied(final Filter filter) {
+        if (filter instanceof LevelFilter) {
+            if (!(this.skill.getSkillType() instanceof BasicSkillType)) {
+                return;
+            }
+            final BasicSkillType skillType = (BasicSkillType) this.skill.getSkillType();
+            final Player player = this.cause.first(Player.class).orElse(null);
+            if (player != null) {
+
+                if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + skill.getSkillType().getName()
+                    .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+                    player.sendMessage(Text.of("You require ", skillType.getFormattedName(), " level ", ((LevelFilter) filter).getLevel() + " to "
+                        + "perform this action."));
+                }
+            }
+        }
     }
 }

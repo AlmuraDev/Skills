@@ -92,12 +92,16 @@ public abstract class BasicSkillType implements SkillType {
         return this.formattedName;
     }
 
-    public final BasicSkillType register(final SkillHolderContainer container, final EventProcessor processor,
-        final FilterRegistrar registrar) {
-        this.eventRegistrations
-            .computeIfAbsent(checkNotNull(container, "SkillHolderContainer cannot be null!"), k -> new HashMap<>())
-            .computeIfAbsent(checkNotNull(processor, "EventFilterProcessor cannot be null!"), k -> new ArrayList<>())
-            .add(checkNotNull(registrar, "FilterRegistrar cannot be null!"));
+    public final BasicSkillType register(final SkillHolderContainer container, final FilterRegistrar registrar, final EventProcessor... processors) {
+        final Map<EventProcessor, List<FilterRegistrar>> processorMap = this.eventRegistrations
+            .computeIfAbsent(checkNotNull(container, "SkillHolderContainer cannot be null!"), k -> new HashMap<>());
+
+        for (EventProcessor processor : processors) {
+            processorMap
+                .computeIfAbsent(checkNotNull(processor, "EventFilterProcessor cannot be null!"), k -> new ArrayList<>())
+                .add(checkNotNull(registrar, "FilterRegistrar cannot be null!"));
+        }
+
         return this;
     }
 

@@ -38,8 +38,7 @@ public final class PotionEffectTypeModule extends ChildModule.Impl<ContentEffect
     @Override
     protected void configure0() {
         this.bindChildType(new ContentEffectType.Child("potion"));
-        this.bindChildLoader(new TypeLiteral<PotionEffectTypeRootLoader>() {
-        });
+        this.bindChildLoader(new TypeLiteral<PotionEffectTypeRootLoader>() {});
 
         this.bindBuilder(ContentPotionEffectTypeBuilder.class).to(ContentPotionEffectTypeBuilderImpl.class);
 

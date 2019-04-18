@@ -41,7 +41,7 @@ import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 import org.inspirenxe.skills.generated.Tables;
 import org.inspirenxe.skills.generated.tables.records.SkillsExperienceRecord;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
-import org.inspirenxe.skills.impl.database.Queries;
+import org.inspirenxe.skills.impl.database.DatabaseQueries;
 import org.jooq.DSLContext;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
@@ -167,7 +167,7 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
 
                             for (final SkillType skillType : skillTypes) {
                                 final SkillsExperienceRecord record =
-                                    Queries
+                                    DatabaseQueries
                                         .createFetchExperienceQuery(containerId, holderId, skillType.getId())
                                         .build(context)
                                         .fetchOne();
@@ -293,14 +293,14 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
                                 if ("SET".equalsIgnoreCase(mode)) {
                                     currentXp = xp;
 
-                                    final int result = Queries
+                                    final int result = DatabaseQueries
                                         .createHasExperienceInSkillQuery(containerId, holderId, type.getId())
                                         .build(context)
                                         .execute();
 
                                     update = result == 1;
                                 } else {
-                                    final SkillsExperienceRecord record = Queries
+                                    final SkillsExperienceRecord record = DatabaseQueries
                                         .createFetchExperienceQuery(containerId, holderId, type.getId())
                                         .build(context)
                                         .fetchOne();
@@ -348,14 +348,14 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
                                         boolean success;
 
                                         if (!finalUpdate) {
-                                            final int execute = Queries
+                                            final int execute = DatabaseQueries
                                                 .createInsertSkillExperienceQuery(containerId, holderId, type.getId(), finalXp)
                                                 .build(context)
                                                 .execute();
 
                                             success = execute != 0;
                                         } else {
-                                            final int execute = Queries
+                                            final int execute = DatabaseQueries
                                                 .createUpdateSkillExperienceQuery(containerId, holderId, type.getId(), finalXp,
                                                     Timestamp.from(Instant.now()))
                                                 .build(context)
@@ -438,7 +438,7 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
                     .execute(() -> {
                         try (final DSLContext context = this.databaseManager.createContext(true)) {
                             for (final SkillType skillType : skillTypes) {
-                                Queries
+                                DatabaseQueries
                                     .createUpdateSkillExperienceQuery(containerId, holderId, skillType.getId(), 0.0, Timestamp.from(Instant.now()))
                                     .build(context)
                                     .execute();

@@ -30,7 +30,6 @@ import com.almuradev.toolbox.inject.event.Witness;
 import com.almuradev.toolbox.inject.event.WitnessScope;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.inspirenxe.skills.api.event.DiscoverContentEvent;
 import org.inspirenxe.skills.api.event.SkillsEventFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;

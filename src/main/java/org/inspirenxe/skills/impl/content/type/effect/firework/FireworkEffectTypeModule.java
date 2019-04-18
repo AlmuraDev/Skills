@@ -38,8 +38,7 @@ public final class FireworkEffectTypeModule extends ChildModule.Impl<ContentEffe
     @Override
     protected void configure0() {
         this.bindChildType(new ContentEffectType.Child("firework"));
-        this.bindChildLoader(new TypeLiteral<FireworkEffectTypeRootLoader>() {
-        });
+        this.bindChildLoader(new TypeLiteral<FireworkEffectTypeRootLoader>() {});
 
         this.bindBuilder(ContentFireworkEffectTypeBuilder.class).to(ContentFireworkEffectTypeBuilderImpl.class);
 

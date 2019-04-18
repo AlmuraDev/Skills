@@ -44,11 +44,9 @@ import org.inspirenxe.skills.impl.content.loader.finder.ContentFinderImpl;
 import org.inspirenxe.skills.impl.content.parser.ContentParserModule;
 import org.inspirenxe.skills.impl.content.registry.RegistryModule;
 import org.inspirenxe.skills.impl.content.type.ContentTypeModule;
-import org.spongepowered.api.config.ConfigDir;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class ContentModule extends AbstractModule implements ToolboxBinder, GlobalBinder {

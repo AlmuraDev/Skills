@@ -31,6 +31,7 @@ import net.kyori.filter.FilterQuery;
 import net.kyori.filter.FilterResponse;
 import net.kyori.filter.MultiFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.inspirenxe.skills.api.skill.builtin.applicator.Applicator;
 
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public final class TriggerFilter extends MultiFilter {
         return matched;
     }
 
+    @Nullable
     public Iterable<Applicator> getElseApplicators() {
         return this.elseApplicators;
     }

@@ -37,7 +37,7 @@ import org.inspirenxe.skills.generated.tables.records.SkillsContainerPaletteReco
 import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.database.DatabaseQuery;
-import org.inspirenxe.skills.impl.database.Queries;
+import org.inspirenxe.skills.impl.database.DatabaseQueries;
 import org.jooq.DSLContext;
 import org.jooq.Query;
 import org.jooq.Results;
@@ -110,13 +110,13 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
 
                 try (final DSLContext context = this.databaseManager.createContext(true)) {
                     if (container == null) {
-                        SkillsContainerPaletteRecord record = Queries
+                        SkillsContainerPaletteRecord record = DatabaseQueries
                             .createFetchContainerPaletteQuery(containerId)
                             .build(context)
                             .keepStatement(false)
                             .fetchOne();
                         if (record == null) {
-                            record = Queries
+                            record = DatabaseQueries
                                 .createInsertContainerPaletteQuery(containerId)
                                 .build(context)
                                 .fetchOne();
@@ -131,7 +131,7 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
                         this.containerPalette.put(containerId, container);
                     }
 
-                    dbResults = Queries
+                    dbResults = DatabaseQueries
                         .createFetchBlockCreationQuery(container)
                         .build(context)
                         .keepStatement(false)
@@ -164,7 +164,6 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
                                 .interval(this.pluginConfiguration.getSaveInterval(), TimeUnit.SECONDS)
                                 .submit(this.container)
                             );
-
                         })
                         .submit(this.container);
                 }
@@ -237,7 +236,7 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
                     map.defaultReturnValue(Long.MIN_VALUE);
                     return map;
                 }).put(key, mask) == Long.MIN_VALUE) {
-                    batcher.queueQuery(key, Queries.createInsertBlockCreationQuery(container, key, mask));
+                    batcher.queueQuery(key, DatabaseQueries.createInsertBlockCreationQuery(container, key, mask));
                 }
             }
         }
@@ -271,7 +270,7 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
             final long key = this.getKey(chunkPos, blockPos);
 
             if (worldCache.remove(key) != Long.MIN_VALUE) {
-                batcher.queueQuery(key, Queries.createDeleteBlockCreationQuery(container, key));
+                batcher.queueQuery(key, DatabaseQueries.createDeleteBlockCreationQuery(container, key));
             }
         }
     }

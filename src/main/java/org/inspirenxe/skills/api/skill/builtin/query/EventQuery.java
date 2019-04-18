@@ -24,6 +24,7 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.query;
 
+import net.kyori.filter.Filter;
 import net.kyori.filter.FilterQuery;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.spongepowered.api.event.cause.Cause;
@@ -36,4 +37,6 @@ public interface EventQuery extends FilterQuery {
     EventContext getContext();
 
     Skill getSkill();
+
+    void denied(Filter filter);
 }

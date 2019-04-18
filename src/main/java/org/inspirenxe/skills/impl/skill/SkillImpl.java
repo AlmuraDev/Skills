@@ -39,7 +39,7 @@ import org.inspirenxe.skills.api.skill.SkillType;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.generated.tables.records.SkillsExperienceRecord;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
-import org.inspirenxe.skills.impl.database.Queries;
+import org.inspirenxe.skills.impl.database.DatabaseQueries;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.spongepowered.api.Sponge;
@@ -146,7 +146,7 @@ public final class SkillImpl implements Skill {
         SkillsExperienceRecord record = null;
 
         try (final DSLContext context = this.databaseManager.createContext(true)) {
-            record = Queries
+            record = DatabaseQueries
                 .createFetchExperienceQuery(containerId, holderId, this.type.getId())
                 .build(context)
                 .keepStatement(false)
@@ -228,7 +228,7 @@ public final class SkillImpl implements Skill {
         }
 
         try (final DSLContext context = this.databaseManager.createContext(true)) {
-            final Record1<Integer> record = Queries
+            final Record1<Integer> record = DatabaseQueries
                 .createHasExperienceInSkillQuery(this.holder.getContainer().getUniqueId(), this.holder.getUniqueId(), this.type.getId())
                 .build(context)
                 .keepStatement(false)
@@ -237,7 +237,7 @@ public final class SkillImpl implements Skill {
             boolean success = true;
 
             if (record == null) {
-                final int result = Queries
+                final int result = DatabaseQueries
                     .createInsertSkillExperienceQuery(containerId, holderId, this.type.getId(), savePreEvent.getExperience())
                     .build(context)
                     .execute();
@@ -247,7 +247,7 @@ public final class SkillImpl implements Skill {
                     success = false;
                 }
             } else {
-                final int result = Queries
+                final int result = DatabaseQueries
                     .createUpdateSkillExperienceQuery(containerId, holderId, this.type.getId(), savePreEvent.getExperience(),
                         Timestamp.from(Instant.now()))
                     .build(context)

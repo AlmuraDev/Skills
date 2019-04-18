@@ -33,14 +33,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public final class FilterRegistrar {
 
     public static FilterRegistrar.Builder registrar() {
         return new Builder();
     }
 
-    private final Filter cancelEvent;
-    private final Filter cancelTransaction;
+    @Nullable private final Filter cancelEvent;
+    @Nullable private final Filter cancelTransaction;
     private final List<TriggerFilter> eventTriggers, transactionTriggers;
 
     private FilterRegistrar(final Builder builder) {
@@ -50,10 +52,12 @@ public final class FilterRegistrar {
         this.transactionTriggers = builder.transactionTriggers;
     }
 
+    @Nullable
     public Filter getCancelEvent() {
         return this.cancelEvent;
     }
 
+    @Nullable
     public Filter getCancelTransaction() {
         return this.cancelTransaction;
     }
@@ -67,8 +71,8 @@ public final class FilterRegistrar {
     }
 
     public static final class Builder {
-        private Filter cancelEvent;
-        private Filter cancelTransaction;
+        @Nullable private Filter cancelEvent;
+        @Nullable private Filter cancelTransaction;
         private List<TriggerFilter> eventTriggers = new ArrayList<>(), transactionTriggers = new ArrayList<>();
 
         public Builder cancelEvent(final Filter cancelEvent) {

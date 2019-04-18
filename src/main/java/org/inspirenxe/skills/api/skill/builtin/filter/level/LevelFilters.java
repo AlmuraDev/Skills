@@ -39,8 +39,13 @@ public final class LevelFilters {
 
             @Override
             public boolean queryResponse(@NonNull final EventQuery query) {
-                final int currentLevel = query.getSkill().getCurrentLevel();
-                return level <= currentLevel;
+                final boolean matched = query.getSkill().getCurrentLevel() >= this.getLevel();
+                if (!matched) {
+                    query.denied(this);
+                    return false;
+                }
+
+                return true;
             }
 
             @Override
