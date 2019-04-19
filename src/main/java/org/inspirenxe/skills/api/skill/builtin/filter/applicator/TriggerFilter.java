@@ -58,7 +58,8 @@ public final class TriggerFilter extends MultiFilter {
         FilterResponse response = FilterResponse.ALLOW;
 
         for (Filter filter : this.filters) {
-            if (filter.query(query) == FilterResponse.DENY) {
+            FilterResponse r = filter.query(query);
+            if (r == FilterResponse.DENY) {
                 response = FilterResponse.DENY;
                 break;
             }

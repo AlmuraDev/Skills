@@ -24,37 +24,25 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.SkillService;
-import org.inspirenxe.skills.api.event.BlockCreationFlags;
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
-import org.inspirenxe.skills.impl.skill.builtin.query.BlockTransactionQueryImpl;
-import org.inspirenxe.skills.impl.skill.builtin.query.PlayerBlockTransactionQueryImpl;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.event.Event;
-
-import java.util.Set;
-import java.util.function.Predicate;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.cause.EventContext;
 
 public final class UserChangeBlockPlaceEventProcessor extends AbstractBlockTransactionEventProcessor {
 
-    public UserChangeBlockPlaceEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
-        super(id, name, shouldProcess);
+    public UserChangeBlockPlaceEventProcessor() {
+        super(SkillsImpl.ID + ":user_change_block_place", "User Change Block Place", event -> event instanceof ChangeBlockEvent.Place);
     }
 
     @Override
-    public EventQuery getCancelTransactionQuery(final Event event, final User user, final SkillService service, final Skill skill,
-        final Transaction<BlockSnapshot> transaction) {
-
-        final Set<BlockCreationFlags> flags = service.getBlockCreationTracker().getCreationFlags(transaction.getFinal());
-
-        if (user.getPlayer().isPresent()) {
-            return new PlayerBlockTransactionQueryImpl(event.getCause(), event.getContext(), user.getPlayer().get(), skill, transaction,
-                flags, false);
-        }
-
-        return new BlockTransactionQueryImpl(event.getCause(), event.getContext(), skill, transaction, flags, false);
+    EventContext populateTransactionContext(final EventContext context, final Transaction<BlockSnapshot> transaction) {
+        return EventContext
+            .builder()
+            .from(context)
+            .add(SkillsEventContextKeys.PROCESSING_BLOCK, transaction.getFinal())
+            .build();
     }
 }

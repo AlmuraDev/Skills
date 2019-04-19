@@ -24,13 +24,8 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
-import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
-import org.inspirenxe.skills.impl.skill.builtin.query.PlayerEventQueryImpl;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 
@@ -42,15 +37,6 @@ public abstract class AbstractBlockTransactionEventProcessor extends AbstractTra
 
     AbstractBlockTransactionEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
         super(id, name, shouldProcess);
-    }
-
-    @Override
-    public EventQuery getCancelEventQuery(final Event event, final User user, final Skill skill) {
-        if (user.getPlayer().isPresent()) {
-            return new PlayerEventQueryImpl(event.getCause(), event.getContext(), skill, user.getPlayer().get());
-        }
-
-        return new EventQueryImpl(event.getCause(), event.getContext(), skill);
     }
 
     @Override

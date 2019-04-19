@@ -27,6 +27,7 @@ package org.inspirenxe.skills.api.skill.builtin.query;
 import net.kyori.filter.Filter;
 import net.kyori.filter.FilterQuery;
 import org.inspirenxe.skills.api.skill.Skill;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 
@@ -35,6 +36,8 @@ public interface EventQuery extends FilterQuery {
     Cause getCause();
 
     EventContext getContext();
+
+    User getUser();
 
     Skill getSkill();
 

@@ -22,14 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.query;
+package org.inspirenxe.skills.api.skill.builtin;
 
-import org.inspirenxe.skills.api.event.BlockCreationFlags;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.event.cause.EventContextKey;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.util.Direction;
 
-import java.util.Set;
+public final class SkillsEventContextKeys {
 
-public interface BlockTransactionEventQuery extends TransactionEventQuery<BlockSnapshot>, TypedEventQuery<BlockSnapshot> {
+    public static final EventContextKey<DataHolder> DATA_HOLDER_USING_SKILL = EventContextKey.builder(DataHolder.class).id("data_holder_using_skill").name("Data Holder Using Skill").build();
 
-    Set<BlockCreationFlags> getCreationFlags();
+    public static final EventContextKey<BlockSnapshot> PROCESSING_BLOCK = EventContextKey.builder(BlockSnapshot.class).id("processing_block").name("Processing Block").build();
+
+    public static final EventContextKey<Direction> PROCESSING_BLOCK_SIDE = EventContextKey.builder(Direction.class).id("processing_block_side").name("Processing Block Side").build();
+
+    public static final EventContextKey<BlockCreationTracker> BLOCK_CREATION_TRACKER = EventContextKey.builder(BlockCreationTracker.class).id("block_creation_tracker").name("Block Creation Tracker").build();
+
+    public static final EventContextKey<ItemStackSnapshot> PROCESSING_ITEM = EventContextKey.builder(ItemStackSnapshot.class).id("processing_item").name("Processing Item").build();
 }

@@ -22,18 +22,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.filter.block;
+package org.inspirenxe.skills.api.skill.builtin.filter.data;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import net.kyori.filter.FilterQuery;
-import net.kyori.filter.TypedFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.BaseValue;
 
-public interface BlockCreatorFilter extends TypedFilter.Strong<EventQuery> {
+public final class ValueFilters {
 
-    @Override
-    default boolean queryable(@NonNull final FilterQuery query) {
-        return query instanceof EventQuery && ((EventQuery) query).getContext().containsKey(SkillsEventContextKeys.PROCESSING_BLOCK);
+    public static <V, T extends BaseValue<V>> ValueFilter value(final Key<T> key, final V... values) {
+        checkNotNull(key);
+        checkNotNull(values);
+
+        return new ValueFilter() {
+            @Override
+            public boolean queryResponse(@NonNull final EventQuery query) {
+                final V current = query.getContext().get(SkillsEventContextKeys.DATA_HOLDER_USING_SKILL).orElse(null).get(key).orElse(null);
+                if (current == null) {
+                    return false;
+                }
+
+                boolean matched = false;
+                for (V v : values) {
+                    if (v.equals(current)) {
+                        matched = true;
+                        break;
+                    }
+                }
+
+                return matched;
+            }
+
+            @Override
+            public boolean queryable(@NonNull final FilterQuery query) {
+                if (!(query instanceof EventQuery)) {
+                    return false;
+                }
+                boolean value = ((EventQuery) query).getContext().containsKey(SkillsEventContextKeys.DATA_HOLDER_USING_SKILL);
+                return value;
+            }
+        };
     }
 }

@@ -22,25 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.skill.builtin.query;
+package org.inspirenxe.skills.api.skill.builtin.filter.data;
 
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.builtin.query.PlayerQuery;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
+import net.kyori.filter.TypedFilter;
+import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 
-public class PlayerEventQueryImpl extends EventQueryImpl implements PlayerQuery {
-
-    private final Player player;
-
-    public PlayerEventQueryImpl(final Cause cause, final EventContext context, final Skill skill, final Player player) {
-        super(cause, context, skill);
-        this.player = player;
-    }
-
-    @Override
-    public Player getPlayer() {
-        return this.player;
-    }
+public interface ValueFilter extends TypedFilter.Strong<EventQuery> {
 }

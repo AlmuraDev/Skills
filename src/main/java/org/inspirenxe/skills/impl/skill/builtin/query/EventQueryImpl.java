@@ -26,12 +26,12 @@ package org.inspirenxe.skills.impl.skill.builtin.query;
 
 import net.kyori.filter.Filter;
 import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
 import org.inspirenxe.skills.api.skill.builtin.filter.level.LevelFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.text.Text;
@@ -40,11 +40,13 @@ public class EventQueryImpl implements EventQuery {
 
     private final Cause cause;
     private final EventContext context;
+    private final User user;
     private final Skill skill;
 
-    public EventQueryImpl(final Cause cause, final EventContext context, final Skill skill) {
+    public EventQueryImpl(final Cause cause, final EventContext context, final User user, final Skill skill) {
         this.cause = cause;
         this.context = context;
+        this.user = user;
         this.skill = skill;
     }
 
@@ -59,6 +61,11 @@ public class EventQueryImpl implements EventQuery {
     }
 
     @Override
+    public User getUser() {
+        return this.user;
+    }
+
+    @Override
     public final Skill getSkill() {
         return this.skill;
     }
@@ -66,18 +73,11 @@ public class EventQueryImpl implements EventQuery {
     @Override
     public void denied(final Filter filter) {
         if (filter instanceof LevelFilter) {
-            if (!(this.skill.getSkillType() instanceof BasicSkillType)) {
-                return;
-            }
-            final BasicSkillType skillType = (BasicSkillType) this.skill.getSkillType();
-            final Player player = this.cause.first(Player.class).orElse(null);
-            if (player != null) {
-
-                if (player.hasPermission(SkillsImpl.ID + ".notification.deny." + skill.getSkillType().getName()
-                    .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
-                    player.sendMessage(Text.of("You require ", skillType.getFormattedName(), " level ", ((LevelFilter) filter).getLevel() + " to "
-                        + "perform this action."));
-                }
+            final Player player = this.user.getPlayer().orElse(null);
+            if (player != null && player.hasPermission(SkillsImpl.ID + ".notification.deny." + skill.getSkillType().getName()
+                .toLowerCase(Sponge.getServer().getConsole().getLocale()))) {
+                player.sendMessage(Text.of("You require ", this.skill.getSkillType().getFormattedName(), " level ", ((LevelFilter) filter)
+                    .getLevel() + " to perform this action."));
             }
         }
     }

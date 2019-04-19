@@ -24,64 +24,35 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import net.kyori.filter.FilterResponse;
 import org.inspirenxe.skills.api.SkillService;
-import org.inspirenxe.skills.api.skill.Skill;
-import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
-import org.inspirenxe.skills.api.skill.builtin.FilterRegistrar;
-import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
-import org.inspirenxe.skills.impl.skill.builtin.query.ItemStackQuery;
-import org.inspirenxe.skills.impl.skill.builtin.query.PlayerItemStackQuery;
-import org.spongepowered.api.entity.living.player.User;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
+import org.inspirenxe.skills.impl.SkillsImpl;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public final class UserInteractBlockEventProcessor extends AbstractEventProcessor {
 
     public UserInteractBlockEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
-        super(id, name, shouldProcess);
+        super(SkillsImpl.ID + ":" + id, name, shouldProcess);
     }
 
     @Override
-    public void process(final Event event, final SkillService service, final Skill skill) {
-        final User user = event.getCause().first(User.class).orElse(null);
-        if (user == null) {
-            return;
+    EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
+        if (event instanceof InteractBlockEvent) {
+            return EventContext
+                .builder()
+                .from(context)
+                .add(SkillsEventContextKeys.PROCESSING_BLOCK, ((InteractBlockEvent) event).getTargetBlock())
+                .add(SkillsEventContextKeys.PROCESSING_BLOCK_SIDE, ((InteractBlockEvent) event).getTargetSide())
+                .add(SkillsEventContextKeys.PROCESSING_ITEM, event.getContext().get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
+                .build();
         }
 
-        final InteractBlockEvent actualEvent = (InteractBlockEvent) event;
-        System.err.println("Interact Creator: " + ((InteractBlockEvent) event).getTargetBlock().getCreator());
-        System.err.println("Interact Notifier: " + ((InteractBlockEvent) event).getTargetBlock().getNotifier());
-        final ItemStackSnapshot usedStack = actualEvent.getContext().get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE);
-        final BasicSkillType skillType = (BasicSkillType) skill.getSkillType();
-
-        final List<FilterRegistrar> filterRegistrations = skillType.getFilterRegistrations(skill.getHolder().getContainer(), this);
-
-        EventQuery query;
-
-        for (final FilterRegistrar registration : filterRegistrations) {
-            if (registration.getCancelEvent() != null) {
-
-                if (user.getPlayer().isPresent()) {
-                    query = new PlayerItemStackQuery(actualEvent.getCause(), actualEvent.getContext(), skill, user.getPlayer().get(), usedStack);
-                } else {
-                    query = new ItemStackQuery(actualEvent.getCause(), actualEvent.getContext(), skill, usedStack);
-                }
-
-                // TODO Target Block Query
-
-                if (registration.getCancelEvent().query(query) == FilterResponse.DENY) {
-                    actualEvent.setCancelled(true);
-                    break;
-                }
-            }
-
-            // TODO Event Triggers
-        }
+        return context;
     }
 }

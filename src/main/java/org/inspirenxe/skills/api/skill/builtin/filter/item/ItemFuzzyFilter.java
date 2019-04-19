@@ -24,8 +24,10 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.filter.item;
 
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.builtin.filter.FuzzyMatchableFilter;
 import org.inspirenxe.skills.api.skill.builtin.inventory.FuzzyItemStack;
+import org.spongepowered.api.event.cause.EventContextKey;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 import java.util.Collection;
@@ -34,5 +36,10 @@ class ItemFuzzyFilter extends FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemS
 
     ItemFuzzyFilter(final Collection<FuzzyItemStack> value) {
         super(value);
+    }
+
+    @Override
+    public EventContextKey<ItemStackSnapshot> getContextKey() {
+        return SkillsEventContextKeys.PROCESSING_ITEM;
     }
 }

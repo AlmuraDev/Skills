@@ -28,11 +28,12 @@ import net.kyori.filter.FilterQuery;
 import net.kyori.filter.TypedFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.inspirenxe.skills.api.skill.builtin.FuzzyMatchable;
-import org.inspirenxe.skills.api.skill.builtin.query.TypedEventQuery;
+import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
+import org.spongepowered.api.event.cause.EventContextKey;
 
 import java.util.Collection;
 
-public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements TypedFilter.Strong<TypedEventQuery<O>> {
+public abstract class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements TypedFilter.Strong<EventQuery> {
 
     private final Collection<T> value;
 
@@ -45,8 +46,11 @@ public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements Typ
     }
 
     @Override
-    public final boolean queryResponse(@NonNull final TypedEventQuery<O> query) {
-        final boolean matched = this.value.stream().anyMatch(v -> v.matches(query.getValue()));
+    public final boolean queryResponse(@NonNull final EventQuery query) {
+        final O o = query.getContext().get(this.getContextKey()).orElse(null);
+
+        final boolean matched = this.value.stream().anyMatch(v -> v.matches(o));
+
         if (!matched) {
             query.denied(this);
             return false;
@@ -57,6 +61,12 @@ public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements Typ
 
     @Override
     public final boolean queryable(@NonNull final FilterQuery query) {
-        return query instanceof TypedEventQuery;
+        if (!(query instanceof EventQuery)) {
+            return false;
+        }
+
+        return ((EventQuery) query).getContext().containsKey(this.getContextKey());
     }
+
+    public abstract EventContextKey<O> getContextKey();
 }

@@ -31,8 +31,8 @@ import org.inspirenxe.skills.api.event.ChangeExperienceEvent;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.inspirenxe.skills.api.skill.SkillType;
 import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
-import org.inspirenxe.skills.api.skill.builtin.EventAction;
 import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 import org.inspirenxe.skills.impl.SkillsImpl;
@@ -47,13 +47,11 @@ import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
@@ -113,10 +111,11 @@ public final class EventFilterProcessor implements Witness {
         for (final Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
             try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
                 frame.pushCause(skillEntry.getValue());
+                frame.addContext(SkillsEventContextKeys.DATA_HOLDER_USING_SKILL, user);
 
                 for (final EventProcessor processor : this.processorModule.getAll()) {
                     if (processor.shouldProcess(event)) {
-                        processor.process(event, service, skillEntry.getValue());
+                        processor.process(event, frame.getCurrentContext(), service, user, skillEntry.getValue());
                     }
                 }
             }

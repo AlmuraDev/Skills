@@ -24,80 +24,61 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.filter.block;
 
+import org.inspirenxe.skills.api.event.BlockCreationFlags;
+import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.living.player.User;
 
+import java.util.Set;
 import java.util.UUID;
 
 public final class BlockCreatorFilters {
 
-    private static final BlockCreatorFilter CREATOR_ONLY, CREATOR_OR_NATURAL, CREATOR_TRACKED_OR_NATURAL, NATURAL;
+    private static final BlockCreatorFilter CREATOR, CREATOR_TRACKED, NATURAL;
 
     static {
-        CREATOR_ONLY = query -> {
-            final UUID creator = query.getValue().getCreator().orElse(null);
+        CREATOR = query -> {
+            final BlockSnapshot snapshot = query.getContext().get(SkillsEventContextKeys.PROCESSING_BLOCK).orElse(BlockSnapshot.NONE);
+            final UUID creator = snapshot.getCreator().orElse(null);
             if (creator == null) {
                 return false;
             }
 
-            final User user = query.getCause().first(User.class).orElse(null);
-            if (user == null) {
-                return false;
-            }
-
-            return user.getUniqueId().equals(creator);
+            return query.getUser().getUniqueId().equals(creator);
         };
 
-        CREATOR_OR_NATURAL = query -> {
-            final UUID creator = query.getValue().getCreator().orElse(null);
+        CREATOR_TRACKED = query -> {
+            final BlockSnapshot snapshot = query.getContext().get(SkillsEventContextKeys.PROCESSING_BLOCK).orElse(BlockSnapshot.NONE);
+            final UUID creator = snapshot.getCreator().orElse(null);
             if (creator == null) {
                 return true;
             }
 
-            final User user = query.getCause().first(User.class).orElse(null);
-            if (user == null) {
+            if (!query.getUser().getUniqueId().equals(creator)) {
                 return false;
             }
 
-            return user.getUniqueId().equals(creator);
-        };
-
-        CREATOR_TRACKED_OR_NATURAL = query -> {
-            final UUID creator = query.getValue().getCreator().orElse(null);
-            if (creator == null) {
-                return true;
-            }
-
-            final User user = query.getCause().first(User.class).orElse(null);
-            if (user == null) {
-                return false;
-            }
-
-            if (!user.getUniqueId().equals(creator)) {
-                return false;
-            }
-
-            return !query.getCreationFlags().isEmpty();
+            final BlockCreationTracker tracker = query.getContext().get(SkillsEventContextKeys.BLOCK_CREATION_TRACKER).orElse(null);
+            final Set<BlockCreationFlags> flags = tracker.getCreationFlags(snapshot);
+            return !flags.isEmpty();
         };
 
         NATURAL = query -> {
-            final UUID creator = query.getValue().getCreator().orElse(null);
-            return creator == null;
+            final BlockSnapshot snapshot = query.getContext().get(SkillsEventContextKeys.PROCESSING_BLOCK).orElse(BlockSnapshot.NONE);
+            return !snapshot.getCreator().isPresent();
         };
     }
 
     private BlockCreatorFilters() {
     }
 
-    public static BlockCreatorFilter creatorOnly() {
-        return CREATOR_ONLY;
+    public static BlockCreatorFilter creator() {
+        return CREATOR;
     }
 
-    public static BlockCreatorFilter creatorOrNatural() {
-        return CREATOR_OR_NATURAL;
-    }
-
-    public static BlockCreatorFilter creatorTrackedOrNatural() {
-        return CREATOR_TRACKED_OR_NATURAL;
+    public static BlockCreatorFilter creatorTracked() {
+        return CREATOR_TRACKED;
     }
 
     public static BlockCreatorFilter natural() {

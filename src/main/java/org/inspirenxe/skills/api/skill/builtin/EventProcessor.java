@@ -27,7 +27,9 @@ package org.inspirenxe.skills.api.skill.builtin;
 import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.util.annotation.CatalogedBy;
 
 @CatalogedBy(EventProcessors.class)
@@ -35,5 +37,5 @@ public interface EventProcessor extends CatalogType {
 
     boolean shouldProcess(Event event);
 
-    void process(Event event, SkillService service, Skill skill);
+    void process(Event event, EventContext context, SkillService service, User user, Skill skill);
 }

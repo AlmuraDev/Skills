@@ -29,18 +29,20 @@ import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
 import org.inspirenxe.skills.api.skill.builtin.FilterRegistrar;
-import org.inspirenxe.skills.api.skill.builtin.applicator.Applicator;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.ApplicatorEntry;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
+import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
 import org.spongepowered.api.data.DataSerializable;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.cause.EventContext;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class AbstractTransactionEventProcessor<T extends DataSerializable> extends AbstractEventProcessor {
 
@@ -49,70 +51,66 @@ public abstract class AbstractTransactionEventProcessor<T extends DataSerializab
     }
 
     @Override
-    public void process(final Event event, final SkillService service, final Skill skill) {
-        final User user = event.getCause().first(User.class).orElse(null);
-        if (user == null) {
-            return;
-        }
-
+    public void process(final Event event, final EventContext context, final SkillService service, final User user, final Skill skill) {
         final BasicSkillType skillType = (BasicSkillType) skill.getSkillType();
 
         final List<FilterRegistrar> filterRegistrations = skillType.getFilterRegistrations(skill.getHolder().getContainer(), this);
 
-        EventQuery query;
+        final EventContext actualContext = this.populateEventContext(event, context, service);
+
+        EventQuery query = new EventQueryImpl(event.getCause(), actualContext, user, skill);
 
         for (final FilterRegistrar registration : filterRegistrations) {
-            // TODO Event Triggers
             if (event instanceof Cancellable && registration.getCancelEvent() != null) {
-
-                query = this.getCancelEventQuery(event, user, skill);
-
                 if (registration.getCancelEvent().query(query) == FilterResponse.DENY) {
                     ((Cancellable) event).setCancelled(true);
-                    break;
+                    return;
                 }
             }
 
-            if (registration.getCancelTransaction() != null || !registration.getTransactionTriggers().isEmpty()) {
-                for (final Transaction<T> transaction : this.getTransactions(event)) {
+            for (final TriggerFilter trigger : registration.getEventTriggers()) {
+                this.processTrigger(trigger, query);
+            }
 
-                    query = this.getCancelTransactionQuery(event, user, service, skill, transaction);
+            List<Transaction<T>> transactions = this.getTransactions(event);
+
+            if (registration.getCancelTransaction() != null) {
+                for (final Transaction<T> transaction : transactions) {
+
+                    query = new EventQueryImpl(event.getCause(), this.populateTransactionContext(actualContext, transaction), user, skill);
 
                     if (registration.getCancelTransaction() != null) {
                         if (registration.getCancelTransaction().query(query) == FilterResponse.DENY) {
                             transaction.setValid(false);
-                            continue;
-                        }
-
-                        for (final TriggerFilter trigger : registration.getTransactionTriggers()) {
-
-                            boolean runFallbackApplicators = trigger.getElseApplicators() != null;
-
-                            if (trigger.query(query) == FilterResponse.ALLOW) {
-                                final Iterable<ApplicatorEntry> applicatorEntries = trigger.getMatchedApplicators(query);
-                                for (final ApplicatorEntry applicatorEntry : applicatorEntries) {
-                                    runFallbackApplicators = false;
-                                    for (final Applicator applicator : applicatorEntry.getApplicators()) {
-                                        applicator.apply(query);
-                                    }
-                                }
-
-                                if (runFallbackApplicators) {
-                                    for (final Applicator applicator : trigger.getElseApplicators()) {
-                                        applicator.apply(query);
-                                    }
-                                }
-                            }
                         }
                     }
+                }
+
+                transactions = transactions
+                    .stream()
+                    .filter(Transaction::isValid)
+                    .collect(Collectors.toList());
+            }
+
+            for (Transaction<T> transaction : transactions) {
+                query = new EventQueryImpl(event.getCause(), this.populateTransactionContext(actualContext, transaction), user, skill);
+
+                for (final TriggerFilter trigger : registration.getTransactionTriggers()) {
+                    this.processTrigger(trigger, query);
                 }
             }
         }
     }
 
-    public abstract EventQuery getCancelEventQuery(Event event, User user, Skill skill);
+    @Override
+    EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
+        return EventContext.builder()
+            .from(context)
+            .add(SkillsEventContextKeys.BLOCK_CREATION_TRACKER, service.getBlockCreationTracker())
+            .build();
+    }
 
-    public abstract List<Transaction<T>> getTransactions(Event event);
+    abstract List<Transaction<T>> getTransactions(Event event);
 
-    public abstract EventQuery getCancelTransactionQuery(Event event, User user, SkillService service, Skill skill, Transaction<T> transaction);
+    abstract EventContext populateTransactionContext(EventContext context, Transaction<T> transaction);
 }

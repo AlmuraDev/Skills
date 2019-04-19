@@ -24,9 +24,11 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.filter.block;
 
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.builtin.block.FuzzyBlockState;
 import org.inspirenxe.skills.api.skill.builtin.filter.FuzzyMatchableFilter;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.event.cause.EventContextKey;
 
 import java.util.Collection;
 
@@ -34,5 +36,10 @@ final class BlockFuzzyFilter extends FuzzyMatchableFilter<BlockSnapshot, FuzzyBl
 
     BlockFuzzyFilter(final Collection<FuzzyBlockState> value) {
         super(value);
+    }
+
+    @Override
+    public EventContextKey<BlockSnapshot> getContextKey() {
+        return SkillsEventContextKeys.PROCESSING_BLOCK;
     }
 }

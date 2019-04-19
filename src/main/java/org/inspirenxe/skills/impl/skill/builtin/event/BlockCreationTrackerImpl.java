@@ -44,7 +44,9 @@ import org.jooq.Results;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
@@ -184,12 +186,13 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
         }
     }
 
-    @Listener
+    @Listener(order = Order.POST)
     public void onChangeBlockPost(final ChangeBlockEvent.Post event) {
         final ChangeBlockEvent.Break breakEvent = event.getCause().first(ChangeBlockEvent.Break.class).orElse(null);
         final ChangeBlockEvent.Decay decayEvent = event.getCause().first(ChangeBlockEvent.Decay.class).orElse(null);
         final ChangeBlockEvent.Place placeEvent = event.getCause().first(ChangeBlockEvent.Place.class).orElse(null);
         final ChangeBlockEvent.Grow growEvent = event.getCause().first(ChangeBlockEvent.Grow.class).orElse(null);
+
         if (breakEvent != null) {
             this.handleDeletions(breakEvent);
         }
@@ -198,46 +201,54 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
             this.handleDeletions(decayEvent);
         }
 
-        if (placeEvent != null || growEvent != null) {
-            if (!event.getContext().get(EventContextKeys.OWNER).isPresent()) {
-                return;
+        if (placeEvent != null) {
+            this.handleAdditions(placeEvent);
+        }
+
+        if (growEvent != null) {
+            this.handleAdditions(growEvent);
+        }
+    }
+
+    private void handleAdditions(final ChangeBlockEvent event) {
+        if (!event.getContext().get(EventContextKeys.OWNER).isPresent()) {
+            return;
+        }
+
+        final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(event.getCause(), event.getContext());
+        if (flags.isEmpty()) {
+            return;
+        }
+
+        final long mask = BlockCreationFlags.mask(flags);
+
+        for (final Transaction<BlockSnapshot> transaction : event.getTransactions()) {
+            if (!transaction.isValid()) {
+                continue;
             }
 
-            final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(placeEvent.getCause(), placeEvent.getContext());
-            if (flags.isEmpty()) {
-                return;
+            final Location<World> location = transaction.getFinal().getLocation().orElse(null);
+            if (location == null) {
+                continue;
             }
 
-            final long mask = BlockCreationFlags.mask(flags);
+            final NonDuplicateQueryBatcher batcher = this.batchers.get(location.getExtent().getUniqueId());
 
-            for (final Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-                if (!transaction.isValid()) {
-                    continue;
-                }
+            final Short container = this.containerPalette.get(location.getExtent().getUniqueId());
+            if (container == null) {
+                continue;
+            }
 
-                final Location<World> location = transaction.getFinal().getLocation().orElse(null);
-                if (location == null) {
-                    continue;
-                }
+            final Vector3i chunkPos = location.getChunkPosition();
+            final Vector3i blockPos = location.getBlockPosition();
+            final long key = this.getKey(chunkPos, blockPos);
 
-                final NonDuplicateQueryBatcher batcher = this.batchers.get(location.getExtent().getUniqueId());
-
-                final Short container = this.containerPalette.get(location.getExtent().getUniqueId());
-                if (container == null) {
-                    continue;
-                }
-
-                final Vector3i chunkPos = location.getChunkPosition();
-                final Vector3i blockPos = location.getBlockPosition();
-                final long key = this.getKey(chunkPos, blockPos);
-
-                if (this.containerCache.computeIfAbsent(location.getExtent().getUniqueId(), k -> {
-                    final Long2LongArrayMap map = new Long2LongArrayMap();
-                    map.defaultReturnValue(Long.MIN_VALUE);
-                    return map;
-                }).put(key, mask) == Long.MIN_VALUE) {
-                    batcher.queueQuery(key, DatabaseQueries.createInsertBlockCreationQuery(container, key, mask));
-                }
+            if (this.containerCache.computeIfAbsent(location.getExtent().getUniqueId(), k -> {
+                final Long2LongArrayMap map = new Long2LongArrayMap();
+                map.defaultReturnValue(Long.MIN_VALUE);
+                return map;
+            }).put(key, mask) == Long.MIN_VALUE) {
+                batcher.queueQuery(key, DatabaseQueries.createInsertBlockCreationQuery(container, key, mask));
             }
         }
     }
