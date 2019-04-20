@@ -24,35 +24,25 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.impl.SkillsImpl;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-import java.util.function.Predicate;
+public final class ChangeBlockPlaceEventProcessor extends AbstractBlockTransactionEventProcessor {
 
-public final class UserInteractBlockEventProcessor extends AbstractEventProcessor {
-
-    public UserInteractBlockEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
-        super(SkillsImpl.ID + ":" + id, name, shouldProcess);
+    public ChangeBlockPlaceEventProcessor() {
+        super(SkillsImpl.ID + ":user_change_block_place", "User Change Block Place", event -> event instanceof ChangeBlockEvent.Place);
     }
 
     @Override
-    EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
-        if (event instanceof InteractBlockEvent) {
-            return EventContext
-                .builder()
-                .from(context)
-                .add(SkillsEventContextKeys.PROCESSING_BLOCK, ((InteractBlockEvent) event).getTargetBlock())
-                .add(SkillsEventContextKeys.PROCESSING_BLOCK_SIDE, ((InteractBlockEvent) event).getTargetSide())
-                .add(SkillsEventContextKeys.PROCESSING_ITEM, event.getContext().get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
-                .build();
-        }
-
-        return context;
+    EventContext populateTransactionContext(final EventContext context, final Transaction<BlockSnapshot> transaction) {
+        return EventContext
+            .builder()
+            .from(context)
+            .add(SkillsEventContextKeys.PROCESSING_BLOCK, transaction.getFinal())
+            .build();
     }
 }

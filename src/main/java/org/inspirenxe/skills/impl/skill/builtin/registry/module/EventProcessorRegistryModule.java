@@ -28,10 +28,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
 import org.inspirenxe.skills.api.skill.builtin.EventProcessors;
-import org.inspirenxe.skills.impl.skill.builtin.event.processor.UserChangeBlockPlaceEventProcessor;
-import org.inspirenxe.skills.impl.skill.builtin.event.processor.UserInteractBlockEventProcessor;
-import org.inspirenxe.skills.impl.skill.builtin.event.processor.UserInteractItemEventProcessor;
-import org.inspirenxe.skills.impl.skill.builtin.event.processor.UserChangeBlockBreakEventProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.processor.ChangeBlockPlaceEventProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.processor.InteractBlockEventProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.processor.InteractItemEventProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.processor.ChangeBlockBreakEventProcessor;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.registry.AdditionalCatalogRegistryModule;
@@ -72,16 +72,16 @@ public final class EventProcessorRegistryModule implements AdditionalCatalogRegi
     @DelayedRegistration(RegistrationPhase.PRE_INIT)
     @Override
     public void registerDefaults() {
-        this.registerAdditionalCatalog(new UserInteractItemEventProcessor("user_interact_item_primary_main_hand", "User Interact Item Primary Main Hand", e -> e instanceof InteractItemEvent.Primary.MainHand));
-        this.registerAdditionalCatalog(new UserInteractItemEventProcessor("user_interact_item_primary_off_hand", "User Interact Item Primary Off Hand", e -> e instanceof InteractItemEvent.Primary.OffHand));
-        this.registerAdditionalCatalog(new UserInteractItemEventProcessor("user_interact_item_secondary_main_hand", "User Interact Item Secondary Main Hand", e -> e instanceof InteractItemEvent.Secondary.MainHand));
-        this.registerAdditionalCatalog(new UserInteractItemEventProcessor("user_interact_item_secondary_off_hand", "User Interact Item Secondary Off Hand", e -> e instanceof InteractItemEvent.Secondary.OffHand));
-        this.registerAdditionalCatalog(new UserInteractBlockEventProcessor("user_interact_block_primary_main_hand", "User Interact Block Primary Main Hand", e -> e instanceof InteractBlockEvent.Primary.MainHand));
-        this.registerAdditionalCatalog(new UserInteractBlockEventProcessor("user_interact_block_primary_off_hand", "User Interact Block Primary Off Hand", e -> e instanceof InteractBlockEvent.Primary.OffHand));
-        this.registerAdditionalCatalog(new UserInteractBlockEventProcessor("user_interact_block_secondary_main_hand", "User Interact Block Secondary Main Hand", e -> e instanceof InteractBlockEvent.Secondary.MainHand));
-        this.registerAdditionalCatalog(new UserInteractBlockEventProcessor("user_interact_block_secondary_off_hand", "User Interact Block Secondary Off Hand", e -> e instanceof InteractBlockEvent.Secondary.OffHand));
-        this.registerAdditionalCatalog(new UserChangeBlockPlaceEventProcessor());
-        this.registerAdditionalCatalog(new UserChangeBlockBreakEventProcessor());
+        this.registerAdditionalCatalog(new InteractItemEventProcessor("interact_item_primary_main_hand", "Interact Item Primary Main Hand", e -> e instanceof InteractItemEvent.Primary.MainHand));
+        this.registerAdditionalCatalog(new InteractItemEventProcessor("interact_item_primary_off_hand", "Interact Item Primary Off Hand", e -> e instanceof InteractItemEvent.Primary.OffHand));
+        this.registerAdditionalCatalog(new InteractItemEventProcessor("interact_item_secondary_main_hand", "Interact Item Secondary Main Hand", e -> e instanceof InteractItemEvent.Secondary.MainHand));
+        this.registerAdditionalCatalog(new InteractItemEventProcessor("interact_item_secondary_off_hand", "Interact Item Secondary Off Hand", e -> e instanceof InteractItemEvent.Secondary.OffHand));
+        this.registerAdditionalCatalog(new InteractBlockEventProcessor("interact_block_primary_main_hand", "Interact Block Primary Main Hand", e -> e instanceof InteractBlockEvent.Primary.MainHand));
+        this.registerAdditionalCatalog(new InteractBlockEventProcessor("interact_block_primary_off_hand", "Interact Block Primary Off Hand", e -> e instanceof InteractBlockEvent.Primary.OffHand));
+        this.registerAdditionalCatalog(new InteractBlockEventProcessor("interact_block_secondary_main_hand", "Interact Block Secondary Main Hand", e -> e instanceof InteractBlockEvent.Secondary.MainHand));
+        this.registerAdditionalCatalog(new InteractBlockEventProcessor("interact_block_secondary_off_hand", "Interact Block Secondary Off Hand", e -> e instanceof InteractBlockEvent.Secondary.OffHand));
+        this.registerAdditionalCatalog(new ChangeBlockPlaceEventProcessor());
+        this.registerAdditionalCatalog(new ChangeBlockBreakEventProcessor());
     }
 
     @Override

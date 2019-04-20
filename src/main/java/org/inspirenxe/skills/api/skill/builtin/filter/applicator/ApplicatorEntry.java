@@ -24,8 +24,6 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.filter.applicator;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import net.kyori.filter.Filter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.inspirenxe.skills.api.skill.builtin.applicator.Applicator;
@@ -41,8 +39,8 @@ public final class ApplicatorEntry {
         this.applicators = applicators;
     }
 
-    public static ApplicatorEntry.Builder applyIf() {
-        return new Builder();
+    public static ApplicatorEntry.Builder apply(Applicator... applicators) {
+        return new Builder(Arrays.asList(applicators));
     }
 
     public Iterable<Filter> getFilters() {
@@ -53,31 +51,16 @@ public final class ApplicatorEntry {
         return this.applicators;
     }
 
-    public static final class Builder {
+    public static class Builder {
 
-        private Iterable<Filter> filters;
-        private Iterable<Applicator> applicators;
+        final Iterable<Applicator> applicators;
 
-        public Builder all(final Filter... filters) {
-            this.filters = Arrays.asList(filters);
-            return this;
+        Builder(final Iterable<Applicator> applicators) {
+            this.applicators = applicators;
         }
 
-        public Builder any(final Filter... filters) {
-            this.filters = Arrays.asList(filters);
-            return this;
-        }
-
-        public Builder then(Applicator... applicators) {
-            this.applicators = Arrays.asList(applicators);
-            return this;
-        }
-
-        public ApplicatorEntry build() {
-            checkNotNull(this.filters);
-            checkNotNull(this.applicators);
-
-            return new ApplicatorEntry(this.filters, this.applicators);
+        public ApplicatorEntry when(final Filter... filters) {
+            return new ApplicatorEntry(Arrays.asList(filters), this.applicators);
         }
     }
 }

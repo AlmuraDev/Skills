@@ -22,27 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.impl.skill.builtin.event.processor;
+package org.inspirenxe.skills.api.skill.builtin.filter;
 
-import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
-import org.inspirenxe.skills.impl.SkillsImpl;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.cause.EventContext;
+import net.kyori.filter.Filter;
+import net.kyori.filter.FilterQuery;
+import net.kyori.filter.FilterResponse;
+import net.kyori.filter.MultiFilter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public final class UserChangeBlockPlaceEventProcessor extends AbstractBlockTransactionEventProcessor {
+import java.util.Arrays;
 
-    public UserChangeBlockPlaceEventProcessor() {
-        super(SkillsImpl.ID + ":user_change_block_place", "User Change Block Place", event -> event instanceof ChangeBlockEvent.Place);
+public final class MatchFilterResponseToResponseFilter extends MultiFilter {
+
+    public static MatchFilterResponseToResponseFilter matchTo(final FilterResponse response, Filter... filters) {
+        return new MatchFilterResponseToResponseFilter(response, Arrays.asList(filters));
+    }
+
+    private final FilterResponse response;
+
+    private MatchFilterResponseToResponseFilter(final FilterResponse response, final Iterable<? extends Filter> filters) {
+        super(filters);
+        this.response = response;
     }
 
     @Override
-    EventContext populateTransactionContext(final EventContext context, final Transaction<BlockSnapshot> transaction) {
-        return EventContext
-            .builder()
-            .from(context)
-            .add(SkillsEventContextKeys.PROCESSING_BLOCK, transaction.getFinal())
-            .build();
+    public @NonNull FilterResponse query(@NonNull final FilterQuery query) {
+        for (final Filter filter : this.filters) {
+            FilterResponse fResponse = filter.query(query);
+            if (fResponse != this.response) {
+                return FilterResponse.ABSTAIN;
+            }
+        }
+        return this.response;
     }
 }

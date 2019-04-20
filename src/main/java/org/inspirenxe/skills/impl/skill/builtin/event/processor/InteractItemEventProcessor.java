@@ -24,25 +24,28 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
+import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.impl.SkillsImpl;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public final class UserChangeBlockBreakEventProcessor extends AbstractBlockTransactionEventProcessor {
+import java.util.function.Predicate;
 
-    public UserChangeBlockBreakEventProcessor() {
-        super(SkillsImpl.ID + ":user_change_block_break", "User Change Block Break", event -> event instanceof ChangeBlockEvent.Break);
+public final class InteractItemEventProcessor extends AbstractEventProcessor {
+
+    public InteractItemEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
+        super(SkillsImpl.ID + ":" + id, name, shouldProcess);
     }
 
     @Override
-    EventContext populateTransactionContext(final EventContext context, final Transaction<BlockSnapshot> transaction) {
+    EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
         return EventContext
             .builder()
             .from(context)
-            .add(SkillsEventContextKeys.PROCESSING_BLOCK, transaction.getOriginal())
+            .add(SkillsEventContextKeys.PROCESSING_ITEM, context.get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
             .build();
     }
 }

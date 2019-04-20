@@ -43,11 +43,14 @@ import org.jooq.Query;
 import org.jooq.Results;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -201,6 +204,10 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
             this.handleDeletions(decayEvent);
         }
 
+        if (!event.getContext().get(EventContextKeys.OWNER).isPresent()) {
+            return;
+        }
+
         if (placeEvent != null) {
             this.handleAdditions(placeEvent);
         }
@@ -211,10 +218,6 @@ public final class BlockCreationTrackerImpl implements Witness, BlockCreationTra
     }
 
     private void handleAdditions(final ChangeBlockEvent event) {
-        if (!event.getContext().get(EventContextKeys.OWNER).isPresent()) {
-            return;
-        }
-
         final Set<BlockCreationFlags> flags = BlockCreationFlags.getFlags(event.getCause(), event.getContext());
         if (flags.isEmpty()) {
             return;

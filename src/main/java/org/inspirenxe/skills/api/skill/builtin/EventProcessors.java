@@ -29,23 +29,23 @@ public final class EventProcessors {
 
     // @formatter:off
 
-    public static EventProcessor USER_INTERACT_ITEM_PRIMARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_ITEM_PRIMARY_MAIN_HAND");
+    public static EventProcessor INTERACT_ITEM_PRIMARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_ITEM_PRIMARY_MAIN_HAND");
 
-    public static EventProcessor USER_INTERACT_ITEM_PRIMARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_ITEM_PRIMARY_OFF_HAND");
+    public static EventProcessor INTERACT_ITEM_PRIMARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_ITEM_PRIMARY_OFF_HAND");
 
-    public static EventProcessor USER_INTERACT_ITEM_SECONDARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_ITEM_SECONDARY_MAIN_HAND");
+    public static EventProcessor INTERACT_ITEM_SECONDARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_ITEM_SECONDARY_MAIN_HAND");
 
-    public static EventProcessor USER_INTERACT_ITEM_SECONDARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_ITEM_SECONDARY_OFF_HAND");
+    public static EventProcessor INTERACT_ITEM_SECONDARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_ITEM_SECONDARY_OFF_HAND");
 
-    public static EventProcessor USER_INTERACT_BLOCK_PRIMARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_BLOCK_PRIMARY_MAIN_HAND");
+    public static EventProcessor INTERACT_BLOCK_PRIMARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_BLOCK_PRIMARY_MAIN_HAND");
 
-    public static EventProcessor USER_INTERACT_BLOCK_PRIMARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_BLOCK_PRIMARY_OFF_HAND");
+    public static EventProcessor INTERACT_BLOCK_PRIMARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_BLOCK_PRIMARY_OFF_HAND");
 
-    public static EventProcessor USER_INTERACT_BLOCK_SECONDARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_BLOCK_SECONDARY_MAIN_HAND");
+    public static EventProcessor INTERACT_BLOCK_SECONDARY_MAIN_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_BLOCK_SECONDARY_MAIN_HAND");
 
-    public static EventProcessor USER_INTERACT_BLOCK_SECONDARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "USER_INTERACT_BLOCK_SECONDARY_OFF_HAND");
+    public static EventProcessor INTERACT_BLOCK_SECONDARY_OFF_HAND = DummyObjectProvider.createFor(EventProcessor.class, "INTERACT_BLOCK_SECONDARY_OFF_HAND");
 
-    public static EventProcessor USER_CHANGE_BLOCK_BREAK = DummyObjectProvider.createFor(EventProcessor.class, "USER_CHANGE_BLOCK_BREAK");
+    public static EventProcessor CHANGE_BLOCK_BREAK = DummyObjectProvider.createFor(EventProcessor.class, "CHANGE_BLOCK_BREAK");
 
     public static EventProcessor USER_CHANGE_BLOCK_PLACE = DummyObjectProvider.createFor(EventProcessor.class, "USER_CHANGE_BLOCK_PLACE");
 
