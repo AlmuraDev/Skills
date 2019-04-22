@@ -47,7 +47,7 @@ public final class EventProcessors {
 
     public static EventProcessor CHANGE_BLOCK_BREAK = DummyObjectProvider.createFor(EventProcessor.class, "CHANGE_BLOCK_BREAK");
 
-    public static EventProcessor USER_CHANGE_BLOCK_PLACE = DummyObjectProvider.createFor(EventProcessor.class, "USER_CHANGE_BLOCK_PLACE");
+    public static EventProcessor CHANGE_BLOCK_PLACE = DummyObjectProvider.createFor(EventProcessor.class, "CHANGE_BLOCK_PLACE");
 
     // @formatter:on
     private EventProcessors() {}

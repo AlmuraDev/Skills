@@ -30,11 +30,13 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 public final class ChangeBlockPlaceEventProcessor extends AbstractBlockTransactionEventProcessor {
 
     public ChangeBlockPlaceEventProcessor() {
-        super(SkillsImpl.ID + ":user_change_block_place", "User Change Block Place", event -> event instanceof ChangeBlockEvent.Place);
+        super(SkillsImpl.ID + ":change_block_place", "Change Block Place", event -> event instanceof ChangeBlockEvent.Place);
     }
 
     @Override
@@ -42,6 +44,7 @@ public final class ChangeBlockPlaceEventProcessor extends AbstractBlockTransacti
         return EventContext
             .builder()
             .from(context)
+            .add(SkillsEventContextKeys.PROCESSING_ITEM, context.get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
             .add(SkillsEventContextKeys.PROCESSING_BLOCK, transaction.getFinal())
             .build();
     }

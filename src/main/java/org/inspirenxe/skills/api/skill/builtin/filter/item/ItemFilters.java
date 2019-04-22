@@ -51,7 +51,7 @@ public final class ItemFilters {
     private ItemFilters() {
     }
 
-    public static ItemFuzzyFilter item(final String... value) {
+    public static ItemFuzzyFilter items(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyItemStack> items = new HashSet<>();
@@ -66,7 +66,7 @@ public final class ItemFilters {
         return new ItemFuzzyFilter(items);
     }
 
-    public static ItemFuzzyFilter item(final ItemType... value) {
+    public static ItemFuzzyFilter items(final ItemType... value) {
         checkNotNull(value);
 
         final Set<FuzzyItemStack> items = new HashSet<>();
@@ -93,7 +93,7 @@ public final class ItemFilters {
         return new ItemFuzzyFilter(items);
     }
 
-    public static ItemFuzzyFilter item() {
+    public static ItemFuzzyFilter items() {
         return ALL_TYPES;
     }
 
