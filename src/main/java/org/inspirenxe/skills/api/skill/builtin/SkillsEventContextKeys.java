@@ -26,6 +26,8 @@ package org.inspirenxe.skills.api.skill.builtin;
 
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.EventContextKey;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.util.Direction;
@@ -41,4 +43,10 @@ public final class SkillsEventContextKeys {
     public static final EventContextKey<BlockCreationTracker> BLOCK_CREATION_TRACKER = EventContextKey.builder(BlockCreationTracker.class).id("block_creation_tracker").name("Block Creation Tracker").build();
 
     public static final EventContextKey<ItemStackSnapshot> PROCESSING_ITEM = EventContextKey.builder(ItemStackSnapshot.class).id("processing_item").name("Processing Item").build();
+
+    public static final EventContextKey<Entity> PROCESSING_ENTITY = EventContextKey.builder(Entity.class).id("processing_entity").name("Processing Entity").build();
+
+    public static final EventContextKey<Player> PROCESSING_PLAYER = EventContextKey.builder(Player.class).id("processing_player").name("Processing Player").build();
+
+
 }

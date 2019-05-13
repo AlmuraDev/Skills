@@ -27,8 +27,11 @@ package org.inspirenxe.skills.api.skill.builtin.filter.block;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.Sets;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.builtin.block.FuzzyBlockState;
+import org.inspirenxe.skills.api.skill.builtin.filter.FuzzyMatchableFilter;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 
@@ -38,7 +41,7 @@ import java.util.Set;
 
 public final class BlockFilters {
 
-    private static final BlockFuzzyFilter ALL_TYPES;
+    private static final FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> ALL_TYPES;
 
     static {
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -46,13 +49,13 @@ public final class BlockFilters {
             states.add(FuzzyBlockState.type(type));
         }
 
-        ALL_TYPES = new BlockFuzzyFilter(states);
+        ALL_TYPES = new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_BLOCK, states);
     }
 
     private BlockFilters() {
     }
 
-    public static BlockFuzzyFilter blocks(final BlockType... value) {
+    public static FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> blocks(final BlockType... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -60,10 +63,10 @@ public final class BlockFilters {
             states.add(FuzzyBlockState.type(type));
         }
 
-        return new BlockFuzzyFilter(states);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_BLOCK, states);
     }
 
-    public static BlockFuzzyFilter blocks(final String... value) {
+    public static FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> blocks(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -75,10 +78,10 @@ public final class BlockFilters {
                 states.add(FuzzyBlockState.type(type));
             }
         }
-        return new BlockFuzzyFilter(states);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_BLOCK, states);
     }
 
-    public static BlockFuzzyFilter blocksFor(final String... value) {
+    public static FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> blocksFor(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -91,18 +94,18 @@ public final class BlockFilters {
             }
         }
 
-        return new BlockFuzzyFilter(states);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_BLOCK, states);
     }
 
-    public static BlockFuzzyFilter blocks() {
+    public static FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> blocks() {
         return ALL_TYPES;
     }
 
-    public static BlockFuzzyFilter states(final FuzzyBlockState... value) {
-        return new BlockFuzzyFilter(Sets.newHashSet(checkNotNull(value)));
+    public static FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> states(final FuzzyBlockState... value) {
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_BLOCK, Sets.newHashSet(checkNotNull(value)));
     }
 
-    public static BlockFuzzyFilter states(final String... value) {
+    public static FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> states(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -114,10 +117,10 @@ public final class BlockFilters {
                 states.add(FuzzyBlockState.state(type));
             }
         }
-        return new BlockFuzzyFilter(states);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_BLOCK, states);
     }
 
-    public static BlockFuzzyFilter statesFor(final String... value) {
+    public static FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> statesFor(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyBlockState> states = new HashSet<>();
@@ -130,6 +133,6 @@ public final class BlockFilters {
             }
         }
 
-        return new BlockFuzzyFilter(states);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_BLOCK, states);
     }
 }

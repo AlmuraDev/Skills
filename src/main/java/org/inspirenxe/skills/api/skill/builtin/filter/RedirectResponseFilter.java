@@ -35,18 +35,17 @@ import net.kyori.filter.MultiFilter;
  */
 public final class RedirectResponseFilter extends MultiFilter {
 
-    public static RedirectResponseFilter whenThen(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when,
-        final @NonNull FilterResponse then) {
-        return new RedirectResponseFilter(filters, when, then);
-    }
-
     private final FilterResponse when;
     private final FilterResponse then;
-
     private RedirectResponseFilter(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when, final @NonNull FilterResponse then) {
         super(filters);
         this.when = when;
         this.then = then;
+    }
+
+    public static RedirectResponseFilter whenThen(final @NonNull Iterable<? extends Filter> filters, final FilterResponse when,
+        final @NonNull FilterResponse then) {
+        return new RedirectResponseFilter(filters, when, then);
     }
 
     @Override

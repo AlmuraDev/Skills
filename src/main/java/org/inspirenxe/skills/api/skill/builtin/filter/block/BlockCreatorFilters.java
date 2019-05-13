@@ -28,7 +28,6 @@ import org.inspirenxe.skills.api.event.BlockCreationFlags;
 import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
 import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.entity.living.player.User;
 
 import java.util.Set;
 import java.util.UUID;

@@ -22,24 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.filter.block;
+package org.inspirenxe.skills.api.skill.builtin.entity;
 
-import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
-import org.inspirenxe.skills.api.skill.builtin.block.FuzzyBlockState;
-import org.inspirenxe.skills.api.skill.builtin.filter.FuzzyMatchableFilter;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.event.cause.EventContextKey;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
+import org.inspirenxe.skills.api.skill.builtin.FuzzyMatchable;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
 
-final class BlockFuzzyFilter extends FuzzyMatchableFilter<BlockSnapshot, FuzzyBlockState> {
+public final class FuzzyEntity implements FuzzyMatchable<Entity> {
 
-    BlockFuzzyFilter(final Collection<FuzzyBlockState> value) {
-        super(value);
+    public static FuzzyEntity type(final EntityType type) {
+        checkNotNull(type);
+
+        return new FuzzyEntity(type);
+    }
+
+    private final EntityType type;
+
+    private FuzzyEntity(final EntityType type) {
+        this.type = type;
     }
 
     @Override
-    public EventContextKey<BlockSnapshot> getContextKey() {
-        return SkillsEventContextKeys.PROCESSING_BLOCK;
+    public boolean matches(Entity actual) {
+        return this.type == actual.getType();
     }
 }

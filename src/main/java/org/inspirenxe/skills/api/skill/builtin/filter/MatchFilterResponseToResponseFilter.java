@@ -34,15 +34,15 @@ import java.util.Arrays;
 
 public final class MatchFilterResponseToResponseFilter extends MultiFilter {
 
-    public static MatchFilterResponseToResponseFilter matchTo(final FilterResponse response, Filter... filters) {
-        return new MatchFilterResponseToResponseFilter(response, Arrays.asList(filters));
-    }
-
     private final FilterResponse response;
 
     private MatchFilterResponseToResponseFilter(final FilterResponse response, final Iterable<? extends Filter> filters) {
         super(filters);
         this.response = response;
+    }
+
+    public static MatchFilterResponseToResponseFilter matchTo(final FilterResponse response, Filter... filters) {
+        return new MatchFilterResponseToResponseFilter(response, Arrays.asList(filters));
     }
 
     @Override

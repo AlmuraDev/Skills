@@ -34,6 +34,7 @@ public final class ApplicatorEntry {
 
     private final Iterable<Filter> filters;
     private final Iterable<Applicator> applicators;
+
     private ApplicatorEntry(@NonNull final Iterable<Filter> filters, @NonNull final Iterable<Applicator> applicators) {
         this.filters = filters;
         this.applicators = applicators;

@@ -22,24 +22,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.filter.data;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.collect.Sets;
-import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.value.BaseValue;
-import org.spongepowered.api.event.cause.EventContextKey;
-
-public final class ValueFilters {
-
-    public static <T extends DataHolder, V, U extends BaseValue<V>> ValueFilter value(final EventContextKey<T> processingKey, final Key<U> key,
-        final V... values) {
-        checkNotNull(processingKey);
-        checkNotNull(key);
-        checkNotNull(values);
-
-        return new ValueFilter<>(processingKey, key, Sets.newHashSet(values));
-    }
-}
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.inspirenxe.skills.api.skill.builtin.entity;

@@ -42,6 +42,7 @@ public final class TriggerFilter extends MultiFilter {
 
     private final Iterable<ApplicatorEntry> applicatorEntries;
     private final Iterable<Applicator> elseApplicators;
+
     private TriggerFilter(@NonNull final Iterable<? extends Filter> filters, @NonNull final Iterable<ApplicatorEntry> applicatorEntries,
         final Iterable<Applicator> elseApplicators) {
         super(filters);

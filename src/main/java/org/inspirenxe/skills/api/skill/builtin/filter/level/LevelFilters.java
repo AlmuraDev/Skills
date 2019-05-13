@@ -30,6 +30,9 @@ import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 
 public final class LevelFilters {
 
+    private LevelFilters() {
+    }
+
     public static LevelFilter level(final int level) {
         return new LevelFilter() {
             @Override
@@ -53,8 +56,5 @@ public final class LevelFilters {
                 return query instanceof EventQuery;
             }
         };
-    }
-
-    private LevelFilters() {
     }
 }

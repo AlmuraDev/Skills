@@ -24,8 +24,52 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.filter.data;
 
+import net.kyori.filter.FilterQuery;
 import net.kyori.filter.TypedFilter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
+import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.BaseValue;
+import org.spongepowered.api.event.cause.EventContextKey;
 
-public interface ValueFilter extends TypedFilter.Strong<EventQuery> {
+import java.util.Collection;
+
+public class ValueFilter<T extends DataHolder, V, U extends BaseValue<V>> implements TypedFilter.Strong<EventQuery> {
+
+    private final EventContextKey<T> processingKey;
+    private final Key<U> key;
+    private final Collection<V> values;
+
+    ValueFilter(final EventContextKey<T> processingKey, final Key<U> key, final Collection<V> values) {
+        this.processingKey = processingKey;
+        this.key = key;
+        this.values = values;
+    }
+
+    @Override
+    public boolean queryResponse(@NonNull final EventQuery query) {
+        final V current = query.getContext().get(this.processingKey).orElse(null).get(this.key).orElse(null);
+        if (current == null) {
+            return false;
+        }
+
+        boolean matched = false;
+        for (V v : this.values) {
+            if (v.equals(current)) {
+                matched = true;
+                break;
+            }
+        }
+
+        return matched;
+    }
+
+    @Override
+    public boolean queryable(@NonNull final FilterQuery query) {
+        if (!(query instanceof EventQuery)) {
+            return false;
+        }
+        return ((EventQuery) query).getContext().containsKey(this.processingKey);
+    }
 }

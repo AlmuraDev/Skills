@@ -27,9 +27,12 @@ package org.inspirenxe.skills.api.skill.builtin.filter.item;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.Sets;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
+import org.inspirenxe.skills.api.skill.builtin.filter.FuzzyMatchableFilter;
 import org.inspirenxe.skills.api.skill.builtin.inventory.FuzzyItemStack;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,7 +40,7 @@ import java.util.Set;
 
 public final class ItemFilters {
 
-    private static final ItemFuzzyFilter ALL_TYPES;
+    private static final FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemStack> ALL_TYPES;
 
     static {
         final Set<FuzzyItemStack> stacks = new HashSet<>();
@@ -45,13 +48,13 @@ public final class ItemFilters {
             stacks.add(FuzzyItemStack.type(type));
         }
 
-        ALL_TYPES = new ItemFuzzyFilter(stacks);
+        ALL_TYPES = new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_ITEM, stacks);
     }
 
     private ItemFilters() {
     }
 
-    public static ItemFuzzyFilter items(final String... value) {
+    public static FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemStack> items(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyItemStack> items = new HashSet<>();
@@ -63,10 +66,10 @@ public final class ItemFilters {
                 items.add(FuzzyItemStack.type(type));
             }
         }
-        return new ItemFuzzyFilter(items);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_ITEM, items);
     }
 
-    public static ItemFuzzyFilter items(final ItemType... value) {
+    public static FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemStack> items(final ItemType... value) {
         checkNotNull(value);
 
         final Set<FuzzyItemStack> items = new HashSet<>();
@@ -74,10 +77,10 @@ public final class ItemFilters {
             items.add(FuzzyItemStack.type(type));
         }
 
-        return new ItemFuzzyFilter(items);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_ITEM, items);
     }
 
-    public static ItemFuzzyFilter itemTypesFor(final String... value) {
+    public static FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemStack> itemTypesFor(final String... value) {
         checkNotNull(value);
 
         final Set<FuzzyItemStack> items = new HashSet<>();
@@ -90,14 +93,14 @@ public final class ItemFilters {
             }
         }
 
-        return new ItemFuzzyFilter(items);
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_ITEM, items);
     }
 
-    public static ItemFuzzyFilter items() {
+    public static FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemStack> items() {
         return ALL_TYPES;
     }
 
-    public static ItemFuzzyFilter itemStacks(final FuzzyItemStack... stacks) {
-        return new ItemFuzzyFilter(Sets.newHashSet(checkNotNull(stacks)));
+    public static FuzzyMatchableFilter<ItemStackSnapshot, FuzzyItemStack> itemStacks(final FuzzyItemStack... stacks) {
+        return new FuzzyMatchableFilter<>(SkillsEventContextKeys.PROCESSING_ITEM, Sets.newHashSet(checkNotNull(stacks)));
     }
 }

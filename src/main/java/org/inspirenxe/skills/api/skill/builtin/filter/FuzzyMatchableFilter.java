@@ -33,11 +33,13 @@ import org.spongepowered.api.event.cause.EventContextKey;
 
 import java.util.Collection;
 
-public abstract class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements TypedFilter.Strong<EventQuery> {
+public class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> implements TypedFilter.Strong<EventQuery> {
 
+    private final EventContextKey<O> processingKey;
     private final Collection<T> value;
 
-    public FuzzyMatchableFilter(final Collection<T> value) {
+    public FuzzyMatchableFilter(final EventContextKey<O> processingKey, final Collection<T> value) {
+        this.processingKey = processingKey;
         this.value = value;
     }
 
@@ -47,7 +49,7 @@ public abstract class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> imple
 
     @Override
     public final boolean queryResponse(@NonNull final EventQuery query) {
-        final O o = query.getContext().get(this.getContextKey()).orElse(null);
+        final O o = query.getContext().get(this.processingKey).orElse(null);
 
         final boolean matched = this.value.stream().anyMatch(v -> v.matches(o));
 
@@ -65,8 +67,6 @@ public abstract class FuzzyMatchableFilter<O, T extends FuzzyMatchable<O>> imple
             return false;
         }
 
-        return ((EventQuery) query).getContext().containsKey(this.getContextKey());
+        return ((EventQuery) query).getContext().containsKey(this.processingKey);
     }
-
-    public abstract EventContextKey<O> getContextKey();
 }
