@@ -49,6 +49,8 @@ public final class EventProcessors {
 
     public static EventProcessor CHANGE_BLOCK_PLACE = DummyObjectProvider.createFor(EventProcessor.class, "CHANGE_BLOCK_PLACE");
 
+    public static EventProcessor DROP_ITEM_DESTRUCT = DummyObjectProvider.createFor(EventProcessor.class, "DROP_ITEM_DESTRUCT");
+
     // @formatter:on
     private EventProcessors() {}
 }

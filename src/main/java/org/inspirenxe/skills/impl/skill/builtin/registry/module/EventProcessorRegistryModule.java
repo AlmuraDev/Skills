@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
 import org.inspirenxe.skills.api.skill.builtin.EventProcessors;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.ChangeBlockPlaceEventProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.processor.DropItemDestructEventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.InteractBlockEventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.InteractItemEventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.ChangeBlockBreakEventProcessor;
@@ -82,6 +83,7 @@ public final class EventProcessorRegistryModule implements AdditionalCatalogRegi
         this.registerAdditionalCatalog(new InteractBlockEventProcessor("interact_block_secondary_off_hand", "Interact Block Secondary Off Hand", e -> e instanceof InteractBlockEvent.Secondary.OffHand));
         this.registerAdditionalCatalog(new ChangeBlockPlaceEventProcessor());
         this.registerAdditionalCatalog(new ChangeBlockBreakEventProcessor());
+        this.registerAdditionalCatalog(new DropItemDestructEventProcessor());
     }
 
     @Override

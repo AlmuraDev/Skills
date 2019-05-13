@@ -24,31 +24,26 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.SkillService;
-import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.impl.SkillsImpl;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
 
-import java.util.function.Predicate;
+import java.util.List;
 
-public final class InteractBlockEventProcessor extends AbstractEventProcessor {
+public final class DropItemDestructEventProcessor extends AbstractEntityEventProcessor {
 
-    public InteractBlockEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
-        super(SkillsImpl.ID + ":" + id, name, shouldProcess);
+    public DropItemDestructEventProcessor() {
+        super(SkillsImpl.ID + ":drop_item_destruct", "Drop Item Destruct", event -> event instanceof DropItemEvent.Destruct);
     }
 
     @Override
-    EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
-        return EventContext
-            .builder()
-            .from(context)
-            .add(SkillsEventContextKeys.PROCESSING_BLOCK, ((InteractBlockEvent) event).getTargetBlock())
-            .add(SkillsEventContextKeys.PROCESSING_BLOCK_SIDE, ((InteractBlockEvent) event).getTargetSide())
-            .add(SkillsEventContextKeys.PROCESSING_ITEM, event.getContext().get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
-            .build();
+    List<Entity> getEntities(final Event event) {
+        return ((DropItemEvent.Destruct) event).getEntities();
+    }
+
+    @Override
+    void cancelEntity(final Event event, final Entity entity) {
+        ((DropItemEvent.Destruct) event).filterEntities(e -> e == entity);
     }
 }

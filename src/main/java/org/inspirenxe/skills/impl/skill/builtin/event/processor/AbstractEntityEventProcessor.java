@@ -24,63 +24,49 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import static net.kyori.filter.FilterResponse.ALLOW;
 import static net.kyori.filter.FilterResponse.DENY;
+import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_ENTITY_SPAWN;
 import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_EVENT;
+import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.ENTITY_SPAWN;
 import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.EVENT;
 
 import net.kyori.filter.Filter;
 import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
-import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
 import org.inspirenxe.skills.api.skill.builtin.FilterRegistrar;
-import org.inspirenxe.skills.api.skill.builtin.applicator.Applicator;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.ApplicatorEntry;
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractEventProcessor implements EventProcessor {
+public abstract class AbstractEntityEventProcessor extends AbstractEventProcessor {
 
-    private final String id, name;
-    private final Predicate<Event> shouldProcess;
-
-    AbstractEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
-        this.id = id;
-        this.name = name;
-        this.shouldProcess = shouldProcess;
-    }
-
-    @Override
-    public final String getId() {
-        return this.id;
-    }
-
-    @Override
-    public final String getName() {
-        return this.name;
-    }
-
-    @Override
-    public final boolean shouldProcess(final Event event) {
-        return this.shouldProcess.test(event);
+    AbstractEntityEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
+        super(id, name, shouldProcess);
     }
 
     @Override
     public void process(final Event event, final EventContext context, final SkillService service, final User user, final Skill skill) {
         final BasicSkillType skillType = (BasicSkillType) skill.getSkillType();
+
         final List<FilterRegistrar> filterRegistrations = skillType.getFilterRegistrations(skill.getHolder().getContainer(), this);
+
         final EventContext actualContext = this.populateEventContext(event, context, service);
 
-        final EventQuery query = new EventQueryImpl(event.getCause(), actualContext, user, skill);
+        EventQuery query = new EventQueryImpl(event.getCause(), actualContext, user, skill);
+
         for (final FilterRegistrar registration : filterRegistrations) {
             if (event instanceof Cancellable) {
                 for (final Filter filter : registration.getFilters(CANCEL_EVENT)) {
@@ -94,28 +80,47 @@ public abstract class AbstractEventProcessor implements EventProcessor {
             for (final TriggerFilter trigger : registration.getTriggers(EVENT)) {
                 this.processTrigger(trigger, query);
             }
-        }
-    }
 
-    abstract EventContext populateEventContext(Event event, EventContext context, SkillService service);
+            List<Entity> entities = new ArrayList<>(this.getEntities(event));
 
-    final void processTrigger(final TriggerFilter trigger, final EventQuery query) {
-        boolean runFallbackApplicators = trigger.getElseApplicators() != null;
+            for (final Entity entity : entities) {
 
-        if (trigger.query(query) == ALLOW) {
-            final Iterable<ApplicatorEntry> applicatorEntries = trigger.getMatchedApplicators(query);
-            for (final ApplicatorEntry applicatorEntry : applicatorEntries) {
-                runFallbackApplicators = false;
-                for (final Applicator applicator : applicatorEntry.getApplicators()) {
-                    applicator.apply(query);
+                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(context, entity), user, skill);
+
+                for (final Filter filter : registration.getFilters(CANCEL_ENTITY_SPAWN)) {
+                    if (filter.query(query) == DENY) {
+                        this.cancelEntity(event, entity);
+                        entities.removeIf(e -> e == entity);
+                        break;
+                    }
                 }
             }
 
-            if (runFallbackApplicators) {
-                for (final Applicator applicator : trigger.getElseApplicators()) {
-                    applicator.apply(query);
+            for (final Entity entity : entities) {
+                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(context, entity), user, skill);
+
+                for (final TriggerFilter trigger : registration.getTriggers(ENTITY_SPAWN)) {
+                    this.processTrigger(trigger, query);
                 }
             }
         }
     }
+
+    @Override
+    public EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
+        return context;
+    }
+
+    abstract List<Entity> getEntities(Event event);
+
+    EventContext populateEntityContext(final EventContext context, final Entity entity) {
+        return EventContext
+            .builder()
+            .from(context)
+            .add(SkillsEventContextKeys.PROCESSING_ITEM, context.get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
+            .add(SkillsEventContextKeys.PROCESSING_ENTITY, entity)
+            .build();
+    }
+
+    abstract void cancelEntity(Event event, Entity entity);
 }

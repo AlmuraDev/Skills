@@ -24,16 +24,14 @@
  */
 package org.inspirenxe.skills.api.skill.builtin;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import net.kyori.filter.Filter;
 import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
-import javax.annotation.Nullable;
+import java.util.Map;
 
 public final class FilterRegistrar {
 
@@ -41,64 +39,37 @@ public final class FilterRegistrar {
         return new Builder();
     }
 
-    @Nullable private final Filter cancelEvent;
-    @Nullable private final Filter cancelTransaction;
-    private final List<TriggerFilter> eventTriggers, transactionTriggers;
+    private final Map<RegistrarType, List<Filter>> filters;
+    private final Map<TriggerRegistrarType, List<TriggerFilter>> triggers;
 
     private FilterRegistrar(final Builder builder) {
-        this.cancelEvent = builder.cancelEvent;
-        this.cancelTransaction = builder.cancelTransaction;
-        this.eventTriggers = builder.eventTriggers;
-        this.transactionTriggers = builder.transactionTriggers;
+        this.filters = builder.filters;
+        this.triggers = builder.triggers;
     }
 
-    @Nullable
-    public Filter getCancelEvent() {
-        return this.cancelEvent;
+    public List<Filter> getFilters(final RegistrarType type) {
+        return this.filters.computeIfAbsent(type, k -> new ArrayList<>());
     }
 
-    @Nullable
-    public Filter getCancelTransaction() {
-        return this.cancelTransaction;
-    }
-
-    public List<TriggerFilter> getEventTriggers() {
-        return this.eventTriggers;
-    }
-
-    public List<TriggerFilter> getTransactionTriggers() {
-        return this.transactionTriggers;
+    public List<TriggerFilter> getTriggers(final TriggerRegistrarType type) {
+        return this.triggers.computeIfAbsent(type, k -> new ArrayList<>());
     }
 
     public static final class Builder {
-        @Nullable private Filter cancelEvent;
-        @Nullable private Filter cancelTransaction;
-        private List<TriggerFilter> eventTriggers = new ArrayList<>(), transactionTriggers = new ArrayList<>();
+        final Map<RegistrarType, List<Filter>> filters = new HashMap<>();
+        final Map<TriggerRegistrarType, List<TriggerFilter>> triggers = new HashMap<>();
 
-        public Builder cancelEvent(final Filter cancelEvent) {
-            this.cancelEvent = cancelEvent;
+        public Builder addFilter(final RegistrarType type, final Filter... filters) {
+            Collections.addAll(this.filters.computeIfAbsent(type, k -> new ArrayList<>()), filters);
             return this;
         }
 
-        public Builder cancelTransaction(final Filter cancelTransaction) {
-            this.cancelTransaction = cancelTransaction;
-            return this;
-        }
-
-        public Builder eventTrigger(final TriggerFilter... triggers) {
-            this.eventTriggers.addAll(Arrays.asList(triggers));
-            return this;
-        }
-
-        public Builder transactionTrigger(final TriggerFilter... triggers) {
-            this.transactionTriggers.addAll(Arrays.asList(triggers));
+        public Builder addTrigger(final TriggerRegistrarType type, final TriggerFilter... triggers) {
+            Collections.addAll(this.triggers.computeIfAbsent(type, k -> new ArrayList<>()), triggers);
             return this;
         }
 
         public FilterRegistrar build() {
-            checkState(this.cancelEvent != null || this.cancelTransaction != null || this.eventTriggers.isEmpty() || this.transactionTriggers.isEmpty(),
-                "A FilterRegistrar must do something!");
-
             return new FilterRegistrar(this);
         }
     }
