@@ -42,7 +42,7 @@ import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import java.util.List;
 import java.util.Objects;
 
-public final class DropItemDestructEventProcessor extends AbstractEntityEventProcessor {
+public final class DropItemDestructEventProcessor extends AbstractBulkEntityEventProcessor {
 
     public DropItemDestructEventProcessor() {
         super(SkillsImpl.ID + ":drop_item_destruct", "Drop Item Destruct", event -> event instanceof DropItemEvent.Destruct);

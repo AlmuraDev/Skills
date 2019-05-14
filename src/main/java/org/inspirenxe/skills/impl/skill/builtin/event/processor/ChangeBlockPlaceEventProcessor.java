@@ -40,7 +40,7 @@ import org.spongepowered.api.event.cause.EventContext;
 
 import java.util.Objects;
 
-public final class ChangeBlockPlaceEventProcessor extends AbstractBlockTransactionEventProcessor {
+public final class ChangeBlockPlaceEventProcessor extends AbstractBulkBlockEventProcessor {
 
     public ChangeBlockPlaceEventProcessor() {
         super(SkillsImpl.ID + ":change_block_place", "Change Block Place", event -> event instanceof ChangeBlockEvent.Place);

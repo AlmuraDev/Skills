@@ -25,12 +25,15 @@
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
 import static net.kyori.filter.FilterResponse.DENY;
+import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_ENTITY_SPAWN;
 import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_EVENT;
-import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_TRANSACTION;
-import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.BLOCK_CREATION_TRACKER;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ENTITY;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ITEM;
 import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_PLAYER;
+import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.ENTITY_SPAWN;
 import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.EVENT;
-import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.TRANSACTION;
+import static org.spongepowered.api.event.cause.EventContextKeys.USED_ITEM;
+import static org.spongepowered.api.item.inventory.ItemStackSnapshot.NONE;
 
 import net.kyori.filter.Filter;
 import org.inspirenxe.skills.api.SkillService;
@@ -40,22 +43,21 @@ import org.inspirenxe.skills.api.skill.builtin.FilterRegistrar;
 import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
-import org.spongepowered.api.data.DataSerializable;
-import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.EventContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-public abstract class AbstractTransactionEventProcessor<T extends DataSerializable> extends AbstractEventProcessor {
+public abstract class AbstractBulkEntityEventProcessor extends AbstractEventProcessor {
 
-    AbstractTransactionEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
+    AbstractBulkEntityEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
         super(id, name, shouldProcess);
     }
 
@@ -83,29 +85,25 @@ public abstract class AbstractTransactionEventProcessor<T extends DataSerializab
                 this.processTrigger(trigger, query);
             }
 
-            List<Transaction<T>> transactions = this.getTransactions(event);
+            List<Entity> entities = new ArrayList<>(this.getEntities(event));
 
-            for (final Transaction<T> transaction : transactions) {
+            for (final Entity entity : entities) {
 
-                query = new EventQueryImpl(event.getCause(), this.populateTransactionContext(event, actualContext, transaction), user, skill);
+                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(event, context, entity), user, skill);
 
-                for (final Filter filter : registration.getFilters(CANCEL_TRANSACTION)) {
+                for (final Filter filter : registration.getFilters(CANCEL_ENTITY_SPAWN)) {
                     if (filter.query(query) == DENY) {
-                        transaction.setValid(false);
+                        this.cancelEntity(event, entity);
+                        entities.removeIf(e -> e == entity);
                         break;
                     }
                 }
             }
 
-            transactions = transactions
-                .stream()
-                .filter(Transaction::isValid)
-                .collect(Collectors.toList());
+            for (final Entity entity : entities) {
+                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(event, context, entity), user, skill);
 
-            for (Transaction<T> transaction : transactions) {
-                query = new EventQueryImpl(event.getCause(), this.populateTransactionContext(event, actualContext, transaction), user, skill);
-
-                for (final TriggerFilter trigger : registration.getTriggers(TRANSACTION)) {
+                for (final TriggerFilter trigger : registration.getTriggers(ENTITY_SPAWN)) {
                     this.processTrigger(trigger, query);
                 }
             }
@@ -113,15 +111,21 @@ public abstract class AbstractTransactionEventProcessor<T extends DataSerializab
     }
 
     @Override
-    EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
-        return EventContext.builder()
+    public EventContext populateEventContext(final Event event, final EventContext context, final SkillService service) {
+        return context;
+    }
+
+    abstract List<Entity> getEntities(Event event);
+
+    EventContext populateEntityContext(final Event event, final EventContext context, final Entity entity) {
+        return EventContext
+            .builder()
             .from(context)
             .add(PROCESSING_PLAYER, Objects.requireNonNull(event.getCause().first(Player.class).orElse(null)))
-            .add(BLOCK_CREATION_TRACKER, service.getBlockCreationTracker())
+            .add(PROCESSING_ITEM, context.get(USED_ITEM).orElse(NONE))
+            .add(PROCESSING_ENTITY, entity)
             .build();
     }
 
-    abstract List<Transaction<T>> getTransactions(Event event);
-
-    abstract EventContext populateTransactionContext(Event event, EventContext context, Transaction<T> transaction);
+    abstract void cancelEntity(Event event, Entity entity);
 }

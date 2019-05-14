@@ -48,6 +48,7 @@ import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.block.tileentity.SmeltEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -115,6 +116,9 @@ public final class EventFilterProcessor implements Witness {
                 frame.addContext(SkillsEventContextKeys.DATA_HOLDER_USING_SKILL, user);
 
                 for (final EventProcessor processor : this.processorModule.getAll()) {
+                    if (event instanceof SmeltEvent) {
+                        System.err.println(event);
+                    }
                     if (processor.shouldProcess(event)) {
                         processor.process(event, frame.getCurrentContext(), service, user, skillEntry.getValue());
                     }

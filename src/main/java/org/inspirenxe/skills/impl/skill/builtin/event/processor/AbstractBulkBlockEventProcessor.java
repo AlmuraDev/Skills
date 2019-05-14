@@ -33,9 +33,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractBlockTransactionEventProcessor extends AbstractTransactionEventProcessor<BlockSnapshot> {
+public abstract class AbstractBulkBlockEventProcessor extends AbstractBulkTransactionEventProcessor<BlockSnapshot> {
 
-    AbstractBlockTransactionEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
+    AbstractBulkBlockEventProcessor(final String id, final String name, final Predicate<Event> shouldProcess) {
         super(id, name, shouldProcess);
     }
 
