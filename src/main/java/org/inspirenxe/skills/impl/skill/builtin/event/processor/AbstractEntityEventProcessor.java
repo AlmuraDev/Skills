@@ -85,7 +85,7 @@ public abstract class AbstractEntityEventProcessor extends AbstractEventProcesso
 
             for (final Entity entity : entities) {
 
-                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(context, entity), user, skill);
+                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(event, context, entity), user, skill);
 
                 for (final Filter filter : registration.getFilters(CANCEL_ENTITY_SPAWN)) {
                     if (filter.query(query) == DENY) {
@@ -97,7 +97,7 @@ public abstract class AbstractEntityEventProcessor extends AbstractEventProcesso
             }
 
             for (final Entity entity : entities) {
-                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(context, entity), user, skill);
+                query = new EventQueryImpl(event.getCause(), this.populateEntityContext(event, context, entity), user, skill);
 
                 for (final TriggerFilter trigger : registration.getTriggers(ENTITY_SPAWN)) {
                     this.processTrigger(trigger, query);
@@ -113,7 +113,7 @@ public abstract class AbstractEntityEventProcessor extends AbstractEventProcesso
 
     abstract List<Entity> getEntities(Event event);
 
-    EventContext populateEntityContext(final EventContext context, final Entity entity) {
+    EventContext populateEntityContext(final Event event, final EventContext context, final Entity entity) {
         return EventContext
             .builder()
             .from(context)

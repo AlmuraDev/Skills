@@ -24,8 +24,6 @@
  */
 package org.inspirenxe.skills.api.skill.builtin.filter.applicator;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import net.kyori.filter.Filter;
 import net.kyori.filter.FilterQuery;
 import net.kyori.filter.FilterResponse;
@@ -97,34 +95,31 @@ public final class TriggerFilter extends MultiFilter {
 
     public static final class Builder {
 
-        private Iterable<Filter> filters;
-        private Iterable<ApplicatorEntry> applicatorFilters;
-        private Iterable<Applicator> elseApplicators;
+        private List<Filter> filters = new ArrayList<>();
+        private List<ApplicatorEntry> applicatorFilters = new ArrayList<>();
+        private List<Applicator> elseApplicators = new ArrayList<>();
 
         public TriggerFilter.Builder all(final Filter... filters) {
-            this.filters = Arrays.asList(filters);
+            this.filters.addAll(Arrays.asList(filters));
             return this;
         }
 
         public TriggerFilter.Builder any(final Filter... filters) {
-            this.filters = Arrays.asList(filters);
+            this.filters.addAll(Arrays.asList(filters));
             return this;
         }
 
         public TriggerFilter.Builder then(final ApplicatorEntry... filters) {
-            this.applicatorFilters = Arrays.asList(filters);
+            this.applicatorFilters.addAll(Arrays.asList(filters));
             return this;
         }
 
         public TriggerFilter.Builder elseApply(final Applicator... applicators) {
-            this.elseApplicators = Arrays.asList(applicators);
+            this.elseApplicators.addAll(Arrays.asList(applicators));
             return this;
         }
 
         public TriggerFilter build() {
-            checkNotNull(this.filters);
-            checkNotNull(this.applicatorFilters);
-
             return new TriggerFilter(this.filters, this.applicatorFilters, this.elseApplicators);
         }
     }

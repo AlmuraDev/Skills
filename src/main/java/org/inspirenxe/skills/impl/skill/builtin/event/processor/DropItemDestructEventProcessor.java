@@ -24,9 +24,13 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
+import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.impl.SkillsImpl;
+import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 
 import java.util.List;
@@ -40,6 +44,23 @@ public final class DropItemDestructEventProcessor extends AbstractEntityEventPro
     @Override
     List<Entity> getEntities(final Event event) {
         return ((DropItemEvent.Destruct) event).getEntities();
+    }
+
+    @Override
+    EventContext populateEntityContext(final Event event, final EventContext context, final Entity entity) {
+        if (!(entity instanceof Item)) {
+            return super.populateEntityContext(event, context, entity);
+        }
+
+        System.err.println(event);
+
+        return EventContext
+            .builder()
+            .from(context)
+            .add(SkillsEventContextKeys.PROCESSING_BLOCK, event.getCause().first(BlockSnapshot.class).orElse(BlockSnapshot.NONE))
+            .add(SkillsEventContextKeys.PROCESSING_ITEM, ((Item) entity).getItemData().item().get())
+            .add(SkillsEventContextKeys.PROCESSING_ENTITY, entity)
+            .build();
     }
 
     @Override

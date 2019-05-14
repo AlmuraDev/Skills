@@ -30,11 +30,11 @@ public final class TriggerRegistrarTypes {
 
     // @formatter:off
 
-    public static final TriggerRegistrarType EVENT = DummyObjectProvider.createExtendedFor(RegistrarType.class, "EVENT");
+    public static final TriggerRegistrarType EVENT = DummyObjectProvider.createExtendedFor(TriggerRegistrarType.class, "EVENT");
 
-    public static final TriggerRegistrarType TRANSACTION = DummyObjectProvider.createExtendedFor(RegistrarType.class, "TRANSACTION");
+    public static final TriggerRegistrarType TRANSACTION = DummyObjectProvider.createExtendedFor(TriggerRegistrarType.class, "TRANSACTION");
 
-    public static final TriggerRegistrarType ENTITY_SPAWN = DummyObjectProvider.createExtendedFor(RegistrarType.class, "ENTITY_SPAWN");
+    public static final TriggerRegistrarType ENTITY_SPAWN = DummyObjectProvider.createExtendedFor(TriggerRegistrarType.class, "ENTITY_SPAWN");
 
     // @formatter:on
     private TriggerRegistrarTypes() {
