@@ -24,14 +24,21 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_BLOCK;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ITEM;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_PLAYER;
+import static org.spongepowered.api.event.cause.EventContextKeys.USED_ITEM;
+import static org.spongepowered.api.item.inventory.ItemStackSnapshot.NONE;
+
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+
+import java.util.Objects;
 
 public final class ChangeBlockBreakEventProcessor extends AbstractBlockTransactionEventProcessor {
 
@@ -40,12 +47,13 @@ public final class ChangeBlockBreakEventProcessor extends AbstractBlockTransacti
     }
 
     @Override
-    EventContext populateTransactionContext(final EventContext context, final Transaction<BlockSnapshot> transaction) {
+    EventContext populateTransactionContext(final Event event, final EventContext context, final Transaction<BlockSnapshot> transaction) {
         return EventContext
             .builder()
             .from(context)
-            .add(SkillsEventContextKeys.PROCESSING_ITEM, context.get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
-            .add(SkillsEventContextKeys.PROCESSING_BLOCK, transaction.getOriginal())
+            .add(PROCESSING_PLAYER, Objects.requireNonNull(event.getCause().first(Player.class).orElse(null)))
+            .add(PROCESSING_ITEM, context.get(USED_ITEM).orElse(NONE))
+            .add(PROCESSING_BLOCK, transaction.getOriginal())
             .build();
     }
 }

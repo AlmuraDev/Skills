@@ -24,14 +24,18 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ITEM;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_PLAYER;
+import static org.spongepowered.api.event.cause.EventContextKeys.USED_ITEM;
+import static org.spongepowered.api.item.inventory.ItemStackSnapshot.NONE;
+
 import org.inspirenxe.skills.api.SkillService;
-import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.impl.SkillsImpl;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public final class InteractItemEventProcessor extends AbstractEventProcessor {
@@ -45,7 +49,8 @@ public final class InteractItemEventProcessor extends AbstractEventProcessor {
         return EventContext
             .builder()
             .from(context)
-            .add(SkillsEventContextKeys.PROCESSING_ITEM, context.get(EventContextKeys.USED_ITEM).orElse(ItemStackSnapshot.NONE))
+            .add(PROCESSING_PLAYER, Objects.requireNonNull(event.getCause().first(Player.class).orElse(null)))
+            .add(PROCESSING_ITEM, context.get(USED_ITEM).orElse(NONE))
             .build();
     }
 }

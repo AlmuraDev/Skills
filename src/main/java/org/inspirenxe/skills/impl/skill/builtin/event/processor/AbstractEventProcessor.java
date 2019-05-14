@@ -86,6 +86,7 @@ public abstract class AbstractEventProcessor implements EventProcessor {
                 for (final Filter filter : registration.getFilters(CANCEL_EVENT)) {
                     if (filter.query(query) == DENY) {
                         ((Cancellable) event).setCancelled(true);
+                        query.denied(filter);
                         return;
                     }
                 }

@@ -24,16 +24,23 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_BLOCK;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ENTITY;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ITEM;
+import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_PLAYER;
+import static org.spongepowered.api.block.BlockSnapshot.NONE;
+
 import org.inspirenxe.skills.impl.SkillsImpl;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class DropItemDestructEventProcessor extends AbstractEntityEventProcessor {
 
@@ -52,14 +59,13 @@ public final class DropItemDestructEventProcessor extends AbstractEntityEventPro
             return super.populateEntityContext(event, context, entity);
         }
 
-        System.err.println(event);
-
         return EventContext
             .builder()
             .from(context)
-            .add(SkillsEventContextKeys.PROCESSING_BLOCK, event.getCause().first(BlockSnapshot.class).orElse(BlockSnapshot.NONE))
-            .add(SkillsEventContextKeys.PROCESSING_ITEM, ((Item) entity).getItemData().item().get())
-            .add(SkillsEventContextKeys.PROCESSING_ENTITY, entity)
+            .add(PROCESSING_PLAYER, Objects.requireNonNull(event.getCause().first(Player.class).orElse(null)))
+            .add(PROCESSING_BLOCK, event.getCause().first(BlockSnapshot.class).orElse(NONE))
+            .add(PROCESSING_ITEM, ((Item) entity).getItemData().item().get())
+            .add(PROCESSING_ENTITY, entity)
             .build();
     }
 
