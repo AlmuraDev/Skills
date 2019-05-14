@@ -51,6 +51,7 @@ public class ValueFilter<T extends DataHolder, V, U extends BaseValue<V>> implem
     public boolean queryResponse(@NonNull final EventQuery query) {
         final V current = query.getContext().get(this.processingKey).orElse(null).get(this.key).orElse(null);
         if (current == null) {
+            query.denied(this);
             return false;
         }
 
@@ -60,6 +61,10 @@ public class ValueFilter<T extends DataHolder, V, U extends BaseValue<V>> implem
                 matched = true;
                 break;
             }
+        }
+
+        if (!matched) {
+            query.denied(this);
         }
 
         return matched;

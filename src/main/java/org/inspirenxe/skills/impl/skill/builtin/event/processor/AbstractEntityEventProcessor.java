@@ -95,6 +95,7 @@ public abstract class AbstractEntityEventProcessor extends AbstractEventProcesso
                     if (filter.query(query) == DENY) {
                         this.cancelEntity(event, entity);
                         entities.removeIf(e -> e == entity);
+                        query.denied(filter);
                         break;
                     }
                 }
