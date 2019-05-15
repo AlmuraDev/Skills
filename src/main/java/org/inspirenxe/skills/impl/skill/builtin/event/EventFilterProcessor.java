@@ -36,6 +36,7 @@ import org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys;
 import org.inspirenxe.skills.api.skill.holder.SkillHolder;
 import org.inspirenxe.skills.api.skill.holder.SkillHolderContainer;
 import org.inspirenxe.skills.impl.SkillsImpl;
+import org.inspirenxe.skills.impl.skill.SkillImpl;
 import org.inspirenxe.skills.impl.skill.builtin.registry.module.EventProcessorRegistryModule;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
@@ -47,8 +48,6 @@ import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.block.tileentity.SmeltEvent;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -79,6 +78,10 @@ public final class EventFilterProcessor implements Witness {
 
     @Listener(order = Order.EARLY)
     public void onEvent(final Event event) {
+
+        if (event instanceof ChangeExperienceEvent) {
+            return;
+        }
 
         final SkillService service = this.serviceManager.provide(SkillService.class).orElse(null);
         if (service == null) {
@@ -111,19 +114,21 @@ public final class EventFilterProcessor implements Witness {
         }
 
         for (final Map.Entry<SkillType, Skill> skillEntry : holder.getSkills().entrySet()) {
+            ((SkillImpl) skillEntry.getValue()).collectPendingExperience(true);
+
             try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
                 frame.pushCause(skillEntry.getValue());
                 frame.addContext(SkillsEventContextKeys.DATA_HOLDER_USING_SKILL, user);
 
                 for (final EventProcessor processor : this.processorModule.getAll()) {
-                    if (event instanceof SmeltEvent) {
-                        System.err.println(event);
-                    }
                     if (processor.shouldProcess(event)) {
                         processor.process(event, frame.getCurrentContext(), service, user, skillEntry.getValue());
                     }
                 }
             }
+
+            ((SkillImpl) skillEntry.getValue()).applyPendingExperience();
+            ((SkillImpl) skillEntry.getValue()).collectPendingExperience(false);
         }
     }
 

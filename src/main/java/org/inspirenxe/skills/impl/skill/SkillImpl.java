@@ -66,6 +66,8 @@ public final class SkillImpl implements Skill {
     private final SkillType type;
     private double experience;
     private boolean isDirty = false;
+    private double pendingExperience;
+    private boolean collectPendingExperience;
 
     @Inject
     private SkillImpl(final PluginContainer container, final Scheduler scheduler, final EventManager eventManager, final DatabaseManager
@@ -132,8 +134,27 @@ public final class SkillImpl implements Skill {
         this.isDirty = true;
     }
 
+    public void collectPendingExperience(final boolean collectPendingExperience) {
+        this.collectPendingExperience = collectPendingExperience;
+        this.pendingExperience = 0;
+    }
+
+    public void applyPendingExperience() {
+        this.collectPendingExperience = false;
+
+        if (this.pendingExperience == 0) {
+            return;
+        }
+
+        this.addExperience(this.pendingExperience);
+    }
+
     @Override
     public void addExperience(final double experience) {
+        if (this.collectPendingExperience) {
+            this.pendingExperience += experience;
+            return;
+        }
         this.setExperience(this.getCurrentExperience() + experience);
     }
 
