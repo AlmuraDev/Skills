@@ -25,12 +25,12 @@
 package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
 import static net.kyori.filter.FilterResponse.DENY;
-import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_ENTITY_SPAWN;
+import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_ENTITY;
 import static org.inspirenxe.skills.api.skill.builtin.RegistrarTypes.CANCEL_EVENT;
 import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ENTITY;
 import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_ITEM;
 import static org.inspirenxe.skills.api.skill.builtin.SkillsEventContextKeys.PROCESSING_PLAYER;
-import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.ENTITY_SPAWN;
+import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.ENTITY;
 import static org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarTypes.EVENT;
 import static org.spongepowered.api.event.cause.EventContextKeys.USED_ITEM;
 import static org.spongepowered.api.item.inventory.ItemStackSnapshot.NONE;
@@ -91,7 +91,7 @@ public abstract class AbstractBulkEntityEventProcessor extends AbstractEventProc
 
                 query = new EventQueryImpl(event.getCause(), this.populateEntityContext(event, context, entity), user, skill);
 
-                for (final Filter filter : registration.getFilters(CANCEL_ENTITY_SPAWN)) {
+                for (final Filter filter : registration.getFilters(CANCEL_ENTITY)) {
                     if (filter.query(query) == DENY) {
                         this.cancelEntity(event, entity);
                         entities.removeIf(e -> e == entity);
@@ -103,7 +103,7 @@ public abstract class AbstractBulkEntityEventProcessor extends AbstractEventProc
             for (final Entity entity : entities) {
                 query = new EventQueryImpl(event.getCause(), this.populateEntityContext(event, context, entity), user, skill);
 
-                for (final TriggerFilter trigger : registration.getTriggers(ENTITY_SPAWN)) {
+                for (final TriggerFilter trigger : registration.getTriggers(ENTITY)) {
                     this.processTrigger(trigger, query);
                 }
             }

@@ -36,7 +36,7 @@ public final class RegistrarTypes {
 
     public static final RegistrarType CANCEL_TRANSACTION = DummyObjectProvider.createExtendedFor(RegistrarType.class, "CANCEL_TRANSACTION");
 
-    public static final RegistrarType CANCEL_ENTITY_SPAWN = DummyObjectProvider.createExtendedFor(RegistrarType.class, "CANCEL_ENTITY_SPAWN");
+    public static final RegistrarType CANCEL_ENTITY = DummyObjectProvider.createExtendedFor(RegistrarType.class, "CANCEL_ENTITY");
 
     // @formatter:on
     private RegistrarTypes() {

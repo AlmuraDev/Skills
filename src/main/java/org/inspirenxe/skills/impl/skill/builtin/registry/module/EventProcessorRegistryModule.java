@@ -30,6 +30,7 @@ import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
 import org.inspirenxe.skills.api.skill.builtin.EventProcessors;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.ChangeBlockPlaceEventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.CraftItemCraftEventProcessor;
+import org.inspirenxe.skills.impl.skill.builtin.event.processor.DestructEntityDeathEventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.DropItemDestructEventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.InteractBlockEventProcessor;
 import org.inspirenxe.skills.impl.skill.builtin.event.processor.InteractItemEventProcessor;
@@ -86,6 +87,7 @@ public final class EventProcessorRegistryModule implements AdditionalCatalogRegi
         this.registerAdditionalCatalog(new ChangeBlockBreakEventProcessor());
         this.registerAdditionalCatalog(new DropItemDestructEventProcessor());
         this.registerAdditionalCatalog(new CraftItemCraftEventProcessor());
+        this.registerAdditionalCatalog(new DestructEntityDeathEventProcessor());
     }
 
     @Override

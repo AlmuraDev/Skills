@@ -53,6 +53,8 @@ public final class EventProcessors {
 
     public static EventProcessor CRAFT_ITEM_CRAFT = DummyObjectProvider.createFor(EventProcessor.class, "CRAFT_ITEM_CRAFT");
 
+    public static EventProcessor DESTRUCT_ENTITY_DEATH = DummyObjectProvider.createFor(EventProcessor.class, "DESTRUCT_ENTITY_DEATH");
+
     // @formatter:on
     private EventProcessors() {}
 }

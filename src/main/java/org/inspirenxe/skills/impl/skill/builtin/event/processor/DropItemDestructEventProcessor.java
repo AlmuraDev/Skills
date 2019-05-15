@@ -40,7 +40,6 @@ import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 
 import java.util.List;
-import java.util.Objects;
 
 public final class DropItemDestructEventProcessor extends AbstractBulkEntityEventProcessor {
 
@@ -55,14 +54,10 @@ public final class DropItemDestructEventProcessor extends AbstractBulkEntityEven
 
     @Override
     EventContext populateEntityContext(final Event event, final EventContext context, final Entity entity) {
-        if (!(entity instanceof Item)) {
-            return super.populateEntityContext(event, context, entity);
-        }
-
         return EventContext
             .builder()
             .from(context)
-            .add(PROCESSING_PLAYER, Objects.requireNonNull(event.getCause().first(Player.class).orElse(null)))
+            .add(PROCESSING_PLAYER, event.getCause().first(Player.class).get())
             .add(PROCESSING_BLOCK, event.getCause().first(BlockSnapshot.class).orElse(NONE))
             .add(PROCESSING_ITEM, ((Item) entity).getItemData().item().get())
             .add(PROCESSING_ENTITY, entity)

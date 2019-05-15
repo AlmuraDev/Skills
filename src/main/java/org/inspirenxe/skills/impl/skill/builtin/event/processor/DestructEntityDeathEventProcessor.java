@@ -22,21 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin;
+package org.inspirenxe.skills.impl.skill.builtin.event.processor;
 
-import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
+import com.google.common.collect.Lists;
+import org.inspirenxe.skills.impl.SkillsImpl;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
 
-public final class TriggerRegistrarTypes {
+import java.util.List;
 
-    // @formatter:off
+public final class DestructEntityDeathEventProcessor extends AbstractBulkEntityEventProcessor {
 
-    public static final TriggerRegistrarType EVENT = DummyObjectProvider.createExtendedFor(TriggerRegistrarType.class, "EVENT");
+    public DestructEntityDeathEventProcessor() {
+        super(SkillsImpl.ID + ":destruct_entity_death", "Destruct Entity Death", event -> event instanceof DestructEntityEvent.Death);
+    }
 
-    public static final TriggerRegistrarType TRANSACTION = DummyObjectProvider.createExtendedFor(TriggerRegistrarType.class, "TRANSACTION");
+    @Override
+    List<Entity> getEntities(Event event) {
+        return Lists.newArrayList(((DestructEntityEvent.Death) event).getTargetEntity());
+    }
 
-    public static final TriggerRegistrarType ENTITY = DummyObjectProvider.createExtendedFor(TriggerRegistrarType.class, "ENTITY");
-
-    // @formatter:on
-    private TriggerRegistrarTypes() {
+    @Override
+    void cancelEntity(Event event, Entity entity) {
     }
 }
