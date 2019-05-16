@@ -23,4 +23,4 @@
  * THE SOFTWARE.
  */
 @org.spongepowered.api.util.annotation.NonnullByDefault
-package org.inspirenxe.skills.api.skill.builtin.filter.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter.trigger;

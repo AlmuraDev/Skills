@@ -36,8 +36,8 @@ import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
 import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
 import org.inspirenxe.skills.api.skill.builtin.FilterRegistrar;
 import org.inspirenxe.skills.api.skill.builtin.applicator.Applicator;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.ApplicatorEntry;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
+import org.inspirenxe.skills.api.skill.builtin.filter.trigger.TriggerEntry;
+import org.inspirenxe.skills.api.skill.builtin.filter.trigger.TriggerFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
 import org.spongepowered.api.entity.living.player.User;
@@ -103,10 +103,10 @@ public abstract class AbstractEventProcessor implements EventProcessor {
         boolean runFallbackApplicators = trigger.getElseApplicators() != null;
 
         if (trigger.query(query) == ALLOW) {
-            final Iterable<ApplicatorEntry> applicatorEntries = trigger.getMatchedApplicators(query);
-            for (final ApplicatorEntry applicatorEntry : applicatorEntries) {
+            final Iterable<TriggerEntry> applicatorEntries = trigger.getMatchedApplicators(query);
+            for (final TriggerEntry triggerEntry : applicatorEntries) {
                 runFallbackApplicators = false;
-                for (final Applicator applicator : applicatorEntry.getApplicators()) {
+                for (final Applicator applicator : triggerEntry.getApplicators()) {
                     applicator.apply(query);
                 }
             }

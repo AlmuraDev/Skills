@@ -40,7 +40,7 @@ import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.skill.Skill;
 import org.inspirenxe.skills.api.skill.builtin.BasicSkillType;
 import org.inspirenxe.skills.api.skill.builtin.FilterRegistrar;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
+import org.inspirenxe.skills.api.skill.builtin.filter.trigger.TriggerFilter;
 import org.inspirenxe.skills.api.skill.builtin.query.EventQuery;
 import org.inspirenxe.skills.impl.skill.builtin.query.EventQueryImpl;
 import org.spongepowered.api.entity.Entity;

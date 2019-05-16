@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.filter.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter.trigger;
 
 import net.kyori.filter.Filter;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -30,17 +30,17 @@ import org.inspirenxe.skills.api.skill.builtin.applicator.Applicator;
 
 import java.util.Arrays;
 
-public final class ApplicatorEntry {
+public final class TriggerEntry {
 
     private final Iterable<Filter> filters;
     private final Iterable<Applicator> applicators;
 
-    private ApplicatorEntry(@NonNull final Iterable<Filter> filters, @NonNull final Iterable<Applicator> applicators) {
+    private TriggerEntry(@NonNull final Iterable<Filter> filters, @NonNull final Iterable<Applicator> applicators) {
         this.filters = filters;
         this.applicators = applicators;
     }
 
-    public static ApplicatorEntry.Builder apply(Applicator... applicators) {
+    public static TriggerEntry.Builder apply(Applicator... applicators) {
         return new Builder(Arrays.asList(applicators));
     }
 
@@ -60,8 +60,8 @@ public final class ApplicatorEntry {
             this.applicators = applicators;
         }
 
-        public ApplicatorEntry when(final Filter... filters) {
-            return new ApplicatorEntry(Arrays.asList(filters), this.applicators);
+        public TriggerEntry when(final Filter... filters) {
+            return new TriggerEntry(Arrays.asList(filters), this.applicators);
         }
     }
 }

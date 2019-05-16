@@ -25,7 +25,7 @@
 package org.inspirenxe.skills.api.skill.builtin;
 
 import net.kyori.filter.Filter;
-import org.inspirenxe.skills.api.skill.builtin.filter.applicator.TriggerFilter;
+import org.inspirenxe.skills.api.skill.builtin.filter.trigger.TriggerFilter;
 
 import java.util.ArrayList;
 import java.util.Collections;

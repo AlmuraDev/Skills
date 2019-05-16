@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.inspirenxe.skills.api.skill.builtin.filter.applicator;
+package org.inspirenxe.skills.api.skill.builtin.filter.trigger;
 
 import net.kyori.filter.Filter;
 import net.kyori.filter.FilterQuery;
@@ -38,10 +38,10 @@ import java.util.List;
 
 public final class TriggerFilter extends MultiFilter {
 
-    private final Iterable<ApplicatorEntry> applicatorEntries;
+    private final Iterable<TriggerEntry> applicatorEntries;
     private final Iterable<Applicator> elseApplicators;
 
-    private TriggerFilter(@NonNull final Iterable<? extends Filter> filters, @NonNull final Iterable<ApplicatorEntry> applicatorEntries,
+    private TriggerFilter(@NonNull final Iterable<? extends Filter> filters, @NonNull final Iterable<TriggerEntry> applicatorEntries,
         final Iterable<Applicator> elseApplicators) {
         super(filters);
         this.applicatorEntries = applicatorEntries;
@@ -67,10 +67,10 @@ public final class TriggerFilter extends MultiFilter {
         return response;
     }
 
-    public Iterable<ApplicatorEntry> getMatchedApplicators(@NonNull final FilterQuery query) {
-        final List<ApplicatorEntry> matched = new ArrayList<>();
+    public Iterable<TriggerEntry> getMatchedApplicators(@NonNull final FilterQuery query) {
+        final List<TriggerEntry> matched = new ArrayList<>();
 
-        for (final ApplicatorEntry entry : this.applicatorEntries) {
+        for (final TriggerEntry entry : this.applicatorEntries) {
             boolean passed = true;
 
             for (final Filter filter : entry.getFilters()) {
@@ -96,7 +96,7 @@ public final class TriggerFilter extends MultiFilter {
     public static final class Builder {
 
         private List<Filter> filters = new ArrayList<>();
-        private List<ApplicatorEntry> applicatorFilters = new ArrayList<>();
+        private List<TriggerEntry> applicatorFilters = new ArrayList<>();
         private List<Applicator> elseApplicators = new ArrayList<>();
 
         public TriggerFilter.Builder all(final Filter... filters) {
@@ -109,7 +109,7 @@ public final class TriggerFilter extends MultiFilter {
             return this;
         }
 
-        public TriggerFilter.Builder then(final ApplicatorEntry... filters) {
+        public TriggerFilter.Builder then(final TriggerEntry... filters) {
             this.applicatorFilters.addAll(Arrays.asList(filters));
             return this;
         }

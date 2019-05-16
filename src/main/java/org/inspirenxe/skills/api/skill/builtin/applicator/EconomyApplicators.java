@@ -36,7 +36,7 @@ import java.util.Random;
 
 public final class EconomyApplicators {
 
-    public static Applicator money(final EconomyService service, final Currency currency, final double amount) {
+    public static Applicator money(final double amount, final EconomyService service, final Currency currency) {
         return query -> {
             if (!(query instanceof EventQuery)) {
                 return;
@@ -51,8 +51,8 @@ public final class EconomyApplicators {
         };
     }
 
-    public static Applicator scaledMoney(final EconomyService service, final EconomyFunctionType function, final Currency currency,
-        final double base) {
+    public static Applicator scaledMoney(final double base, final EconomyService service, final EconomyFunctionType function,
+        final Currency currency) {
         return query -> {
             if (!(query instanceof EventQuery)) {
                 return;
@@ -68,8 +68,8 @@ public final class EconomyApplicators {
         };
     }
 
-    public static Applicator variableScaledMoney(final EconomyService service, final EconomyFunctionType function, final Currency currency,
-        final DoubleRange range, final Random random) {
+    public static Applicator variableScaledMoney(final DoubleRange range, final EconomyService service, final EconomyFunctionType function,
+        final Currency currency, final Random random) {
         return query -> {
             if (!(query instanceof EventQuery)) {
                 return;
