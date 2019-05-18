@@ -125,10 +125,10 @@ public final class EventFilterProcessor implements Witness {
                         processor.process(event, frame.getCurrentContext(), service, user, skillEntry.getValue());
                     }
                 }
-            }
 
-            ((SkillImpl) skillEntry.getValue()).applyPendingExperience();
-            ((SkillImpl) skillEntry.getValue()).collectPendingExperience(false);
+                ((SkillImpl) skillEntry.getValue()).applyPendingExperience();
+                ((SkillImpl) skillEntry.getValue()).collectPendingExperience(false);
+            }
         }
     }
 
@@ -137,7 +137,7 @@ public final class EventFilterProcessor implements Witness {
         final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
         if (event instanceof ChangeExperienceEvent.Post.Level) {
-            this.levelChange(event.getCause(), event.getSkill(), ((ChangeExperienceEvent.Post.Level) event).getLevel());
+            this.levelChange(service, event.getCause(), event.getSkill(), event.getExperienceDifference(), ((ChangeExperienceEvent.Post.Level) event).getLevel());
         } else {
             this.xpChange(service, event.getCause(), event.getSkill(), event.getExperienceDifference());
         }
@@ -171,7 +171,7 @@ public final class EventFilterProcessor implements Witness {
         skillType.onXPChanged(cause, skill, amount);
     }
 
-    private void levelChange(final Cause cause, final Skill skill, final int newLevel) {
+    private void levelChange(final SkillService service, final Cause cause, final Skill skill, final double amount, final int newLevel) {
         if (!(skill.getSkillType() instanceof BasicSkillType)) {
             return;
         }
@@ -179,6 +179,16 @@ public final class EventFilterProcessor implements Witness {
 
         final Player player = cause.first(Player.class).orElse(null);
         if (player != null) {
+
+            if (player.hasPermission(SkillsImpl.ID + ".notification.xp." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
+                .getConsole().getLocale()))) {
+
+                final char mod = amount >= 0 ? '+' : '-';
+
+                player.sendMessage(ChatTypes.ACTION_BAR, Text.of(mod, " ", service.getXPFormat().format(Math.abs(amount)), "xp ",
+                    skillType.getFormattedName()));
+            }
+
             if (player.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(Sponge.getServer()
                 .getConsole().getLocale()))) {
                 player.sendMessage(Text.of("Congratulations, you just advanced a new ", skillType.getFormattedName(), " level! You are now"
