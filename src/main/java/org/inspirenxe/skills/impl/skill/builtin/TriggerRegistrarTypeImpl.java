@@ -24,31 +24,24 @@
  */
 package org.inspirenxe.skills.impl.skill.builtin;
 
-import com.almuradev.toolbox.inject.ToolboxBinder;
-import net.kyori.violet.AbstractModule;
-import org.inspirenxe.skills.api.skill.builtin.BlockCreationTracker;
-import org.inspirenxe.skills.api.skill.builtin.EventProcessor;
-import org.inspirenxe.skills.api.skill.builtin.RegistrarType;
 import org.inspirenxe.skills.api.skill.builtin.TriggerRegistrarType;
-import org.inspirenxe.skills.impl.skill.builtin.event.EventFilterProcessor;
-import org.inspirenxe.skills.impl.skill.builtin.event.BlockCreationTrackerImpl;
-import org.inspirenxe.skills.impl.skill.builtin.registry.module.EventProcessorRegistryModule;
-import org.inspirenxe.skills.impl.skill.builtin.registry.module.RegistrarTypeRegistryModule;
-import org.inspirenxe.skills.impl.skill.builtin.registry.module.TriggerRegistrarTypeRegistryModule;
 
-public final class BuiltinModule extends AbstractModule implements ToolboxBinder {
+public final class TriggerRegistrarTypeImpl implements TriggerRegistrarType {
+
+    private final String id, name;
+
+    public TriggerRegistrarTypeImpl(final String id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
-    protected void configure() {
-        this.bind(BlockCreationTracker.class).to(BlockCreationTrackerImpl.class);
+    public String getId() {
+        return this.id;
+    }
 
-        this.registry()
-            .module(EventProcessor.class, EventProcessorRegistryModule.class)
-            .module(RegistrarType.class, RegistrarTypeRegistryModule.class)
-            .module(TriggerRegistrarType.class, TriggerRegistrarTypeRegistryModule.class);
-
-        this.facet()
-            .add(BlockCreationTrackerImpl.class)
-            .add(EventFilterProcessor.class);
+    @Override
+    public String getName() {
+        return this.name;
     }
 }
