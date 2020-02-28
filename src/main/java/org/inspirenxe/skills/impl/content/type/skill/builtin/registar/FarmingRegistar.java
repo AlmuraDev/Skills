@@ -81,6 +81,8 @@ public final class FarmingRegistar {
             // Farmland
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query(BlockTypes.FARMLAND).xp(0.75).economy(0.10))
             // almura crops
+            .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/ginger_root").level(18).xp(1.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/cardamon").level(19).xp(1.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/alfalfa").level(20).xp(1.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/corn").level(21).xp(1.25).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/barley").level(22).xp(1.5).economy(1.0))
@@ -173,6 +175,8 @@ public final class FarmingRegistar {
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.POTATOES.getDefaultState().withTrait(IntegerTraits.POTATOES_AGE, "7").orElse(null)).level(17).xp(1.0).economy(0.25))
 
             // almura crops
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/ginger_root").level(18))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/cardamon").level(19))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/alfalfa").level(20))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/corn").level(21))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/barley").level(22))
@@ -248,6 +252,8 @@ public final class FarmingRegistar {
             // Note:  don't check for drops, can't be trusted.
 
             // almura crop drops
+            .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/ginger").xp(1.0).economy(0.5))
+            .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/cardamon").xp(1.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/crop/alfalfa_item").xp(1.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/corn").xp(1.25).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/barley").xp(1.5).economy(0.5))
@@ -289,7 +295,6 @@ public final class FarmingRegistar {
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/soybean").xp(11.5).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/tarragon").xp(12.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/peanut").xp(12.5).economy(0.5))
-
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/peppercorn").xp(13.5).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/hops").xp(14.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/lotusroot").xp(14.5).economy(0.5))
@@ -297,7 +302,6 @@ public final class FarmingRegistar {
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/materials_agaveplant").xp(15.5).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/blackroot").xp(16.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/butterbean").xp(16.5).economy(0.5))
-
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/cilantro").xp(17.5).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/clove").xp(18.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/rice").xp(19.0).economy(0.5))
