@@ -19,6 +19,8 @@ plugins {
     id 'net.minecrell.licenser' version '0.4.1'
     id 'nu.studer.jooq' version '3.0.2'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'maven'
+    id 'signing'
 }
 
 apply plugin: "org.spongepowered.event-impl-gen"
@@ -162,10 +164,91 @@ generateDdlJooqSchemaSource.dependsOn 'cleanDatabaseClasses'
 
 project.tasks.getByName('compileJava').dependsOn -= 'generateDdlJooqSchemaSource'
 
-shadowJar.dependsOn 'genApiJar'
-task genApiJar(type: Jar) {
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-path', '-parameters']
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+}
+
+if (JavaVersion.current().isJava8Compatible() || JavaVersion.current().isJava9Compatible()) {
+    tasks.withType(Javadoc) {
+        // disable the crazy super-strict doclint tool in Java 8
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+task apiJar(type: Jar) {
     classifier = 'api'
     from (sourceSets.main.output) {
         include "org/inspirenxe/skills/api/**"
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives apiJar
+    archives sourcesJar
+    archives javadocJar
+}
+
+signing {
+    required { !project.version.endsWith('-SNAPSHOT') && gradle.taskGraph.hasTask(':uploadArchives') }
+    sign configurations.archives
+}
+
+if (project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                pom.project {
+                    description 'Shared code useful for anyone working with the Sponge ecosystem'
+                    name project.name
+                    url 'https://github.com/AlmuraDev/Skills/'
+
+                    developers {
+                        developer {
+                            name 'zidane'
+                        }
+                    }
+
+                    issueManagement {
+                        system 'GitHub Issues'
+                        url 'https://github.com/AlmuraDev/Skills/issues'
+                    }
+
+                    licenses {
+                        license {
+                            name 'MIT License'
+                            url 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+
+                    scm {
+                        connection 'scm:git@github.com:AlmuraDev/Skills.git'
+                        developerConnection 'scm:git@github.com:AlmuraDev/Skills.git'
+                        url 'https://github.com/AlmuraDev/Skills/'
+                    }
+                }
+            }
+        }
     }
 }

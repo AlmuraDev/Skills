@@ -47,10 +47,12 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.FarmingReg
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.MiningRegistar;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.registar.WoodcuttingRegistar;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
+import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.entity.FallingBlock;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -92,6 +94,7 @@ import java.util.stream.Collectors;
 @Singleton
 public final class BuiltinEventListener implements Witness {
 
+    private final Logger logger;
     private final ServiceManager serviceManager;
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> messageBuilders = new HashMap<>();
     private final Map<Class<? extends Event>, Map<SkillType, List<EventFeedback>>> effectBuilders = new HashMap<>();
@@ -101,7 +104,8 @@ public final class BuiltinEventListener implements Witness {
     private final Map<Chain<?>, Long> denyTimers = new HashMap<>();
 
     @Inject
-    public BuiltinEventListener(final ServiceManager serviceManager) {
+    public BuiltinEventListener(final Logger logger, final ServiceManager serviceManager) {
+        this.logger = logger;
         this.serviceManager = serviceManager;
     }
 
@@ -115,56 +119,61 @@ public final class BuiltinEventListener implements Witness {
         this.configure();
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
+      // Patch getting XP for blocks that fall
+      if (event.getCause().containsType(FallingBlock.class)) {
+          return;
+      }
+      
       this.handleChangeBlock(service, event, player, true);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockModify(final ChangeBlockEvent.Modify event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleChangeBlock(service, event, player, false);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleChangeBlock(service, event, player, false);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleInteractItem(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onInteractBlock(final InteractBlockEvent event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleInteractBlock(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onCraftItemCraft(final CraftItemEvent.Craft event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleCraftItem(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleDropItemEvent(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeExperiencePost(final ChangeExperienceEvent.Post event, @First final Player player) {
 
         List<EventFeedback> messages = null;
@@ -254,7 +263,7 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onDamageEntity(final DamageEntityEvent event, @Root final EntityDamageSource source, @First final Skill skill) {
         if (source.getSource() instanceof Firework) {
             event.setCancelled(true);
@@ -588,13 +597,7 @@ public final class BuiltinEventListener implements Witness {
         if (recipe != null) {
             final ItemStack defaultResult = recipe.getExemplaryResult().createStack();
 
-            final int craftedTimes = crafted.getQuantity() / (defaultResult.getQuantity() == 0 ? crafted.getQuantity() : defaultResult.getQuantity());
-
-            for (int i = 0; i < craftedTimes; i++) {
-                final ItemStack copyStack = crafted.copy();
-                copyStack.setQuantity(defaultResult.getQuantity());
-                stacks.add(copyStack);
-            }
+            stacks.add(defaultResult);
         } else {
             stacks.add(crafted);
         }

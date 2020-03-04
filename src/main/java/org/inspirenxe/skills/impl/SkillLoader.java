@@ -154,8 +154,8 @@ public final class SkillLoader implements Witness {
 
   private void handleContainerChange(final UUID fromContainerId, final UUID toContainerId, final UUID holderId, final String holderName) {
     final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
     final SkillHolderContainer fromContainer = service.getContainer(fromContainerId).orElse(null);
-    SkillHolderContainer toContainer = service.getContainer(toContainerId).orElse(null);
 
     boolean remove = true;
 
@@ -163,28 +163,32 @@ public final class SkillLoader implements Witness {
       remove = false;
     }
 
+    final SkillHolderContainer toContainer = this.getContainerOrParent(service, toContainerId).orElse(null);
+    if (fromContainer == null || fromContainer == toContainer) {
+      remove = false;
+    }
+
+    final SkillHolder holder;
     if (toContainer != null) {
-      final SkillHolderContainer parentContainer = service.getParentContainer(toContainer).orElse(null);
-      if (fromContainer == parentContainer) {
-        remove = false;
-      }
+      holder = toContainer.createHolder(holderId, holderName);
+    } else {
+      holder = null;
     }
 
-    if (remove) {
-      this.scheduler
-        .createTaskBuilder()
-        .async()
-        .execute(() -> fromContainer.removeHolder(holderId).ifPresent(SkillHolder::save))
-        .submit(this.container);
+    final boolean result = remove;
+    
+    this.scheduler
+      .createTaskBuilder()
+      .async()
+      .execute(() -> {
+        if (result) {
+          fromContainer.removeHolder(holderId).ifPresent(SkillHolder::save);
+        }
 
-      if (toContainer != null) {
-        final SkillHolder holder = toContainer.createHolder(holderId, holderName);
-        this.scheduler
-          .createTaskBuilder()
-          .async()
-          .execute(() -> holder.getSkills().values().forEach(Skill::load))
-          .submit(this.container);
-      }
-    }
+        if (holder != null) {
+          holder.getSkills().values().forEach(Skill::load);
+        }
+      })
+      .submit(this.container);
   }
 }
