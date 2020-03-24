@@ -1,17 +1,20 @@
 buildscript {
-  repositories {
-    mavenLocal()
-    maven {
-        name = 'sponge'
-        url = 'http://repo.spongepowered.org/maven'
+    repositories {
+        mavenLocal()
+        maven {
+            name = 'sponge'
+            url = 'http://repo.spongepowered.org/maven'
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            url = "https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/"
+        }
     }
-    maven {
-      url "https://plugins.gradle.org/m2/"
+    dependencies {
+        classpath "org.spongepowered:event-impl-gen:${project.eventImplGenPluginVersion}"
     }
-  }
-  dependencies {
-    classpath "org.spongepowered:event-impl-gen:${project.eventImplGenPluginVersion}"
-  }
 }
 
 plugins {
@@ -46,6 +49,9 @@ repositories {
         name = 'sponge'
         url = 'http://repo.spongepowered.org/maven'
     }
+    maven {
+        url = "https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/"
+    }
 }
 
 dependencies {
@@ -66,6 +72,7 @@ dependencies {
     compile "com.almuradev:toolbox:${project.toolboxVersion}"
     compile "net.kyori:violet:${project.violetVersion}"
     compile "net.kyori:xml:${project.xmlVersion}"
+    compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-7:1.8.9'
     jooqRuntime "org.jooq:jooq-meta-extensions:${project.jooqVersion}"
     testCompile "junit:junit:${project.junitVersion}"
 }
