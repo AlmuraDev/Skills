@@ -35,6 +35,7 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEf
 import org.inspirenxe.skills.impl.content.type.skill.builtin.EventFeedback;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
+import org.inspirenxe.skills.impl.util.UchatUtil;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.spongepowered.api.GameRegistry;
@@ -46,6 +47,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatTypes;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +89,8 @@ public final class CommonRegistar {
         player.sendMessage(Text.of("Congratulations, you just advanced a new ", skill.getSkillType().getFormattedName(), " level! You are now"
           + " level ", level, "."));
       }
+
+      UchatUtil.relayMessageToDiscord(":trophy:", Text.of(player.getName()+ " has advanced to " + skill.getSkillType().getFormattedName() + " level " + level + ".").toPlain(), true);
 
       if (!cause.containsType(CommandCallable.class)) {
         Sponge.getServer().getOnlinePlayers().forEach(p -> {
