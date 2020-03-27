@@ -52,11 +52,13 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.FallingBlock;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.entity.projectile.Firework;
+import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
@@ -145,35 +147,55 @@ public final class BuiltinEventListener implements Witness {
       this.handleChangeBlock(service, event, player, false);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleInteractItem(service, event, player);
+      this.handleInteractItem(service, event, event.getClass(), event.getItemStack().createStack(), player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onInteractBlock(final InteractBlockEvent event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+
+      final boolean isRightClick = event instanceof InteractBlockEvent.Secondary;
+
+      // If the Player has an item in their hand, give that priority and allow it to cancel the block interaction (main hand -> offhand -> block).
+      // Needed for farming tools
+      ItemStack itemStack = player.getItemInHand(HandTypes.MAIN_HAND).orElse(null);
+      if (itemStack != null) {
+        this.handleInteractItem(service, event, !isRightClick ? InteractItemEvent.Primary.MainHand.class : InteractItemEvent.Secondary.MainHand.class, itemStack, player);
+      }
+      if (event.isCancelled()) {
+        return;
+      }
+
+      itemStack = player.getItemInHand(HandTypes.OFF_HAND).orElse(null);
+      if (itemStack != null) {
+          this.handleInteractItem(service, event, !isRightClick ? InteractItemEvent.Primary.OffHand.class : InteractItemEvent.Secondary.OffHand.class, itemStack, player);
+      }
+      if (event.isCancelled()) {
+        return;
+      }
 
       this.handleInteractBlock(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onCraftItemCraft(final CraftItemEvent.Craft event, @Root final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleCraftItem(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
       final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
       this.handleDropItemEvent(service, event, player);
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onChangeExperiencePost(final ChangeExperienceEvent.Post event, @First final Player player) {
 
         List<EventFeedback> messages = null;
@@ -263,7 +285,7 @@ public final class BuiltinEventListener implements Witness {
         }
     }
 
-    @Listener(order = Order.PRE)
+    @Listener(order = Order.EARLY)
     public void onDamageEntity(final DamageEntityEvent event, @Root final EntityDamageSource source, @First final Skill skill) {
         if (source.getSource() instanceof Firework) {
             event.setCancelled(true);
@@ -368,7 +390,7 @@ public final class BuiltinEventListener implements Witness {
         this.adjustXPAndMoney(event, player, totalXPGained, totalMoneyGained);
     }
 
-    private void handleInteractItem(final SkillService service, final InteractItemEvent event, final Player player) {
+    private void handleInteractItem(final SkillService service, final Event event, final Class<? extends Event> classFilter, final ItemStack eventStack, final Player player) {
         if (player.gameMode().get() == GameModes.CREATIVE) {
             return;
         }
@@ -391,7 +413,7 @@ public final class BuiltinEventListener implements Witness {
 
         final Map<SkillType, List<ItemChain>> eventChains = this.itemChains.entrySet()
             .stream()
-            .filter(kv -> kv.getKey().isAssignableFrom(event.getClass()))
+            .filter(kv -> kv.getKey().isAssignableFrom(classFilter))
             .findAny()
             .map(Map.Entry::getValue)
             .orElse(new HashMap<>());
@@ -413,9 +435,7 @@ public final class BuiltinEventListener implements Witness {
             return;
         }
 
-        final ItemStack stack = event.getItemStack().createStack();
-
-        final Collection<BuiltinResult> results = this.handleItemStack(skills, skillChains, stack);
+        final Collection<BuiltinResult> results = this.handleItemStack(skills, skillChains, eventStack);
 
         final List<BuiltinResult> cancelledResults = results
             .stream()
@@ -423,7 +443,9 @@ public final class BuiltinEventListener implements Witness {
             .collect(Collectors.toList());
 
         for (final BuiltinResult cancelledResult : cancelledResults) {
-            event.setCancelled(true);
+            if (event instanceof Cancellable) {
+                ((Cancellable) event).setCancelled(true);
+            }
 
             final Chain<?> chain = cancelledResult.getChain().orElse(null);
             if (chain != null && chain.denyLevelRequired != null) {
@@ -441,7 +463,7 @@ public final class BuiltinEventListener implements Witness {
             }
         }
 
-        if (event.isCancelled()) {
+        if (event instanceof Cancellable && ((Cancellable) event).isCancelled()) {
             return;
         }
 
