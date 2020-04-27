@@ -124,76 +124,76 @@ public final class BuiltinEventListener implements Witness {
 
     @Listener(order = Order.EARLY)
     public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
-      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      // Patch getting XP for blocks that fall
-      if (event.getCause().containsType(FallingBlock.class)) {
-          return;
-      }
-      
-      this.handleChangeBlock(service, event, player, true);
+        // Patch getting XP for blocks that fall
+        if (event.getCause().containsType(FallingBlock.class)) {
+            return;
+        }
+
+        this.handleChangeBlock(service, event, player, true);
     }
 
     @Listener(order = Order.EARLY)
     public void onChangeBlockModify(final ChangeBlockEvent.Modify event, @Root final Player player) {
-      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleChangeBlock(service, event, player, false);
+        this.handleChangeBlock(service, event, player, false);
     }
 
     @Listener(order = Order.EARLY)
     public void onChangeBlockPlace(final ChangeBlockEvent.Place event, @Root final Player player) {
-      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleChangeBlock(service, event, player, false);
+        this.handleChangeBlock(service, event, player, false);
     }
 
     @Listener(order = Order.EARLY)
     public void onInteractItem(final InteractItemEvent event, @Root final Player player) {
-      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleInteractItem(service, event, event.getClass(), event.getItemStack().createStack(), player);
+        this.handleInteractItem(service, event, event.getClass(), event.getItemStack().createStack(), player);
     }
 
     @Listener(order = Order.EARLY)
     public void onInteractBlock(final InteractBlockEvent event, @Root final Player player) {
-      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      final boolean isRightClick = event instanceof InteractBlockEvent.Secondary;
+        final boolean isRightClick = event instanceof InteractBlockEvent.Secondary;
 
-      // If the Player has an item in their hand, give that priority and allow it to cancel the block interaction (main hand -> offhand -> block).
-      // Needed for farming tools
-      ItemStack itemStack = player.getItemInHand(HandTypes.MAIN_HAND).orElse(null);
-      if (itemStack != null) {
-        this.handleInteractItem(service, event, !isRightClick ? InteractItemEvent.Primary.MainHand.class : InteractItemEvent.Secondary.MainHand.class, itemStack, player);
-      }
-      if (event.isCancelled()) {
-        return;
-      }
+        // If the Player has an item in their hand, give that priority and allow it to cancel the block interaction (main hand -> offhand -> block).
+        // Needed for farming tools
+        ItemStack itemStack = player.getItemInHand(HandTypes.MAIN_HAND).orElse(null);
+        if (itemStack != null) {
+            this.handleInteractItem(service, event, !isRightClick ? InteractItemEvent.Primary.MainHand.class : InteractItemEvent.Secondary.MainHand.class, itemStack, player);
+        }
+        if (event.isCancelled()) {
+            return;
+        }
 
-      itemStack = player.getItemInHand(HandTypes.OFF_HAND).orElse(null);
-      if (itemStack != null) {
-          this.handleInteractItem(service, event, !isRightClick ? InteractItemEvent.Primary.OffHand.class : InteractItemEvent.Secondary.OffHand.class, itemStack, player);
-      }
-      if (event.isCancelled()) {
-        return;
-      }
+        itemStack = player.getItemInHand(HandTypes.OFF_HAND).orElse(null);
+        if (itemStack != null) {
+            this.handleInteractItem(service, event, !isRightClick ? InteractItemEvent.Primary.OffHand.class : InteractItemEvent.Secondary.OffHand.class, itemStack, player);
+        }
+        if (event.isCancelled()) {
+            return;
+        }
 
-      this.handleInteractBlock(service, event, player);
+        this.handleInteractBlock(service, event, player);
     }
 
     @Listener(order = Order.EARLY)
     public void onCraftItemCraft(final CraftItemEvent.Craft event, @Root final Player player) {
-      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleCraftItem(service, event, player);
+        this.handleCraftItem(service, event, player);
     }
 
     @Listener(order = Order.EARLY)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
-      final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
+        final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-      this.handleDropItemEvent(service, event, player);
+        this.handleDropItemEvent(service, event, player);
     }
 
     @Listener(order = Order.EARLY)
@@ -352,16 +352,27 @@ public final class BuiltinEventListener implements Witness {
 
             final BlockSnapshot snapshot = originalState ? transaction.getOriginal() : transaction.getFinal();
 
-            final Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, snapshot);
+            Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, snapshot);
 
-            final List<BuiltinResult> cancelledResults = transactionResults
+            List<BuiltinResult> cancelledResults = transactionResults
                 .stream()
                 .filter(result -> result.getType() == Result.Type.CANCELLED)
                 .collect(Collectors.toList());
 
+            // Bandaid fix for breaking blocks that have attachments
+            // TODO I am quite aware Vanilla attachables are not always top facing, we only care about top facing for now
+            if (cancelledResults.isEmpty() && event instanceof ChangeBlockEvent.Break) {
+                final BlockSnapshot upwardAttachedBlock = transaction.getFinal().getLocation().orElse(null).add(0, 1, 0).createSnapshot();
+                transactionResults = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, upwardAttachedBlock);
+
+                cancelledResults = transactionResults
+                    .stream()
+                    .filter(result -> result.getType() == Result.Type.CANCELLED)
+                    .collect(Collectors.toList());
+            }
+
             for (final BuiltinResult cancelledResult : cancelledResults) {
                 transaction.setValid(false);
-
                 final Chain<?> chain = cancelledResult.getChain().orElse(null);
                 if (chain != null && chain.denyLevelRequired != null) {
                     final long stamp = System.currentTimeMillis();
@@ -428,8 +439,8 @@ public final class BuiltinEventListener implements Witness {
         final Set<Map.Entry<SkillType, List<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
             .filter(kv -> skills
-              .stream()
-              .anyMatch(v -> v.getSkillType() == kv.getKey()))
+                .stream()
+                .anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
 
         if (skillChains.isEmpty()) {
@@ -516,8 +527,8 @@ public final class BuiltinEventListener implements Witness {
         final Set<Map.Entry<SkillType, List<BlockChain>>> skillChains = eventChains.entrySet()
             .stream()
             .filter(kv -> skills
-              .stream()
-              .anyMatch(v -> v.getSkillType() == kv.getKey()))
+                .stream()
+                .anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
 
         if (skillChains.isEmpty()) {
@@ -602,8 +613,8 @@ public final class BuiltinEventListener implements Witness {
         final Set<Map.Entry<SkillType, List<ItemChain>>> skillChains = eventChains.entrySet()
             .stream()
             .filter(kv -> skills
-              .stream()
-              .anyMatch(v -> v.getSkillType() == kv.getKey()))
+                .stream()
+                .anyMatch(v -> v.getSkillType() == kv.getKey()))
             .collect(Collectors.toSet());
 
         if (skillChains.isEmpty()) {
@@ -950,7 +961,7 @@ public final class BuiltinEventListener implements Witness {
     }
 
     private void adjustXPAndMoney(final Event event, final Player player, final Map<Skill, Double> totalXPGained,
-      final Map<Skill, BigDecimal> totalMoneyGained) {
+        final Map<Skill, BigDecimal> totalMoneyGained) {
 
         try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
             frame.pushCause(event);
