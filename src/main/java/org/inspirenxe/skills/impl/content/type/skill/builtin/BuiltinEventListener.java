@@ -50,6 +50,7 @@ import org.inspirenxe.skills.impl.util.function.TriFunction;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandType;
@@ -82,6 +83,7 @@ import org.spongepowered.api.item.recipe.crafting.CraftingRecipe;
 import org.spongepowered.api.service.ServiceManager;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
+import org.spongepowered.api.world.LocatableBlock;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -90,6 +92,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 // TODO Plan B. Move to scripting engine later.
@@ -123,7 +126,7 @@ public final class BuiltinEventListener implements Witness {
     }
 
     @Listener(order = Order.EARLY)
-    public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @Root final Player player) {
+    public void onChangeBlockBreak(final ChangeBlockEvent.Break event, @First final Player player) {
         final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
         // Patch getting XP for blocks that fall
@@ -352,27 +355,16 @@ public final class BuiltinEventListener implements Witness {
 
             final BlockSnapshot snapshot = originalState ? transaction.getOriginal() : transaction.getFinal();
 
-            Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, snapshot);
+            final Collection<BuiltinResult> transactionResults = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, snapshot);
 
-            List<BuiltinResult> cancelledResults = transactionResults
+            final List<BuiltinResult> cancelledResults = transactionResults
                 .stream()
                 .filter(result -> result.getType() == Result.Type.CANCELLED)
                 .collect(Collectors.toList());
 
-            // Bandaid fix for breaking blocks that have attachments
-            // TODO I am quite aware Vanilla attachables are not always top facing, we only care about top facing for now
-            if (cancelledResults.isEmpty() && event instanceof ChangeBlockEvent.Break) {
-                final BlockSnapshot upwardAttachedBlock = transaction.getFinal().getLocation().orElse(null).add(0, 1, 0).createSnapshot();
-                transactionResults = this.processBlockSnapshotFor(event.getCause(), skills, skillChains, upwardAttachedBlock);
-
-                cancelledResults = transactionResults
-                    .stream()
-                    .filter(result -> result.getType() == Result.Type.CANCELLED)
-                    .collect(Collectors.toList());
-            }
-
             for (final BuiltinResult cancelledResult : cancelledResults) {
                 transaction.setValid(false);
+
                 final Chain<?> chain = cancelledResult.getChain().orElse(null);
                 if (chain != null && chain.denyLevelRequired != null) {
                     final long stamp = System.currentTimeMillis();
