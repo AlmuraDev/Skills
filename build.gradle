@@ -50,7 +50,14 @@ repositories {
         url = 'http://repo.spongepowered.org/maven'
     }
     maven {
-        url = "https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/"
+        name = 'bstats'
+        url = 'https://repo.codemc.org/repository/maven-public'
+    }
+    maven {
+        url = "https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo"
+    }
+    flatDir {
+        dirs "lib"
     }
 }
 
@@ -72,7 +79,7 @@ dependencies {
     compile "com.almuradev:toolbox:${project.toolboxVersion}"
     compile "net.kyori:violet:${project.violetVersion}"
     compile "net.kyori:xml:${project.xmlVersion}"
-    compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-7:1.8.9'
+    compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-56-1.9.1'
     jooqRuntime "org.jooq:jooq-meta-extensions:${project.jooqVersion}"
     testCompile "junit:junit:${project.junitVersion}"
 }
