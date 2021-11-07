@@ -57,10 +57,10 @@ public final class DiggerRegistar {
 
         listener
             // Vanilla Tools
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_SHOVEL).level(10))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_SHOVEL).level(20))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_SHOVEL).level(30))
-            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_SHOVEL).level(40))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.STONE_SHOVEL).level(5))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.IRON_SHOVEL).level(10))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.GOLDEN_SHOVEL).level(20))
+            .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query(ItemTypes.DIAMOND_SHOVEL).level(30))
 
             // Mods
             .addItemChain(InteractItemEvent.class, type, new ItemChain().from(interactChain).query("tconstruct:shovel").level(50))
