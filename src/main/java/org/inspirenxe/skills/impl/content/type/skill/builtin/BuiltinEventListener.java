@@ -195,7 +195,9 @@ public final class BuiltinEventListener implements Witness {
     @Listener(order = Order.EARLY)
     public void onDropItemDestruct(final DropItemEvent.Destruct event, @Root final BlockSnapshot snapshot, @First final Player player) {
         final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
-
+        if (player.getWorld().getTileEntity(snapshot.getPosition()).isPresent()) {
+            return;
+        }
         this.handleDropItemEvent(service, event, player);
     }
 
