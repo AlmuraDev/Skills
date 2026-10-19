@@ -38,6 +38,9 @@ import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillHolderContainer;
 import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.api.SkillType;
+import org.inspirenxe.skills.api.function.level.LevelFunctionType;
+import org.inspirenxe.skills.api.result.Result;
+import org.inspirenxe.skills.api.result.experience.ExperienceResult;
 import org.inspirenxe.skills.generated.Tables;
 import org.inspirenxe.skills.generated.tables.records.SkillsExperienceRecord;
 import org.inspirenxe.skills.impl.database.DatabaseManager;
@@ -135,7 +138,15 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
 
         container = service.getParentContainer(worldContainer).orElse(null);
 
+        // Only ever remove the temporary world container, never the (possibly shared) parent
+        final Runnable removeTempContainer = () -> {
+          if (tempWorldContainer) {
+            service.removeContainer(world.getUniqueId());
+          }
+        };
+
         if (container == null) {
+          removeTempContainer.run();
           return CommandResult.success();
         }
 
@@ -152,14 +163,13 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
             .collect(Collectors.toList());
 
           this.handleSkillsPrintout(service, source, source == user ? "My" : holder.getName(), container.getName(), sorted);
+          removeTempContainer.run();
           return CommandResult.success();
         }
 
         final Collection<SkillType> skillTypes = this.registry.getAllOf(SkillType.class);
 
-        this.scheduler
-          .createTaskBuilder()
-          .async()
+        this.databaseManager
           .execute(() -> {
             final Map<SkillType, Double> skills = new HashMap<>();
 
@@ -187,6 +197,8 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
               this.scheduler
                 .createTaskBuilder()
                 .execute(() -> {
+                  removeTempContainer.run();
+
                   if (source instanceof Player) {
                     if (!((Player) source).isOnline()) {
                       return;
@@ -194,16 +206,13 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
                   }
 
                   this.handleSkillsPrintout(service, source, source == user ? "My" : user.getName(), container.getName(), sorted);
-
-                  if (tempWorldContainer) {
-                    service.removeContainer(containerId);
-                  }
                 })
                 .submit(this.container);
             } catch (final SQLException e) {
               e.printStackTrace();
+              this.scheduler.createTaskBuilder().execute(removeTempContainer).submit(this.container);
             }
-          }).submit(this.container);
+          });
 
         return CommandResult.success();
       })
@@ -282,9 +291,7 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
           return this.handleSkillsXP(source, user, container, holder, type, mode, xp);
         } else {
           // Database set
-          this.scheduler
-            .createTaskBuilder()
-            .async()
+          this.databaseManager
             .execute(() -> {
               try (final DSLContext context = this.databaseManager.createContext(true)) {
                 boolean update;
@@ -339,46 +346,60 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
                     final SkillHolder potHolder = container.getHolder(holderId).orElse(null);
 
                     if (potHolder != null) {
-                      // Hmm, they came online! We need to run this through the normal systems..
+                      // Hmm, they came online! We need to run this through the normal systems with the original change..
 
-                      this.handleSkillsXP(source, user, container, potHolder, type, mode, finalXp);
+                      this.handleSkillsXP(source, user, container, potHolder, type, mode, xp);
                       return;
                     }
 
-                    boolean success;
+                    // Queued on the database thread, so a load for a holder created after this point sees the write
+                    this.databaseManager.execute(() -> {
+                      boolean success;
 
-                    if (!finalUpdate) {
-                      final int execute = Queries
-                        .createInsertSkillExperienceQuery(containerId, holderId, type.getId(), finalXp)
-                        .build(context)
-                        .execute();
+                      try (final DSLContext writeContext = this.databaseManager.createContext(true)) {
+                        if (!finalUpdate) {
+                          final int execute = Queries
+                            .createInsertSkillExperienceQuery(containerId, holderId, type.getId(), finalXp)
+                            .build(writeContext)
+                            .execute();
 
-                      success = execute != 0;
-                    } else {
-                      final int execute = Queries
-                        .createUpdateSkillExperienceQuery(containerId, holderId, type.getId(), finalXp, Timestamp.from(Instant.now()))
-                        .build(context)
-                        .execute();
+                          success = execute != 0;
+                        } else {
+                          final int execute = Queries
+                            .createUpdateSkillExperienceQuery(containerId, holderId, type.getId(), finalXp, Timestamp.from(Instant.now()))
+                            .build(writeContext)
+                            .execute();
 
-                      success = execute != 0;
-                    }
+                          success = execute != 0;
+                        }
+                      } catch (final SQLException e) {
+                        e.printStackTrace();
+                        success = false;
+                      }
 
-                    if (success) {
-                      if (source instanceof Player && !((Player) source).isOnline()) {
+                      if (!success) {
                         return;
                       }
 
-                      source.sendMessage(Text.of(user.getName(), " had their xp in ", type.getFormattedName(), " set to ",
-                        skillService.getXPFormat().format(finalXp), " for Container ", TextColors.GRAY, container.getName(),
-                        TextColors.RESET, "."));
-                    }
+                      this.scheduler
+                        .createTaskBuilder()
+                        .execute(() -> {
+                          if (source instanceof Player && !((Player) source).isOnline()) {
+                            return;
+                          }
+
+                          source.sendMessage(Text.of(user.getName(), " had their xp in ", type.getFormattedName(), " set to ",
+                            skillService.getXPFormat().format(finalXp), " for Container ", TextColors.GRAY, container.getName(),
+                            TextColors.RESET, "."));
+                        })
+                        .submit(this.container);
+                    });
                   })
                   .submit(this.container);
               } catch (final SQLException e) {
                 e.printStackTrace();
               }
-            })
-            .submit(this.container);
+            });
         }
 
         return CommandResult.success();
@@ -431,9 +452,8 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
 
         final Collection<SkillType> skillTypes = this.registry.getAllOf(SkillType.class);
 
-        this.scheduler
-          .createTaskBuilder()
-          .async()
+        // Queued on the database thread, behind any pending save of the removed holder
+        this.databaseManager
           .execute(() -> {
             try (final DSLContext context = this.databaseManager.createContext(true)) {
               for (final SkillType skillType : skillTypes) {
@@ -442,23 +462,22 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
                   .build(context)
                   .execute();
               }
-
-              this.scheduler
-                .createTaskBuilder()
-                .execute(() -> {
-                  if (load) {
-                    try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                      // TODO Context for target
-                      container.createHolder(holderId, user.getName()).getSkills().values().forEach(Skill::load);
-                    }
-                  }
-                })
-                .submit(this.container);
             } catch (final SQLException e) {
               e.printStackTrace();
             }
-          })
-          .submit(this.container);
+
+            this.scheduler
+              .createTaskBuilder()
+              .execute(() -> {
+                if (load && !container.getHolder(holderId).isPresent()) {
+                  try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                    // TODO Context for target
+                    container.createHolder(holderId, user.getName()).getSkills().values().forEach(Skill::load);
+                  }
+                }
+              })
+              .submit(this.container);
+          });
         return CommandResult.success();
       })
       .build();
@@ -482,8 +501,12 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
       final double maxLevelExperience = skillType.getLevelFunction().getXPFor(maxLevel);
       double toNextLevelExperience = 0;
 
-      if (currentLevel != maxLevel) {
-        toNextLevelExperience = skillType.getLevelFunction().getXPFor(currentLevel + 1) - currentExperience;
+      if (currentLevel < maxLevel) {
+        final double nextLevelExperience = skillType.getLevelFunction().getXPFor(currentLevel + 1);
+
+        if (nextLevelExperience != LevelFunctionType.UNKNOWN_EXP) {
+          toNextLevelExperience = Math.max(0, nextLevelExperience - currentExperience);
+        }
       }
 
       skillPrintouts.add(Text.of(skillType.getFormattedName(), " :: Lv. ", currentLevel, " / ", maxLevel));
@@ -532,16 +555,26 @@ public final class SkillsCommandProvider implements Provider<CommandSpec> {
       // TODO Target needs to go into context
       frame.pushCause(target);
 
+      ExperienceResult result = null;
+
       switch (mode.toUpperCase(Sponge.getServer().getConsole().getLocale())) {
         case "ADD":
-          skill.addExperience(xp);
+          result = skill.addExperience(xp);
           break;
         case "REMOVE":
-          skill.addExperience(-xp);
+          result = skill.addExperience(-xp);
           break;
         case "SET":
-          skill.setExperience(xp);
+          result = skill.setExperience(xp);
           break;
+      }
+
+      if (result != null && result.getType() != Result.Type.SUCCESS) {
+        if (feedback) {
+          source.sendMessage(Text.of(TextColors.RED, "Failed to change the xp of ", holder.getName(), " in ", skillType.getFormattedName(),
+            result.getException().map(e -> ": " + e.getMessage()).orElse(" (" + result.getType() + ")"), "."));
+        }
+        return CommandResult.empty();
       }
 
       skill.save();

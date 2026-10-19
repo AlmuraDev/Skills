@@ -38,7 +38,8 @@ public final class BuiltinModule extends AbstractModule implements ToolboxBinder
     @Override
     protected void configure() {
         this.facet()
-          .add(BuiltinEventListener.class);
+          .add(BuiltinEventListener.class)
+          .add(SmeltingTracker.class);
         this.requestStaticInjection(CommonRegistar.class);
         this.requestStaticInjection(MiningRegistar.class);
         this.requestStaticInjection(CraftingRegistar.class);

@@ -43,19 +43,21 @@ import org.inspirenxe.skills.impl.database.DatabaseManager;
 import org.inspirenxe.skills.impl.database.Queries;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.EventManager;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Scheduler;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Nullable;
 
 public final class SkillImpl implements Skill {
 
@@ -63,14 +65,20 @@ public final class SkillImpl implements Skill {
   private final Scheduler scheduler;
   private final EventManager eventManager;
   private final DatabaseManager databaseManager;
+  private final Logger logger;
   private final SkillHolder holder;
   private final SkillType type;
-  private double experience;
-  private boolean isDirty = false;
+  private volatile double experience;
+  private volatile boolean isDirty = false;
+  // Experience may only be changed and saved once successfully loaded from the database
+  private volatile boolean loaded = false;
+  private volatile boolean loadFailed = false;
+  // Experience added before the load completed (main thread only), applied on top of the loaded value
+  private double pendingExperience;
 
   @Inject
   private SkillImpl(final PluginContainer container, final Scheduler scheduler, final EventManager eventManager, final DatabaseManager
-    databaseManager, @Assisted final SkillHolder holder, @Assisted final SkillType type) {
+    databaseManager, final Logger logger, @Assisted final SkillHolder holder, @Assisted final SkillType type) {
     checkNotNull(type);
     checkNotNull(holder);
 
@@ -78,6 +86,7 @@ public final class SkillImpl implements Skill {
     this.scheduler = scheduler;
     this.eventManager = eventManager;
     this.databaseManager = databaseManager;
+    this.logger = logger;
     this.type = type;
     this.holder = holder;
   }
@@ -102,11 +111,20 @@ public final class SkillImpl implements Skill {
     return this.experience;
   }
 
+  /**
+   * @return True once the experience has been loaded from the database (levels are only accurate after that)
+   */
+  public boolean isLoaded() {
+    return this.loaded;
+  }
+
   @Override
   public ExperienceResult setExperience(final double experience) {
     Exception exception = null;
 
-    if (experience < 0) {
+    if (!this.loaded) {
+      exception = new IllegalStateException(this.loadFailed ? "Experience failed to load from the database!" : "Experience is not loaded yet!");
+    } else if (experience < 0) {
       exception = new ArithmeticException("Experience must be positive!");
     }
 
@@ -144,27 +162,65 @@ public final class SkillImpl implements Skill {
 
   @Override
   public ExperienceResult addExperience(final double experience) {
+    if (!this.loaded) {
+      if (this.loadFailed) {
+        return ExperienceResult.builder().type(Result.Type.ERROR).exception(new IllegalStateException("Experience failed to load from the "
+          + "database!")).build();
+      }
+
+      this.pendingExperience += experience;
+      return ExperienceResult.builder().type(Result.Type.SUCCESS).xp(experience).build();
+    }
+
     return this.setExperience(this.getCurrentExperience() + experience);
   }
 
   @Override
   public void load() {
-    final CauseStackManager causeStack = Sponge.getCauseStackManager();
     final UUID containerId = this.holder.getContainer().getUniqueId();
     final UUID holderId = this.holder.getUniqueId();
 
-    SkillsExperienceRecord record = null;
+    this.databaseManager.execute(() -> {
+      SkillsExperienceRecord record = null;
+      boolean success = true;
 
-    try (final DSLContext context = this.databaseManager.createContext(true)) {
-      record = Queries
-        .createFetchExperienceQuery(containerId, holderId, this.type.getId())
-        .build(context)
-        .keepStatement(false)
-        .fetchOne();
+      try (final DSLContext context = this.databaseManager.createContext(true)) {
+        record = Queries
+          .createFetchExperienceQuery(containerId, holderId, this.type.getId())
+          .build(context)
+          .keepStatement(false)
+          .fetchOne();
+      } catch (final Exception ex) {
+        success = false;
+        this.logger.error("Failed to load experience for holder '{}' ({}) in skill '{}' for container '{}'! Experience changes and saves are "
+          + "disabled for this skill until it loads successfully.", this.holder.getName(), holderId, this.type.getId(), containerId, ex);
+      }
 
-    } catch (final SQLException ex) {
-      ex.printStackTrace();
+      final boolean finalSuccess = success;
+      final SkillsExperienceRecord finalRecord = record;
+
+      this.scheduler
+        .createTaskBuilder()
+        .execute(() -> {
+          try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+            this.completeLoad(finalSuccess, finalRecord);
+          }
+        })
+        .submit(this.container);
+    });
+  }
+
+  private void completeLoad(final boolean success, @Nullable final SkillsExperienceRecord record) {
+    if (!success) {
+      if (!this.loaded) {
+        this.loadFailed = true;
+      }
+      return;
     }
+
+    final CauseStackManager causeStack = Sponge.getCauseStackManager();
+    final UUID containerId = this.holder.getContainer().getUniqueId();
+    final UUID holderId = this.holder.getUniqueId();
 
     final double originalExperience = this.experience;
 
@@ -172,47 +228,46 @@ public final class SkillImpl implements Skill {
 
     final boolean hasGainedExperienceBefore = originalExperience == 0 && record == null;
 
-    final LoadExperienceEvent.Pre loadPreEvent;
+    final LoadExperienceEvent.Pre loadPreEvent = SkillsEventFactory.createLoadExperienceEventPre(causeStack.getCurrentCause(), containerId,
+      holderId, this.type, originalExperience, dbExperience, hasGainedExperienceBefore);
 
-    if (!Sponge.getServer().isMainThread()) {
-      loadPreEvent = SkillsEventFactory.createLoadExperienceEventPre(Cause.of(EventContext.empty(), this), containerId, holderId, this.type,
-        originalExperience, dbExperience, hasGainedExperienceBefore);
+    this.loadFailed = false;
+
+    if (!this.eventManager.post(loadPreEvent)) {
+      this.experience = loadPreEvent.getExperience();
+      this.loaded = true;
+
+      final LoadExperienceEvent.Post loadPostEvent = SkillsEventFactory.createLoadExperienceEventPost(causeStack.getCurrentCause(), this,
+        originalExperience, this.experience, hasGainedExperienceBefore);
+
+      this.eventManager.post(loadPostEvent);
     } else {
-      loadPreEvent = SkillsEventFactory.createLoadExperienceEventPre(causeStack.getCurrentCause(), containerId, holderId, this.type,
-        originalExperience, dbExperience, hasGainedExperienceBefore);
+      this.loaded = true;
     }
 
-    if (this.eventManager.post(loadPreEvent)) {
-      return;
-    }
-
-    final double postExperience = loadPreEvent.getExperience();
-
-    final Runnable runnable = () -> {
-      SkillImpl.this.experience = postExperience;
-
-      final LoadExperienceEvent.Post loadPostEvent = SkillsEventFactory.createLoadExperienceEventPost(causeStack.getCurrentCause(),
-        SkillImpl.this, originalExperience, SkillImpl.this.experience, hasGainedExperienceBefore);
-
-      SkillImpl.this.eventManager.post(loadPostEvent);
-    };
-
-    if (!Sponge.getServer().isMainThread()) {
-      this.scheduler
-        .createTaskBuilder()
-        .execute(() -> {
-          try (final CauseStackManager.StackFrame frame = causeStack.pushCauseFrame()) {
-            runnable.run();
-          }
-        })
-        .submit(this.container);
-    } else {
-      runnable.run();
+    if (this.pendingExperience != 0) {
+      final double pending = this.pendingExperience;
+      this.pendingExperience = 0;
+      this.addExperience(pending);
     }
   }
 
   @Override
   public void save() {
+    if (!Sponge.getServer().isMainThread()) {
+      // State is snapshotted on the main thread, only the database write happens asynchronously
+      this.scheduler.createTaskBuilder().execute(this::save).submit(this.container);
+      return;
+    }
+
+    if (!this.loaded) {
+      if (this.isDirty || this.pendingExperience != 0) {
+        this.logger.warn("Not saving experience for holder '{}' ({}) in skill '{}' as it was never loaded from the database.",
+          this.holder.getName(), this.holder.getUniqueId(), this.type.getId());
+      }
+      return;
+    }
+
     if (!this.isDirty) {
       return;
     }
@@ -223,80 +278,90 @@ public final class SkillImpl implements Skill {
 
     final double originalExperience = this.experience;
 
-    final SaveExperienceEvent.Pre savePreEvent;
-
-    if (!Sponge.getServer().isMainThread()) {
-      savePreEvent = SkillsEventFactory.createSaveExperienceEventPre(Cause.of(EventContext.empty(), this), containerId, holderId,
-        this.type, originalExperience, originalExperience);
-    } else {
-      savePreEvent = SkillsEventFactory.createSaveExperienceEventPre(causeStack.getCurrentCause(), containerId, holderId,
-        this.type, originalExperience, originalExperience);
-    }
+    final SaveExperienceEvent.Pre savePreEvent = SkillsEventFactory.createSaveExperienceEventPre(causeStack.getCurrentCause(), containerId,
+      holderId, this.type, originalExperience, originalExperience);
 
     if (this.eventManager.post(savePreEvent)) {
       return;
     }
 
+    final double experience = savePreEvent.getExperience();
+    final AtomicBoolean success = new AtomicBoolean();
+
+    final CompletableFuture<Void> future = this.databaseManager.execute(() -> success.set(this.write(containerId, holderId, experience)));
+
+    if (this.databaseManager.isStopping()) {
+      // Server is going down, wait for the write so it is not lost
+      future.join();
+
+      if (success.get()) {
+        this.completeSave(originalExperience, experience);
+      }
+    } else {
+      future.thenRun(() -> {
+        if (!success.get()) {
+          return;
+        }
+
+        this.scheduler
+          .createTaskBuilder()
+          .execute(() -> {
+            try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+              this.completeSave(originalExperience, experience);
+            }
+          })
+          .submit(this.container);
+      });
+    }
+  }
+
+  private boolean write(final UUID containerId, final UUID holderId, final double experience) {
     try (final DSLContext context = this.databaseManager.createContext(true)) {
       final Record1<Integer> record = Queries
-        .createHasExperienceInSkillQuery(this.holder.getContainer().getUniqueId(), this.holder.getUniqueId(), this.type.getId())
+        .createHasExperienceInSkillQuery(containerId, holderId, this.type.getId())
         .build(context)
         .keepStatement(false)
         .fetchOne();
 
-      boolean success = true;
+      final int result;
 
       if (record == null) {
-        final int result = Queries
-          .createInsertSkillExperienceQuery(containerId, holderId, this.type.getId(), savePreEvent.getExperience())
+        result = Queries
+          .createInsertSkillExperienceQuery(containerId, holderId, this.type.getId(), experience)
           .build(context)
           .execute();
-
-        if (result == 0) {
-          // TODO Database insert failed, what do?
-          success = false;
-        }
       } else {
-        final int result = Queries
-          .createUpdateSkillExperienceQuery(containerId, holderId, this.type.getId(), savePreEvent.getExperience(), Timestamp.from(Instant.now()))
+        result = Queries
+          .createUpdateSkillExperienceQuery(containerId, holderId, this.type.getId(), experience, Timestamp.from(Instant.now()))
           .build(context)
           .execute();
-
-        if (result == 0) {
-          success = false;
-        }
       }
 
-      if (!success) {
-        return;
+      if (result == 0) {
+        this.logger.error("Failed to save experience for holder '{}' ({}) in skill '{}' for container '{}': no rows affected.",
+          this.holder.getName(), holderId, this.type.getId(), containerId);
+        return false;
       }
 
-      final Runnable runnable = () -> {
-        SkillImpl.this.experience = savePreEvent.getExperience();
-
-        final SaveExperienceEvent.Post savePostEvent =
-          SkillsEventFactory.createSaveExperienceEventPost(causeStack.getCurrentCause(), SkillImpl.this, originalExperience, SkillImpl.this.experience);
-
-        this.eventManager.post(savePostEvent);
-
-        SkillImpl.this.isDirty = false;
-      };
-
-      if (!Sponge.getServer().isMainThread()) {
-        this.scheduler
-          .createTaskBuilder()
-          .execute(() -> {
-            try (final CauseStackManager.StackFrame frame = causeStack.pushCauseFrame()) {
-              runnable.run();
-            }
-          })
-          .submit(this.container);
-      } else {
-        runnable.run();
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
+      return true;
+    } catch (final Exception ex) {
+      this.logger.error("Failed to save experience for holder '{}' ({}) in skill '{}' for container '{}'!", this.holder.getName(), holderId,
+        this.type.getId(), containerId, ex);
+      return false;
     }
+  }
+
+  private void completeSave(final double originalExperience, final double savedExperience) {
+    // Only clear dirty if nothing changed while saving, otherwise the newer experience still needs saving
+    if (this.experience == originalExperience) {
+      this.experience = savedExperience;
+      this.isDirty = false;
+    }
+
+    final SaveExperienceEvent.Post savePostEvent = SkillsEventFactory.createSaveExperienceEventPost(Sponge.getCauseStackManager()
+      .getCurrentCause(), this, originalExperience, savedExperience);
+
+    this.eventManager.post(savePostEvent);
   }
 
   @Override

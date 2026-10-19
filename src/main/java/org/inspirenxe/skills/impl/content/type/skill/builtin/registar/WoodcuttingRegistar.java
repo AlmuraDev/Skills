@@ -32,7 +32,9 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.trait.BlockTrait;
 import org.spongepowered.api.block.trait.EnumTraits;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -72,34 +74,33 @@ public final class WoodcuttingRegistar {
         // Logs/etc
         final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
 
-        final BlockState log = BlockTypes.LOG.getDefaultState();
-        final BlockState log2 = BlockTypes.LOG2.getDefaultState();
-
+        // Vanilla logs: match every axis state (x/y/z/none) of the variant, not just the default (axis=y) state
         listener
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "oak").orElse(null)).xp(2.5).economy(0.1))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "spruce").orElse(null)).level(5).xp(3.5).economy(0.5))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "jungle").orElse(null)).level(10).xp(4.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log.withTrait(EnumTraits.LOG_VARIANT, "birch").orElse(null)).level(15).xp(4.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "dark_oak").orElse(null)).level(20).xp(7.0).economy(1.5))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(log2.withTrait(EnumTraits.LOG2_VARIANT, "acacia").orElse(null)).level(25).xp(10.0).economy(1.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.LOG, EnumTraits.LOG_VARIANT, "oak")).xp(2.5).economy(0.1))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.LOG, EnumTraits.LOG_VARIANT, "spruce")).level(5).xp(3.5).economy(0.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.LOG, EnumTraits.LOG_VARIANT, "jungle")).level(10).xp(4.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.LOG, EnumTraits.LOG_VARIANT, "birch")).level(15).xp(4.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.LOG2, EnumTraits.LOG2_VARIANT, "dark_oak")).level(20).xp(7.0).economy(1.5))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.LOG2, EnumTraits.LOG2_VARIANT, "acacia")).level(25).xp(10.0).economy(1.5))
 
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("ic2:rubber_wood").level(50).xp(15.0).economy(1.0))
 
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/afledos_tree_log").level(30).xp(6.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/cherry_tree_log").level(30).xp(6.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/citrus_tree_log").level(35).xp(6.5).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/dark_ephedra_tree_log").level(35).xp(6.5).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/doku_tree_log").level(40).xp(7.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/fraze_tree_log").level(40).xp(7.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/green_apple_tree_log").level(45).xp(7.5).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/juko_tree_log").level(45).xp(7.5).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/kiwi_tree_log").level(50).xp(8.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/light_ephedra_tree_log").level(50).xp(8.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/liku_tree_log").level(55).xp(8.5).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/morbus_tree_log").level(55).xp(8.5).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/peach_tree_log").level(60).xp(9.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/plum_tree_log").level(60).xp(9.0).economy(1.0))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/walnut_tree_log").level(65).xp(9.5).economy(1.0))
+            // Almura logs (type-only match already covers every axis state)
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/afledos_tree_log").level(30).xp(10.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/cherry_tree_log").level(30).xp(10.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/citrus_tree_log").level(35).xp(11.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/dark_ephedra_tree_log").level(35).xp(11.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/doku_tree_log").level(40).xp(12.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/fraze_tree_log").level(40).xp(12.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/green_apple_tree_log").level(45).xp(13.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/juko_tree_log").level(45).xp(13.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/kiwi_tree_log").level(50).xp(14.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/light_ephedra_tree_log").level(50).xp(14.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/liku_tree_log").level(55).xp(15.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/morbus_tree_log").level(55).xp(15.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/peach_tree_log").level(60).xp(15.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/plum_tree_log").level(60).xp(15.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/walnut_tree_log").level(65).xp(16.0).economy(1.0))
 
 
             ;
@@ -112,6 +113,15 @@ public final class WoodcuttingRegistar {
         // Effects (Xp change/Level change)
         listener
             .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/woodcutting-level-up"));
+    }
+
+    /**
+     * Every state of {@code type} whose {@code trait} has the given value, regardless of its other traits (e.g. log axis).
+     */
+    private static BlockState[] statesWith(final BlockType type, final BlockTrait<?> trait, final Object value) {
+        return type.getAllBlockStates().stream()
+            .filter(state -> state.withTrait(trait, value).map(state::equals).orElse(false))
+            .toArray(BlockState[]::new);
     }
 
     private WoodcuttingRegistar() {

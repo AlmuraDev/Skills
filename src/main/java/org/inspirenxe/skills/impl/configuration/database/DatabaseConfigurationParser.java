@@ -32,6 +32,8 @@ import net.kyori.xml.node.parser.Parser;
 import org.jooq.SQLDialect;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,17 +89,35 @@ public final class DatabaseConfigurationParser implements Parser<DatabaseConfigu
         connectionString = String.format("jdbc:%s:%s;%s;%s;%s", dialect.getName().toLowerCase(), path.toAbsolutePath(), "SCHEMA=" +
           initialCatalog, "DATABASE_TO_UPPER=FALSE", "AUTO_SERVER=TRUE");
       } else {
-        server = this.stringParser.parse(node.requireAttribute("server"));
-        port = this.intParser.parse(node.requireAttribute("port"));
+        // Accept both elements (as in the default skills.xml) and attributes
+        server = this.stringParser.parse(node.node("server").required());
+        port = this.intParser.parse(node.node("port").required());
+        final String user = node.node("user").optional().map(Node::value).map(String::trim).orElse("");
+        final String password = node.node("password").optional().map(Node::value).orElse("");
+
+        final String credentials;
+        if (user.isEmpty()) {
+          credentials = "";
+        } else {
+          credentials = encode(user) + (password.isEmpty() ? "" : ":" + encode(password)) + "@";
+        }
 
         path = null;
-        connectionStringNoSchema = String.format("jdbc:%s://%s:%d", dialect.getName().toLowerCase(), server, port);
-        connectionString = String.format("jdbc:%s://%s:%d/%s", dialect.getName().toLowerCase(), server, port, initialCatalog);
+        connectionStringNoSchema = String.format("jdbc:postgresql://%s%s:%d/postgres", credentials, server, port);
+        connectionString = String.format("jdbc:postgresql://%s%s:%d/%s", credentials, server, port, initialCatalog);
       }
     } else {
       throw new UnsupportedOperationException("Only H2 or Postgres_9_5 are currently supported!");
     }
 
     return new DatabaseConfiguration(dialect, initialCatalog, path, server, port, connectionStringNoSchema, connectionString);
+  }
+
+  private static String encode(final String value) {
+    try {
+      return URLEncoder.encode(value, "UTF-8");
+    } catch (final UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

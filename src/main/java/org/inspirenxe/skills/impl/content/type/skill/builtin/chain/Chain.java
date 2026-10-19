@@ -43,6 +43,14 @@ public abstract class Chain<B extends Chain<B>> {
 
     protected boolean inErrorState = false;
 
+    /**
+     * @return True if this chain was misconfigured (unknown id, null query state, etc). Chains in an error state are skipped when
+     * registered with the listener.
+     */
+    public boolean isInErrorState() {
+        return this.inErrorState;
+    }
+
     public B level(final Integer value) {
         if (value != null) {
             checkState(value >= 0);

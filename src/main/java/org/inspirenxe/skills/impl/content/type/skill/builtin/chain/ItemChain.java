@@ -32,9 +32,11 @@ import org.slf4j.LoggerFactory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackComparators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -43,8 +45,6 @@ public final class ItemChain extends Chain<ItemChain> {
     private static final Logger logger = LoggerFactory.getLogger(SkillsImpl.ID);
     public List<ItemStack> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
-
-    private boolean inErrorState;
 
     public ItemChain inverseQuery() {
         if (this.inErrorState) {
@@ -119,6 +119,36 @@ public final class ItemChain extends Chain<ItemChain> {
         }
         this.matchOnlyType = false;
         return this;
+    }
+
+    /**
+     * @return True if a stack of the given type could possibly match this chain (used to index chains by item type).
+     */
+    public boolean couldMatchType(final ItemType type) {
+        if (this.inverseQuery) {
+            return true;
+        }
+        for (final ItemStack query : this.toQuery) {
+            if (query.getType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return True if the given stack matches this chain, honoring {@link #matchOnlyType} and {@link #inverseQuery}.
+     */
+    public boolean matches(final ItemStack stack) {
+        final Comparator<ItemStack> comparator = this.matchOnlyType ? ItemStackComparators.TYPE : ItemStackComparators.IGNORE_SIZE;
+        boolean found = false;
+        for (final ItemStack query : this.toQuery) {
+            if (comparator.compare(query, stack) == 0) {
+                found = true;
+                break;
+            }
+        }
+        return this.inverseQuery != found;
     }
 
     @Override
