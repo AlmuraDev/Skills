@@ -34,8 +34,6 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.inspirenxe.skills.api.function.level.LevelFunctionType;
 import org.inspirenxe.skills.impl.function.SkillsFunctionType;
-import org.slf4j.Logger;
-import org.spongepowered.api.Sponge;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -45,7 +43,7 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
   private final RegistryKey registryKey;
   private final Expression expression;
 
-  private double[] xpTable = new double[100];
+  private double[] xpTable = new double[200];
 
   @Inject
   public SkillsLevelFunctionType(@Assisted final RegistryKey registryKey, @Assisted final String formula) {
@@ -72,9 +70,7 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
       return UNKNOWN_EXP;
     }
 
-    final double cache = this.xpTable[level - 1];
-
-    return cache == UNKNOWN_EXP ? 0 : cache;
+    return this.xpTable[level - 1];
   }
 
   @Override
@@ -98,13 +94,17 @@ public final class SkillsLevelFunctionType implements SkillsFunctionType, LevelF
 
   @Override
   public void buildLevelTable(final int suggestedMax) {
-    if (suggestedMax > this.xpTable.length) {
-      final int length = this.xpTable.length;
-      this.xpTable = Arrays.copyOf(this.xpTable, this.xpTable.length * 2);
-      Arrays.fill(this.xpTable, length, this.xpTable.length - 1, UNKNOWN_EXP);
+    if (suggestedMax <= 0) {
+      return;
     }
 
-    if (this.xpTable[suggestedMax] == UNKNOWN_EXP) {
+    if (suggestedMax >= this.xpTable.length) {
+      final int length = this.xpTable.length;
+      this.xpTable = Arrays.copyOf(this.xpTable, Math.max(suggestedMax + 1, length * 2));
+      Arrays.fill(this.xpTable, length, this.xpTable.length, UNKNOWN_EXP);
+    }
+
+    if (this.xpTable[suggestedMax - 1] == UNKNOWN_EXP) {
       for (int lvl = 1; lvl <= suggestedMax; lvl++) {
         this.expression.setVariable("L", lvl);
         this.xpTable[lvl - 1] = this.expression.evaluate();

@@ -31,7 +31,10 @@ import org.inspirenxe.skills.impl.content.type.skill.builtin.BuiltinEventListene
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.BlockChain;
 import org.inspirenxe.skills.impl.content.type.skill.builtin.chain.ItemChain;
 import org.spongepowered.api.GameRegistry;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.trait.BlockTrait;
 import org.spongepowered.api.block.trait.IntegerTraits;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -42,6 +45,15 @@ import org.spongepowered.api.item.ItemTypes;
 public final class FarmingRegistar {
 
     private FarmingRegistar() {
+    }
+
+    /**
+     * Every state of {@code type} whose {@code trait} has the given value, regardless of its other traits (e.g. cocoa facing).
+     */
+    private static BlockState[] statesWith(final BlockType type, final BlockTrait<?> trait, final Object value) {
+        return type.getAllBlockStates().stream()
+            .filter(state -> state.withTrait(trait, value).map(state::equals).orElse(false))
+            .toArray(BlockState[]::new);
     }
 
     @Inject
@@ -148,6 +160,7 @@ public final class FarmingRegistar {
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/white_grape").level(80).xp(29.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/raspberry").level(81).xp(30.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/pineapple").level(82).xp(31.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/banana").level(82).xp(31.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/sweetpotato").level(83).xp(32.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/tobacco").level(84).xp(33.0).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Place.class, type, new BlockChain().from(placeChain).query("almura:crop/vanilla_bean").level(85).xp(34.0).economy(1.0))
@@ -164,18 +177,20 @@ public final class FarmingRegistar {
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.WHEAT.getDefaultState().withTrait(IntegerTraits.WHEAT_AGE, "7").orElse(null)).xp(1.0).economy(0.25))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.CARROTS.getDefaultState().withTrait(IntegerTraits.CARROTS_AGE, "7").orElse(null)).level(5).xp(1.0).economy(0.25))
 
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.BROWN_MUSHROOM_BLOCK).level(2))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.BROWN_MUSHROOM).level(2))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.RED_MUSHROOM_BLOCK).level(3))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.RED_MUSHROOM).level(3))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.BROWN_MUSHROOM_BLOCK).level(2).xp(2.0).economy(0.10))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.BROWN_MUSHROOM).level(2).xp(2.0).economy(0.10))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.RED_MUSHROOM_BLOCK).level(3).xp(2.0).economy(0.10))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.RED_MUSHROOM).level(3).xp(2.0).economy(0.10))
 
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.MELON_BLOCK).level(7))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.PUMPKIN).level(7))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.REEDS).level(10))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.NETHER_WART_BLOCK).level(12))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.REEDS).level(3).xp(2.0).economy(0.10))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.MELON_BLOCK).level(7).xp(3.0).economy(0.25))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.PUMPKIN).level(7).xp(3.0).economy(0.25))
+            // Nether wart crop: mature (age 3) pays, any other age is only gated
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.NETHER_WART, IntegerTraits.NETHER_WART_AGE, "3")).level(12).xp(4.0).economy(0.25))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChainNoOwner).query(BlockTypes.NETHER_WART).level(12))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.BEETROOTS.getDefaultState().withTrait(IntegerTraits.BEETROOT_AGE, "3").orElse(null)).level(13).xp(1.0).economy(0.25))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.COCOA.getDefaultState().withTrait(IntegerTraits.COCOA_AGE, "2").orElse(null)).level(15).xp(1.0).economy(0.25))
+            // Cocoa: mature (age 2) pods on every facing
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(statesWith(BlockTypes.COCOA, IntegerTraits.COCOA_AGE, "2")).level(15).xp(1.0).economy(0.25))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).fuzzyMatch().query(BlockTypes.POTATOES.getDefaultState().withTrait(IntegerTraits.POTATOES_AGE, "7").orElse(null)).level(17).xp(1.0).economy(0.25))
 
             // almura crops
@@ -246,6 +261,7 @@ public final class FarmingRegistar {
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/white_grape").level(80))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/raspberry").level(81))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/pineapple").level(82))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/banana").level(82))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/sweetpotato").level(83))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/tobacco").level(84))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:crop/vanilla_bean").level(85))
@@ -328,6 +344,7 @@ public final class FarmingRegistar {
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/white_grape").xp(29.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/raspberry").xp(30.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/pineapple").xp(31.0).economy(0.5))
+            .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/banana").xp(31.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:food/food/sweetpotato").xp(32.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/tobacco").xp(33.0).economy(0.5))
             .addItemChain(DropItemEvent.Destruct.class, type, new ItemChain().from(dropsChain).query("almura:normal/ingredient/vanilla").xp(34.0).economy(0.5))

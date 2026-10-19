@@ -37,11 +37,11 @@ import org.spongepowered.api.GameRegistry;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class SkillHolderContainerImpl implements SkillHolderContainer {
 
@@ -50,7 +50,7 @@ public final class SkillHolderContainerImpl implements SkillHolderContainer {
   private final UUID uniqueId;
   private final String name;
 
-  private final Map<UUID, SkillHolder> holders = new HashMap<>();
+  private final Map<UUID, SkillHolder> holders = new ConcurrentHashMap<>();
 
   @Inject
   public SkillHolderContainerImpl(final GameRegistry registry, final SkillHolderImpl.Factory factory, @Assisted final UUID uniqueId,
@@ -81,11 +81,18 @@ public final class SkillHolderContainerImpl implements SkillHolderContainer {
     checkNotNull(holderId);
     checkNotNull(name);
 
+    // Never replace a live holder, it may hold unsaved experience
+    final SkillHolder existing = this.holders.get(holderId);
+    if (existing != null) {
+      return existing;
+    }
+
     final SkillHolderImpl holder = this.factory.create(this, holderId, name);
-    this.holders.put(holderId, holder);
 
     final Collection<SkillType> skillTypes = this.registry.getAllOf(SkillType.class);
     skillTypes.forEach(holder::createSkill);
+
+    this.holders.put(holderId, holder);
 
     return holder;
   }

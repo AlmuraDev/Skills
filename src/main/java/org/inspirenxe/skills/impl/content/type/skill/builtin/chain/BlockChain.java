@@ -35,14 +35,32 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.trait.BlockTrait;
 import org.spongepowered.api.event.cause.Cause;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
+/**
+ * A rule matching block states.
+ *
+ * <p>Matching modes:</p>
+ * <ul>
+ *     <li>{@link #matchTypeOnly()}: a state matches if its {@link BlockType} equals the type of any queried state.</li>
+ *     <li>{@link #fuzzyMatch()} (exact state, the default): a state matches if it equals any queried state, comparing every trait except
+ *     the traits named via {@link #ignoreTraits(BlockTrait[])} / {@link #ignoreTraits(String...)} / {@link #queryIgnoring(BlockState,
+ *     BlockTrait[])}. Ignored traits apply to every queried state of this chain (and are copied by {@link #from(BlockChain)}), so e.g.
+ *     {@code query(oakLog).ignoreTraits(EnumTraits.LOG_AXIS)} matches oak logs on every axis while still requiring variant=oak.</li>
+ * </ul>
+ *
+ * <p>Any number of states may be queried, either by calling {@code query} repeatedly or by passing several states at once.</p>
+ */
 @SuppressWarnings("unchecked")
 public final class BlockChain extends Chain<BlockChain> {
 
@@ -50,6 +68,10 @@ public final class BlockChain extends Chain<BlockChain> {
     public List<BlockState> toQuery = new ArrayList<>();
     public boolean inverseQuery = false, matchOnlyType = false;
     @Nullable public TriFunction<Cause, Skill, BlockSnapshot, Boolean> owner;
+    /**
+     * Names of block traits ignored when matching exact states (see class docs).
+     */
+    public Set<String> ignoredTraits = new HashSet<>();
 
     public BlockChain inverseQuery() {
         if (this.inErrorState) {
@@ -92,11 +114,16 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
-    public BlockChain query(final BlockState value) {
+    public BlockChain query(@Nullable final BlockState value) {
         if (this.inErrorState) {
             return this;
         }
-        checkNotNull(value);
+        if (value == null) {
+            // Typically the result of a failed BlockState#withTrait(...).orElse(null)
+            logger.error("Null block state given to block chain!");
+            this.inErrorState = true;
+            return this;
+        }
         this.toQuery.add(value);
         return this;
     }
@@ -106,7 +133,47 @@ public final class BlockChain extends Chain<BlockChain> {
             return this;
         }
         checkNotNull(values);
-        this.toQuery.addAll(Arrays.asList(values));
+        for (final BlockState value : values) {
+            this.query(value);
+        }
+        return this;
+    }
+
+    /**
+     * Queries the given state and ignores the given traits when matching exact states. Equivalent to
+     * {@code query(value).ignoreTraits(traits)}; note that ignored traits apply to every queried state of this chain.
+     */
+    public BlockChain queryIgnoring(@Nullable final BlockState value, final BlockTrait<?>... traits) {
+        return this.query(value).ignoreTraits(traits);
+    }
+
+    /**
+     * Ignores the given traits (matched by name) when matching exact states, e.g. log axis or cocoa facing.
+     */
+    public BlockChain ignoreTraits(final BlockTrait<?>... traits) {
+        if (this.inErrorState) {
+            return this;
+        }
+        checkNotNull(traits);
+        for (final BlockTrait<?> trait : traits) {
+            checkNotNull(trait);
+            this.ignoredTraits.add(trait.getName());
+        }
+        return this;
+    }
+
+    /**
+     * Ignores the traits with the given names when matching exact states, e.g. "axis" or "facing".
+     */
+    public BlockChain ignoreTraits(final String... traitNames) {
+        if (this.inErrorState) {
+            return this;
+        }
+        checkNotNull(traitNames);
+        for (final String name : traitNames) {
+            checkNotNull(name);
+            this.ignoredTraits.add(name);
+        }
         return this;
     }
 
@@ -136,6 +203,54 @@ public final class BlockChain extends Chain<BlockChain> {
         return this;
     }
 
+    /**
+     * @return True if a state of the given type could possibly match this chain (used to index chains by block type).
+     */
+    public boolean couldMatchType(final BlockType type) {
+        if (this.inverseQuery) {
+            return true;
+        }
+        for (final BlockState query : this.toQuery) {
+            if (query.getType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return True if the given state matches this chain, honoring {@link #matchOnlyType}, {@link #ignoredTraits} and {@link #inverseQuery}.
+     */
+    public boolean matches(final BlockState state) {
+        boolean found = false;
+        for (final BlockState query : this.toQuery) {
+            if (this.matchOnlyType ? query.getType() == state.getType() : this.stateMatches(query, state)) {
+                found = true;
+                break;
+            }
+        }
+        return this.inverseQuery != found;
+    }
+
+    private boolean stateMatches(final BlockState query, final BlockState state) {
+        if (query.getType() != state.getType()) {
+            return false;
+        }
+        if (this.ignoredTraits.isEmpty()) {
+            return query.equals(state);
+        }
+        final Map<BlockTrait<?>, ?> stateTraits = state.getTraitMap();
+        for (final Map.Entry<BlockTrait<?>, ?> entry : query.getTraitMap().entrySet()) {
+            if (this.ignoredTraits.contains(entry.getKey().getName())) {
+                continue;
+            }
+            if (!Objects.equals(entry.getValue(), stateTraits.get(entry.getKey()))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public BlockChain from(final BlockChain builder) {
         super.from(builder);
@@ -146,6 +261,7 @@ public final class BlockChain extends Chain<BlockChain> {
 
         this.matchOnlyType = builder.matchOnlyType;
         this.owner = builder.owner;
+        this.ignoredTraits = new HashSet<>(builder.ignoredTraits);
         return this;
     }
 }

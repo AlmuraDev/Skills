@@ -31,16 +31,17 @@ import org.inspirenxe.skills.api.SkillHolder;
 import org.inspirenxe.skills.api.SkillHolderContainer;
 import org.inspirenxe.skills.api.SkillService;
 import org.inspirenxe.skills.impl.configuration.PluginConfiguration;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.scheduler.Task;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public final class SkillServiceImpl implements SkillService {
@@ -50,9 +51,9 @@ public final class SkillServiceImpl implements SkillService {
   private final PluginConfiguration pluginConfiguration;
   private final SkillHolderContainerImpl.Factory factory;
 
-  private final Map<UUID, SkillHolderContainer> containers = new HashMap<>();
-  private final Map<UUID, Task> tasks = new HashMap<>();
-  private final Map<UUID, SaveContainerToDatabase> runnables = new HashMap<>();
+  private final Map<UUID, SkillHolderContainer> containers = new ConcurrentHashMap<>();
+  private final Map<UUID, Task> tasks = new ConcurrentHashMap<>();
+  private final Map<UUID, SaveContainerToDatabase> runnables = new ConcurrentHashMap<>();
 
   @Inject
   public SkillServiceImpl(final PluginContainer container, final Scheduler scheduler,
@@ -63,9 +64,12 @@ public final class SkillServiceImpl implements SkillService {
     this.factory = factory;
   }
 
+  // DecimalFormat is not thread-safe, cache one per thread instead of creating one per call
+  private static final ThreadLocal<DecimalFormat> XP_FORMAT = ThreadLocal.withInitial(() -> new DecimalFormat("#,###.##"));
+
   @Override
   public DecimalFormat getXPFormat() {
-    return new DecimalFormat("#,###.##");
+    return XP_FORMAT.get();
   }
 
   @Override
@@ -77,10 +81,21 @@ public final class SkillServiceImpl implements SkillService {
       return Optional.of(container);
     }
 
-    return this.containers.values()
+    final Optional<SkillHolderContainer> parent = this.containers.values()
       .stream()
       .filter(c -> c.getName().equalsIgnoreCase(share))
       .findFirst();
+
+    if (parent.isPresent()) {
+      return parent;
+    }
+
+    // The Nether/End share from the main world, which may not be named as configured (level-name)
+    if (("DIM-1".equalsIgnoreCase(container.getName()) || "DIM1".equalsIgnoreCase(container.getName())) && Sponge.isServerAvailable()) {
+      return Sponge.getServer().getDefaultWorld().map(properties -> this.containers.get(properties.getUniqueId()));
+    }
+
+    return Optional.empty();
   }
 
   @Override
@@ -98,13 +113,17 @@ public final class SkillServiceImpl implements SkillService {
 
     final SaveContainerToDatabase runnable = new SaveContainerToDatabase(container);
 
-    this.tasks.put(containerId, this.scheduler
+    // Runs on the main thread; skills snapshot their experience there and write to the database asynchronously
+    final Task previous = this.tasks.put(containerId, this.scheduler
       .createTaskBuilder()
-      .async()
       .interval(this.pluginConfiguration.getSaveInterval(), TimeUnit.SECONDS)
       .execute(runnable)
       .submit(this.container)
     );
+
+    if (previous != null) {
+      previous.cancel();
+    }
 
     this.runnables.put(containerId, runnable);
 
@@ -120,23 +139,14 @@ public final class SkillServiceImpl implements SkillService {
       return;
     }
 
-    final SaveContainerToDatabase runnable = this.runnables.get(containerId);
-    if (runnable == null) {
-      return;
-    }
-
-    runnable.skipProcessing(true);
-
-    new SaveContainerToDatabase(container).run();
-
-    runnable.skipProcessing(false);
+    container.save();
   }
 
   @Override
   public Optional<SkillHolderContainer> removeContainer(final UUID containerId) {
     checkNotNull(containerId);
 
-    final SkillHolderContainer container = this.containers.get(containerId);
+    final SkillHolderContainer container = this.containers.remove(containerId);
     if (container == null) {
       return Optional.empty();
     }
@@ -159,7 +169,7 @@ public final class SkillServiceImpl implements SkillService {
 
     private final SkillHolderContainer container;
 
-    private boolean skipProcessing = false;
+    private volatile boolean skipProcessing = false;
 
     SaveContainerToDatabase(final SkillHolderContainer container) {
       this.container = container;

@@ -73,6 +73,8 @@ public final class DiggerRegistar {
         final BlockChain breakChain = new BlockChain().matchTypeOnly().creator(CommonRegistar.CREATOR_NONE).denyLevelRequired(CommonRegistar.createDenyAction("break"));
 
         listener
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SNOW_LAYER).xp(0.5).economy(0.05))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SNOW).xp(1.5).economy(0.05))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.DIRT).xp(2.5).economy(0.10))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS).xp(2.5).economy(0.15))
 
@@ -80,9 +82,13 @@ public final class DiggerRegistar {
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRAVEL).level(5).xp(6.0).economy(0.35))
 
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CLAY).level(10).xp(6.0).economy(0.15))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.MYCELIUM).level(10).xp(6.0).economy(0.25))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.CONCRETE_POWDER).level(10).xp(6.0).economy(0.25))
 
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS_PATH).level(20).xp(4.5).economy(0.20))
-            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.STAINED_HARDENED_CLAY).level(20).xp(5.0).economy(0.35))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.SOUL_SAND).level(15).xp(7.0).economy(0.35))
+
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query(BlockTypes.GRASS_PATH).level(20).xp(7.5).economy(0.35))
+            // Stained hardened clay is a pickaxe block: see MiningRegistar
 
             ;
 
@@ -93,7 +99,7 @@ public final class DiggerRegistar {
 
         // Effects (Xp change/Level change)
         listener
-            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/crafting-level-up"));
+            .addEffectChain(Event.class, type, CommonRegistar.createFireworkEffect(SkillsImpl.ID + ":firework/digger-level-up"));
     }
 
     private DiggerRegistar() {

@@ -43,7 +43,6 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Scheduler;
 import org.spongepowered.api.service.ServiceManager;
 
 import java.util.Optional;
@@ -52,15 +51,12 @@ import java.util.UUID;
 public final class SkillLoader implements Witness {
 
   private final PluginContainer container;
-  private final Scheduler scheduler;
   private final ServiceManager serviceManager;
   private final SkillServiceImpl.Factory factory;
 
   @Inject
-  public SkillLoader(final PluginContainer container, final Scheduler scheduler, final ServiceManager serviceManager,
-    final SkillServiceImpl.Factory factory) {
+  public SkillLoader(final PluginContainer container, final ServiceManager serviceManager, final SkillServiceImpl.Factory factory) {
     this.container = container;
-    this.scheduler = scheduler;
     this.serviceManager = serviceManager;
     this.factory = factory;
   }
@@ -91,15 +87,7 @@ public final class SkillLoader implements Witness {
 
     final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-    this.getContainerOrParent(service, containerId).ifPresent(container -> {
-      final SkillHolder holder = container.createHolder(holderId, player.getName());
-
-      this.scheduler
-        .createTaskBuilder()
-        .async()
-        .execute(() -> holder.getSkills().values().forEach(Skill::load))
-        .submit(this.container);
-    });
+    this.getContainerOrParent(service, containerId).ifPresent(container -> this.loadHolder(container, holderId, player.getName()));
   }
 
   @Listener(order = Order.LAST)
@@ -137,6 +125,7 @@ public final class SkillLoader implements Witness {
 
     final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
+    // Experience is snapshotted here and written asynchronously (synchronously while the server stops)
     try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
       this.getContainerOrParent(service, containerId).ifPresent(container -> container.removeHolder(holderId).ifPresent(SkillHolder::save));
     }
@@ -152,43 +141,35 @@ public final class SkillLoader implements Witness {
     return Optional.ofNullable(container);
   }
 
+  private void loadHolder(final SkillHolderContainer container, final UUID holderId, final String holderName) {
+    // Keep a live holder as is, reloading it would discard unsaved experience
+    if (container.getHolder(holderId).isPresent()) {
+      return;
+    }
+
+    container.createHolder(holderId, holderName).getSkills().values().forEach(Skill::load);
+  }
+
   private void handleContainerChange(final UUID fromContainerId, final UUID toContainerId, final UUID holderId, final String holderName) {
     final SkillService service = this.serviceManager.provideUnchecked(SkillService.class);
 
-    final SkillHolderContainer fromContainer = service.getContainer(fromContainerId).orElse(null);
-
-    boolean remove = true;
-
-    if (fromContainer == null) {
-      remove = false;
-    }
-
+    final SkillHolderContainer fromContainer = this.getContainerOrParent(service, fromContainerId).orElse(null);
     final SkillHolderContainer toContainer = this.getContainerOrParent(service, toContainerId).orElse(null);
-    if (fromContainer == null || fromContainer == toContainer) {
-      remove = false;
+
+    // Worlds share the same container (e.g. Overworld <-> Nether), keep the live holder
+    if (fromContainer == toContainer) {
+      return;
     }
 
-    final SkillHolder holder;
+    // Saves and loads run in submission order on the database thread, so a later load always sees this save
+    if (fromContainer != null) {
+      try (final CauseStackManager.StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+        fromContainer.removeHolder(holderId).ifPresent(SkillHolder::save);
+      }
+    }
+
     if (toContainer != null) {
-      holder = toContainer.createHolder(holderId, holderName);
-    } else {
-      holder = null;
+      this.loadHolder(toContainer, holderId, holderName);
     }
-
-    final boolean result = remove;
-    
-    this.scheduler
-      .createTaskBuilder()
-      .async()
-      .execute(() -> {
-        if (result) {
-          fromContainer.removeHolder(holderId).ifPresent(SkillHolder::save);
-        }
-
-        if (holder != null) {
-          holder.getSkills().values().forEach(Skill::load);
-        }
-      })
-      .submit(this.container);
   }
 }

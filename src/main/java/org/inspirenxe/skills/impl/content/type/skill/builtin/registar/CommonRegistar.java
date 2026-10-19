@@ -26,6 +26,7 @@ package org.inspirenxe.skills.impl.content.type.skill.builtin.registar;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.UChat;
 import com.google.inject.Inject;
 import org.inspirenxe.skills.api.Skill;
 import org.inspirenxe.skills.api.SkillService;
@@ -35,9 +36,10 @@ import org.inspirenxe.skills.impl.content.type.effect.firework.ContentFireworkEf
 import org.inspirenxe.skills.impl.content.type.skill.builtin.EventFeedback;
 import org.inspirenxe.skills.impl.effect.SkillsEffectType;
 import org.inspirenxe.skills.impl.effect.firework.SkillsFireworkEffectType;
-import org.inspirenxe.skills.impl.util.UchatUtil;
 import org.inspirenxe.skills.impl.util.function.TriConsumer;
 import org.inspirenxe.skills.impl.util.function.TriFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.api.GameRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
@@ -54,6 +56,9 @@ import java.util.List;
 import java.util.UUID;
 
 public final class CommonRegistar {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SkillsImpl.ID);
+  private static final String ULTIMATE_CHAT_ID = "ultimatechat";
 
   @Inject
   private static GameRegistry registry;
@@ -90,9 +95,9 @@ public final class CommonRegistar {
           + " level ", level, "."));
       }
 
-      UchatUtil.relayMessageToDiscord(":trophy:", Text.of(player.getName()+ " has advanced to ").toPlain() + skill.getSkillType().getFormattedName().toPlain() + Text.of(" level " + level + ".").toPlain(), true);
-
       if (!cause.containsType(CommandCallable.class)) {
+        relayLevelUpToDiscord(player, skill, level);
+
         Sponge.getServer().getOnlinePlayers().forEach(p -> {
           if (p != player && p.hasPermission(SkillsImpl.ID + ".notification.level." + skill.getSkillType().getName().toLowerCase(
             Sponge.getServer().getConsole().getLocale()) + ".other")) {
@@ -144,6 +149,41 @@ public final class CommonRegistar {
     return false;
   };
   public static TriFunction<Cause, Skill, BlockSnapshot, Boolean> CREATOR_OR_ANY = (cause, skill, snapshot) -> true;
+
+  /**
+   * Relays a level up to Discord through UltimateChat, if it is installed and its JDA bridge is up. Any failure in the relay is logged and
+   * swallowed so the rest of the level up feedback (chat broadcast, fireworks) always runs.
+   */
+  private static void relayLevelUpToDiscord(final Player player, final Skill skill, final Integer level) {
+    if (!Sponge.getPluginManager().isLoaded(ULTIMATE_CHAT_ID)) {
+      return;
+    }
+
+    try {
+      DiscordRelay.relay(":trophy:", player.getName() + " has advanced to " + skill.getSkillType().getFormattedName().toPlain() + " level "
+        + level + ".");
+    } catch (final Exception | LinkageError e) {
+      LOGGER.warn("Failed to relay level up of '{}' to Discord via UltimateChat.", player.getName(), e);
+    }
+  }
+
+  /**
+   * Isolates the UltimateChat classes so they are only loaded when the plugin is present.
+   */
+  private static final class DiscordRelay {
+
+    private DiscordRelay() {
+    }
+
+    static void relay(final String icon, final String message) {
+      final UChat uChat = UChat.get();
+      if (uChat == null || uChat.getUCJDA() == null || !uChat.getUCJDA().JDAAvailable()) {
+        return;
+      }
+
+      uChat.getUCJDA().sendRawToDiscord(icon + " **" + message + "**");
+    }
+  }
 
   @SuppressWarnings("unchecked")
   public static TriConsumer<Cause, Skill, Integer> createDenyAction(final String action) {
