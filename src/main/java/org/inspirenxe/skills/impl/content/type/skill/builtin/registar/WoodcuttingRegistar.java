@@ -101,6 +101,13 @@ public final class WoodcuttingRegistar {
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/peach_tree_log").level(60).xp(15.5).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/plum_tree_log").level(60).xp(15.5).economy(1.0))
             .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/walnut_tree_log").level(65).xp(16.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/palm_tree_log").level(65).xp(16.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/almond_tree_log").level(70).xp(16.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/chestnut_tree_log").level(70).xp(16.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/pecan_tree_log").level(75).xp(17.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/pistachio_tree_log").level(75).xp(17.0).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/avocado_tree_log").level(80).xp(17.5).economy(1.0))
+            .addBlockChain(ChangeBlockEvent.Break.class, type, new BlockChain().from(breakChain).query("almura:log/nutmeg_tree_log").level(80).xp(17.5).economy(1.0))
 
 
             ;
