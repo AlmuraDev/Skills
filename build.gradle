@@ -1,268 +1,78 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        maven {
-            name = 'sponge'
-            url = 'https://repo.spongepowered.org/maven'
-        }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-        maven {
-            url = "https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/"
-        }
-    }
-    dependencies {
-        classpath "org.spongepowered:event-impl-gen:${project.eventImplGenPluginVersion}"
-    }
-}
-
 plugins {
-    id 'org.spongepowered.plugin' version '0.9.0'
-    id 'net.minecrell.licenser' version '0.4.1'
-    id 'nu.studer.jooq' version '3.0.2'
-    id 'com.github.johnrengelman.shadow' version '2.0.4'
-    id 'maven'
-    id 'signing'
+    id 'java'
+    id 'com.gradleup.shadow' version "${shadow_version}"
 }
 
-apply plugin: "org.spongepowered.event-impl-gen"
+base {
+    archivesName = 'Skills'
+}
 
-group = project.group
-version = project.version
-description = project.description
-
-defaultTasks 'clean', 'updateLicenses', 'build'
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-archivesBaseName = project.name.toLowerCase()
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version as int)
+}
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
-        name = 'oss-sonatype-public'
-        url = 'https://oss.sonatype.org/content/repositories/public/'
+        name = 'Sponge'
+        url = uri('https://repo.spongepowered.org/repository/maven-public/')
+        content {
+            includeGroup('org.spongepowered')
+        }
     }
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/maven'
-    }
-    maven {
-        name = 'bstats'
-        url = 'https://repo.codemc.org/repository/maven-public'
-    }
-    maven {
-        url = "https://raw.githubusercontent.com/FabioZumbi12/UltimateChat/mvn-repo"
-    }
-    flatDir {
-        dirs "lib"
-    }
+}
+
+configurations {
+    // Jars packed into the plugin jar as plain files (META-INF/skills/libs), not on the class path
+    bundledH2 { transitive = false }
 }
 
 dependencies {
-    compile "com.google.inject.extensions:guice-assistedinject:${project.assistedInjectVersion}"
-    compile "org.checkerframework:checker-qual:${project.checkerQualVersion}"
-    compile "com.almuradev:droplet:${project.dropletVersion}"
-    compile "net.objecthunter:exp4j:${project.exp4JVersion}"
-    compile "net.kyori:feature:${project.featureVersion}"
-    compile "net.kyori:fragment:${project.fragmentVersion}"
-    compile "com.google.inject.extensions:guice-multibindings:${project.guiceMultibindingsVersion}"
-    compile "org.jdom:jdom2:${project.jdom2Version}"
-    compile "org.jooq:jooq:${project.jooqVersion}"
-    compile "org.jooq:jooq-meta:${project.jooqVersion}"
-    compile "org.jooq:jooq-codegen:${project.jooqVersion}"
-    compile "net.kyori:lunar:${project.lunarVersion}"
-    compile "net.kyori:membrane:${project.membraneVersion}"
-    compile "org.spongepowered:spongeapi:${project.spongeAPIVersion}"
-    compile "com.almuradev:toolbox:${project.toolboxVersion}"
-    compile "net.kyori:violet:${project.violetVersion}"
-    compile "net.kyori:xml:${project.xmlVersion}"
-    compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-56-1.9.1'
-    jooqRuntime "org.jooq:jooq-meta-extensions:${project.jooqVersion}"
-    testCompile "junit:junit:${project.junitVersion}"
+    // SpongeNeo brings SpongeAPI (with Adventure, Configurate, Guice, Gson and Log4j) at run time
+    compileOnly("org.spongepowered:spongeapi:${sponge_api_version}")
+
+    implementation("net.objecthunter:exp4j:${exp4j_version}")
+
+    bundledH2("com.h2database:h2:${h2_version}")
 }
 
-license {
-    header project.file('header.txt')
-    include '**/*.java'
-    exclude 'src/main/generated/**'
-    newLine false
-}
-
-genEventImpl {
-    // The full qualified class name of the factory
-    outputFactory = 'org.inspirenxe.skills.api.event.SkillsEventFactory'
-
-    // The path to your event interfaces
-
-    include 'org/inspirenxe/skills/api/event/*'
-    exclude 'org/inspirenxe/skills/api/event/ExperienceEvent.java'
-
-}
-
-def generatedDir = 'src/main/generated'
-sourceSets {
-    main {
-        java {
-            srcDirs += [generatedDir]
-        }
-    }
-}
-
-build.dependsOn 'shadowJar'
-shadowJar {
-    dependencies {
-        include(dependency("com.almuradev:droplet"))
-        include(dependency("com.almuradev:toolbox"))
-        include(dependency('net.kyori:feature'))
-        include(dependency('net.kyori:fragment'))
-        include(dependency('net.kyori:lunar'))
-        include(dependency('net.kyori:membrane'))
-        include(dependency('net.kyori:violet'))
-        include(dependency('net.kyori:xml'))
-        include(dependency('org.jdom:jdom2'))
-        include(dependency('org.checkerframework:checker-qual'))
-        include(dependency('com.google.inject.extensions:guice-assistedinject'))
-        include(dependency('com.google.inject.extensions:guice-multibindings'))
-        include(dependency("net.objecthunter:exp4j"))
-        include(dependency("org.jooq:jooq"))
-        include(dependency("org.jooq:jooq-meta"))
-        include(dependency("org.jooq:jooq-codegen"))
-    }
-    classifier = null
-}
-
-jooq {
-    version = project.jooqVersion
-    edition = project.jooqEdition
-    ddl(sourceSets.main) {
-        generator {
-            database {
-                name = 'org.jooq.meta.extensions.ddl.DDLDatabase'
-                properties {
-                    property {
-                        key = 'scripts'
-                        value = 'src/main/resources/db/database.sql'
-                    }
-                }
-
-                inputSchema = 'PUBLIC'
-                outputSchemaToDefault = true
-            }
-            generate {
-                relations = true
-                deprecated = false
-                records = true
-                immutablePojos = false
-                fluentSetters = true
-            }
-            target {
-                packageName = 'org.inspirenxe.skills.generated'
-                directory = generatedDir
-            }
-        }
-    }
-}
-
-task generateDatabaseClasses() {}
-generateDatabaseClasses.dependsOn 'generateDdlJooqSchemaSource'
-
-task cleanDatabaseClasses() {
-    doLast {
-        project.file(generatedDir).deleteDir()
-    }
-}
-generateDdlJooqSchemaSource.dependsOn 'cleanDatabaseClasses'
-
-project.tasks.getByName('compileJava').dependsOn -= 'generateDdlJooqSchemaSource'
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs += ['-Xlint:all', '-Xlint:-path', '-parameters']
-    options.deprecation = true
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release = java_version as int
+    options.compilerArgs << '-Xlint:deprecation'
 }
 
-if (JavaVersion.current().isJava8Compatible() || JavaVersion.current().isJava9Compatible()) {
-    tasks.withType(Javadoc) {
-        // disable the crazy super-strict doclint tool in Java 8
-        options.addStringOption('Xdoclint:none', '-quiet')
+def pluginProps = [
+        'version'           : project.version,
+        'sponge_api_version': sponge_api_version.replace('-SNAPSHOT', ''),
+        'h2_version'        : h2_version
+]
+
+processResources {
+    inputs.properties(pluginProps)
+    filesMatching(['META-INF/sponge_plugins.json', 'skills-build.properties']) {
+        expand(pluginProps)
+    }
+    into('META-INF/skills/libs') {
+        from(configurations.bundledH2) { rename { "h2-${h2_version}.jar" } }
     }
 }
 
-task apiJar(type: Jar) {
-    classifier = 'api'
-    from (sourceSets.main.output) {
-        include "org/inspirenxe/skills/api/**"
+shadowJar {
+    archiveClassifier = ''
+    configurations = [project.configurations.runtimeClasspath]
+    relocate 'net.objecthunter.exp4j', 'org.inspirenxe.skills.libs.exp4j'
+    manifest {
+        attributes(
+                'Specification-Title': 'Skills',
+                'Implementation-Title': 'Skills',
+                'Implementation-Version': project.version
+        )
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+jar {
+    archiveClassifier = 'slim'
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives apiJar
-    archives sourcesJar
-    archives javadocJar
-}
-
-signing {
-    required { !project.version.endsWith('-SNAPSHOT') && gradle.taskGraph.hasTask(':uploadArchives') }
-    sign configurations.archives
-}
-
-if (project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-
-                snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
-
-                pom.project {
-                    description 'Shared code useful for anyone working with the Sponge ecosystem'
-                    name project.name
-                    url 'https://github.com/AlmuraDev/Skills/'
-
-                    developers {
-                        developer {
-                            name 'zidane'
-                        }
-                    }
-
-                    issueManagement {
-                        system 'GitHub Issues'
-                        url 'https://github.com/AlmuraDev/Skills/issues'
-                    }
-
-                    licenses {
-                        license {
-                            name 'MIT License'
-                            url 'https://opensource.org/licenses/MIT'
-                        }
-                    }
-
-                    scm {
-                        connection 'scm:git@github.com:AlmuraDev/Skills.git'
-                        developerConnection 'scm:git@github.com:AlmuraDev/Skills.git'
-                        url 'https://github.com/AlmuraDev/Skills/'
-                    }
-                }
-            }
-        }
-    }
-}
+assemble.dependsOn shadowJar

@@ -24,20 +24,30 @@
  */
 package org.inspirenxe.skills.api;
 
-import org.inspirenxe.skills.api.function.economy.EconomyFunctionType;
-import org.inspirenxe.skills.api.function.level.LevelFunctionType;
-import org.spongepowered.api.CatalogType;
-import org.spongepowered.api.text.Text;
+import net.kyori.adventure.text.Component;
+import org.inspirenxe.skills.api.function.EconomyFunction;
+import org.inspirenxe.skills.api.function.LevelFunction;
+import org.spongepowered.api.ResourceKey;
 
 import java.util.Optional;
 
-public interface SkillType extends CatalogType {
+public interface SkillType {
 
-  Text getFormattedName();
+    /**
+     * @return The key, e.g. {@code skills:mining}
+     */
+    ResourceKey key();
 
-  LevelFunctionType getLevelFunction();
+    /**
+     * @return The plain name, e.g. "Mining"
+     */
+    String name();
 
-  Optional<EconomyFunctionType> getEconomyFunction();
+    Component formattedName();
 
-  int getMaxLevel();
+    LevelFunction levelFunction();
+
+    Optional<EconomyFunction> economyFunction();
+
+    int maxLevel();
 }

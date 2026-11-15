@@ -24,25 +24,31 @@
  */
 package org.inspirenxe.skills.api;
 
-import org.inspirenxe.skills.api.result.experience.ExperienceResult;
+public interface Skill {
 
-public interface Skill extends Nameable {
+    SkillType type();
 
-  SkillType getSkillType();
+    SkillHolder holder();
 
-  SkillHolder getHolder();
+    double experience();
 
-  double getCurrentExperience();
+    default int level() {
+        return this.type().levelFunction().levelFor(this.experience());
+    }
 
-  ExperienceResult setExperience(final double experience);
+    /**
+     * @return True once the experience was loaded from the database; experience can only change and be saved after that
+     */
+    boolean isLoaded();
 
-  ExperienceResult addExperience(final double experience);
+    ExperienceResult setExperience(double experience);
 
-  default int getCurrentLevel() {
-    return this.getSkillType().getLevelFunction().getLevelFor(this.getCurrentExperience());
-  }
+    /**
+     * Adds (or with a negative value removes) experience. Experience added before the skill finished loading is applied once it has.
+     */
+    ExperienceResult addExperience(double experience);
 
-  void load();
+    void load();
 
-  void save();
+    void save();
 }

@@ -24,37 +24,42 @@
  */
 package org.inspirenxe.skills.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import org.spongepowered.api.util.Identifiable;
+import org.spongepowered.api.ResourceKey;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface SkillHolderContainer extends Identifiable, Nameable {
+/**
+ * The skills of every holder (player) in one world, or in a group of worlds sharing their skills.
+ */
+public interface SkillHolderContainer {
 
-  Map<UUID, SkillHolder> getHolders();
+    /**
+     * @return The key of the world this container belongs to
+     */
+    ResourceKey key();
 
-  default Optional<SkillHolder> getHolder(final UUID holderId) {
-    checkNotNull(holderId);
+    Map<UUID, SkillHolder> holders();
 
-    return Optional.ofNullable(this.getHolders().get(holderId));
-  }
+    default Optional<SkillHolder> holder(final UUID holderId) {
+        Objects.requireNonNull(holderId, "holderId");
+        return Optional.ofNullable(this.holders().get(holderId));
+    }
 
-  default SkillHolder createHolder(final UUID holderId) {
-    return this.createHolder(holderId, SkillService.UNKNOWN_NAME);
-  }
+    /**
+     * Creates the holder with a skill of every loaded type, or returns the live holder if there is one already.
+     */
+    SkillHolder createHolder(UUID holderId, String name);
 
-  SkillHolder createHolder(final UUID holderId, final String name);
+    default void saveHolder(final UUID holderId) {
+        this.holder(holderId).ifPresent(SkillHolder::save);
+    }
 
-  default void saveHolder(final UUID holderId) {
-    this.getHolder(holderId).ifPresent(SkillHolder::save);
-  }
+    Optional<SkillHolder> removeHolder(UUID holderId);
 
-  Optional<SkillHolder> removeHolder(final UUID holderId);
-
-  default void save() {
-    this.getHolders().values().forEach(SkillHolder::save);
-  }
+    default void save() {
+        this.holders().values().forEach(SkillHolder::save);
+    }
 }

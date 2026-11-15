@@ -1,0 +1,49 @@
+{
+    "loader": {
+        "name": "java_plain",
+        "version": "1.0"
+    },
+    "license": "MIT",
+    "global": {
+        "version": "${version}",
+        "links": {
+            "homepage": "https://github.com/AlmuraDev/Skills",
+            "source": "https://github.com/AlmuraDev/Skills",
+            "issues": "https://github.com/AlmuraDev/Skills/issues"
+        },
+        "contributors": [
+            {
+                "name": "InspireNXE",
+                "description": "Author"
+            }
+        ],
+        "dependencies": [
+            {
+                "id": "spongeapi",
+                "version": "${sponge_api_version}",
+                "load-order": "AFTER",
+                "optional": false
+            },
+            {
+                "id": "ultimatechat",
+                "version": "[0,)",
+                "load-order": "AFTER",
+                "optional": true
+            },
+            {
+                "id": "economylite",
+                "version": "[0,)",
+                "load-order": "AFTER",
+                "optional": true
+            }
+        ]
+    },
+    "plugins": [
+        {
+            "id": "skills",
+            "name": "Skills",
+            "entrypoint": "org.inspirenxe.skills.SkillsPlugin",
+            "description": "Advance character through skills!"
+        }
+    ]
+}

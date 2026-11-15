@@ -24,46 +24,56 @@
  */
 package org.inspirenxe.skills.api;
 
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.spongepowered.api.ResourceKey;
 
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface SkillService {
 
-  String UNKNOWN_NAME = "Unknown";
+    String UNKNOWN_NAME = "Unknown";
 
-  DecimalFormat getXPFormat();
+    /**
+     * @return A formatter for experience values (one per thread, DecimalFormat is not thread-safe)
+     */
+    DecimalFormat xpFormat();
 
-  /**
-   * Returns the passed in {@link SkillHolderContainer} or the container this skill states it inherits from.
-   *
-   * <Note>
-   *   It is expected to only return {@link Optional#empty()} if the parent container is not loaded currently.
-   * </Note>
-   * @param container The container
-   * @return The parent container
-   */
-  Optional<SkillHolderContainer> getParentContainer(final SkillHolderContainer container);
+    /**
+     * @return Every loaded skill type, sorted by name
+     */
+    Collection<SkillType> skillTypes();
 
-  Map<UUID, SkillHolderContainer> getContainers();
+    /**
+     * @param id The key ({@code skills:mining}) or the bare name ({@code mining})
+     */
+    Optional<SkillType> skillType(String id);
 
-  default Optional<SkillHolderContainer> getContainer(final UUID containerId) {
-    checkNotNull(containerId);
+    /**
+     * Returns the passed in {@link SkillHolderContainer} or the container it shares skills from (e.g. the Nether shares from the
+     * Overworld). Only empty if that parent container is not loaded currently.
+     */
+    Optional<SkillHolderContainer> parentContainer(SkillHolderContainer container);
 
-    return Optional.ofNullable(this.getContainers().get(containerId));
-  }
+    Map<ResourceKey, SkillHolderContainer> containers();
 
-  default SkillHolderContainer createContainer(final UUID containerId) {
-    return this.createContainer(containerId, UNKNOWN_NAME);
-  }
+    default Optional<SkillHolderContainer> container(final ResourceKey worldKey) {
+        Objects.requireNonNull(worldKey, "worldKey");
+        return Optional.ofNullable(this.containers().get(worldKey));
+    }
 
-  SkillHolderContainer createContainer(final UUID containerId, final String name);
+    /**
+     * @return The container holding the skills used in the given world (its own or the one it shares from)
+     */
+    default Optional<SkillHolderContainer> containerFor(final ResourceKey worldKey) {
+        return this.container(worldKey).flatMap(this::parentContainer);
+    }
 
-  void saveContainer(final UUID containerId);
+    SkillHolderContainer createContainer(ResourceKey worldKey);
 
-  Optional<SkillHolderContainer> removeContainer(final UUID containerId);
+    void saveContainer(ResourceKey worldKey);
+
+    Optional<SkillHolderContainer> removeContainer(ResourceKey worldKey);
 }
