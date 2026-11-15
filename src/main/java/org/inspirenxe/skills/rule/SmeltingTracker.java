@@ -465,7 +465,6 @@ public final class SmeltingTracker {
             final CommentedConfigurationNode root = loader.createNode();
             root.node("version").set(SmeltingTracker.DATA_VERSION);
             final CommentedConfigurationNode furnaces = root.node("furnaces");
-            furnaces.setList(Object.class, List.of());
             for (final Map.Entry<FurnaceKey, Deque<Contribution>> entry : this.queues.entrySet()) {
                 final CommentedConfigurationNode node = furnaces.appendListNode();
                 node.node("world").set(entry.getKey().world.asString());
@@ -480,7 +479,6 @@ public final class SmeltingTracker {
                 }
             }
             final CommentedConfigurationNode pendingNode = root.node("pending");
-            pendingNode.setList(Object.class, List.of());
             for (final Map.Entry<UUID, List<PendingSmelt>> entry : this.pending.entrySet()) {
                 for (final PendingSmelt smelt : entry.getValue()) {
                     final CommentedConfigurationNode node = pendingNode.appendListNode();
