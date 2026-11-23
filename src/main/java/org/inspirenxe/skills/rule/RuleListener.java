@@ -151,8 +151,9 @@ public final class RuleListener {
     @Listener(order = Order.EARLY)
     public void onChangeBlock(final ChangeBlockEvent.All event, @First final ServerPlayer player) {
         final Cause cause = event.cause();
-        // Blocks that fall, pistons, block ticks etc. are not the player's own doing
-        if (cause.containsType(FallingBlock.class)) {
+        // Blocks that fall, pistons, block ticks etc. are not the player's own doing; neither are changes made by commands
+        // (/fill, /setblock, WorldEdit), which Sponge credits to the player who ran them
+        if (cause.containsType(FallingBlock.class) || RuleListener.byCommand(event)) {
             return;
         }
         final boolean placedByPlayer = cause.root() instanceof ServerPlayer && !cause.containsType(LocatableBlock.class);
@@ -255,7 +256,7 @@ public final class RuleListener {
 
     @Listener(order = Order.EARLY)
     public void onDropFromBlock(final DropItemEvent.Destruct event, @First final ServerPlayer player) {
-        if (!this.rules.has(Trigger.DROP)) {
+        if (!this.rules.has(Trigger.DROP) || RuleListener.byCommand(event)) {
             return;
         }
         final BlockSnapshot block = event.cause().first(BlockSnapshot.class)
@@ -321,6 +322,13 @@ public final class RuleListener {
     @IsCancelled(Tristate.UNDEFINED)
     public void onDropFromBlockPost(final DropItemEvent.Destruct event) {
         this.pay(event);
+    }
+
+    /**
+     * @return True if the event happened while a command ran; commands neither earn rewards nor are level gated
+     */
+    private static boolean byCommand(final Event event) {
+        return event.context().containsKey(EventContextKeys.COMMAND);
     }
 
     // Evaluation
